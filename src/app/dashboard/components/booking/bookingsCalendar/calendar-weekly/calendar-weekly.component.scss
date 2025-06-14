@@ -1,0 +1,204 @@
+.card-date{
+    width: 12.7%;
+    color: #000;
+    border-radius: 12px;
+    margin: 4px;
+    margin-top: 0px;
+    align-items: center;
+    box-shadow: none;
+    cursor: pointer;
+    backdrop-filter: blur(24px);
+    background-color: rgba(237, 237, 237, 0.72);
+    border-color: #f1f3f7 !important;
+}
+
+.card-date:hover{
+    background-color: #d0d1d3 !important;
+    border-color: rgb(245, 246, 248) !important;
+}
+
+.card-date.today{
+    background-color: rgb(26, 41, 60) !important;
+    border-color: rgb(26, 41, 60) !important;
+    color: #fff !important;
+}
+
+.card-next{
+    width: 3.4%;
+    color: #000;
+    border-radius: 12px;
+    margin: 0px;
+    margin-top: 0px;
+    align-items: center;
+    height: 84px;
+}
+
+.calendar-canvas {
+    margin-top: 20px;
+    overflow-x: hidden;
+    background-color: transparent;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-container {
+    min-width: 100%;
+    padding: 0;
+}
+
+.calendar-table {
+    width: 100%;
+    border-spacing: 0;
+    font-family: inherit;
+}
+
+
+.time-header {
+    width: 80px;
+    text-align: center;
+    font-weight: 600;
+    color: #495057;
+    padding: 12px 8px;
+    font-size: 14px;
+}
+
+.day-header {
+    text-align: center;
+    font-weight: 600;
+    color: #495057;
+    padding: 8px 4px;
+    min-width: 120px;
+}
+
+.day-header:last-child {
+    border-right: none;
+}
+
+.day-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.day-name {
+    font-size: 12px;
+    text-transform: capitalize;
+    color: #6c757d;
+}
+
+.day-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: #495057;
+}
+
+.time-row {
+    height: 80px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.time-row:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.time-cell {
+    background-color: transparent;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+    position: relative;
+}
+
+.time-label {
+    font-size: 14px;
+    font-weight: 800;
+    color: #1a293c;
+    padding: 4px;
+    position: absolute;
+    top: 0%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+}
+
+.day-cell {    
+    vertical-align: top;
+    padding: 2px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid rgb(221, 225, 237)
+}
+
+.day-cell:last-child {
+    border-right: none;
+}
+
+.day-cell:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.cell-content {
+    width: 100%;
+    height: 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 2px;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .calendar-canvas {
+        margin-top: 15px;
+    }
+    
+    .time-header {
+        width: 60px;
+        font-size: 12px;
+        padding: 8px 4px;
+    }
+    
+    .day-header {
+        min-width: 80px;
+        padding: 6px 2px;
+    }
+    
+    .day-name {
+        font-size: 10px;
+    }
+    
+    .day-number {
+        font-size: 14px;
+    }
+    
+    .time-row {
+        height: 50px;
+    }
+    
+    .cell-content {
+        height: 46px;
+    }
+    
+    .time-label {
+        font-size: 10px;
+    }
+}
+
+.time-row.current-hour {
+    background-color: rgba(0, 123, 255, 0.1);
+    
+    .time-cell {
+        background-color: rgba(0, 123, 255, 0.2);
+    }
+    
+    .time-label {
+        color: #007bff;
+        font-weight: 600;
+    }
+}
+

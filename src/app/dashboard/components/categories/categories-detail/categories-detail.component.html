@@ -1,0 +1,107 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ titleComponent }}</h5>
+          <div class="btn-group">
+            <button class="btn btn-outline-secondary" (click)="return()">
+              <i class="fas fa-arrow-left me-2"></i>Volver
+            </button>
+            <button class="btn btn-primary" (click)="update()" *ngIf="!loading">
+              <i class="fas fa-edit me-2"></i>Editar
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          
+          <!-- Loading State -->
+          <div *ngIf="loading" class="d-flex justify-content-center p-4">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+          
+          <!-- Contenido -->
+          <div *ngIf="!loading">
+            <div class="row">
+              
+              <!-- Información Básica -->
+              <div class="col-12">
+                <h6 class="border-bottom pb-2 mb-3">Información Básica</h6>
+              </div>
+              
+              <!-- ID -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">ID</label>
+                <div class="form-control-plaintext">{{ category.id }}</div>
+              </div>
+              
+              <!-- Estado -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Estado</label>
+                <div class="form-control-plaintext">
+                  <span class="badge" [ngClass]="getCategoryStatusClass(category)">
+                    {{ getCategoryStatus(category) }}
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Nombre -->
+              <div class="col-md-12 mb-3">
+                <label class="form-label fw-bold">Nombre</label>
+                <div class="form-control-plaintext">{{ category.name }}</div>
+              </div>
+              
+              <!-- Descripción -->
+              <div class="col-12 mb-3">
+                <label class="form-label fw-bold">Descripción</label>
+                <div class="form-control-plaintext">
+                  <p class="mb-0">{{ category.description }}</p>
+                </div>
+              </div>
+              
+              <!-- Información de Auditoría -->
+              <div class="col-12 mt-4">
+                <h6 class="border-bottom pb-2 mb-3">Información de Auditoría</h6>
+              </div>
+              
+              <!-- Fecha de Creación -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Fecha de Creación</label>
+                <div class="form-control-plaintext">
+                  <i class="fas fa-calendar-alt me-2 text-muted"></i>
+                  {{ formatDate(category.createdAt) }}
+                </div>
+              </div>
+              
+            </div>
+            
+            <!-- Acciones adicionales -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="alert alert-info">
+                  <i class="fas fa-info-circle me-2"></i>
+                  Esta es una vista de solo lectura. Para modificar la información, haz clic en el botón "Editar".
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          
+        </div>
+        <div class="card-footer" *ngIf="!loading">
+          <div class="d-flex justify-content-between">
+            <button class="btn btn-outline-secondary" (click)="return()">
+              <i class="fas fa-arrow-left me-2"></i>Volver al Listado
+            </button>
+            <button class="btn btn-primary" (click)="update()">
+              <i class="fas fa-edit me-2"></i>Editar Categoría
+            </button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>

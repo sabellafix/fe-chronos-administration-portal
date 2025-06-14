@@ -1,0 +1,109 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ titleComponent }}</h5>
+          <button class="btn btn-outline-secondary" (click)="return()">
+            <i class="fas fa-arrow-left me-2"></i>Volver
+          </button>
+        </div>
+        <div class="card-body">
+          
+          <form [formGroup]="form" (ngSubmit)="post()">
+            <div class="row">
+              
+              <!-- Información Básica -->
+              <div class="col-12">
+                <h6 class="border-bottom pb-2 mb-3">Información Básica</h6>
+              </div>
+              
+              <!-- Nombre -->
+              <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">
+                  Nombre <span class="text-danger">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="name"
+                  formControlName="name" 
+                  placeholder="Ingrese el nombre de la categoría"
+                  [class.is-invalid]="form.get('name')?.invalid && form.get('name')?.touched"
+                  (blur)="capitalize('name')">
+                <div class="invalid-feedback" *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
+                  <div *ngIf="form.get('name')?.errors?.['required']">
+                    El nombre es requerido
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Estado -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Estado</label>
+                <div class="form-check form-switch">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="isActive"
+                    formControlName="isActive">
+                  <label class="form-check-label" for="isActive">
+                    {{ form.get('isActive')?.value ? 'Activo' : 'Inactivo' }}
+                  </label>
+                </div>
+              </div>
+              
+              <!-- Descripción -->
+              <div class="col-12 mb-3">
+                <label for="description" class="form-label">
+                  Descripción <span class="text-danger">*</span>
+                </label>
+                <textarea 
+                  class="form-control" 
+                  id="description"
+                  formControlName="description" 
+                  rows="4"
+                  placeholder="Ingrese la descripción de la categoría"
+                  [class.is-invalid]="form.get('description')?.invalid && form.get('description')?.touched">
+                </textarea>
+                <div class="invalid-feedback" *ngIf="form.get('description')?.invalid && form.get('description')?.touched">
+                  <div *ngIf="form.get('description')?.errors?.['required']">
+                    La descripción es requerida
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          </form>
+          
+        </div>
+        <div class="card-footer">
+          <div class="d-flex justify-content-between">
+            <div>
+              <button type="button" class="btn btn-outline-danger me-2" (click)="resetForm()">
+                <i class="fas fa-undo me-2"></i>Limpiar Formulario
+              </button>
+            </div>
+            <div>
+              <button type="button" class="btn btn-secondary me-2" (click)="return()">
+                <i class="fas fa-times me-2"></i>Cancelar
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary" 
+                (click)="post()"
+                [disabled]="form.invalid || charge">
+                <span *ngIf="charge" class="spinner-border spinner-border-sm me-2" role="status">
+                  <span class="visually-hidden">Guardando...</span>
+                </span>
+                <i *ngIf="!charge" class="fas fa-save me-2"></i>
+                {{ charge ? 'Guardando...' : 'Guardar Categoría' }}
+              </button>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>

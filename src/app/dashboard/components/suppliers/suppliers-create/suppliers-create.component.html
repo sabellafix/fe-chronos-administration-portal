@@ -1,0 +1,165 @@
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card animated fadeIn fast">
+                    <div class="card-header card-header-form">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <h4 class="card-title mt-2">{{titleComponent}}</h4>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+                                    <button (click)="return()" type="button" class="btn btn-danger w-sm bg-gradient waves-effect waves-light">Regresar</button>
+                                    <button (click)="post()" type="submit" class="btn btn-success w-sm bg-gradient waves-effect waves-light">
+                                        <i *ngIf="charge" class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i> Guardar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form novalidate="novalidate" class="mb-2" [formGroup]="form" *ngIf="!loading">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="row">
+                                        <!-- Nombre de la empresa -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Nombre de la empresa *</label>
+                                            <input type="text" class="form-control" (input)="capitalize('companyName')" placeholder="Indique el nombre de la empresa" formControlName="companyName">
+                                            <div class="invalid-feedback" *ngIf="form.controls['companyName'].hasError('required') && form.controls['companyName'].touched">
+                                                <strong>*</strong> El nombre de la empresa es requerido
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('companyName') != undefined && send">
+                                                <strong>*</strong> {{getValidation('companyName')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Usuario asociado -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Usuario asociado *</label>
+                                            <select class="form-select" formControlName="userId">
+                                                <option value="">Seleccione un usuario</option>
+                                                <option *ngFor="let user of getUsers()" [value]="user.code">{{user.name}}</option>
+                                            </select>
+                                            <div class="invalid-feedback" *ngIf="form.controls['userId'].hasError('required') && form.controls['userId'].touched">
+                                                <strong>*</strong> El usuario asociado es requerido
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('userId') != undefined && send">
+                                                <strong>*</strong> {{getValidation('userId')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Email de negocio -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Email de negocio *</label>
+                                            <input type="email" class="form-control" placeholder="correo@empresa.com" formControlName="businessEmail">
+                                            <div class="invalid-feedback" *ngIf="form.controls['businessEmail'].hasError('required') && form.controls['businessEmail'].touched">
+                                                <strong>*</strong> El email de negocio es requerido
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="form.controls['businessEmail'].hasError('email') && form.controls['businessEmail'].touched">
+                                                <strong>*</strong> El formato del email no es válido
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('businessEmail') != undefined && send">
+                                                <strong>*</strong> {{getValidation('businessEmail')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Teléfono de negocio -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Teléfono de negocio *</label>
+                                            <input type="text" class="form-control" placeholder="+34 900 000 000" formControlName="businessPhone">
+                                            <div class="invalid-feedback" *ngIf="form.controls['businessPhone'].hasError('required') && form.controls['businessPhone'].touched">
+                                                <strong>*</strong> El teléfono de negocio es requerido
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('businessPhone') != undefined && send">
+                                                <strong>*</strong> {{getValidation('businessPhone')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Dirección de negocio -->
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label">Dirección de negocio *</label>
+                                            <input type="text" class="form-control" placeholder="Dirección completa del negocio" formControlName="businessAddress">
+                                            <div class="invalid-feedback" *ngIf="form.controls['businessAddress'].hasError('required') && form.controls['businessAddress'].touched">
+                                                <strong>*</strong> La dirección de negocio es requerida
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('businessAddress') != undefined && send">
+                                                <strong>*</strong> {{getValidation('businessAddress')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Sitio web -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Sitio web</label>
+                                            <input type="url" class="form-control" placeholder="https://www.sitio.com" formControlName="website">
+                                            <div class="invalid-feedback" *ngIf="getValidation('website') != undefined && send">
+                                                <strong>*</strong> {{getValidation('website')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Rating inicial -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Rating inicial</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" step="0.1" min="0" max="5" placeholder="0.0" formControlName="rating">
+                                                <span class="input-group-text">
+                                                    <span class="text-warning">{{getRatingStars(form.get('rating')?.value || 0)}}</span>
+                                                </span>
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="form.controls['rating'].hasError('min') || form.controls['rating'].hasError('max') && form.controls['rating'].touched">
+                                                <strong>*</strong> El rating debe estar entre 0 y 5
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('rating') != undefined && send">
+                                                <strong>*</strong> {{getValidation('rating')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Total de reseñas inicial -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Total de reseñas inicial</label>
+                                            <input type="number" class="form-control" min="0" placeholder="0" formControlName="totalReviews">
+                                            <div class="invalid-feedback" *ngIf="form.controls['totalReviews'].hasError('min') && form.controls['totalReviews'].touched">
+                                                <strong>*</strong> El total de reseñas debe ser un número positivo
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('totalReviews') != undefined && send">
+                                                <strong>*</strong> {{getValidation('totalReviews')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <!-- Estados -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Estados</label>
+                                            <div class="d-flex gap-4 align-items-center mt-2">
+                                                <div class="form-check form-switch">
+                                                    <input formControlName="isActive" class="form-check-input" type="checkbox" id="isActive">
+                                                    <label class="form-check-label" for="isActive">Activo</label>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input formControlName="isVerified" class="form-check-input" type="checkbox" id="isVerified">
+                                                    <label class="form-check-label" for="isVerified">Verificado</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Descripción del negocio -->
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label">Descripción del negocio</label>
+                                            <textarea class="form-control" rows="4" placeholder="Descripción detallada del negocio, servicios ofrecidos, etc." formControlName="businessDescription"></textarea>
+                                            <div class="invalid-feedback" *ngIf="getValidation('businessDescription') != undefined && send">
+                                                <strong>*</strong> {{getValidation('businessDescription')?.message}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="mb-3 mt-4" *ngIf="loading">
+                            <app-skelleton-user-info></app-skelleton-user-info>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
