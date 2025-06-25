@@ -1,0 +1,117 @@
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card animated fadeIn fast">
+                    <div class="card-header card-header-form">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="d-flex flex-wrap gap-2 justify-content-start align-items-center h-100">
+                                    <button (click)="return()" type="button" class="btn btn-light w-sm bg-gradient waves-effect waves-light">Return</button>
+                                    <h4 class="card-title"> <i class="bx bx-face text-muted font-size-18 me-2"></i> {{titleComponent}}</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+                                    
+                                    <button (click)="post()" type="submit" class="btn btn-success w-sm bg-gradient waves-effect waves-light">
+                                        <i *ngIf="charge" class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form novalidate="novalidate" class="mb-2" [formGroup]="form" *ngIf="!loading">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Name of company </label>
+                                            <input type="text" class="form-control" (input)="capitalize('companyName')" placeholder="Enter the name of the company" formControlName="companyName">
+                                            <div class="invalid-feedback" *ngIf="form.controls['companyName'].hasError('required') && form.controls['companyName'].touched">
+                                                <strong>*</strong> The name of the company is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('companyName') != undefined && send">
+                                                <strong>*</strong> {{getValidation('companyName')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Associated user *</label>
+                                            <select class="form-select" formControlName="userId">
+                                                <option value="">Select a user</option>
+                                                <option *ngFor="let user of users" [value]="user.id">{{user.firstName}} {{user.lastName}}</option>
+                                            </select>
+                                            <div class="invalid-feedback" *ngIf="form.controls['userId'].hasError('required') && form.controls['userId'].touched">
+                                                <strong>*</strong> The associated user is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('userId') != undefined && send">
+                                                <strong>*</strong> {{getValidation('userId')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Business email *</label>
+                                            <input type="email" class="form-control" placeholder="business@company.com" formControlName="businessEmail">
+                                            <div class="invalid-feedback" *ngIf="form.controls['businessEmail'].hasError('required') && form.controls['businessEmail'].touched">
+                                                <strong>*</strong> The business email is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="form.controls['businessEmail'].hasError('email') && form.controls['businessEmail'].touched">
+                                                <strong>*</strong> The email format is not valid
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('businessEmail') != undefined && send">
+                                                <strong>*</strong> {{getValidation('businessEmail')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Business phone *</label>
+                                            <input type="text" class="form-control" placeholder="+1 900 000 000" formControlName="businessPhone">
+                                            <div class="invalid-feedback" *ngIf="form.controls['businessPhone'].hasError('required') && form.controls['businessPhone'].touched">
+                                                <strong>*</strong> The business phone is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('businessPhone') != undefined && send">
+                                                <strong>*</strong> {{getValidation('businessPhone')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Business address *</label>
+                                            <input type="text" class="form-control" placeholder="Complete business address" formControlName="businessAddress">
+                                            <div class="invalid-feedback" *ngIf="form.controls['businessAddress'].hasError('required') && form.controls['businessAddress'].touched">
+                                                <strong>*</strong> The business address is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('businessAddress') != undefined && send">
+                                                <strong>*</strong> {{getValidation('businessAddress')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Website</label>
+                                            <input type="url" class="form-control" placeholder="https://www.website.com" formControlName="website">
+                                            <div class="invalid-feedback" *ngIf="getValidation('website') != undefined && send">
+                                                <strong>*</strong> {{getValidation('website')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label">Business description</label>
+                                            <textarea class="form-control" rows="4" placeholder="Detailed business description, services offered, etc." formControlName="businessDescription"></textarea>
+                                            <div class="invalid-feedback" *ngIf="getValidation('businessDescription') != undefined && send">
+                                                <strong>*</strong> {{getValidation('businessDescription')?.message}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="mb-3 mt-4" *ngIf="loading">
+                            <app-skelleton-user-info></app-skelleton-user-info>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

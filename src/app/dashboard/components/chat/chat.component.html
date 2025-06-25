@@ -1,0 +1,108 @@
+<div class="chat-widget" [class.minimized]="isMinimized">
+    <div class="chat-header" (click)="toggleMinimize()">
+        <div class="chat-header-content">
+            <div class="chat-title">
+                <img src="assets/images/chronos-collapse-dark.png" alt="Soporte" class="avatar">
+                <div class="title-text">
+                    <h6 class="text-white">Chronos</h6>
+                    <p class="status">En línea</p>
+                </div>
+            </div>
+            <div class="chat-controls">
+                <button type="button" class="control-btn" title="Minimizar/Maximizar">
+                    <i class="bx bx-minus"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-body">
+        <div class="chat-conversation" #chatContainer>
+            <ul class="list-unstyled mb-0">
+                <li class="chat-day-title">
+                    <span class="title">Hoy</span>
+                </li>
+                
+                <li *ngFor="let message of messages" [class.right]="isUserMessage(message)">
+                    <div class="conversation-list">
+                        <div class="d-flex">
+                            <img 
+                                *ngIf="isAgentMessage(message)"
+                                src="assets/images/chronos-collapse-dark.png" 
+                                class="rounded-circle" 
+                                alt="Agente">
+                            
+                            <div class="flex-1 m-0" 
+                                 [ngClass]="{'me-1': isAgentMessage(message), 'ms-1': isUserMessage(message)}">
+                                <div class="ctext-wrap">
+                                    <div class="ctext-wrap-content m-0">
+                                        <div class="conversation-name">
+                                            <span class="time">{{ formatTime(message.createdAt) }}</span>
+                                        </div>
+                                        <p class="mb-0" 
+                                           [ngClass]="{'text-dark': isAgentMessage(message), 'text-white': isUserMessage(message)}">
+                                            {{ message.message }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <img 
+                                *ngIf="isUserMessage(message)"
+                                src="assets/images/user-image.jpg" 
+                                class="rounded-circle" 
+                                alt="Usuario">
+                        </div>
+                    </div>
+                </li>
+                
+                <li *ngIf="isLoading">
+                    <div class="conversation-list">
+                        <div class="d-flex">
+                            <img src="assets/images/chronos-collapse-dark.png" class="rounded-circle" alt="Agente">
+                            <div class="flex-1 m-0 me-1">
+                                <div class="ctext-wrap">
+                                    <div class="ctext-wrap-content m-0">
+                                        <div class="typing-indicator">
+                                            <div class="typing-dots">
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="chat-input">
+        <div class="row align-items-center g-2">
+            <div class="col">
+                <input 
+                    #messageInput
+                    type="text" 
+                    class="form-control" 
+                    placeholder="Escribe tu mensaje..."
+                    [disabled]="isLoading"
+                    (keypress)="onKeyPress($event, messageInput)">
+            </div>
+            <div class="col-auto">
+                <button 
+                    type="button" 
+                    class="btn btn-primary"
+                    [disabled]="isLoading"
+                    (click)="onSendMessage(messageInput)">
+                    <i class="mdi mdi-send" *ngIf="!isLoading"></i>
+                    <div class="spinner-border spinner-border-sm" role="status" *ngIf="isLoading">
+                        <span class="visually-hidden">Enviando...</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

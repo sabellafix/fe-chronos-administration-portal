@@ -1,0 +1,254 @@
+<div class="page-content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xl-12">
+				<div class="card animated fadeIn fast">
+					<div class="card-header card-header-form">
+						<div class="row">
+							<div class="col-md-9">
+								<div class="d-flex flex-wrap gap-2 justify-content-start align-items-start h-100">
+									<button (click)="return()" type="button"
+										class="btn btn-light w-sm bg-gradient waves-effect waves-light">
+										Return</button>
+									<h4 class="card-title ms-2 mt-2">{{titleComponent}}</h4>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+									<button (click)="update()" type="button"
+										class="btn btn-primary w-sm bg-gradient waves-effect waves-light">
+										Actualizar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<form novalidate="novalidate" class="mb-2" [formGroup]="form" *ngIf="!loading">
+							<div class="row">
+								<div class="col-md-12 col-sm-12">
+									<div class="row">
+										<div class="col-md-12">
+											<h5 class="mb-3">Información Básica</h5>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Name de la Empresa</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													{{company.companyName || 'No especificado'}}
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Name Legal</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													{{company.legalName || 'No especificado'}}
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Industria</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													{{company.industry || 'No especificado'}}
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Dirección de Sede Principal</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													{{company.headquartersAddress || 'No especificado'}}
+												</div>
+											</div>
+										</div>
+
+										<!-- Información de Contacto -->
+										<div class="col-12">
+											<hr>
+											<h5 class="mb-3">Información de Contacto</h5>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Email</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													<a *ngIf="company.email" [href]="'mailto:' + company.email"
+														class="text-decoration-none">
+														{{company.email}}
+													</a>
+													<span *ngIf="!company.email">No especificado</span>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Teléfono</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													<a *ngIf="company.phone" [href]="'tel:' + company.phone"
+														class="text-decoration-none">
+														{{company.phone}}
+													</a>
+													<span *ngIf="!company.phone">No especificado</span>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-12">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Sitio Web</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													<a *ngIf="company.website" [href]="company.website" target="_blank"
+														class="text-decoration-none">
+														{{company.website}} <i
+															class="fas fa-external-link-alt fa-sm"></i>
+													</a>
+													<span *ngIf="!company.website">No especificado</span>
+												</div>
+											</div>
+										</div>
+
+										<!-- Persona de Contacto -->
+										<div class="col-12">
+											<hr>
+											<h5 class="mb-3">Persona de Contacto</h5>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Name del Contacto</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													{{company.contactPersonName || 'No especificado'}}
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Teléfono del Contacto</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													<a *ngIf="company.contactPersonPhone"
+														[href]="'tel:' + company.contactPersonPhone"
+														class="text-decoration-none">
+														{{company.contactPersonPhone}}
+													</a>
+													<span *ngIf="!company.contactPersonPhone">No especificado</span>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-12">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Email del Contacto</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													<a *ngIf="company.contactPersonEmail"
+														[href]="'mailto:' + company.contactPersonEmail"
+														class="text-decoration-none">
+														{{company.contactPersonEmail}}
+													</a>
+													<span *ngIf="!company.contactPersonEmail">No especificado</span>
+												</div>
+											</div>
+										</div>
+
+										<!-- Información de Suscripción -->
+										<div class="col-12">
+											<hr>
+											<h5 class="mb-3">Información de Suscripción</h5>
+										</div>
+
+										<div class="col-md-4">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Plan de Suscripción</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													<span class="badge bg-info">{{company.subscriptionPlan || 'No especificado'}}</span>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-4">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Fecha de Inicio</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													{{formatDate(company.subscriptionStartDate) || 'No especificado'}}
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-4">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Fecha de Finalización</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													{{formatDate(company.subscriptionEndDate) || 'No especificado'}}
+												</div>
+											</div>
+										</div>
+
+										<!-- State y Fechas del Sistema -->
+										<div class="col-12">
+											<hr>
+											<h5 class="mb-3">State e Información del Sistema</h5>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">State</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													<span class="badge" [ngClass]="getCompanyStatusClass(company)">
+														{{getCompanyStatus(company)}}
+													</span>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">ID de la Empresa</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													{{company.id || 'No especificado'}}
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Fecha de Creación</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													{{formatDate(company.createdAt) || 'No especificado'}}
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label class="form-label fw-bold">Última Actualización</label>
+												<div class="form-control-plaintext border rounded p-2 bg-light">
+													{{formatDate(company.updatedAt) || 'No especificado'}}
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<!-- Botones de Acción -->
+									<div *ngIf="!loading" class="d-flex justify-content-end gap-2 mt-4">
+										<button type="button" class="btn btn-outline-secondary" (click)="return()">
+											<i class="fas fa-arrow-left"></i> Volver al Listado
+										</button>
+										<button type="button" class="btn btn-primary" (click)="update()">
+											<i class="fas fa-edit"></i> Editar Empresa
+										</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

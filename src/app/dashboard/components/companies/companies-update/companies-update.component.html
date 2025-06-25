@@ -1,0 +1,273 @@
+<div class="page-content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xl-12">
+				<div class="card animated fadeIn fast">
+					<div class="card-header card-header-form">
+						<div class="row">
+							<div class="col-md-9">
+								<h4 class="card-title mt-2">{{titleComponent}}</h4>
+							</div>
+							<div class="col-md-3">
+								<div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+									<button (click)="return()" type="button"
+										class="btn btn-light w-sm bg-gradient waves-effect waves-light">Return</button>
+									<button (click)="put()" type="submit"
+										class="btn btn-success w-sm bg-gradient waves-effect waves-light"><i
+											*ngIf="charge"
+											class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i>
+										Guardar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<form novalidate="novalidate" class="mb-2" [formGroup]="form" *ngIf="!loading">
+							<div class="row">
+								<div class="col-md-12 col-sm-12">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label for="companyName" class="form-label">Name de la
+													Empresa *</label>
+												<input type="text" class="form-control" id="companyName"
+													formControlName="companyName"
+													placeholder="Ingrese el nombre de la empresa"
+													(blur)="capitalize('companyName')">
+												<div *ngIf="form.get('companyName')?.touched && form.get('companyName')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('companyName')?.errors?.['required']">
+														El nombre de la empresa es obligatorio</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label for="legalName" class="form-label">Name Legal
+													*</label>
+												<input type="text" class="form-control" id="legalName"
+													formControlName="legalName" placeholder="Ingrese el nombre legal"
+													(blur)="capitalize('legalName')">
+												<div *ngIf="form.get('legalName')?.touched && form.get('legalName')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('legalName')?.errors?.['required']">
+														El nombre legal es obligatorio</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label for="industry" class="form-label">Industria *</label>
+												<select class="form-control" id="industry" formControlName="industry">
+													<option value="">Seleccione una industria</option>
+													<option *ngFor="let industry of getIndustries()"
+														[value]="industry.code">
+														{{industry.name}}
+													</option>
+												</select>
+												<div *ngIf="form.get('industry')?.touched && form.get('industry')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('industry')?.errors?.['required']">
+														La industria es obligatoria</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label for="headquartersAddress" class="form-label">Dirección de Sede
+													Principal *</label>
+												<input type="text" class="form-control" id="headquartersAddress"
+													formControlName="headquartersAddress"
+													placeholder="Ingrese la dirección">
+												<div *ngIf="form.get('headquartersAddress')?.touched && form.get('headquartersAddress')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('headquartersAddress')?.errors?.['required']">
+														La dirección es obligatoria</div>
+												</div>
+											</div>
+										</div>
+
+										<!-- Información de Contacto -->
+										<div class="col-12">
+											<hr>
+											<h5 class="mb-3">Información de Contacto</h5>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label for="email" class="form-label">Email *</label>
+												<input type="email" class="form-control" id="email"
+													formControlName="email" placeholder="empresa@ejemplo.com">
+												<div *ngIf="form.get('email')?.touched && form.get('email')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('email')?.errors?.['required']">El
+														email es obligatorio</div>
+													<div *ngIf="form.get('email')?.errors?.['email']">
+														Ingrese un email válido</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label for="phone" class="form-label">Teléfono *</label>
+												<input type="text" class="form-control" id="phone"
+													formControlName="phone" placeholder="+57 300 123 4567">
+												<div *ngIf="form.get('phone')?.touched && form.get('phone')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('phone')?.errors?.['required']">El
+														teléfono es obligatorio</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-12">
+											<div class="form-group mb-3">
+												<label for="website" class="form-label">Sitio Web</label>
+												<input type="text" class="form-control" id="website"
+													formControlName="website" placeholder="https://www.empresa.com">
+												<div *ngIf="form.get('website')?.touched && form.get('website')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('website')?.errors?.['pattern']">
+														Ingrese una URL válida</div>
+												</div>
+											</div>
+										</div>
+
+										<!-- Persona de Contacto -->
+										<div class="col-12">
+											<hr>
+											<h5 class="mb-3">Persona de Contacto</h5>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label for="contactPersonName" class="form-label">Name del
+													Contacto *</label>
+												<input type="text" class="form-control" id="contactPersonName"
+													formControlName="contactPersonName"
+													placeholder="Name completo del contacto"
+													(blur)="capitalize('contactPersonName')">
+												<div *ngIf="form.get('contactPersonName')?.touched && form.get('contactPersonName')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('contactPersonName')?.errors?.['required']">
+														El nombre del contacto es obligatorio</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<div class="form-group mb-3">
+												<label for="contactPersonPhone" class="form-label">Teléfono
+													del Contacto *</label>
+												<input type="text" class="form-control" id="contactPersonPhone"
+													formControlName="contactPersonPhone" placeholder="+57 300 123 4567">
+												<div *ngIf="form.get('contactPersonPhone')?.touched && form.get('contactPersonPhone')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('contactPersonPhone')?.errors?.['required']">
+														El teléfono del contacto es obligatorio</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-12">
+											<div class="form-group mb-3">
+												<label for="contactPersonEmail" class="form-label">Email del
+													Contacto *</label>
+												<input type="email" class="form-control" id="contactPersonEmail"
+													formControlName="contactPersonEmail"
+													placeholder="contacto@empresa.com">
+												<div *ngIf="form.get('contactPersonEmail')?.touched && form.get('contactPersonEmail')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('contactPersonEmail')?.errors?.['required']">
+														El email del contacto es obligatorio</div>
+													<div *ngIf="form.get('contactPersonEmail')?.errors?.['email']">
+														Ingrese un email válido</div>
+												</div>
+											</div>
+										</div>
+
+										<!-- Información de Suscripción -->
+										<div class="col-12">
+											<hr>
+											<h5 class="mb-3">Información de Suscripción</h5>
+										</div>
+
+										<div class="col-md-4">
+											<div class="form-group mb-3">
+												<label for="subscriptionPlan" class="form-label">Plan de
+													Suscripción *</label>
+												<select class="form-control" id="subscriptionPlan"
+													formControlName="subscriptionPlan">
+													<option *ngFor="let plan of getSubscriptionPlans()"
+														[value]="plan.code">
+														{{plan.name}}
+													</option>
+												</select>
+												<div *ngIf="form.get('subscriptionPlan')?.touched && form.get('subscriptionPlan')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('subscriptionPlan')?.errors?.['required']">
+														El plan de suscripción es obligatorio</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-4">
+											<div class="form-group mb-3">
+												<label for="subscriptionStartDate" class="form-label">Fecha
+													de Inicio *</label>
+												<input type="date" class="form-control" id="subscriptionStartDate"
+													formControlName="subscriptionStartDate">
+												<div *ngIf="form.get('subscriptionStartDate')?.touched && form.get('subscriptionStartDate')?.errors"
+													class="text-danger small mt-1">
+													<div
+														*ngIf="form.get('subscriptionStartDate')?.errors?.['required']">
+														La fecha de inicio es obligatoria</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-4">
+											<div class="form-group mb-3">
+												<label for="subscriptionEndDate" class="form-label">Fecha de
+													Finalización *</label>
+												<input type="date" class="form-control" id="subscriptionEndDate"
+													formControlName="subscriptionEndDate">
+												<div *ngIf="form.get('subscriptionEndDate')?.touched && form.get('subscriptionEndDate')?.errors"
+													class="text-danger small mt-1">
+													<div *ngIf="form.get('subscriptionEndDate')?.errors?.['required']">
+														La fecha de finalización es obligatoria</div>
+												</div>
+											</div>
+										</div>
+
+										<!-- State -->
+										<div class="col-12">
+											<hr>
+											<h5 class="mb-3">State</h5>
+										</div>
+
+										<div class="col-md-12">
+											<div class="form-group mb-3">
+												<div class="form-check form-switch">
+													<input class="form-check-input" type="checkbox" id="isActive"
+														formControlName="isActive">
+													<label class="form-check-label" for="isActive">
+														Empresa Activa
+													</label>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

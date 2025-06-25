@@ -1,0 +1,88 @@
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card animated fadeIn fast">
+                    <div class="card-header card-header-form">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <h4 class="card-title mt-2">{{titleComponent}}</h4>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+                                    <button (click)="return()"  type="button" class="btn btn-danger w-sm bg-gradient waves-effect waves-light">Return</button>
+                                    <button (click)="post()" type="submit" class="btn btn-success w-sm bg-gradient waves-effect waves-light"><i *ngIf="charge" class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i> Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form novalidate="novalidate" class="mb-2" [formGroup]="form" *ngIf="!loading">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Name *</label>
+                                            <input type="text" class="form-control" (input)="capitalize('name')" placeholder="Indique un primer nombre" formControlName="name">
+                                            <div class="invalid-feedback" *ngIf="form.controls['name'].hasError('required') && form.controls['name'].touched">
+                                                <strong>*</strong> El primer nombre es requerido
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('name') != undefined && send">
+                                                <strong>*</strong> {{getValidation('name')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Correo electrónico *</label>
+                                            <input type="text" class="form-control" placeholder="Indique un correo electrónico" formControlName="email">
+                                            <div class="invalid-feedback" *ngIf="form.controls['email'].hasError('required') && form.controls['email'].touched">
+                                                <strong>*</strong> El correo electrónico es requerido
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="form.controls['email'].hasError('email') && form.controls['email'].touched">
+                                                <strong>*</strong> El formato del correo no es válido
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('email') != undefined && send">
+                                                <strong>*</strong> {{getValidation('email')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Telefóno móvil *</label>
+                                            <input type="text" class="form-control" placeholder="Indique un telefóno móvil" formControlName="mobilePhone">
+                                            <div class="invalid-feedback" *ngIf="form.controls['mobilePhone'].hasError('required') && form.controls['mobilePhone'].touched">
+                                                <strong>*</strong> El telefóno móvil es requerido
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="form.controls['mobilePhone'].hasError('pattern') && form.controls['mobilePhone'].touched">
+                                                <strong>*</strong> El telefóno móvil debe tener 9 números
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('mobilePhone') != undefined && send">
+                                                <strong>*</strong> {{getValidation('mobilePhone')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Perfil *</label>
+                                            <select type="text" class="form-select" placeholder="Indique un perfil" formControlName="roleId" >
+                                                <option value="">Indique un perfil</option>
+                                                <option *ngFor="let rol of roles" [value]="rol.id">{{rol.name}}</option>
+                                            </select>
+                                            <div class="invalid-feedback" *ngIf="form.controls['roleId'].hasError('required') && form.controls['roleId'].touched">
+                                                <strong>*</strong> El perfil es requerido
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('roleId') != undefined && send">
+                                                <strong>*</strong> {{getValidation('roleId')?.message}}
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="mb-3 mt-4" *ngIf="loading">
+                            <app-skelleton-user-info></app-skelleton-user-info>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

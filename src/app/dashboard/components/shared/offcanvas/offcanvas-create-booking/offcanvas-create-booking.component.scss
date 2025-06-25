@@ -1,0 +1,158 @@
+/* Offcanvas Styles */
+.offcanvas {
+  width: 420px !important;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  background-color: #dfe7ec;
+  border-left: 0px !important;
+  @media (max-width: 768px) {
+    width: 90vw !important;
+  }
+}
+
+.offcanvas-header {
+  background: linear-gradient(135deg, #22324c 0%, #000000 100%);
+  color: white;
+  padding: 1.5rem;
+  
+  .offcanvas-title {
+    font-weight: 600;
+    margin: 0;
+    font-size: 1.25rem;
+    
+    i {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+  
+  .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.offcanvas-body {
+  background-color: #f8f9fa;
+  border-radius: 16px !important;
+  
+  form {
+    background: white;
+    border-radius: 16px;
+    margin: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Form Styles */
+.form-label {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  
+  i {
+    color: #6c757d;
+    width: 16px;
+  }
+}
+
+.input-group-text {
+  background-color: #f8f9fc;
+  border: 1px solid #e3e6f0;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* Validation Styles */
+.text-danger {
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #dc3545;
+  
+  &:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  }
+}
+
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+ 
+}
+
+
+/* Animation for form validation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.form-control.is-invalid {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .offcanvas-header {
+    padding: 1rem;
+    
+    .offcanvas-title {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .offcanvas-body form {
+    margin: 0.5rem;
+    padding: 1rem !important;
+  }
+  
+  .form-control, .form-select {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .btn {
+    padding: 0.6rem 1.2rem;
+  }
+}
+
+/* Loading state */
+.btn:disabled {
+  position: relative;
+  color: transparent;
+  
+  &::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

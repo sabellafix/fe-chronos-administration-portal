@@ -1,0 +1,111 @@
+<div class="auth-page">
+    <div class="container-fluid p-0">
+        <div class="row g-0 align-items-center">
+            <div class="col-xxl-6 col-lg-6 col-md-6">
+                <div class="login-bg">
+                    <div class="row justify-content-center align-items-center g-0">
+                        <div class="col-xl-7">
+                            <div class="pt-2">
+                                <div  class="card mb-0 mt-0 no-border no-box-shadow mt-5 ">
+                                    <div  class="card-body">
+                                        <div  class="auth-full-page-content p-5 pb-0 d-flex my-2">
+                                            <div class="w-100">
+                                                <div *ngIf="!charge" class="d-flex flex-column  h-100 animated fadeIn fast">
+                                                    <div class="mb-4 mb-md-5">
+                                                        <div class="d-block m-0 auth-logo">
+                                                            <img [src]="companyLogo" alt="" height="105" class="auth-logo-dark me-start text-left">                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="auth-content my-auto">
+                                                        <div class="text-left">
+                                                            <h5 class="mb-0 font-size-24 mb-3">Portal de administración</h5>
+                                                            <p class="text-muted mt-2 font-size-14">¡Bienvenido de vuelta!</p>
+                                                            <h6 class="font-size-14">Ingrese su email y contraseña para iniciar sesión</h6>
+                                                        </div>
+                                                        <form [formGroup]="form" novalidate="novalidate" class="mt-4 pt-2" >
+
+                                                            <div class="form-floating  form-floating-custom mb-2">
+                                                                <input type="text" class="form-control" autocomplete="username" placeholder="Email"  formControlName="userNumber">
+                                                                <label for="input-username">Email</label>
+                                                                <div class="form-floating-icon">
+                                                                    <i data-eva="people-outline"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div class="invalid-feedback" *ngIf="form.controls['userNumber'].hasError('email') && form.controls['userNumber'].touched">
+                                                                <strong>*</strong> El email no es valido
+                                                            </div>
+                                                            <div class="invalid-feedback" *ngIf="form.controls['userNumber'].hasError('required') && form.controls['userNumber'].touched">
+                                                                <strong>*</strong> El email es requerido
+                                                            </div>
+                                                            <br>
+                                                            <div class="form-floating form-floating-custom mb-2 auth-pass-inputgroup">
+                                                                <input type="password" class="form-control pe-5" autocomplete="current-password" name="current-password" placeholder="Contraseña" formControlName="password">
+                                                                <label for="password-input">Contraseña</label>
+                                                                <div class="form-floating-icon">
+                                                                    <i data-eva="lock-outline"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div class="invalid-feedback" *ngIf="form.controls['password'].hasError('required') && form.controls['password'].touched">
+                                                                <strong>*</strong> La contraseña es requerida
+                                                            </div>
+                                                            <br>
+                                                            <div *ngIf="logginError"  class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                                Su inicio de sesion fallo, intentelo de nuevo
+                                                                <button type="button" class="btn-close" (click)="logginError = false" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <button (click)="signIn()"  style="height: 50px; background-color: #6f19e6;" class="btn btn-dark w-100 waves-effect waves-light" type="submit">
+                                                                    <span *ngIf="!loading">Ingresar</span>
+                                                                    <span *ngIf="loading">Cargando <i  class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i></span>
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="divider">
+                                                                <span class="divider-text">O</span>
+                                                            </div>
+
+                                                            <div class="mb-3">
+                                                                <button (click)="signIn()"  style="height: 50px;" class="btn btn-white border w-100 waves-effect waves-light" type="submit">
+                                                                    <span><i class="bx bxl-google font-size-18 align-middle me-2"></i> Continuar con Google </span>
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="mb-3">
+                                                                <button (click)="signIn()"  style="height: 50px;" class="btn btn-white border w-100 waves-effect waves-light" type="submit">
+                                                                    <span><i class="bx bxl-windows font-size-18 align-middle me-2"></i> Continuar con Windows </span>
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="mt-4 text-center">
+                                                        <p class="mb-0" *ngIf="!charge"> <script>document.write(new Date().getFullYear())</script> 2025 © {{this.companyName}}</p>
+                                                    </div>
+                                                </div>
+                                                <app-skelleton-login *ngIf="charge"></app-skelleton-login>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-6 col-lg-6 col-md-6">
+                <div class="auth-bg">
+                    <video 
+                        #loginVideo
+                        autoplay 
+                        muted 
+                        loop 
+                        playsinline 
+                        preload="auto"
+                        class="auth-video"
+                        [src]="'assets/videos/login3.mp4'">
+                        Tu navegador no soporta el elemento de video.
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

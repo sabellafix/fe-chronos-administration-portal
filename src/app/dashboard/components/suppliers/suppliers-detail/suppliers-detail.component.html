@@ -1,0 +1,145 @@
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-header card-header-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="card-title mt-2">{{titleComponent}}</h4>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+                                    <button (click)="update()" class="btn btn-warning w-sm bg-gradient waves-effect waves-light">Actualizar</button>
+                                    <button (click)="return()" class="btn btn-light w-sm waves-effect waves-light">Return</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" *ngIf="!loading">
+                            <div class="col-md-12">
+                                <form [formGroup]="form" class="ng-untouched ng-pristine ng-valid">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mb-4">
+                                                <h5 class="text-primary mb-3">State del proveedor</h5>
+                                                <span class="badge badge-pill" 
+                                                      [ngClass]="getSupplierStatusClass(supplier)"
+                                                      style="font-size: 14px; padding: 8px 16px;">
+                                                    {{getSupplierStatus(supplier)}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Name de la empresa <span class="text-danger">*</span></label>
+                                                <input type="text" formControlName="companyName" class="form-control" placeholder="Name de la empresa">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">ID de usuario <span class="text-danger">*</span></label>
+                                                <input type="text" formControlName="userId" class="form-control" placeholder="ID de usuario">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Email de negocio <span class="text-danger">*</span></label>
+                                                <input type="email" formControlName="businessEmail" class="form-control" placeholder="correo@empresa.com">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Teléfono de negocio <span class="text-danger">*</span></label>
+                                                <input type="text" formControlName="businessPhone" class="form-control" placeholder="+34 900 000 000">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label class="form-label">Dirección de negocio <span class="text-danger">*</span></label>
+                                                <input type="text" formControlName="businessAddress" class="form-control" placeholder="Dirección completa">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Sitio web</label>
+                                                <input type="url" formControlName="website" class="form-control" placeholder="https://www.sitio.com">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Rating</label>
+                                                <div class="input-group">
+                                                    <input type="number" formControlName="rating" class="form-control" step="0.1" min="0" max="5">
+                                                    <span class="input-group-text">
+                                                        <span class="text-warning">{{getRatingStars(form.get('rating')?.value || 0)}}</span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Total de reseñas</label>
+                                                <input type="number" formControlName="totalReviews" class="form-control" min="0">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">States</label>
+                                                <div class="d-flex gap-3 align-items-center">
+                                                    <div class="form-check">
+                                                        <input formControlName="isActive" class="form-check-input" type="checkbox" id="isActive">
+                                                        <label class="form-check-label" for="isActive">Activo</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input formControlName="isVerified" class="form-check-input" type="checkbox" id="isVerified">
+                                                        <label class="form-check-label" for="isVerified">Verificado</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label class="form-label">Descripción del negocio</label>
+                                                <textarea formControlName="businessDescription" class="form-control" rows="4" placeholder="Descripción detallada del negocio"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="row" *ngIf="loading">
+                            <div class="col-md-12">
+                                <div class="animated fadeIn fast">
+                                    <ngx-skeleton-loader [count]="8"
+                                        [theme]="{ 'border-radius': '10', height: '50px', 'background-color': '#FFFFFFF' }">
+                                    </ngx-skeleton-loader>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

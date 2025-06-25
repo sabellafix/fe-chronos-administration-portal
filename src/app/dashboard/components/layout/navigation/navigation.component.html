@@ -1,0 +1,47 @@
+<div class="vertical-menu" style="background-image: url('assets/images/side-menu-bg-17.jpeg'); background-size: cover; background-position: center">
+    <div style="background: none !important" class="navbar-brand-box">
+        <a class="logo">
+            <span class="logo-lg pt-2">
+                <app-company-logo type="default" mode="light"></app-company-logo>
+            </span>
+            <span class="logo-sm pt-2">
+                <app-company-logo type="collapse" mode="dark"></app-company-logo>
+            </span>
+        </a>
+    </div>
+
+    <button type="button" class="btn btn-sm text-dark px-3 header-item vertical-menu-btn topnav-hamburger">
+        <span style="color: #000 !important;" class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </span>
+    </button>
+
+    <div data-simplebar class="sidebar-menu-scroll">
+        <div id="sidebar-menu">
+            <ul class="metismenu list-unstyled" id="side-menu">
+                <li *ngFor="let item of menuItems">
+                    <a (click)="toggleSubmenu(item)" [class.mm-active]="item.isOpen">
+                        <i [class]="item.icon" class="text-withe"></i>
+                        <span class="menu-item text-withe">{{item.title}}</span>
+                        <i *ngIf="item.children && !item.isOpen" class="bx bx-chevron-down ms-auto text-white animated fadeIn fast"></i>
+                        <i *ngIf="item.children && item.isOpen" class="bx bx-chevron-up ms-auto text-white animated fadeIn fast"></i>
+                    </a>
+                    <ul *ngIf="item.children" class="sub-menu animated fadeIn fast" [class.show]="item.isOpen">
+                        <li *ngFor="let child of item.children">
+                            <a [routerLink]="child.route">
+                                <span class="menu-item font-size-14">{{child.title}}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="space-200"></div>
+        <div *ngIf="showBrand" class="p-3 px-4 sidebar-footer">
+            <p class="mb-1 main-title">2025 © {{companyName}}</p>
+            <p style="font-size: 12px;" class="mb-0"> <small class="text-muted"> Powered by </small></p>
+        </div>
+    </div>
+</div>

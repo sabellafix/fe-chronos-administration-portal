@@ -1,0 +1,70 @@
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card animated fadeIn fast">
+                    <div class="card-header card-header-form">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div
+                                    class="d-flex flex-wrap gap-2 justify-content-start align-items-center h-100">
+                                    <button (click)="return()" type="button"
+                                        class="btn btn-light w-sm bg-gradient waves-effect waves-light">Regresar</button>
+                                    <h4 class="card-title"> <i
+                                            class="bx bx-collection text-muted font-size-18 me-2"></i>
+                                        {{titleComponent}}</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div
+                                    class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+                                    <button (click)="update()" type="submit"
+                                        class="btn btn-success w-sm bg-gradient waves-effect waves-light">
+                                        <i *ngIf="charge"
+                                            class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i>
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div *ngIf="!loading">
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Name</label>
+                                    <div class="form-control-plaintext">{{ category.name }}</div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Description</label>
+                                    <div class="form-control-plaintext">
+                                        <p class="mb-0">{{ category.description }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">State</label>
+                                    <div class="form-control-plaintext">
+                                        <span class="badge badge-pill font-size-14"
+                                            [ngClass]="getCategoryStatusClass(category)">
+                                            {{ getCategoryStatus(category) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="loading" class="row">
+                            <div class="col-md-12">
+                                <app-skelletons-simple [row]="2" [col]="2"></app-skelletons-simple>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,136 @@
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card animated fadeIn fast">
+                    <div class="card-header card-header-form">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="d-flex flex-wrap gap-2 justify-content-start align-items-center h-100">
+                                    <button (click)="return()" type="button" class="btn btn-light w-sm bg-gradient waves-effect waves-light">Return</button>
+                                    <h4 class="card-title"> <i class="bx bx-user text-muted font-size-18 me-2"></i> {{titleComponent}}</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+                                    <button (click)="post()" type="submit" class="btn btn-success w-sm bg-gradient waves-effect waves-light">
+                                        <i *ngIf="charge" class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form novalidate="novalidate" class="mb-2" [formGroup]="form" *ngIf="!loading">
+                            <div class="row">
+                                <div class="col-md-4 col-sm-12 ">
+                                    <label class="form-label">Profile photo</label>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <div class="text-center p-3 text-white rounded">
+                                            <div class="mb-3">
+                                                <img [src]="imageUser" style="width: 150px" class="half-width img-thumbnail text-center" alt="Preview" />
+                                            </div>
+                                            <button (click)="fileInput.click()" class="btn btn-outline-primary w-xl waves-effect waves-light">Upload photo</button>
+                                            <input #fileInput  (click)="onFileSelected($event)" type="file" accept=".png, .jpg, .jepg" (change)="onFileSelected($event)" class="hidden">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">First name *</label>
+                                            <input type="text" class="form-control" (input)="capitalize('firstName')" placeholder="Enter first name" formControlName="firstName">
+                                            <div class="invalid-feedback" *ngIf="form.controls['firstName'].hasError('required') && form.controls['firstName'].touched">
+                                                <strong>*</strong> The first name is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('firstName') != undefined && send">
+                                                <strong>*</strong> {{getValidation('firstName')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Last name *</label>
+                                            <input type="text" class="form-control" (input)="capitalize('lastName')" placeholder="Enter last name" formControlName="lastName">
+                                            <div class="invalid-feedback" *ngIf="form.controls['lastName'].hasError('required') && form.controls['lastName'].touched">
+                                                <strong>*</strong> The last name is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('lastName') != undefined && send">
+                                                <strong>*</strong> {{getValidation('lastName')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Associated user *</label>
+                                            <select class="form-select" formControlName="userId">
+                                                <option value="">Select a user</option>
+                                                <option *ngFor="let user of users" [value]="user.id">{{user.firstName}} {{user.lastName}}</option>
+                                            </select>
+                                            <div class="invalid-feedback" *ngIf="form.controls['userId'].hasError('required') && form.controls['userId'].touched">
+                                                <strong>*</strong> The associated user is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('userId') != undefined && send">
+                                                <strong>*</strong> {{getValidation('userId')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Date of Birth *</label>
+                                            <input type="date" class="form-control" [max]="getTodayDate()" formControlName="dateOfBirth">
+                                            <div class="invalid-feedback" *ngIf="form.controls['dateOfBirth'].hasError('required') && form.controls['dateOfBirth'].touched">
+                                                <strong>*</strong> The date of birth is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('dateOfBirth') != undefined && send">
+                                                <strong>*</strong> {{getValidation('dateOfBirth')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Gender *</label>
+                                            <select class="form-select" formControlName="gender">
+                                                <option value="">Select gender</option>
+                                                <option *ngFor="let gender of genderOptions" [value]="gender.value">{{gender.label}}</option>
+                                            </select>
+                                            <div class="invalid-feedback" *ngIf="form.controls['gender'].hasError('required') && form.controls['gender'].touched">
+                                                <strong>*</strong> The gender is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('gender') != undefined && send">
+                                                <strong>*</strong> {{getValidation('gender')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Preferred Language *</label>
+                                            <select class="form-select" formControlName="preferredLanguage">
+                                                <option *ngFor="let language of languageOptions" [value]="language.value">{{language.label}}</option>
+                                            </select>
+                                            <div class="invalid-feedback" *ngIf="form.controls['preferredLanguage'].hasError('required') && form.controls['preferredLanguage'].touched">
+                                                <strong>*</strong> The preferred language is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('preferredLanguage') != undefined && send">
+                                                <strong>*</strong> {{getValidation('preferredLanguage')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label">Address *</label>
+                                            <input type="text" class="form-control" placeholder="Complete address" formControlName="address">
+                                            <div class="invalid-feedback" *ngIf="form.controls['address'].hasError('required') && form.controls['address'].touched">
+                                                <strong>*</strong> The address is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('address') != undefined && send">
+                                                <strong>*</strong> {{getValidation('address')?.message}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="mb-3 mt-4" *ngIf="loading">
+                            <app-skelleton-user-info></app-skelleton-user-info>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

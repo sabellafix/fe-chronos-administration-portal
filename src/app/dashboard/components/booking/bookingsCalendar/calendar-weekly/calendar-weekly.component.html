@@ -1,0 +1,87 @@
+<div class="calendar-canvas calendar-weekly mt-0 no-border no-box-shadow" id="calendar-weekly-header">
+    <div class="calendar-container">
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th class="time-header"><p class="font-size-24 mt-3 fw-lighter"><i class="bx bx-calendar"></i></p></th>
+                    <th class="day-header pe-1 ps-1 pb-2" *ngFor="let date of dates">
+                        <div class="day-header-content">
+                            <div class="card w-100 bg-light p-1 pt-2 card-date text-center" [ngClass]="{'today': date.isToday}">
+                                <div class="card-date-day">
+                                    <p class="font-size-16 fw-normal mb-1 capitalize">{{date.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
+                                </div>
+                                <div class="card-date-number">
+                                    <p class="font-size-26 fw-semibold mb-0">{{date.date.getDate()}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                    <th class="time-hedaer-space"></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div class="calendar-canvas calendar-body mt-0 no-border no-box-shadow">
+    <div class="calendar-container">
+        <table class="calendar-table mt-1">
+            <thead>
+                <tr style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
+                    <th class="time-header" style="height: 0px !important; padding: 0px !important; margin: 0px !important;"></th>
+                    <th class="day-header" *ngFor="let date of dates" style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
+                        <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="day-header-content">
+                            <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card w-100 bg-light p-1 pt-2 card-date text-center" >
+                                <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card-date-day">
+                                    <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="font-size-16 text-light fw-normal mb-1 capitalize">{{date.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
+                                </div>
+                                <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card-date-number">
+                                    <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="font-size-26 text-light fw-semibold mb-0">{{date.date.getDate()}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                    <th class="time-hedaer-space"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="time-row"dashbpoar *ngFor="let hour of getHoursRange()">
+                    <td class="time-cell">
+                        <span class="time-label fw-semibold">{{formatHour(hour)}}</span>
+                    </td>
+                    <td class="day-cell" 
+                        *ngFor="let date of dates" 
+                        [attr.data-hour]="hour" 
+                        [attr.data-date]="date.date.toISOString()"
+                        
+                        (click)="openBookingModal(date.date, hour)">
+                        <div class="cell-content">
+                            <div class="booking-item" 
+                                 *ngFor="let booking of getBookingsForDateTime(date.date, hour)"
+                                 [style.background-color]="booking.service.color"
+                                 [title]="'Cliente: ' + booking.customerId + ' | ' + formatHour(booking.startTime.hour) + ' - ' + formatHour(booking.endTime.hour)">
+                                <div class="booking-info">
+                                    <span class="text-white booking-customer">{{booking.service.serviceName}}</span>
+                                    <span class="text-white booking-time mb-2">{{formatHour(booking.startTime.hour)}} - {{formatHour(booking.endTime.hour)}}</span>
+                                    <span class="text-white booking-price mb-2">${{booking.totalPrice}}</span>
+                                    <span class="booking-customer-photo d-flex align-items-start">
+                                        <img class="rounded-circle header-profile-user" width="20" height="20" [src]="booking.customer.photo" alt="Header Avatar">
+                                        <p class="text-white ms-2 mt-2">{{booking.customer.firstName}} {{booking.customer.lastName}}</p>
+                                    </span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <th class="time-hedaer-space"></th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Offcanvas para crear booking -->
+<app-offcanvas-create-booking 
+  (bookingCreated)="onBookingCreated($event)"
+  (cancelled)="onBookingCancelled()">
+</app-offcanvas-create-booking>

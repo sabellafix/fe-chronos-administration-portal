@@ -1,0 +1,81 @@
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card animated fadeIn fast">
+                    <div class="card-header card-header-form">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="d-flex flex-wrap gap-2 justify-content-start align-items-center h-100">
+                                    <button (click)="return()" type="button" class="btn btn-light w-sm bg-gradient waves-effect waves-light">Return</button>
+                                    <h4 class="card-title"> <i class="bx bx-collection text-muted font-size-18 me-2"></i> {{titleComponent}}</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+                                    <button (click)="post()" type="submit"
+                                        class="btn btn-success w-sm bg-gradient waves-effect waves-light">
+                                        <i *ngIf="charge"
+                                            class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+                        <form [formGroup]="form" (ngSubmit)="post()">
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">
+                                        Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="name" formControlName="name"
+                                        placeholder="Enter the name of the category"
+                                        [class.is-invalid]="form.get('name')?.invalid && form.get('name')?.touched"
+                                        (blur)="capitalize('name')">
+                                    <div class="invalid-feedback"
+                                        *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
+                                        <div *ngIf="form.get('name')?.errors?.['required']">
+                                            The name is required
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">State</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="isActive"
+                                            formControlName="isActive">
+                                        <label class="form-check-label" for="isActive">
+                                            {{ form.get('isActive')?.value ? 'Active' : 'Inactive' }}
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    <label for="description" class="form-label">
+                                        Description <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea class="form-control" id="description" formControlName="description"
+                                        rows="4" placeholder="Enter the description of the category"
+                                        [class.is-invalid]="form.get('description')?.invalid && form.get('description')?.touched">
+                                    </textarea>
+                                    <div class="invalid-feedback"
+                                        *ngIf="form.get('description')?.invalid && form.get('description')?.touched">
+                                        <div *ngIf="form.get('description')?.errors?.['required']">
+                                            The description is required
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

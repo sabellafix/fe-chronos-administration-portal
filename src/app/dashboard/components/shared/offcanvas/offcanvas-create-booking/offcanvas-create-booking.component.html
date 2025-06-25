@@ -1,0 +1,170 @@
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCreateBooking" aria-labelledby="offcanvasCreateBookingLabel">
+  <div class="offcanvas-header border-bottom">
+    <h6 class="offcanvas-title text-white fw-normal fs-18" id="offcanvasCreateBookingLabel">
+      <i class="bx bx-calendar-plus me-2"></i>
+      Create new booking
+    </h6>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body shadow-sm p-0">
+    <form [formGroup]="bookingForm" class="p-4">
+      <div class="mb-3">
+        <label class="form-label">Service *</label>
+        <div class="row">
+          <div class="col-md-10">
+            <select class="form-select" (change)="onServiceChange($event)" formControlName="serviceId">
+              <option [value]="null">Select a service</option>
+              <option [value]="service.id" *ngFor="let service of services">{{service.serviceName}}</option>
+            </select>
+            <div *ngIf="bookingForm.get('serviceId')?.invalid && bookingForm.get('serviceId')?.touched" class="text-danger small mt-1">
+              Service required
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button *ngIf="service.color != ''" type="button" [matTooltip]="service.color" [ngStyle]="{'background-color': service.color}" style="color: white"
+                class="btn btn-rounded waves-effect waves-light ">
+                <i class="bx bx-cut "></i>
+            </button>
+            <button *ngIf="service.color == ''" type="button"  style="border: 1px solid #e0e0e0; background-color: white; color: white"
+                class="btn btn-ligth btn-rounded waves-effect waves-light ">
+                <i class="bx bx-cut "></i>
+            </button>
+          </div>
+        </div>
+        
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Customer *</label>
+
+        <div class="row">
+          <div class="col-md-10">
+            <select class="form-select" (change)="onCustomerChange($event)" formControlName="customerId">
+              <option [value]="null">Select a customer</option>
+              <option [value]="customer.id" *ngFor="let customer of customers">{{customer.firstName}} {{customer.lastName }}</option>
+            </select>
+            <div *ngIf="bookingForm.get('customerId')?.invalid && bookingForm.get('customerId')?.touched" class="text-danger small mt-1">
+              Customer required
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button  *ngIf="customer != null" type="button" class="btn btn-circle p-0 d-flex align-items-center"
+              id="page-header-user-dropdown-v" data-bs-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+            <img class="rounded-circle header-profile-user" [src]="customer.photo" alt="Header Avatar">
+            </button>
+
+            <div *ngIf="customer != null" class="dropdown-menu dropdown-menu-end pt-0">
+                <div class="p-3 border-bottom">
+                    <h6 class="mb-0">{{customer.firstName}} {{customer.lastName}}</h6>
+                    <p class="mb-0 font-size-11 text-muted">{{customer.address}}</p>
+                </div>
+                <a class="dropdown-item" href="#"><i
+                        class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> <span
+                        class="align-middle">Perfil</span></a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item cursor"><i
+                        class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span
+                        class="align-middle">Cerrar sesión</span></a>
+            </div>
+            <button *ngIf="customer == null" type="button"
+              style="border: 1px solid #e0e0e0; background-color: white; color: white"
+              class="btn btn-ligth btn-rounded waves-effect waves-light ">
+              <i class="bx bxs-color-fill "></i>
+            </button>
+          </div>
+        </div>
+        
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">
+              Booking date *
+            </label>
+            <input type="date" class="form-control" formControlName="bookingDate">
+            <div *ngIf="bookingForm.get('bookingDate')?.invalid && bookingForm.get('bookingDate')?.touched" class="text-danger small mt-1">
+              Booking date required
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">
+              Start time *
+            </label>
+            <input type="time" class="form-control" formControlName="startTime">
+            <div *ngIf="bookingForm.get('startTime')?.invalid && bookingForm.get('startTime')?.touched" class="text-danger small mt-1">
+              Start time required
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">
+              Duration (minutes) *
+            </label>
+            <input type="number" class="form-control" formControlName="durationMinutes" min="15" max="480" placeholder="60">
+            <div *ngIf="bookingForm.get('durationMinutes')?.invalid && bookingForm.get('durationMinutes')?.touched" class="text-danger small mt-1">
+              <span *ngIf="bookingForm.get('durationMinutes')?.errors?.['required']">Duration required</span>
+              <span *ngIf="bookingForm.get('durationMinutes')?.errors?.['min']">Duration minimum: 15 minutes</span>
+              <span *ngIf="bookingForm.get('durationMinutes')?.errors?.['max']">Duration maximum: 8 hours</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">
+              Status
+            </label>
+            <select class="form-select" formControlName="status">
+              <option [value]="BookingStatus.Pending">
+                <i class="bx bx-time-five"></i> Pending
+              </option>
+              <option [value]="BookingStatus.Confirmed">
+                <i class="bx bx-check"></i> Confirmed
+              </option>
+              <option [value]="BookingStatus.InProgress">
+                <i class="bx bx-play"></i> In Progress
+              </option>
+              <option [value]="BookingStatus.Completed">
+                <i class="bx bx-check-double"></i> Completed
+              </option>
+              <option [value]="BookingStatus.Cancelled">
+                <i class="bx bx-x"></i> Cancelled
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="mb-3">
+        <label class="form-label">
+          Client Notes
+        </label>
+        <textarea class="form-control" formControlName="clientNotes" rows="3" placeholder="Notas adicionales del cliente..."></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">
+          Provider Notes
+        </label>
+        <textarea class="form-control" formControlName="providerNotes" rows="3" placeholder="Notas internas del proveedor..."></textarea>
+      </div>
+
+      <div class="d-grid gap-2 pt-3 border-top">
+        <button type="button" 
+                (click)="onConfirm()" 
+                class="btn btn-primary waves-effect waves-light">
+          <i class="bx bx-calendar-plus me-2"></i>
+          Create Booking
+        </button>       
+      </div>
+    </form>
+  </div>
+</div>

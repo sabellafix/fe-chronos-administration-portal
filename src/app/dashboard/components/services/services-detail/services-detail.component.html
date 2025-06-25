@@ -1,0 +1,95 @@
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card animated fadeIn fast">
+                    <div class="card-header card-header-form">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div
+                                    class="d-flex flex-wrap gap-2 justify-content-start align-items-center h-100">
+                                    <button (click)="return()" type="button"
+                                        class="btn btn-light w-sm bg-gradient waves-effect waves-light">Return</button>
+                                    <h4 class="card-title"> <i
+                                            class="bx bx-cut text-muted font-size-18 me-2"></i>
+                                        {{titleComponent}}</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div
+                                    class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+                                    <button (click)="update()" type="submit"
+                                        class="btn btn-success w-sm bg-gradient waves-effect waves-light">
+                                        <i *ngIf="charge"
+                                            class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i>
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div *ngIf="!loading">
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Nombre</label>
+                                    <div class="form-control-plaintext">{{ service.serviceName }}</div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Category</label>
+                                    <div class="form-control-plaintext">{{ getCategoryName(service.categoryId) }}</div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Duration</label>
+                                    <div class="form-control-plaintext">{{ getDurationFormatted(service.durationMinutes) }}</div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Price</label>
+                                    <div class="form-control-plaintext">{{ getPriceFormatted(service.price, service.currency) }}</div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">State</label>
+                                    <div class="form-control-plaintext">
+                                        <span class="badge badge-pill font-size-14"
+                                            [ngClass]="getServiceStatusClass(service)">
+                                            {{ getServiceStatus(service) }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Color</label>
+                                    <div class="form-control-plaintext">
+                                        <button type="button" [matTooltip]="service.color" [ngStyle]="{'background-color': service.color}" style="color: white"
+                                                        class="btn btn-sm waves-effect waves-light cursor">
+                                            <i class="bx bxs-color-fill "></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12 mb-3" *ngIf="service.serviceDescription">
+                                    <label class="form-label fw-bold">Description</label>
+                                    <div class="form-control-plaintext">
+                                        <p class="mb-0">{{ service.serviceDescription }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="loading" class="row">
+                            <div class="col-md-12">
+                                <app-skelletons-simple [row]="3" [col]="2"></app-skelletons-simple>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

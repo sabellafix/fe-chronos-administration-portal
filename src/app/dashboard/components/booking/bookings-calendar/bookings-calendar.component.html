@@ -1,0 +1,49 @@
+<div class="calend-header" id="calendar-header">
+    <div class="page-content" style="padding-top: 16px;">
+        <div class="container-fluid">
+            <div class="row ">
+                <div class="col-xl-4">
+                    <h1 class="mb-0 mt-2">{{dateNow | date}}</h1>
+                </div>
+                <div class="col-xl-4">
+                    <div class="card bg-light mt-1">
+                        <ul class="nav nav-pills nav-justified p-1" role="tablist">
+                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab" href="#home-1" role="tab" aria-selected="false"
+                                    tabindex="-1">
+                                    <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                    <span class="d-none d-sm-block">Month</span>
+                                </a>
+                            </li>
+                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#profile-1" role="tab"
+                                    aria-selected="true">
+                                    <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                    <span class="d-none d-sm-block">Week</span>
+                                </a>
+                            </li>
+                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab" href="#messages-1" role="tab" aria-selected="false"
+                                    tabindex="-1">
+                                    <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                    <span class="d-none d-sm-block">Day</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
+                        <button style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
+                        <button style="height: 46px !important" class="btn btn-light shadow-sm w-25">Today</button>
+                        <button style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="calendar-content">
+    <app-calendar-weekly></app-calendar-weekly>
+</div>

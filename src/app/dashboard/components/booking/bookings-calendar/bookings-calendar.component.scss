@@ -1,0 +1,49 @@
+.calend-header{
+    position: fixed;
+    top: 60px;
+    right: 0;
+    left: 255px;
+    z-index: 949;
+    width: auto;
+    height: 95px;
+    background-color: #fff;
+    padding: 16px;
+    -webkit-transition: all .2s;
+    transition: all .2s;
+    -webkit-box-shadow: 0 2px 3px rgba(26, 41, 60, .06);
+    box-shadow: 0 2px 3px rgba(26, 41, 60, .06);
+}
+
+@media (max-width:991.98px) {
+    .calend-header {
+        left: 0;
+    }
+}
+
+body[data-sidebar-size=sm] .calend-header {
+    left: 70px;
+}
+
+@media (max-width:991.98px) {
+    body[data-sidebar-size=sm] .calend-header {
+        left: 0;
+    }
+}
+
+.calend-header.sticky {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.calendar-content {
+    margin-top: 140px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 20px;
+}
+
+.nav-link.active{
+    background-color: #fff;
+    color: #000 !important;
+    font-weight: 600;
+}
