@@ -1,51 +1,55 @@
-name: Azure Static Web Apps CI/CD
+name: Build and Deploy
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
 
 jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+  build_and_deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
-    permissions:
-       id-token: write
-       contents: read
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 18.20.4
+        uses: actions/setup-node@v2
         with:
-          submodules: true
-          lfs: false
-      - name: Install OIDC Client from Core Package
-        run: npm install @actions/core@1.6.0 @actions/http-client
-      - name: Get Id Token
-        uses: actions/github-script@v6
-        id: idtoken
+          node-version: '18.20.4'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install CLI
+        run: npm install -g @angular/cli@16
+
+      - name: Build Angular application for production
+        run: ng build --configuration production
+
+      - name: List build output
+        run: ls -al dist/
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v4
         with:
-           script: |
-               const coredemo = require('@actions/core')
-               return await coredemo.getIDToken()
-           result-encoding: string
+          name: dist
+          path: dist/**
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_THANKFUL_MOSS_07054E80F }}
+          azure_static_web_apps_api_token:  ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_THANKFUL_MOSS_07054E80F }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/src" # App source code path
-          api_location: "https://az-chronos-gateway-ascberh2bfepcaej.eastus2-01.azurewebsites.net" # Api source code path - optional
+          app_location: "/" # App source code path
+          api_location: "" # Api source code path - optional
           output_location: "dist/fe-chronos-administration-portal" # Built app content directory - optional
-          github_id_token: ${{ steps.idtoken.outputs.result }}
           ###### End of Repository/Build Configurations ######
-
+  
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
@@ -55,4 +59,5 @@ jobs:
         id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_THANKFUL_MOSS_07054E80F }}
           action: "close"
