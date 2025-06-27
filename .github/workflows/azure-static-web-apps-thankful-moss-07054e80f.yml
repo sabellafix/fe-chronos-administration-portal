@@ -63,7 +63,7 @@ jobs:
           ###### Repository/Build Configurations ######
           app_location: "/" # Código fuente de la app (raíz del repositorio)
           api_location: "" # Ubicación del código de la API (vacío si no hay API)
-          output_location: "dist/fe-chronos-administration-portal" # Directorio donde se genera el build
+          output_location: "dist/fe-chronos-administration-portal/browser" # Directorio donde se genera el build
           github_id_token: ${{ steps.idtoken.outputs.result }}
           ###### End of Repository/Build Configurations ######
 
