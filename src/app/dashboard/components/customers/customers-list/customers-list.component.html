@@ -24,7 +24,6 @@
                                             <tr>
                                                 <th>State</th>
                                                 <th>Name</th>
-                                                <th>Gender</th>
                                                 <th>Language</th>
                                                 <th width="250" class="text-center">Actions</th>
                                             </tr>
@@ -36,8 +35,7 @@
                                                     <span *ngIf="customer.isActive == false" class="badge badge-pill bg-danger-subtle text-danger font-size-14">Inactive</span>
                                                 </td>
                                                 <td>{{ getCustomerName(customer) | slice:0:50}}</td>
-                                                <td>{{getGenderFormatted(customer.gender)}}</td>
-                                                <td>{{getLanguageFormatted(customer.preferredLanguage)}}</td>
+                                                <td>{{getLanguageFormatted(customer.preferredLanguage || 'English')}}</td>
                                                 <td class="text-rigth">
                                                     <ul class="list-inline mb-0">
                                                         <li class="list-inline-item">

@@ -7,7 +7,7 @@ import { Pagination } from '@app/core/models/interfaces/pagination.interface';
 import { Option } from '@app/core/models/interfaces/option.interface';
 import { Response } from '@app/core/models/dtos/response';
 import { Validation } from '@app/core/models/dtos/validation';
-import { PlatformServiceService } from '@app/core/services/http/platform-service.service';
+import { ServiceService as PlatformServiceService } from '@app/core/services/http/platform-service.service';
 import { CategoryService } from '@app/core/services/http/category.service';
 import { Category } from '@app/core/models/bussiness/category';
 
@@ -62,7 +62,7 @@ export class ServicesDetailComponent {
   load(): void{
     if(this.id) {
       this.loading = true;
-      this.serviceService.get(this.id).subscribe({
+      this.serviceService.getService(this.id).subscribe({
         next: (data: any) => {      
           this.service = <Service>data;
           this.getCategories();

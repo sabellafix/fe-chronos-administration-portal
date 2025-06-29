@@ -75,8 +75,8 @@ export class MockSupplierService {
                 const aValue = a[field as keyof Supplier];
                 const bValue = b[field as keyof Supplier];
                 return direction === 'desc' 
-                    ? bValue > aValue ? 1 : -1 
-                    : aValue > bValue ? 1 : -1;
+                    ? bValue && aValue && bValue > aValue ? 1 : -1 
+                    : aValue && bValue && aValue > bValue ? 1 : -1;
             });
         }
 

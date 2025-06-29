@@ -6,7 +6,7 @@ export class BlockedTime{
     blockedDate: DateOnly;
     startTime: TimeOnly;
     endTime: TimeOnly;
-    reason: string;
+    reason: string | null;
     isActive: boolean;
     createdAt: string;
 
@@ -16,7 +16,7 @@ export class BlockedTime{
         this.blockedDate = new DateOnly();
         this.startTime = new TimeOnly();
         this.endTime = new TimeOnly();
-        this.reason = "";
+        this.reason = null;
         this.isActive = false;
         this.createdAt = "";
     }

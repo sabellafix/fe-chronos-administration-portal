@@ -50,7 +50,7 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Price</label>
-                                    <div class="form-control-plaintext">{{ getPriceFormatted(service.price, service.currency) }}</div>
+                                    <div class="form-control-plaintext">{{ getPriceFormatted(service.price, service.currency || 'USD') }}</div>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
@@ -66,7 +66,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Color</label>
                                     <div class="form-control-plaintext">
-                                        <button type="button" [matTooltip]="service.color" [ngStyle]="{'background-color': service.color}" style="color: white"
+                                        <button type="button" [matTooltip]="service.color || '#23324d'" [ngStyle]="{'background-color': service.color || '#23324d'}" style="color: white"
                                                         class="btn btn-sm waves-effect waves-light cursor">
                                             <i class="bx bxs-color-fill "></i>
                                         </button>

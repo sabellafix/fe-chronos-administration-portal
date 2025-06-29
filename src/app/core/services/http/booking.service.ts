@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { StorageService } from '../shared/storage.service';
+import { Booking, CreateBookingDto, UpdateBookingDto, DateOnly } from '@app/core/models/bussiness';
 
 @Injectable({
     providedIn: 'root'
@@ -13,51 +14,73 @@ export class BookingService {
     apiUrl: string = environment.apiUrl;
     controller: string = "api/chronos/bookings";
     token: string = "";
-    headers : any = {};
 
     constructor(private http: HttpClient, private storageService: StorageService) {
         this.token = this.storageService.get(StorageKeyConst._TOKEN)!; 
-        this.headers = { headers: { Authorization: `Bearer ${this.token}` } };
      }
 
-    getBookings(): Observable<any[]> {
+    private getHttpOptions() {
+        return {
+            headers: { Authorization: `Bearer ${this.token}` }
+        };
+    }
+
+    getBookings(): Observable<Booking[]> {
         const url = `${this.apiUrl}/${this.controller}/get-bookings`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
+        return this.http.get<Booking[]>(url, this.getHttpOptions());
     }
 
-    getBookingsByCustomer(customerId: string): Observable<any[]> {
-        const url = `${this.apiUrl}/${this.controller}/get-bookings-by-customer/${customerId}`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
+    getBookingsByMonth(searchMonth: DateOnly): Observable<DateOnly[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-bookings-by-month`;
+        const params = new HttpParams().set('searchMonth', JSON.stringify(searchMonth));
+        return this.http.get<DateOnly[]>(url, { ...this.getHttpOptions(), params });
     }
 
-    getBookingsBySupplier(supplierId: string): Observable<any[]> {
-        const url = `${this.apiUrl}/${this.controller}/get-bookings-by-supplier/${supplierId}`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
+    getBookingsByDay(dateToSearch: DateOnly): Observable<Booking[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-bookings-by-day`;
+        const params = new HttpParams().set('dateToSearch', JSON.stringify(dateToSearch));
+        return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params });
     }
 
-    getBookingsByService(serviceId: string): Observable<any[]> {
-        const url = `${this.apiUrl}/${this.controller}/get-bookings-by-service/${serviceId}`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
+    getBookingsCountWeek(dateToSearch: DateOnly): Observable<number> {
+        const url = `${this.apiUrl}/${this.controller}/get-bookings-count-week`;
+        const params = new HttpParams().set('dateToSearch', JSON.stringify(dateToSearch));
+        return this.http.get<number>(url, { ...this.getHttpOptions(), params });
     }
 
-    get(id: string): Observable<any> {
+    getBooking(id: string): Observable<Booking> {
         const url = `${this.apiUrl}/${this.controller}/get-booking/${id}`;
-        return this.http.get<any>(url, this.headers);
-    } 
+        return this.http.get<Booking>(url, this.getHttpOptions());
+    }
+
+    getBookingsByCustomer(customerId: string): Observable<Booking[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-bookings-by-customer/${customerId}`;
+        return this.http.get<Booking[]>(url, this.getHttpOptions());
+    }
+
+    getBookingsBySupplier(): Observable<Booking[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-bookings-by-supplier`;
+        return this.http.get<Booking[]>(url, this.getHttpOptions());
+    }
+
+    getBookingsByService(serviceId: string): Observable<Booking[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-bookings-by-service/${serviceId}`;
+        return this.http.get<Booking[]>(url, this.getHttpOptions());
+    }
   
-    post(entity: any): Observable<any> {
+    createBooking(entity: CreateBookingDto): Observable<Booking> {
         const url = `${this.apiUrl}/${this.controller}/create-booking`;
-        return this.http.post<any>(url, entity, this.headers);
+        return this.http.post<Booking>(url, entity, this.getHttpOptions());
     } 
 
-    put(entity: any, id: string): Observable<any> {
+    updateBooking(id: string, entity: UpdateBookingDto): Observable<Booking> {
         const url = `${this.apiUrl}/${this.controller}/update-booking/${id}`;
-        return this.http.put<any>(url, entity, this.headers);
+        return this.http.put<Booking>(url, entity, this.getHttpOptions());
     } 
 
-    delete(id: string): Observable<any> {
+    deleteBooking(id: string): Observable<void> {
         const url = `${this.apiUrl}/${this.controller}/delete-booking/${id}`;
-        return this.http.delete<any>(url, this.headers);
+        return this.http.delete<void>(url, this.getHttpOptions());
     } 
     
 } 

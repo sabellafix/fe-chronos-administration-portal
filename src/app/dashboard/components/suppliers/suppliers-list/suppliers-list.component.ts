@@ -99,7 +99,7 @@ export class SuppliersListComponent {
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.supplierService.delete(id).subscribe({
+          this.supplierService.deleteSupplier(id).subscribe({
             next: (response: any) => {              
               this.snackBar.open('Proveedor eliminado correctamente', 'Cerrar', {duration: 4000});
               this.load();

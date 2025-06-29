@@ -52,7 +52,7 @@ export class CategoriesDetailComponent {
   load(): void {
     if (this.id && this.id > 0) {
       this.loading = true;
-      this.categoryService.get(this.id).subscribe({
+      this.categoryService.getCategory(this.id).subscribe({
         next: (data: Category) => {
           this.category = data;
           this.setForm();

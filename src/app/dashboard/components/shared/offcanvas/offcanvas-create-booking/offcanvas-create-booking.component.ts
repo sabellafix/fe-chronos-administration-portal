@@ -1,11 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Booking } from '@app/core/models/bussiness/booking';
+import { CreateBookingDto } from '@app/core/models/bussiness';
 import { BookingStatus } from '@app/core/models/bussiness/enums';
 import { DateOnly, TimeOnly } from '@app/core/models/bussiness/availability';
 import { Service } from '@app/core/models/bussiness/service';
 import { Customer } from '@app/core/models/bussiness/customer';
-import { PlatformServiceService } from '@app/core/services/http/platform-service.service';
+import { ServiceService } from '@app/core/services/http/platform-service.service';
+import { BookingService } from '@app/core/services/http/booking.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CustomerService } from '@app/core/services/http/customer.service';
 import { User } from '@app/core/models/bussiness/user';
@@ -44,7 +46,8 @@ export class OffcanvasCreateBookingComponent implements OnInit {
   ];
   
   constructor(private formBuilder: FormBuilder, 
-    private serviceService: PlatformServiceService, 
+    private serviceService: ServiceService, 
+    private bookingService: BookingService,
     private customerService: CustomerService,
     private userService: UserService,
     private snackBar: MatSnackBar) {
@@ -105,9 +108,12 @@ export class OffcanvasCreateBookingComponent implements OnInit {
         this.customers.forEach((customer, index) => {
           const user = this.users.find(u => u.id === customer.userId);
           if (user) {
-            customer.firstName = user.firstName;
-            customer.lastName = user.lastName;
-            customer.photo = this.userImages[index];
+            // Nota: Customer ya no tiene firstName, lastName, photo - estas propiedades están en User
+            // Solo asignamos una imagen de placeholder si es necesario
+            if (index < this.userImages.length) {
+              // Podríamos agregar una propiedad temporal para la imagen
+              (customer as any).photo = this.userImages[index];
+            }
           }
         });
         this.loading = false;
@@ -166,57 +172,53 @@ export class OffcanvasCreateBookingComponent implements OnInit {
   onConfirm(): void {
     if (this.bookingForm.valid) {
       const formValue = this.bookingForm.value;
-      const booking = new Booking();
       
-      booking.id = this.generateBookingId();
+      // Crear DTO para enviar al backend
+      const createBookingDto: CreateBookingDto = new CreateBookingDto();
+      createBookingDto.customerId = formValue.customerId;
+      createBookingDto.serviceId = formValue.serviceId;
       
-      booking.customerId = formValue.customerId;
-      booking.supplierId = formValue.supplierId;
-      booking.serviceId = formValue.serviceId;
-      
+      // Convertir fecha
       const bookingDate = new Date(formValue.bookingDate);
-      booking.bookingDate = new DateOnly();
-      booking.bookingDate.year = bookingDate.getFullYear();
-      booking.bookingDate.month = bookingDate.getMonth() + 1;
-      booking.bookingDate.day = bookingDate.getDate() + 1;
+      createBookingDto.bookingDate = new DateOnly();
+      createBookingDto.bookingDate.year = bookingDate.getFullYear();
+      createBookingDto.bookingDate.month = bookingDate.getMonth() + 1;
+      createBookingDto.bookingDate.day = bookingDate.getDate();
       
+      // Convertir hora
       const [startHour, startMinute] = formValue.startTime.split(':').map(Number);
-      booking.startTime = new TimeOnly();
-      booking.startTime.hour = startHour;
-      booking.startTime.minute = startMinute;
+      createBookingDto.startTime = new TimeOnly();
+      createBookingDto.startTime.hour = startHour;
+      createBookingDto.startTime.minute = startMinute;
       
+      // Calcular hora de fin
       const endMinutes = startMinute + formValue.durationMinutes;
       const endHour = startHour + Math.floor(endMinutes / 60);
       const finalMinutes = endMinutes % 60;
-      booking.endTime = new TimeOnly();
-      booking.endTime.hour = endHour;
-      booking.endTime.minute = finalMinutes;
+      createBookingDto.endTime = new TimeOnly();
+      createBookingDto.endTime.hour = endHour % 24; // Asegurar que no exceda 24 horas
+      createBookingDto.endTime.minute = finalMinutes;
       
-      booking.durationMinutes = formValue.durationMinutes;
-      booking.totalPrice = formValue.totalPrice;
-      booking.currency = formValue.currency;
-      booking.status = formValue.status;
-      booking.clientNotes = formValue.clientNotes;
-      booking.providerNotes = formValue.providerNotes;
-      booking.totalPrice = this.service.price;
-      booking.service = this.service || new Service();
-      booking.customer = this.customer || new Customer(); 
+      createBookingDto.durationMinutes = formValue.durationMinutes;
+      createBookingDto.totalPrice = this.service.price || 0;
+      createBookingDto.currency = this.service.currency || 'USD';
+      createBookingDto.clientNotes = formValue.clientNotes || null;
       
-      booking.bookingReference = this.generateBookingReference();
+      console.log("createBookingDto", createBookingDto);
       
-      const now = new Date().toISOString();
-      booking.createdAt = now;
-      booking.updatedAt = now;
-      
-      if (booking.status === BookingStatus.Confirmed) {
-        booking.confirmedAt = now;
-      }
-      console.log("booking", booking);
-      
-      this.hide();
-      this.bookingCreated.emit(booking);
-      
-      this.resetForm();
+      // Enviar al backend
+      this.bookingService.createBooking(createBookingDto).subscribe({
+        next: (createdBooking: Booking) => {
+          this.snackBar.open('Reserva creada exitosamente', 'Cerrar', {duration: 4000});
+          this.hide();
+          this.bookingCreated.emit(createdBooking);
+          this.resetForm();
+        },
+        error: (error) => {
+          this.snackBar.open('Error al crear la reserva', 'Cerrar', {duration: 4000});
+          console.error('Error creating booking:', error);
+        }
+      });
     } else {
       this.markFormGroupTouched();
     }
@@ -224,15 +226,17 @@ export class OffcanvasCreateBookingComponent implements OnInit {
 
   private resetForm(): void {
     this.bookingForm.reset({
-      serviceId: '',
+      serviceId: null,
+      customerId: null,
       bookingDate: this.defaultDate,
       startTime: this.getDefaultTime(),
       durationMinutes: 60,
-      totalPrice: 0,
       status: BookingStatus.Pending,
       clientNotes: '',
       providerNotes: ''
     });
+    this.service = new Service();
+    this.customer = null;
   }
 
   onServiceChange(event: any): void {
@@ -242,7 +246,32 @@ export class OffcanvasCreateBookingComponent implements OnInit {
 
   onCustomerChange(event: any): void {
     const customerId = event.target.value;
-    this.customer = this.customers.find(c => c.id === customerId) || new Customer();
+    this.customer = this.customers.find(c => c.id === customerId) || null;
+  }
+
+  // Helper methods para el template
+  getServiceName(service: Service): string {
+    return service.serviceName || 'Sin nombre';
+  }
+
+  getServiceColor(service: Service): string {
+    return service.color || '#23324d';
+  }
+
+  getCustomerFullName(customer: Customer): string {
+    const user = this.users.find(u => u.id === customer.userId);
+    if (user) {
+      return `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Cliente sin nombre';
+    }
+    return 'Cliente sin nombre';
+  }
+
+  getCustomerPhoto(customer: Customer): string {
+    return (customer as any).photo || this.imageUser;
+  }
+
+  getUserForCustomer(customer: Customer): User | null {
+    return this.users.find(u => u.id === customer.userId) || null;
   }
 
   private generateBookingId(): string {

@@ -58,10 +58,10 @@
                         <div class="cell-content">
                             <div class="booking-item" 
                                  *ngFor="let booking of getBookingsForDateTime(date.date, hour)"
-                                 [style.background-color]="booking.service.color"
+                                 [style.background-color]="booking.services?.[0]?.color || '#23324d'"
                                  [title]="'Cliente: ' + booking.customerId + ' | ' + formatHour(booking.startTime.hour) + ' - ' + formatHour(booking.endTime.hour)">
                                 <div class="booking-info">
-                                    <span class="text-white booking-customer">{{booking.service.serviceName}}</span>
+                                    <span class="text-white booking-customer">{{booking.services?.[0]?.serviceName || 'Sin servicio'}}</span> 
                                     <span class="text-white booking-time mb-2">{{formatHour(booking.startTime.hour)}} - {{formatHour(booking.endTime.hour)}}</span>
                                     <span class="text-white booking-price mb-2">${{booking.totalPrice}}</span>
                                     <span class="booking-customer-photo d-flex align-items-start">

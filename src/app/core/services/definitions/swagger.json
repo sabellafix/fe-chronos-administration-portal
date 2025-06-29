@@ -1,1898 +1,2956 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Chronos Platform API",
-    "description": "API para la plataforma SaaS Chronos - Sistema de conexión entre proveedores de servicios y clientes",
-    "version": "1.0.0",
-    "contact": {
-      "name": "Chronos Support",
-      "email": "support@chronos-platform.com"
-    }
+    "title": "ChronosService",
+    "version": "1.0"
   },
-  "servers": [
-    {
-      "url": "https://api.chronos-platform.com/v1",
-      "description": "Servidor de Producción"
-    },
-    {
-      "url": "https://staging-api.chronos-platform.com/v1",
-      "description": "Servidor de Staging"
-    }
-  ],
   "paths": {
-    "/customers": {
+    "/api/Availabilities/get-availabilities": {
       "get": {
-        "tags": ["Customers"],
-        "summary": "Obtener lista de clientes",
-        "description": "Obtiene una lista paginada de clientes",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Page"
-          },
-          {
-            "$ref": "#/components/parameters/PageSize"
-          },
-          {
-            "name": "isActive",
-            "in": "query",
-            "description": "Filtrar por estado activo",
-            "schema": {
-              "type": "boolean"
-            }
-          }
+        "tags": [
+          "Availabilities"
         ],
         "responses": {
           "200": {
-            "description": "Lista de clientes obtenida exitosamente",
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
+                }
+              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomerPagedResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
                 }
               }
             }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Customers"],
-        "summary": "Crear nuevo cliente",
-        "description": "Crea un nuevo perfil de cliente",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CustomerCreateRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Cliente creado exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CustomerResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
           }
         }
       }
     },
-    "/customers/{id}": {
+    "/api/Availabilities/get-availability/{id}": {
       "get": {
-        "tags": ["Customers"],
-        "summary": "Obtener cliente por ID",
-        "description": "Obtiene un cliente específico por su ID",
+        "tags": [
+          "Availabilities"
+        ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/CustomerId"
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Cliente obtenido exitosamente",
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvailabilityDto"
+                }
+              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustomerResponse"
+                  "$ref": "#/components/schemas/AvailabilityDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvailabilityDto"
                 }
               }
             }
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        }
-      },
-      "put": {
-        "tags": ["Customers"],
-        "summary": "Actualizar cliente",
-        "description": "Actualiza la información de un cliente existente",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CustomerId"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CustomerUpdateRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Cliente actualizado exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CustomerResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Customers"],
-        "summary": "Eliminar cliente",
-        "description": "Elimina un cliente del sistema",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CustomerId"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Cliente eliminado exitosamente"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
           }
         }
       }
     },
-    "/suppliers": {
+    "/api/Availabilities/get-availabilities-by-provider/{providerId}": {
       "get": {
-        "tags": ["Suppliers"],
-        "summary": "Obtener lista de proveedores",
-        "description": "Obtiene una lista paginada de proveedores de servicios",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Page"
-          },
-          {
-            "$ref": "#/components/parameters/PageSize"
-          },
-          {
-            "name": "isVerified",
-            "in": "query",
-            "description": "Filtrar por proveedores verificados",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "minRating",
-            "in": "query",
-            "description": "Filtrar por rating mínimo",
-            "schema": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 5
-            }
-          },
-          {
-            "name": "companyId",
-            "in": "query",
-            "description": "Filtrar por compañía",
-            "schema": {
-              "type": "integer"
-            }
-          }
+        "tags": [
+          "Availabilities"
         ],
-        "responses": {
-          "200": {
-            "description": "Lista de proveedores obtenida exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SupplierPagedResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Suppliers"],
-        "summary": "Crear nuevo proveedor",
-        "description": "Crea un nuevo perfil de proveedor de servicios",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SupplierCreateRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Proveedor creado exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SupplierResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      }
-    },
-    "/suppliers/{id}": {
-      "get": {
-        "tags": ["Suppliers"],
-        "summary": "Obtener proveedor por ID",
-        "description": "Obtiene un proveedor específico por su ID",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/SupplierId"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Proveedor obtenido exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SupplierResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        }
-      },
-      "put": {
-        "tags": ["Suppliers"],
-        "summary": "Actualizar proveedor",
-        "description": "Actualiza la información de un proveedor existente",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/SupplierId"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SupplierUpdateRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Proveedor actualizado exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SupplierResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Suppliers"],
-        "summary": "Eliminar proveedor",
-        "description": "Elimina un proveedor del sistema",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/SupplierId"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Proveedor eliminado exitosamente"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        }
-      }
-    },
-    "/services": {
-      "get": {
-        "tags": ["Services"],
-        "summary": "Obtener lista de servicios",
-        "description": "Obtiene una lista paginada de servicios",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Page"
-          },
-          {
-            "$ref": "#/components/parameters/PageSize"
-          },
-          {
-            "name": "categoryId",
-            "in": "query",
-            "description": "Filtrar por categoría de servicio",
-            "schema": {
-              "type": "integer"
-            }
-          },
           {
             "name": "providerId",
-            "in": "query",
-            "description": "Filtrar por proveedor",
+            "in": "path",
+            "required": true,
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
             }
-          },
-          {
-            "name": "minPrice",
-            "in": "query",
-            "description": "Precio mínimo",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "maxPrice",
-            "in": "query",
-            "description": "Precio máximo",
-            "schema": {
-              "type": "number"
-            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Lista de servicios obtenida exitosamente",
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
+                }
+              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServicePagedResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
                 }
               }
             }
           }
         }
-      },
+      }
+    },
+    "/api/Availabilities/create-availability": {
       "post": {
-        "tags": ["Services"],
-        "summary": "Crear nuevo servicio",
-        "description": "Crea un nuevo servicio",
+        "tags": [
+          "Availabilities"
+        ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ServiceCreateRequest"
+                "$ref": "#/components/schemas/CreateAvailabilityDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAvailabilityDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAvailabilityDto"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Servicio creado exitosamente",
+          "200": {
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvailabilityDto"
+                }
+              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceResponse"
+                  "$ref": "#/components/schemas/AvailabilityDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvailabilityDto"
                 }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
           }
         }
       }
     },
-    "/services/{id}": {
-      "get": {
-        "tags": ["Services"],
-        "summary": "Obtener servicio por ID",
-        "description": "Obtiene un servicio específico por su ID",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/ServiceId"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Servicio obtenido exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ServiceResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        }
-      },
+    "/api/Availabilities/update-availability/{id}": {
       "put": {
-        "tags": ["Services"],
-        "summary": "Actualizar servicio",
-        "description": "Actualiza la información de un servicio existente",
+        "tags": [
+          "Availabilities"
+        ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/ServiceId"
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ServiceUpdateRequest"
+                "$ref": "#/components/schemas/UpdateAvailabilityDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvailabilityDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvailabilityDto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Servicio actualizado exitosamente",
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvailabilityDto"
+                }
+              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceResponse"
+                  "$ref": "#/components/schemas/AvailabilityDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvailabilityDto"
                 }
               }
             }
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Services"],
-        "summary": "Eliminar servicio",
-        "description": "Elimina un servicio del sistema",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/ServiceId"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Servicio eliminado exitosamente"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
           }
         }
       }
     },
-    "/bookings": {
-      "get": {
-        "tags": ["Bookings"],
-        "summary": "Obtener lista de reservas",
-        "description": "Obtiene una lista paginada de reservas",
+    "/api/Availabilities/delete-availability/{id}": {
+      "delete": {
+        "tags": [
+          "Availabilities"
+        ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/Page"
-          },
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/BlockedTimes/get-blocked-times": {
+      "get": {
+        "tags": [
+          "BlockedTimes"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlockedTimeDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlockedTimeDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlockedTimeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BlockedTimes/get-blocked-time/{id}": {
+      "get": {
+        "tags": [
+          "BlockedTimes"
+        ],
+        "parameters": [
           {
-            "$ref": "#/components/parameters/PageSize"
-          },
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockedTimeDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockedTimeDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockedTimeDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BlockedTimes/get-blocked-times-by-provider/{providerId}": {
+      "get": {
+        "tags": [
+          "BlockedTimes"
+        ],
+        "parameters": [
+          {
+            "name": "providerId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlockedTimeDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlockedTimeDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlockedTimeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BlockedTimes/create-blocked-time": {
+      "post": {
+        "tags": [
+          "BlockedTimes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlockedTimeDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlockedTimeDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlockedTimeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockedTimeDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockedTimeDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockedTimeDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BlockedTimes/update-blocked-time/{id}": {
+      "put": {
+        "tags": [
+          "BlockedTimes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBlockedTimeDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBlockedTimeDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBlockedTimeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockedTimeDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockedTimeDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockedTimeDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BlockedTimes/delete-blocked-time/{id}": {
+      "delete": {
+        "tags": [
+          "BlockedTimes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Bookings/get-bookings": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bookings/get-bookings-by-month": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "parameters": [
+          {
+            "name": "searchMonth",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "$ref": "#/components/schemas/DateOnly"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DateOnly"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DateOnly"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DateOnly"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bookings/get-bookings-by-day": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "parameters": [
+          {
+            "name": "dateToSearch",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "$ref": "#/components/schemas/DateOnly"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bookings/get-bookings-count-week": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "parameters": [
+          {
+            "name": "dateToSearch",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "$ref": "#/components/schemas/DateOnly"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bookings/get-booking/{id}": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bookings/get-bookings-by-customer/{customerId}": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "parameters": [
           {
             "name": "customerId",
-            "in": "query",
-            "description": "Filtrar por cliente",
+            "in": "path",
+            "required": true,
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
             }
-          },
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bookings/get-bookings-by-supplier": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Bookings/get-bookings-by-service/{serviceId}": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "parameters": [
           {
-            "name": "supplierId",
-            "in": "query",
-            "description": "Filtrar por proveedor",
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
             }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "description": "Filtrar por estado de la reserva",
-            "schema": {
-              "type": "string",
-              "enum": ["Pending", "Confirmed", "Completed", "Cancelled", "NoShow", "Rescheduled"]
-            }
-          },
-          {
-            "name": "fromDate",
-            "in": "query",
-            "description": "Fecha desde (YYYY-MM-DD)",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          },
-          {
-            "name": "toDate",
-            "in": "query",
-            "description": "Fecha hasta (YYYY-MM-DD)",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Lista de reservas obtenida exitosamente",
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BookingPagedResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingDto"
+                  }
                 }
               }
             }
           }
         }
-      },
+      }
+    },
+    "/api/Bookings/create-booking": {
       "post": {
-        "tags": ["Bookings"],
-        "summary": "Crear nueva reserva",
-        "description": "Crea una nueva reserva",
+        "tags": [
+          "Bookings"
+        ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BookingCreateRequest"
+                "$ref": "#/components/schemas/CreateBookingDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingDto"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Reserva creada exitosamente",
+          "200": {
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BookingResponse"
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
                 }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "409": {
-            "description": "Conflicto de horario"
           }
         }
       }
     },
-    "/bookings/{id}": {
-      "get": {
-        "tags": ["Bookings"],
-        "summary": "Obtener reserva por ID",
-        "description": "Obtiene una reserva específica por su ID",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/BookingId"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Reserva obtenida exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BookingResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        }
-      },
+    "/api/Bookings/update-booking/{id}": {
       "put": {
-        "tags": ["Bookings"],
-        "summary": "Actualizar reserva",
-        "description": "Actualiza la información de una reserva existente",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/BookingId"
-          }
+        "tags": [
+          "Bookings"
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BookingUpdateRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Reserva actualizada exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BookingResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Bookings"],
-        "summary": "Cancelar reserva",
-        "description": "Cancela una reserva del sistema",
         "parameters": [
           {
-            "$ref": "#/components/parameters/BookingId"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Reserva cancelada exitosamente"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        }
-      }
-    },
-    "/companies": {
-      "get": {
-        "tags": ["Companies"],
-        "summary": "Obtener lista de compañías",
-        "description": "Obtiene una lista paginada de compañías",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Page"
-          },
-          {
-            "$ref": "#/components/parameters/PageSize"
-          },
-          {
-            "name": "industry",
-            "in": "query",
-            "description": "Filtrar por industria",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "subscriptionPlan",
-            "in": "query",
-            "description": "Filtrar por plan de suscripción",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
             "schema": {
               "type": "string",
-              "enum": ["Basic", "Professional", "Enterprise"]
-            }
-          },
-          {
-            "name": "isActive",
-            "in": "query",
-            "description": "Filtrar por estado activo",
-            "schema": {
-              "type": "boolean"
+              "format": "uuid"
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "Lista de compañías obtenida exitosamente",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CompanyPagedResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["Companies"],
-        "summary": "Crear nueva compañía",
-        "description": "Crea una nueva compañía en el sistema",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CompanyCreateRequest"
+                "$ref": "#/components/schemas/UpdateBookingDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBookingDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBookingDto"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Compañía creada exitosamente",
+          "200": {
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompanyResponse"
+                  "$ref": "#/components/schemas/BookingDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingDto"
                 }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
           }
         }
       }
     },
-    "/companies/{id}": {
-      "get": {
-        "tags": ["Companies"],
-        "summary": "Obtener compañía por ID",
-        "description": "Obtiene una compañía específica por su ID",
+    "/api/Bookings/delete-booking/{id}": {
+      "delete": {
+        "tags": [
+          "Bookings"
+        ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/CompanyId"
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Compañía obtenida exitosamente",
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Categories/get-categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompanyResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
                 }
               }
             }
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
           }
         }
-      },
-      "put": {
-        "tags": ["Companies"],
-        "summary": "Actualizar compañía",
-        "description": "Actualiza la información de una compañía existente",
+      }
+    },
+    "/api/Categories/get-category/{id}": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/CompanyId"
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Categories/create-category": {
+      "post": {
+        "tags": [
+          "Categories"
+        ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CompanyUpdateRequest"
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Compañía actualizada exitosamente",
+            "description": "Success",
             "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CompanyResponse"
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
                 }
               }
             }
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
           }
         }
-      },
-      "delete": {
-        "tags": ["Companies"],
-        "summary": "Eliminar compañía",
-        "description": "Elimina una compañía del sistema",
+      }
+    },
+    "/api/Categories/update-category/{id}": {
+      "put": {
+        "tags": [
+          "Categories"
+        ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/CompanyId"
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Categories/delete-category/{id}": {
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Compañía eliminada exitosamente"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Customers/get-all-customers": {
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Customers/get-customers": {
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Customers/get-customer/{id}": {
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Customers/create-customer": {
+      "post": {
+        "tags": [
+          "Customers"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Customers/update-customer/{id}": {
+      "put": {
+        "tags": [
+          "Customers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Customers/delete-customer/{id}": {
+      "delete": {
+        "tags": [
+          "Customers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Services/get-service/{id}": {
+      "get": {
+        "tags": [
+          "Services"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Services/get-services": {
+      "get": {
+        "tags": [
+          "Services"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Services/get-services-by-category/{categoryId}": {
+      "get": {
+        "tags": [
+          "Services"
+        ],
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Services/create-service": {
+      "post": {
+        "tags": [
+          "Services"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Services/update-service/{id}": {
+      "put": {
+        "tags": [
+          "Services"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServiceDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServiceDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Services/delete-service/{id}": {
+      "delete": {
+        "tags": [
+          "Services"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Suppliers/get-suppliers": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SupplierDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SupplierDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SupplierDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Suppliers/get-supplier/{id}": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Suppliers/create-supplier": {
+      "post": {
+        "tags": [
+          "Suppliers"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSupplierDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSupplierDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSupplierDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Suppliers/update-supplier/{id}": {
+      "put": {
+        "tags": [
+          "Suppliers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSupplierDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSupplierDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSupplierDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Suppliers/delete-supplier/{id}": {
+      "delete": {
+        "tags": [
+          "Suppliers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
     }
   },
   "components": {
-    "parameters": {
-      "Page": {
-        "name": "page",
-        "in": "query",
-        "description": "Número de página (empezando en 1)",
-        "schema": {
-          "type": "integer",
-          "minimum": 1,
-          "default": 1
-        }
-      },
-      "PageSize": {
-        "name": "pageSize",
-        "in": "query",
-        "description": "Número de elementos por página",
-        "schema": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 100,
-          "default": 20
-        }
-      },
-      "CustomerId": {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "ID único del cliente",
-        "schema": {
-          "type": "string",
-          "format": "uuid"
-        }
-      },
-      "SupplierId": {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "ID único del proveedor",
-        "schema": {
-          "type": "string",
-          "format": "uuid"
-        }
-      },
-      "ServiceId": {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "ID único del servicio",
-        "schema": {
-          "type": "string",
-          "format": "uuid"
-        }
-      },
-      "BookingId": {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "ID único de la reserva",
-        "schema": {
-          "type": "string",
-          "format": "uuid"
-        }
-      },
-      "CompanyId": {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "ID único de la compañía",
-        "schema": {
-          "type": "integer"
-        }
-      }
-    },
     "schemas": {
-      "PaginationMetadata": {
+      "AvailabilityDto": {
         "type": "object",
         "properties": {
-          "page": {
-            "type": "integer",
-            "description": "Página actual"
-          },
-          "pageSize": {
-            "type": "integer",
-            "description": "Tamaño de página"
-          },
-          "totalItems": {
-            "type": "integer",
-            "description": "Total de elementos"
-          },
-          "totalPages": {
-            "type": "integer",
-            "description": "Total de páginas"
-          },
-          "hasNext": {
-            "type": "boolean",
-            "description": "Indica si hay página siguiente"
-          },
-          "hasPrevious": {
-            "type": "boolean",
-            "description": "Indica si hay página anterior"
-          }
-        }
-      },
-      "CustomerResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
+          "availabilityId": {
             "type": "string",
-            "format": "uuid",
-            "description": "ID único del cliente"
-          },
-          "userId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "ID del usuario asociado"
-          },
-          "dateOfBirth": {
-            "type": "string",
-            "format": "date",
-            "nullable": true,
-            "description": "Fecha de nacimiento"
-          },
-          "gender": {
-            "type": "string",
-            "nullable": true,
-            "description": "Género del cliente"
-          },
-          "preferredLanguage": {
-            "type": "string",
-            "default": "EN",
-            "description": "Idioma preferido"
-          },
-          "address": {
-            "type": "string",
-            "nullable": true,
-            "description": "Dirección del cliente"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Indica si el cliente está activo"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Fecha de creación"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Fecha de última actualización"
-          }
-        }
-      },
-      "CustomerCreateRequest": {
-        "type": "object",
-        "required": ["userId"],
-        "properties": {
-          "userId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "ID del usuario asociado"
-          },
-          "dateOfBirth": {
-            "type": "string",
-            "format": "date",
-            "nullable": true,
-            "description": "Fecha de nacimiento"
-          },
-          "gender": {
-            "type": "string",
-            "nullable": true,
-            "description": "Género del cliente"
-          },
-          "preferredLanguage": {
-            "type": "string",
-            "default": "EN",
-            "description": "Idioma preferido"
-          },
-          "address": {
-            "type": "string",
-            "nullable": true,
-            "description": "Dirección del cliente"
-          }
-        }
-      },
-      "CustomerUpdateRequest": {
-        "type": "object",
-        "properties": {
-          "dateOfBirth": {
-            "type": "string",
-            "format": "date",
-            "nullable": true,
-            "description": "Fecha de nacimiento"
-          },
-          "gender": {
-            "type": "string",
-            "nullable": true,
-            "description": "Género del cliente"
-          },
-          "preferredLanguage": {
-            "type": "string",
-            "description": "Idioma preferido"
-          },
-          "address": {
-            "type": "string",
-            "nullable": true,
-            "description": "Dirección del cliente"
-          }
-        }
-      },
-      "CustomerPagedResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CustomerResponse"
-            }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/PaginationMetadata"
-          }
-        }
-      },
-      "SupplierResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "ID único del proveedor"
-          },
-          "userId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "ID del usuario asociado"
-          },
-          "idCompany": {
-            "type": "integer",
-            "nullable": true,
-            "description": "ID de la compañía asociada (opcional)"
-          },
-          "companyName": {
-            "type": "string",
-            "nullable": true,
-            "description": "Nombre de la empresa"
-          },
-          "businessDescription": {
-            "type": "string",
-            "nullable": true,
-            "description": "Descripción del negocio"
-          },
-          "businessAddress": {
-            "type": "string",
-            "nullable": true,
-            "description": "Dirección del negocio"
-          },
-          "website": {
-            "type": "string",
-            "nullable": true,
-            "description": "Sitio web"
-          },
-          "businessEmail": {
-            "type": "string",
-            "nullable": true,
-            "description": "Email del negocio"
-          },
-          "businessPhone": {
-            "type": "string",
-            "nullable": true,
-            "description": "Teléfono del negocio"
-          },
-          "isVerified": {
-            "type": "boolean",
-            "description": "Indica si el proveedor está verificado"
-          },
-          "rating": {
-            "type": "number",
-            "format": "decimal",
-            "minimum": 0,
-            "maximum": 5,
-            "description": "Calificación promedio"
-          },
-          "totalReviews": {
-            "type": "integer",
-            "description": "Total de reseñas"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Indica si el proveedor está activo"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Fecha de creación"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Fecha de última actualización"
-          }
-        }
-      },
-      "SupplierCreateRequest": {
-        "type": "object",
-        "required": ["userId"],
-        "properties": {
-          "userId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "ID del usuario asociado"
-          },
-          "idCompany": {
-            "type": "integer",
-            "nullable": true,
-            "description": "ID de la compañía asociada (opcional)"
-          },
-          "companyName": {
-            "type": "string",
-            "description": "Nombre de la empresa"
-          },
-          "businessDescription": {
-            "type": "string",
-            "description": "Descripción del negocio"
-          },
-          "businessAddress": {
-            "type": "string",
-            "description": "Dirección del negocio"
-          },
-          "website": {
-            "type": "string",
-            "description": "Sitio web"
-          },
-          "businessEmail": {
-            "type": "string",
-            "description": "Email del negocio"
-          },
-          "businessPhone": {
-            "type": "string",
-            "description": "Teléfono del negocio"
-          }
-        }
-      },
-      "SupplierUpdateRequest": {
-        "type": "object",
-        "properties": {
-          "idCompany": {
-            "type": "integer",
-            "nullable": true,
-            "description": "ID de la compañía asociada (opcional)"
-          },
-          "companyName": {
-            "type": "string",
-            "description": "Nombre de la empresa"
-          },
-          "businessDescription": {
-            "type": "string",
-            "description": "Descripción del negocio"
-          },
-          "businessAddress": {
-            "type": "string",
-            "description": "Dirección del negocio"
-          },
-          "website": {
-            "type": "string",
-            "description": "Sitio web"
-          },
-          "businessEmail": {
-            "type": "string",
-            "description": "Email del negocio"
-          },
-          "businessPhone": {
-            "type": "string",
-            "description": "Teléfono del negocio"
-          }
-        }
-      },
-      "SupplierPagedResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SupplierResponse"
-            }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/PaginationMetadata"
-          }
-        }
-      },
-      "ServiceResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "ID único del servicio"
+            "format": "uuid"
           },
           "providerId": {
             "type": "string",
-            "format": "uuid",
-            "description": "ID del proveedor"
+            "format": "uuid"
           },
-          "categoryId": {
+          "dayOfWeek": {
             "type": "integer",
-            "description": "ID de la categoría"
+            "format": "int32"
           },
-          "serviceName": {
-            "type": "string",
-            "description": "Nombre del servicio"
+          "startTime": {
+            "$ref": "#/components/schemas/TimeOnly"
           },
-          "serviceDescription": {
-            "type": "string",
-            "nullable": true,
-            "description": "Descripción del servicio"
+          "endTime": {
+            "$ref": "#/components/schemas/TimeOnly"
           },
-          "durationMinutes": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Duración en minutos"
+          "isRecurring": {
+            "type": "boolean"
           },
-          "price": {
-            "type": "number",
-            "format": "decimal",
-            "minimum": 0,
-            "description": "Precio del servicio"
+          "effectiveFromDate": {
+            "$ref": "#/components/schemas/DateOnly"
           },
-          "currency": {
-            "type": "string",
-            "default": "USD",
-            "description": "Moneda del precio"
+          "effectiveToDate": {
+            "$ref": "#/components/schemas/DateOnly"
           },
           "isActive": {
-            "type": "boolean",
-            "description": "Indica si el servicio está activo"
+            "type": "boolean"
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time",
-            "description": "Fecha de creación"
+            "format": "date-time"
           },
           "updatedAt": {
             "type": "string",
-            "format": "date-time",
-            "description": "Fecha de última actualización"
+            "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "ServiceCreateRequest": {
+      "BlockedTimeDto": {
         "type": "object",
-        "required": ["providerId", "categoryId", "serviceName", "durationMinutes", "price"],
         "properties": {
+          "blockedTimeId": {
+            "type": "string",
+            "format": "uuid"
+          },
           "providerId": {
             "type": "string",
-            "format": "uuid",
-            "description": "ID del proveedor"
+            "format": "uuid"
           },
-          "categoryId": {
-            "type": "integer",
-            "description": "ID de la categoría"
+          "blockedDate": {
+            "$ref": "#/components/schemas/DateOnly"
           },
-          "serviceName": {
+          "startTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "endTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "reason": {
             "type": "string",
-            "description": "Nombre del servicio"
+            "nullable": true
           },
-          "serviceDescription": {
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
             "type": "string",
-            "description": "Descripción del servicio"
-          },
-          "durationMinutes": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Duración en minutos"
-          },
-          "price": {
-            "type": "number",
-            "format": "decimal",
-            "minimum": 0,
-            "description": "Precio del servicio"
-          },
-          "currency": {
-            "type": "string",
-            "default": "USD",
-            "description": "Moneda del precio"
+            "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "ServiceUpdateRequest": {
-        "type": "object",
-        "properties": {
-          "categoryId": {
-            "type": "integer",
-            "description": "ID de la categoría"
-          },
-          "serviceName": {
-            "type": "string",
-            "description": "Nombre del servicio"
-          },
-          "serviceDescription": {
-            "type": "string",
-            "description": "Descripción del servicio"
-          },
-          "durationMinutes": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Duración en minutos"
-          },
-          "price": {
-            "type": "number",
-            "format": "decimal",
-            "minimum": 0,
-            "description": "Precio del servicio"
-          },
-          "currency": {
-            "type": "string",
-            "description": "Moneda del precio"
-          }
-        }
-      },
-      "ServicePagedResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ServiceResponse"
-            }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/PaginationMetadata"
-          }
-        }
-      },
-      "BookingResponse": {
+      "BookingDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "description": "ID único de la reserva"
+            "format": "uuid"
           },
           "customerId": {
             "type": "string",
-            "format": "uuid",
-            "description": "ID del cliente"
+            "format": "uuid"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerDto"
           },
           "supplierId": {
             "type": "string",
-            "format": "uuid",
-            "description": "ID del proveedor"
+            "format": "uuid"
           },
           "serviceId": {
             "type": "string",
-            "format": "uuid",
-            "description": "ID del servicio"
+            "format": "uuid"
           },
           "bookingDate": {
-            "type": "string",
-            "format": "date",
-            "description": "Fecha de la reserva"
+            "$ref": "#/components/schemas/DateOnly"
           },
           "startTime": {
-            "type": "string",
-            "format": "time",
-            "description": "Hora de inicio"
+            "$ref": "#/components/schemas/TimeOnly"
           },
           "endTime": {
-            "type": "string",
-            "format": "time",
-            "description": "Hora de fin"
+            "$ref": "#/components/schemas/TimeOnly"
           },
           "durationMinutes": {
             "type": "integer",
-            "minimum": 1,
-            "description": "Duración en minutos"
+            "format": "int32"
           },
           "totalPrice": {
             "type": "number",
-            "format": "decimal",
-            "minimum": 0,
-            "description": "Precio total"
+            "format": "double"
           },
           "currency": {
             "type": "string",
-            "default": "USD",
-            "description": "Moneda del precio"
+            "nullable": true
           },
           "status": {
-            "type": "string",
-            "enum": ["Pending", "Confirmed", "Completed", "Cancelled", "NoShow", "Rescheduled"],
-            "description": "Estado de la reserva"
+            "$ref": "#/components/schemas/BookingStatus"
           },
           "clientNotes": {
             "type": "string",
-            "nullable": true,
-            "description": "Notas del cliente"
+            "nullable": true
           },
           "providerNotes": {
             "type": "string",
-            "nullable": true,
-            "description": "Notas del proveedor"
+            "nullable": true
           },
           "bookingReference": {
             "type": "string",
-            "description": "Referencia única de la reserva"
+            "nullable": true
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time",
-            "description": "Fecha de creación"
+            "format": "date-time"
           },
           "updatedAt": {
             "type": "string",
-            "format": "date-time",
-            "description": "Fecha de última actualización"
+            "format": "date-time"
           },
           "confirmedAt": {
             "type": "string",
             "format": "date-time",
-            "nullable": true,
-            "description": "Fecha de confirmación"
+            "nullable": true
           },
           "completedAt": {
             "type": "string",
             "format": "date-time",
-            "nullable": true,
-            "description": "Fecha de completado"
+            "nullable": true
           },
           "cancelledAt": {
             "type": "string",
             "format": "date-time",
-            "nullable": true,
-            "description": "Fecha de cancelación"
+            "nullable": true
           },
           "cancellationReason": {
             "type": "string",
-            "nullable": true,
-            "description": "Razón de cancelación"
-          }
-        }
-      },
-      "BookingCreateRequest": {
-        "type": "object",
-        "required": ["customerId", "supplierId", "serviceId", "bookingDate", "startTime", "endTime"],
-        "properties": {
-          "customerId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "ID del cliente"
+            "nullable": true
           },
-          "supplierId": {
+          "bookingServices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookingServiceDTO"
+            },
+            "nullable": true
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BookingServiceDTO": {
+        "type": "object",
+        "properties": {
+          "bookingId": {
             "type": "string",
-            "format": "uuid",
-            "description": "ID del proveedor"
+            "format": "uuid"
           },
           "serviceId": {
             "type": "string",
-            "format": "uuid",
-            "description": "ID del servicio"
+            "format": "uuid"
           },
-          "bookingDate": {
-            "type": "string",
-            "format": "date",
-            "description": "Fecha de la reserva"
+          "order": {
+            "type": "integer",
+            "format": "int32"
           },
-          "startTime": {
-            "type": "string",
-            "format": "time",
-            "description": "Hora de inicio"
-          },
-          "endTime": {
-            "type": "string",
-            "format": "time",
-            "description": "Hora de fin"
-          },
-          "clientNotes": {
-            "type": "string",
-            "description": "Notas del cliente"
+          "durationInMinutes": {
+            "type": "integer",
+            "format": "int32"
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "BookingUpdateRequest": {
-        "type": "object",
-        "properties": {
-          "bookingDate": {
-            "type": "string",
-            "format": "date",
-            "description": "Fecha de la reserva"
-          },
-          "startTime": {
-            "type": "string",
-            "format": "time",
-            "description": "Hora de inicio"
-          },
-          "endTime": {
-            "type": "string",
-            "format": "time",
-            "description": "Hora de fin"
-          },
-          "status": {
-            "type": "string",
-            "enum": ["Pending", "Confirmed", "Completed", "Cancelled", "NoShow", "Rescheduled"],
-            "description": "Estado de la reserva"
-          },
-          "clientNotes": {
-            "type": "string",
-            "description": "Notas del cliente"
-          },
-          "providerNotes": {
-            "type": "string",
-            "description": "Notas del proveedor"
-          },
-          "cancellationReason": {
-            "type": "string",
-            "description": "Razón de cancelación"
-          }
-        }
+      "BookingStatus": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "type": "integer",
+        "format": "int32"
       },
-      "BookingPagedResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/BookingResponse"
-            }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/PaginationMetadata"
-          }
-        }
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "description": "Código de error"
-          },
-          "message": {
-            "type": "string",
-            "description": "Mensaje de error descriptivo"
-          },
-          "details": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Detalles adicionales del error"
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp del error"
-          }
-        }
-      },
-      "CompanyResponse": {
+      "CategoryDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "integer",
-            "description": "ID único de la compañía"
+            "format": "int32"
           },
-          "companyName": {
+          "name": {
             "type": "string",
-            "description": "Nombre de la compañía"
+            "nullable": true
           },
-          "legalName": {
+          "description": {
             "type": "string",
-            "nullable": true,
-            "description": "Nombre legal de la compañía"
-          },
-          "industry": {
-            "type": "string",
-            "nullable": true,
-            "description": "Industria de la compañía"
-          },
-          "headquartersAddress": {
-            "type": "string",
-            "nullable": true,
-            "description": "Dirección de la sede principal"
-          },
-          "website": {
-            "type": "string",
-            "nullable": true,
-            "description": "Sitio web de la compañía"
-          },
-          "email": {
-            "type": "string",
-            "nullable": true,
-            "description": "Email de contacto de la compañía"
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true,
-            "description": "Teléfono de contacto de la compañía"
-          },
-          "contactPersonName": {
-            "type": "string",
-            "nullable": true,
-            "description": "Nombre de la persona de contacto"
-          },
-          "contactPersonEmail": {
-            "type": "string",
-            "nullable": true,
-            "description": "Email de la persona de contacto"
-          },
-          "contactPersonPhone": {
-            "type": "string",
-            "nullable": true,
-            "description": "Teléfono de la persona de contacto"
-          },
-          "subscriptionPlan": {
-            "type": "string",
-            "enum": ["Basic", "Professional", "Enterprise"],
-            "default": "Basic",
-            "description": "Plan de suscripción"
-          },
-          "subscriptionStartDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true,
-            "description": "Fecha de inicio de suscripción"
-          },
-          "subscriptionEndDate": {
-            "type": "string",
-            "format": "date",
-            "nullable": true,
-            "description": "Fecha de fin de suscripción"
+            "nullable": true
           },
           "isActive": {
-            "type": "boolean",
-            "description": "Indica si la compañía está activa"
+            "type": "boolean"
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time",
-            "description": "Fecha de creación"
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAvailabilityDto": {
+        "required": [
+          "dayOfWeek",
+          "effectiveFromDate",
+          "endTime",
+          "providerId",
+          "startTime"
+        ],
+        "type": "object",
+        "properties": {
+          "providerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dayOfWeek": {
+            "maximum": 7,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "startTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "endTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "isRecurring": {
+            "type": "boolean"
+          },
+          "effectiveFromDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "effectiveToDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateBlockedTimeDto": {
+        "required": [
+          "blockedDate",
+          "endTime",
+          "providerId",
+          "startTime"
+        ],
+        "type": "object",
+        "properties": {
+          "providerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "blockedDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "startTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "endTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "reason": {
+            "maxLength": 255,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateBookingDto": {
+        "required": [
+          "bookingDate",
+          "customerId",
+          "serviceId",
+          "startTime",
+          "totalPrice"
+        ],
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "serviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bookingDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "endTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "totalPrice": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "clientNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookingServiceDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateCategoryDto": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "preferredLanguage": {
+            "maxLength": 10,
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "maxLength": 500,
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateServiceDto": {
+        "required": [
+          "categoryId",
+          "durationMinutes",
+          "price",
+          "serviceName"
+        ],
+        "type": "object",
+        "properties": {
+          "providerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serviceName": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "serviceDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "durationMinutes": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "price": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double"
+          },
+          "color": {
+            "maxLength": 7,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateSupplierDto": {
+        "required": [
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "companyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "businessDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "businessAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "nullable": true
+          },
+          "businessEmail": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "businessPhone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "preferredLanguage": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           },
           "updatedAt": {
             "type": "string",
-            "format": "date-time",
-            "description": "Fecha de última actualización"
+            "format": "date-time"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "maxLength": 500,
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "CompanyCreateRequest": {
+      "DateOnly": {
         "type": "object",
-        "required": ["companyName"],
         "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "day": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dayOfWeek": {
+            "$ref": "#/components/schemas/DayOfWeek"
+          },
+          "dayOfYear": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "dayNumber": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DayOfWeek": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ServiceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "providerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serviceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "serviceDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "color": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "category": {
+            "$ref": "#/components/schemas/CategoryDto"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/SupplierDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SupplierDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
           "companyName": {
             "type": "string",
-            "description": "Nombre de la compañía"
+            "nullable": true
           },
-          "legalName": {
+          "businessDescription": {
             "type": "string",
-            "description": "Nombre legal de la compañía"
+            "nullable": true
           },
-          "industry": {
+          "businessAddress": {
             "type": "string",
-            "description": "Industria de la compañía"
-          },
-          "headquartersAddress": {
-            "type": "string",
-            "description": "Dirección de la sede principal"
+            "nullable": true
           },
           "website": {
             "type": "string",
-            "description": "Sitio web de la compañía"
+            "nullable": true
+          },
+          "businessEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "businessPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "isVerified": {
+            "type": "boolean"
+          },
+          "rating": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalReviews": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TimeOnly": {
+        "type": "object",
+        "properties": {
+          "hour": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minute": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "second": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "millisecond": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "microsecond": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "nanosecond": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "ticks": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateAvailabilityDto": {
+        "type": "object",
+        "properties": {
+          "dayOfWeek": {
+            "maximum": 7,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "startTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "endTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "isRecurring": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "effectiveFromDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "effectiveToDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateBlockedTimeDto": {
+        "type": "object",
+        "properties": {
+          "blockedDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "startTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "endTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "reason": {
+            "maxLength": 255,
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateBookingDto": {
+        "type": "object",
+        "properties": {
+          "bookingDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "startTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "endTime": {
+            "$ref": "#/components/schemas/TimeOnly"
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalPrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/BookingStatus"
+          },
+          "clientNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "providerNotes": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancellationReason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "preferredLanguage": {
+            "maxLength": 10,
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
           },
           "email": {
+            "maxLength": 500,
             "type": "string",
-            "format": "email",
-            "description": "Email de contacto de la compañía"
+            "nullable": true
           },
-          "phone": {
+          "notes": {
             "type": "string",
-            "description": "Teléfono de contacto de la compañía"
-          },
-          "contactPersonName": {
-            "type": "string",
-            "description": "Nombre de la persona de contacto"
-          },
-          "contactPersonEmail": {
-            "type": "string",
-            "format": "email",
-            "description": "Email de la persona de contacto"
-          },
-          "contactPersonPhone": {
-            "type": "string",
-            "description": "Teléfono de la persona de contacto"
-          },
-          "subscriptionPlan": {
-            "type": "string",
-            "enum": ["Basic", "Professional", "Enterprise"],
-            "default": "Basic",
-            "description": "Plan de suscripción"
-          },
-          "subscriptionStartDate": {
-            "type": "string",
-            "format": "date",
-            "description": "Fecha de inicio de suscripción"
-          },
-          "subscriptionEndDate": {
-            "type": "string",
-            "format": "date",
-            "description": "Fecha de fin de suscripción"
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "CompanyUpdateRequest": {
+      "UpdateServiceDto": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "serviceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "serviceDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "durationMinutes": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "price": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "color": {
+            "maxLength": 7,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateSupplierDto": {
         "type": "object",
         "properties": {
           "companyName": {
             "type": "string",
-            "description": "Nombre de la compañía"
+            "nullable": true
           },
-          "legalName": {
+          "businessDescription": {
             "type": "string",
-            "description": "Nombre legal de la compañía"
+            "nullable": true
           },
-          "industry": {
+          "businessAddress": {
             "type": "string",
-            "description": "Industria de la compañía"
-          },
-          "headquartersAddress": {
-            "type": "string",
-            "description": "Dirección de la sede principal"
+            "nullable": true
           },
           "website": {
             "type": "string",
-            "description": "Sitio web de la compañía"
+            "nullable": true
           },
-          "email": {
+          "businessEmail": {
             "type": "string",
             "format": "email",
-            "description": "Email de contacto de la compañía"
+            "nullable": true
           },
-          "phone": {
+          "businessPhone": {
             "type": "string",
-            "description": "Teléfono de contacto de la compañía"
+            "nullable": true
           },
-          "contactPersonName": {
-            "type": "string",
-            "description": "Nombre de la persona de contacto"
+          "isVerified": {
+            "type": "boolean",
+            "nullable": true
           },
-          "contactPersonEmail": {
-            "type": "string",
-            "format": "email",
-            "description": "Email de la persona de contacto"
+          "rating": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           },
-          "contactPersonPhone": {
-            "type": "string",
-            "description": "Teléfono de la persona de contacto"
+          "totalReviews": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
-          "subscriptionPlan": {
-            "type": "string",
-            "enum": ["Basic", "Professional", "Enterprise"],
-            "description": "Plan de suscripción"
-          },
-          "subscriptionStartDate": {
-            "type": "string",
-            "format": "date",
-            "description": "Fecha de inicio de suscripción"
-          },
-          "subscriptionEndDate": {
-            "type": "string",
-            "format": "date",
-            "description": "Fecha de fin de suscripción"
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
           }
-        }
-      },
-      "CompanyPagedResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CompanyResponse"
-            }
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/PaginationMetadata"
-          }
-        }
-      }
-    },
-    "responses": {
-      "BadRequest": {
-        "description": "Solicitud inválida",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ErrorResponse"
-            }
-          }
-        }
-      },
-      "NotFound": {
-        "description": "Recurso no encontrado",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ErrorResponse"
-            }
-          }
-        }
-      },
-      "InternalServerError": {
-        "description": "Error interno del servidor",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "securitySchemes": {
-      "BearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+        },
+        "additionalProperties": false
       }
     }
-  },
-  "security": [
-    {
-      "BearerAuth": []
-    }
-  ]
+  }
 }

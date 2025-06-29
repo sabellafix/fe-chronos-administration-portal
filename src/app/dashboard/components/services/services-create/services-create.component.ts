@@ -11,7 +11,8 @@ import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { Category } from '@app/core/models/bussiness/category';
 import { User } from '@app/core/models/bussiness/user';
 import { CategoryService } from '@app/core/services/http/category.service';
-import { PlatformServiceService } from '@app/core/services/http/platform-service.service';
+import { ServiceService as PlatformServiceService } from '@app/core/services/http/platform-service.service';
+import { CreateServiceDto } from '@app/core/models/bussiness';
 
 @Component({
   selector: 'app-services-create',
@@ -69,21 +70,20 @@ export class ServicesCreateComponent {
   post(){
     this.form.markAllAsTouched();
     if( this.form.valid){
-      let post = {
-        serviceName : this.form.get('serviceName')?.value,
-        serviceDescription : this.form.get('serviceDescription')?.value,
-        providerId : this.providerId,
-        categoryId : this.form.get('categoryId')?.value,
-        durationMinutes : this.form.get('durationMinutes')?.value,
-        price : this.form.get('price')?.value,
-        color : this.form.get('color')?.value,
-        currency : "USD",
-        isActive : true,
-      }
+      let createDto: CreateServiceDto = new CreateServiceDto();
+      createDto.serviceName = this.form.get('serviceName')?.value;
+      createDto.serviceDescription = this.form.get('serviceDescription')?.value;
+      createDto.providerId = this.providerId;
+      createDto.categoryId = this.form.get('categoryId')?.value;
+      createDto.durationMinutes = this.form.get('durationMinutes')?.value;
+      createDto.price = this.form.get('price')?.value;
+      createDto.color = this.form.get('color')?.value;
+      createDto.currency = "USD";
+      
       this.charge = true;
       this.send = false;
       this.response = new Response();
-      this.serviceService.post(post).subscribe({
+      this.serviceService.createService(createDto).subscribe({
         next: (data: any) => {
           let service = <Service>data;          
           this.charge = false;

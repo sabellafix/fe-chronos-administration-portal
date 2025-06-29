@@ -3,7 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Service } from '@app/core/models/bussiness/service';
-import { PlatformServiceService } from '@app/core/services/http/platform-service.service';
+import { ServiceService as PlatformServiceService } from '@app/core/services/http/platform-service.service';
+import { CreateServiceDto, UpdateServiceDto } from '@app/core/models/bussiness';
 import { CategoryService } from '@app/core/services/http/category.service';
 import { StorageService } from '@app/core/services/shared/storage.service';
 import { Pagination } from '@app/core/models/interfaces/pagination.interface';
@@ -75,7 +76,7 @@ export class ServicesUpdateComponent {
   load(): void{
     if(this.id) {
       this.loading = true;
-      this.serviceService.get(this.id).subscribe({
+      this.serviceService.getService(this.id).subscribe({
         next: (data: any) => {      
           this.service = <Service>data;
           this.setIdProvider();
@@ -108,22 +109,21 @@ export class ServicesUpdateComponent {
   put(){
     this.form.markAllAsTouched();
     if( this.form.valid){
-      let put = {
-        serviceName : this.form.get('serviceName')?.value,
-        serviceDescription : this.form.get('serviceDescription')?.value,
-        providerId : this.providerId,
-        categoryId : this.form.get('categoryId')?.value,
-        durationMinutes : this.form.get('durationMinutes')?.value,
-        price : this.form.get('price')?.value,
-        color : this.form.get('color')?.value,
-        currency : "USD",
-        isActive : this.form.get('isActive')?.value,
-      }
+      let updateDto: UpdateServiceDto = new UpdateServiceDto();
+      updateDto.serviceName = this.form.get('serviceName')?.value;
+      updateDto.serviceDescription = this.form.get('serviceDescription')?.value;
+      updateDto.categoryId = this.form.get('categoryId')?.value;
+      updateDto.durationMinutes = this.form.get('durationMinutes')?.value;
+      updateDto.price = this.form.get('price')?.value;
+      updateDto.color = this.form.get('color')?.value;
+      updateDto.currency = "USD";
+      updateDto.isActive = this.form.get('isActive')?.value;
+      
       this.charge = true;
       this.send = false;
       this.response = new Response();
-      console.log("put", put);
-      this.serviceService.put(put, this.id).subscribe({
+      console.log("updateDto", updateDto);
+      this.serviceService.updateService(this.id, updateDto).subscribe({
         next: (data: any) => {
           this.charge = false;
           let service = <Service>data;

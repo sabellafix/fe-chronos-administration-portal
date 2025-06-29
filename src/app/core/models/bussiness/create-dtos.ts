@@ -41,27 +41,27 @@ export class CreateBlockedTimeDto {
 
 export class CreateBookingDto {
     customerId: string;
-    supplierId: string;
     serviceId: string;
     bookingDate: DateOnly;
+    durationMinutes?: number;
     startTime: TimeOnly;
-    endTime: TimeOnly;
-    durationMinutes: number;
+    endTime?: TimeOnly;
     totalPrice: number;
-    currency: string;
-    clientNotes: string;
+    currency?: string;
+    clientNotes?: string;
+    services?: any[];
 
     constructor() {
         this.customerId = "";
-        this.supplierId = "";
         this.serviceId = "";
         this.bookingDate = new DateOnly();
+        this.durationMinutes = undefined;
         this.startTime = new TimeOnly();
-        this.endTime = new TimeOnly();
-        this.durationMinutes = 0;
+        this.endTime = undefined;
         this.totalPrice = 0;
-        this.currency = "";
-        this.clientNotes = "";
+        this.currency = undefined;
+        this.clientNotes = undefined;
+        this.services = undefined;
     }
 }
 
@@ -76,38 +76,42 @@ export class CreateCategoryDto {
 }
 
 export class CreateCustomerDto {
-    userId: string;
-    dateOfBirth: DateOnly;
-    gender: string;
-    preferredLanguage: string;
-    address: string;
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    preferredLanguage?: string;
+    email?: string;
+    notes?: string;
 
     constructor() {
-        this.userId = "";
-        this.dateOfBirth = new DateOnly();
-        this.gender = "";
-        this.preferredLanguage = "";
-        this.address = "";
+        this.firstName = undefined;
+        this.lastName = undefined;
+        this.phoneNumber = undefined;
+        this.preferredLanguage = undefined;
+        this.email = undefined;
+        this.notes = undefined;
     }
 }
 
 export class CreateServiceDto {
-    providerId: string;
+    providerId?: string;
     categoryId: number;
     serviceName: string;
-    serviceDescription: string;
+    serviceDescription?: string;
     durationMinutes: number;
     price: number;
-    currency: string;
+    color?: string;
+    currency?: string;
 
     constructor() {
-        this.providerId = "";
+        this.providerId = undefined;
         this.categoryId = 0;
         this.serviceName = "";
-        this.serviceDescription = "";
+        this.serviceDescription = undefined;
         this.durationMinutes = 0;
         this.price = 0;
-        this.currency = "";
+        this.color = undefined;
+        this.currency = undefined;
     }
 }
 

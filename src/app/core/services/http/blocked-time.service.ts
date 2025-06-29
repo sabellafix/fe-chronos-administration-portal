@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { StorageService } from '../shared/storage.service';
+import { BlockedTime, CreateBlockedTimeDto, UpdateBlockedTimeDto } from '@app/core/models/bussiness';
 
 @Injectable({
     providedIn: 'root'
@@ -11,43 +12,47 @@ import { StorageService } from '../shared/storage.service';
 export class BlockedTimeService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/blockedTimes";
+    controller: string = "api/chronos/blocked-times";
     token: string = "";
-    headers : any = {};
 
     constructor(private http: HttpClient, private storageService: StorageService) {
         this.token = this.storageService.get(StorageKeyConst._TOKEN)!; 
-        this.headers = { headers: { Authorization: `Bearer ${this.token}` } };
      }
 
-    getBlockedTimes(): Observable<any[]> {
+    private getHttpOptions() {
+        return {
+            headers: { Authorization: `Bearer ${this.token}` }
+        };
+    }
+
+    getBlockedTimes(): Observable<BlockedTime[]> {
         const url = `${this.apiUrl}/${this.controller}/get-blocked-times`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
+        return this.http.get<BlockedTime[]>(url, this.getHttpOptions());
     }
 
-    getBlockedTimesByProvider(providerId: string): Observable<any[]> {
+    getBlockedTimesByProvider(providerId: string): Observable<BlockedTime[]> {
         const url = `${this.apiUrl}/${this.controller}/get-blocked-times-by-provider/${providerId}`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
+        return this.http.get<BlockedTime[]>(url, this.getHttpOptions());
     }
 
-    get(id: string): Observable<any> {
+    getBlockedTime(id: string): Observable<BlockedTime> {
         const url = `${this.apiUrl}/${this.controller}/get-blocked-time/${id}`;
-        return this.http.get<any>(url, this.headers);
+        return this.http.get<BlockedTime>(url, this.getHttpOptions());
     } 
   
-    post(entity: any): Observable<any> {
+    createBlockedTime(entity: CreateBlockedTimeDto): Observable<BlockedTime> {
         const url = `${this.apiUrl}/${this.controller}/create-blocked-time`;
-        return this.http.post<any>(url, entity, this.headers);
+        return this.http.post<BlockedTime>(url, entity, this.getHttpOptions());
     } 
 
-    put(entity: any, id: string): Observable<any> {
+    updateBlockedTime(id: string, entity: UpdateBlockedTimeDto): Observable<BlockedTime> {
         const url = `${this.apiUrl}/${this.controller}/update-blocked-time/${id}`;
-        return this.http.put<any>(url, entity, this.headers);
+        return this.http.put<BlockedTime>(url, entity, this.getHttpOptions());
     } 
 
-    delete(id: string): Observable<any> {
+    deleteBlockedTime(id: string): Observable<void> {
         const url = `${this.apiUrl}/${this.controller}/delete-blocked-time/${id}`;
-        return this.http.delete<any>(url, this.headers);
+        return this.http.delete<void>(url, this.getHttpOptions());
     } 
     
 } 

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { StorageService } from '../shared/storage.service';
+import { Supplier, CreateSupplierDto, UpdateSupplierDto } from '@app/core/models/bussiness';
 
 @Injectable({
     providedIn: 'root'
@@ -13,36 +14,40 @@ export class SupplierService {
     apiUrl: string = environment.apiUrl;
     controller: string = "api/chronos/suppliers";
     token: string = "";
-    headers : any = {};
 
     constructor(private http: HttpClient, private storageService: StorageService) {
         this.token = this.storageService.get(StorageKeyConst._TOKEN)!; 
-        this.headers = { headers: { Authorization: `Bearer ${this.token}` } };
      }
 
-    getSuppliers(): Observable<any[]> {
-        const url = `${this.apiUrl}/${this.controller}/get-suppliers`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
+    private getHttpOptions() {
+        return {
+            headers: { Authorization: `Bearer ${this.token}` }
+        };
     }
 
-    get(id: string): Observable<any> {
+    getSuppliers(): Observable<Supplier[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-suppliers`;
+        return this.http.get<Supplier[]>(url, this.getHttpOptions());
+    }
+
+    getSupplier(id: string): Observable<Supplier> {
         const url = `${this.apiUrl}/${this.controller}/get-supplier/${id}`;
-        return this.http.get<any>(url, this.headers);
+        return this.http.get<Supplier>(url, this.getHttpOptions());
     } 
   
-    post(entity: any): Observable<any> {
+    createSupplier(entity: CreateSupplierDto): Observable<Supplier> {
         const url = `${this.apiUrl}/${this.controller}/create-supplier`;
-        return this.http.post<any>(url, entity, this.headers);
+        return this.http.post<Supplier>(url, entity, this.getHttpOptions());
     } 
 
-    put(entity: any, id: string): Observable<any> {
+    updateSupplier(id: string, entity: UpdateSupplierDto): Observable<Supplier> {
         const url = `${this.apiUrl}/${this.controller}/update-supplier/${id}`;
-        return this.http.put<any>(url, entity, this.headers);
+        return this.http.put<Supplier>(url, entity, this.getHttpOptions());
     } 
 
-    delete(id: string): Observable<any> {
+    deleteSupplier(id: string): Observable<void> {
         const url = `${this.apiUrl}/${this.controller}/delete-supplier/${id}`;
-        return this.http.delete<any>(url, this.headers);
+        return this.http.delete<void>(url, this.getHttpOptions());
     } 
     
 } 

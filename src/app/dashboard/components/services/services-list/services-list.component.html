@@ -36,11 +36,11 @@
                                                     <span *ngIf="service.isActive == true" class="badge badge-pill bg-success-subtle text-success font-size-14">Active</span>
                                                     <span *ngIf="service.isActive == false" class="badge badge-pill bg-danger-subtle text-danger font-size-14">Inactive</span>
                                                 </td>
-                                                <td>{{ service.serviceName | slice:0:40}}</td>
-                                                <td>{{service.price}} {{service.currency}}</td>
+                                                <td>{{ getServiceDisplayName(service) | slice:0:40}}</td>
+                                                <td>{{service.price}} {{getServiceCurrency(service)}}</td>
                                                 <td>{{getDurationFormatted(service.durationMinutes)}}</td>
                                                 <td>
-                                                    <button type="button" [matTooltip]="service.color" [ngStyle]="{'background-color': service.color}" style="color: white"
+                                                    <button type="button" [matTooltip]="getServiceColor(service)" [ngStyle]="{'background-color': getServiceColor(service)}" style="color: white"
                                                         class="btn btn-sm waves-effect waves-light cursor">
                                                         <i class="bx bxs-color-fill "></i>
                                                     </button>

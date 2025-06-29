@@ -106,7 +106,7 @@ export class CustomersCreateComponent {
       this.charge = true;
       this.send = false;
       this.response = new Response();
-      this.customerService.post(post).subscribe({
+      this.customerService.createCustomer(post).subscribe({
         next: (data: any) => {
           let customer = <Customer>data;          
           this.charge = false;

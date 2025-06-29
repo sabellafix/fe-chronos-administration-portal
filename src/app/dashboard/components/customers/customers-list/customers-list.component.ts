@@ -94,7 +94,7 @@ export class CustomersListComponent {
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.customerService.delete(id).subscribe({
+          this.customerService.deleteCustomer(id).subscribe({
             next: (response: any) => {              
               this.snackBar.open('Cliente eliminado correctamente', 'Cerrar', {duration: 4000});
               this.load();

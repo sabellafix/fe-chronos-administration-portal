@@ -14,18 +14,18 @@
           <div class="col-md-10">
             <select class="form-select" (change)="onServiceChange($event)" formControlName="serviceId">
               <option [value]="null">Select a service</option>
-              <option [value]="service.id" *ngFor="let service of services">{{service.serviceName}}</option>
+              <option [value]="service.id" *ngFor="let service of services">{{getServiceName(service)}}</option>
             </select>
             <div *ngIf="bookingForm.get('serviceId')?.invalid && bookingForm.get('serviceId')?.touched" class="text-danger small mt-1">
               Service required
             </div>
           </div>
           <div class="col-md-2">
-            <button *ngIf="service.color != ''" type="button" [matTooltip]="service.color" [ngStyle]="{'background-color': service.color}" style="color: white"
+            <button *ngIf="getServiceColor(service) !== '#23324d'" type="button" [matTooltip]="getServiceColor(service)" [ngStyle]="{'background-color': getServiceColor(service)}" style="color: white"
                 class="btn btn-rounded waves-effect waves-light ">
                 <i class="bx bx-cut "></i>
             </button>
-            <button *ngIf="service.color == ''" type="button"  style="border: 1px solid #e0e0e0; background-color: white; color: white"
+            <button *ngIf="getServiceColor(service) === '#23324d'" type="button"  style="border: 1px solid #e0e0e0; background-color: white; color: #999"
                 class="btn btn-ligth btn-rounded waves-effect waves-light ">
                 <i class="bx bx-cut "></i>
             </button>
@@ -41,7 +41,7 @@
           <div class="col-md-10">
             <select class="form-select" (change)="onCustomerChange($event)" formControlName="customerId">
               <option [value]="null">Select a customer</option>
-              <option [value]="customer.id" *ngFor="let customer of customers">{{customer.firstName}} {{customer.lastName }}</option>
+              <option [value]="customer.id" *ngFor="let customer of customers">{{getCustomerFullName(customer)}}</option>
             </select>
             <div *ngIf="bookingForm.get('customerId')?.invalid && bookingForm.get('customerId')?.touched" class="text-danger small mt-1">
               Customer required
@@ -51,13 +51,13 @@
             <button  *ngIf="customer != null" type="button" class="btn btn-circle p-0 d-flex align-items-center"
               id="page-header-user-dropdown-v" data-bs-toggle="dropdown" aria-haspopup="true"
             aria-expanded="false">
-            <img class="rounded-circle header-profile-user" [src]="customer.photo" alt="Header Avatar">
+            <img class="rounded-circle header-profile-user" [src]="getCustomerPhoto(customer)" alt="Header Avatar">
             </button>
 
             <div *ngIf="customer != null" class="dropdown-menu dropdown-menu-end pt-0">
                 <div class="p-3 border-bottom">
-                    <h6 class="mb-0">{{customer.firstName}} {{customer.lastName}}</h6>
-                    <p class="mb-0 font-size-11 text-muted">{{customer.address}}</p>
+                    <h6 class="mb-0">{{getCustomerFullName(customer)}}</h6>
+                    <p class="mb-0 font-size-11 text-muted">{{getUserForCustomer(customer)?.email || 'Sin email'}}</p>
                 </div>
                 <a class="dropdown-item" href="#"><i
                         class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> <span
@@ -68,9 +68,9 @@
                         class="align-middle">Cerrar sesión</span></a>
             </div>
             <button *ngIf="customer == null" type="button"
-              style="border: 1px solid #e0e0e0; background-color: white; color: white"
+              style="border: 1px solid #e0e0e0; background-color: white; color: #999"
               class="btn btn-ligth btn-rounded waves-effect waves-light ">
-              <i class="bx bxs-color-fill "></i>
+              <i class="bx bx-user "></i>
             </button>
           </div>
         </div>
@@ -142,6 +142,24 @@
         </div>
       </div>
 
+      <!-- Información del servicio seleccionado -->
+      <div *ngIf="service.id" class="mb-3 p-3 bg-light rounded">
+        <h6 class="mb-2">Selected Service Details</h6>
+        <div class="row">
+          <div class="col-md-6">
+            <small class="text-muted">Service:</small>
+            <p class="mb-1">{{getServiceName(service)}}</p>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted">Price:</small>
+            <p class="mb-1">{{service.price || 0}} {{service.currency || 'USD'}}</p>
+          </div>
+        </div>
+        <div *ngIf="service.serviceDescription" class="mt-2">
+          <small class="text-muted">Description:</small>
+          <p class="mb-0 small">{{service.serviceDescription}}</p>
+        </div>
+      </div>
 
       <div class="mb-3">
         <label class="form-label">
@@ -160,9 +178,11 @@
       <div class="d-grid gap-2 pt-3 border-top">
         <button type="button" 
                 (click)="onConfirm()" 
+                [disabled]="!bookingForm.valid || loading"
                 class="btn btn-primary waves-effect waves-light">
           <i class="bx bx-calendar-plus me-2"></i>
-          Create Booking
+          <span *ngIf="!loading">Create Booking</span>
+          <span *ngIf="loading">Creating...</span>
         </button>       
       </div>
     </form>

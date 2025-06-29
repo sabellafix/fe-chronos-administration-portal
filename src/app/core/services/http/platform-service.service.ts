@@ -3,56 +3,56 @@ import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
-import { StorageService } from '../shared/storage.service';
+import { StorageService as StorageServiceLocal } from '../shared/storage.service';
+import { Service, CreateServiceDto, UpdateServiceDto } from '@app/core/models/bussiness';
 
 @Injectable({
     providedIn: 'root'
 })
-export class PlatformServiceService {
+export class ServiceService {
 
     apiUrl: string = environment.apiUrl;
     controller: string = "api/chronos/services";
     token: string = "";
-    headers : any = {};
 
-    constructor(private http: HttpClient, private storageService: StorageService) {
+    constructor(private http: HttpClient, private storageService: StorageServiceLocal) {
         this.token = this.storageService.get(StorageKeyConst._TOKEN)!; 
-        this.headers = { headers: { Authorization: `Bearer ${this.token}` } };
      }
 
-    getServices(): Observable<any[]> {
-        const url = `${this.apiUrl}/${this.controller}/get-services`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
+    private getHttpOptions() {
+        return {
+            headers: { Authorization: `Bearer ${this.token}` }
+        };
     }
 
-    getServicesByProvider(providerId: string): Observable<any[]> {
-        const url = `${this.apiUrl}/${this.controller}/get-services-by-provider/${providerId}`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
-    }
-
-    getServicesByCategory(categoryId: number): Observable<any[]> {
-        const url = `${this.apiUrl}/${this.controller}/get-services-by-category/${categoryId}`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
-    }
-
-    get(id: string): Observable<any> {
+    getService(id: string): Observable<Service> {
         const url = `${this.apiUrl}/${this.controller}/get-service/${id}`;
-        return this.http.get<any>(url, this.headers);
-    } 
+        return this.http.get<Service>(url, this.getHttpOptions());
+    }
+
+    getServices(): Observable<Service[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-services`;
+        return this.http.get<Service[]>(url, this.getHttpOptions());
+    }
+
+    getServicesByCategory(categoryId: number): Observable<Service[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-services-by-category/${categoryId}`;
+        return this.http.get<Service[]>(url, this.getHttpOptions());
+    }
   
-    post(entity: any): Observable<any> {
+    createService(entity: CreateServiceDto): Observable<Service> {
         const url = `${this.apiUrl}/${this.controller}/create-service`;
-        return this.http.post<any>(url, entity, this.headers);
+        return this.http.post<Service>(url, entity, this.getHttpOptions());
     } 
 
-    put(entity: any, id: string): Observable<any> {
+    updateService(id: string, entity: UpdateServiceDto): Observable<Service> {
         const url = `${this.apiUrl}/${this.controller}/update-service/${id}`;
-        return this.http.put<any>(url, entity, this.headers);
+        return this.http.put<Service>(url, entity, this.getHttpOptions());
     } 
 
-    delete(id: string): Observable<any> {
+    deleteService(id: string): Observable<void> {
         const url = `${this.apiUrl}/${this.controller}/delete-service/${id}`;
-        return this.http.delete<any>(url, this.headers);
+        return this.http.delete<void>(url, this.getHttpOptions());
     } 
     
 }

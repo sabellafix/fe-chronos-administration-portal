@@ -48,7 +48,7 @@ export class CategoriesCreateComponent {
 
       this.charge = true;
       this.send = false;
-      this.categoryService.post(createDto).subscribe({
+      this.categoryService.createCategory(createDto).subscribe({
         next: (data: Category) => {
           this.charge = false;
           this.snackBar.open('Categoría creada correctamente.', 'Cerrar', { duration: 4000 });

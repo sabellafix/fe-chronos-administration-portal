@@ -78,18 +78,22 @@ export class UpdateCategoryDto {
 }
 
 export class UpdateCustomerDto {
-    dateOfBirth?: DateOnly;
-    gender?: string;
+    firstName?: string;
+    lastName?: string;
     preferredLanguage?: string;
-    address?: string;
     isActive?: boolean;
+    phoneNumber?: string;
+    email?: string;
+    notes?: string;
 
     constructor() {
-        this.dateOfBirth = undefined;
-        this.gender = undefined;
+        this.firstName = undefined;
+        this.lastName = undefined;
         this.preferredLanguage = undefined;
-        this.address = undefined;
         this.isActive = undefined;
+        this.phoneNumber = undefined;
+        this.email = undefined;
+        this.notes = undefined;
     }
 }
 
@@ -99,6 +103,7 @@ export class UpdateServiceDto {
     serviceDescription?: string;
     durationMinutes?: number;
     price?: number;
+    color?: string;
     currency?: string;
     isActive?: boolean;
 
@@ -108,6 +113,7 @@ export class UpdateServiceDto {
         this.serviceDescription = undefined;
         this.durationMinutes = undefined;
         this.price = undefined;
+        this.color = undefined;
         this.currency = undefined;
         this.isActive = undefined;
     }

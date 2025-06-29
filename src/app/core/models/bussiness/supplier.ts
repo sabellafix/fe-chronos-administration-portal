@@ -1,12 +1,12 @@
 export class Supplier{
     id : string;
     userId : string;
-    companyName : string;
-    businessDescription : string;
-    businessAddress : string;
-    website : string;
-    businessEmail : string;
-    businessPhone : string;
+    companyName : string | null;
+    businessDescription : string | null;
+    businessAddress : string | null;
+    website : string | null;
+    businessEmail : string | null;
+    businessPhone : string | null;
     isVerified : boolean;
     rating : number;
     totalReviews : number;
@@ -17,12 +17,12 @@ export class Supplier{
     constructor() {
         this.id = "";
         this.userId = "";
-        this.companyName = "";
-        this.businessDescription = "";
-        this.businessAddress = "";
-        this.website = "";
-        this.businessEmail = "";
-        this.businessPhone = "";
+        this.companyName = null;
+        this.businessDescription = null;
+        this.businessAddress = null;
+        this.website = null;
+        this.businessEmail = null;
+        this.businessPhone = null;
         this.isVerified = false;
         this.rating = 0;
         this.totalReviews = 0;

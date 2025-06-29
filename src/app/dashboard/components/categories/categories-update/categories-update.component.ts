@@ -51,7 +51,7 @@ export class CategoriesUpdateComponent {
   load(): void {
     if (this.id && this.id > 0) {
       this.loading = true;
-      this.categoryService.get(this.id).subscribe({
+      this.categoryService.getCategory(this.id).subscribe({
         next: (data: Category) => {
           this.category = data;
           this.setForm();
@@ -87,7 +87,7 @@ export class CategoriesUpdateComponent {
 
       this.charge = true;
       this.send = false;
-      this.categoryService.put(updateDto, this.id).subscribe({
+      this.categoryService.updateCategory(this.id, updateDto).subscribe({
         next: (data: Category) => {
           this.charge = false;
           this.snackBar.open('Category updated successfully.', 'Close', { duration: 4000 });

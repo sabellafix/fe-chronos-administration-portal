@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Service } from '@app/core/models/bussiness/service';
-import { PlatformServiceService } from '@app/core/services/http/platform-service.service';
+import { ServiceService } from '@app/core/services/http/platform-service.service';
 import { Option } from '@app/core/models/interfaces/option.interface';
 import { DialogConfirmComponent } from '@app/dashboard/components/shared/dialogs/dialog-confirm/dialog-confirm.component';
 
@@ -37,7 +37,7 @@ export class ServicesListComponent {
   maxItems = [10,20,50];
 
   constructor(
-    private serviceService: PlatformServiceService,
+    private serviceService: ServiceService,
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
@@ -93,7 +93,7 @@ export class ServicesListComponent {
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.serviceService.delete(id).subscribe({
+          this.serviceService.deleteService(id).subscribe({
             next: (response: any) => {              
               this.snackBar.open('Servicio eliminado correctamente', 'Cerrar', {duration: 4000});
               this.load();
@@ -115,7 +115,7 @@ export class ServicesListComponent {
   }
 
   getServiceName(service: Service): string {
-    return [service.serviceName, service.price ? `($${service.price} ${service.currency})` : '']
+    return [service.serviceName, service.price ? `($${service.price} ${service.currency || ''})` : '']
       .filter(name => name)
       .join(' ')!;
   }
@@ -144,4 +144,16 @@ export class ServicesListComponent {
   }
 
   clear(){}
+
+  getServiceDisplayName(service: Service): string {
+    return service.serviceName || 'Sin nombre';
+  }
+
+  getServiceCurrency(service: Service): string {
+    return service.currency || 'USD';
+  }
+
+  getServiceColor(service: Service): string {
+    return service.color || '#23324d';
+  }
 }
