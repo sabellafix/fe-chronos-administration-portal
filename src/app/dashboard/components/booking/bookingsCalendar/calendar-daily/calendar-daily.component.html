@@ -1,1 +1,120 @@
-<p>calendar-daily works!</p>
+<div class="calendar-canvas calendar-daily mt-0 no-border no-box-shadow animated fadeIn fast" id="calendar-daily-header">
+    <div class="calendar-container-daily">
+        <div [ngClass]="{'bg-dark': currentDate.isToday, 'text-light': !currentDate.isToday}" class="date-navigation d-flex justify-content-between align-items-center mb-3">
+            <button class="btn btn-outline-primary btn-sm" (click)="navigateToDate('prev')">
+                <i class="bx bx-chevron-left"></i> Anterior
+            </button>
+            
+            <div class="current-date-info text-center">
+                <h4 class="mb-0 text-capitalize">{{getCurrentDayName()}}</h4>
+                <p class="text-muted mb-0">{{currentDate.date.getDate()}} de {{getCurrentMonthName()}} {{currentDate.date.getFullYear()}}</p>
+                <span class="badge bg-primary" *ngIf="currentDate.isToday">Hoy</span>
+            </div>
+            
+            <button class="btn btn-outline-primary btn-sm" (click)="navigateToDate('next')">
+                Siguiente <i class="bx bx-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Cuerpo del calendario diario -->
+<div class="calendar-canvas calendar-body-daily mt-0 no-border no-box-shadow animated fadeIn fast">
+    <div class="calendar-container-daily">
+        <table class="calendar-table-daily mt-1">
+            <thead>
+                <tr style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
+                    <th class="time-header-daily" style="height: 0px !important; padding: 0px !important; margin: 0px !important;"></th>
+                    <th class="day-header-daily" style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
+                        <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" 
+                             class="day-header-content-daily">
+                            <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" 
+                                 class="card w-100 bg-light p-1 pt-2 card-date-daily text-center">
+                                <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" 
+                                     class="card-date-day-daily">
+                                    <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" 
+                                       class="font-size-16 text-light fw-normal mb-1 capitalize">
+                                        {{currentDate.date.toLocaleString('es-ES', { weekday: 'long' })}}
+                                    </p>
+                                </div>
+                                <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" 
+                                     class="card-date-number-daily">
+                                    <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" 
+                                       class="font-size-26 text-light fw-semibold mb-0">{{currentDate.date.getDate()}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                    <th class="time-header-space-daily"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Filas de horas -->
+                <tr class="time-row-daily" *ngFor="let hour of getHoursRange()">
+                    <td class="time-cell-daily">
+                        <span class="time-label-daily fw-semibold">{{formatHour(hour)}}</span>
+                    </td>
+                    <td class="day-cell-daily" 
+                        [attr.data-hour]="hour" 
+                        [attr.data-date]="currentDate.date.toISOString()"
+                        (click)="openBookingModal(currentDate.date, hour)">
+                        <div class="cell-content-daily">
+                            <!-- Bookings para esta hora -->
+                            <div class="booking-item-daily" 
+                                 *ngFor="let booking of getBookingsForDateTime(currentDate.date, hour)"
+                                 [style.background-color]="booking.services?.[0]?.color || '#23324d'"
+                                 [title]="'Cliente: ' + booking.customer.firstName + ' ' + booking.customer.lastName + ' | ' + formatHour(booking.startTime.hour) + ' - ' + formatHour(booking.endTime.hour)">
+                                <div class="booking-info-daily">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="text-white booking-service fw-bold">
+                                            {{booking.services?.[0]?.serviceName || 'Sin servicio'}}
+                                        </span>
+                                        <span class="text-white booking-price-daily fw-semibold">
+                                            ${{booking.totalPrice}}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-white booking-time-daily">
+                                            {{formatHour(booking.startTime.hour)}} - {{formatHour(booking.endTime.hour)}}
+                                        </span>
+                                        <span class="badge" 
+                                              [style.background-color]="getBookingStatusColor(booking)"
+                                              style="color: #000 !important;">
+                                            {{booking.status}}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="booking-customer-info-daily d-flex align-items-center">
+                                        <img class="rounded-circle me-2" 
+                                             width="24" 
+                                             height="24" 
+                                             [src]="booking.customer.photo" 
+                                             alt="Foto del cliente">
+                                        <span class="text-white booking-customer-name">
+                                            {{booking.customer.firstName}} {{booking.customer.lastName}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Indicador de hora vacía -->
+                            <div class="empty-slot-daily" 
+                                 *ngIf="!hasBookings(currentDate.date, hour)">
+                                <i class="bx bx-plus text-muted"></i>
+                                <span class="text-muted ms-1">Agregar cita</span>
+                            </div>
+                        </div>
+                    </td>
+                    <th class="time-header-space-daily"></th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Offcanvas para crear booking -->
+<app-offcanvas-create-booking 
+    (bookingCreated)="onBookingCreated($event)"
+    (cancelled)="onBookingCancelled()">
+</app-offcanvas-create-booking>

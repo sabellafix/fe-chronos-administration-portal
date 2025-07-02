@@ -54,6 +54,7 @@
     background-color: transparent;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.3s ease-out;
 }
 
 .calendar-canvas.no-border {
@@ -76,6 +77,18 @@
     border-spacing: 0;
     font-family: inherit;
 }
+
+// Animaciones
+@keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
 .time-header {
     width: 80px;
@@ -417,4 +430,5 @@ body[data-sidebar-size=sm] .calendar-weekly {
     text-align: center;
     vertical-align: middle;
 }
+
 

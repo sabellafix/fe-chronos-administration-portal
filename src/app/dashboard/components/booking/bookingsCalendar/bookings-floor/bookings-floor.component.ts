@@ -5,23 +5,26 @@ import { BookingStatus } from '@app/core/models/bussiness/enums';
 import { OffcanvasCreateBookingComponent } from '../../../shared/offcanvas/offcanvas-create-booking/offcanvas-create-booking.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Service } from '@app/core/models/bussiness/service';
+import { Space } from '@app/core/models/bussiness/space';
 
 @Component({
-  selector: 'app-calendar-daily',
-  templateUrl: './calendar-daily.component.html',
-  styleUrl: './calendar-daily.component.scss'
+  selector: 'app-bookings-floor',
+  templateUrl: './bookings-floor.component.html',
+  styleUrl: './bookings-floor.component.scss'
 })
-export class CalendarDailyComponent implements OnInit, OnDestroy {
+export class BookingsFloorComponent implements OnInit, OnDestroy {
 
   @ViewChild(OffcanvasCreateBookingComponent) offcanvasCreateBooking!: OffcanvasCreateBookingComponent;
 
-  dateNow: Date = new Date();
-  currentDate: DateItem = new DateItem();
+  dateNow : Date = new Date();
+  dates: DateItem[] = [];
+  activeDate: DateItem = new DateItem();
   bookings: Booking[] = [];
+  spaces: any[] = [];
   private scrollListener?: () => void;
 
   constructor(private snackBar: MatSnackBar){
-    this.initCurrentDate();
+    this.spaces = this.getSpaces();
     this.getStaticBookings();
   }
 
@@ -36,37 +39,49 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
   }
 
   private initStickyHeader(): void {
-    const calendarDailyHeader = document.getElementById("calendar-daily-header");
-    if (calendarDailyHeader) {
+    const calendarWeeklyHeader = document.getElementById("calendar-weekly-header");
+    if (calendarWeeklyHeader) {
       this.scrollListener = () => {
         const scrollPosition = window.scrollY;
         if (scrollPosition >= 30) {
-          calendarDailyHeader.classList.add("sticky");
+          calendarWeeklyHeader.classList.add("sticky");
         } else {
-          calendarDailyHeader.classList.remove("sticky");
+          calendarWeeklyHeader.classList.remove("sticky");
         }
       };
       
       window.addEventListener("scroll", this.scrollListener);
     }
   }
-
-  initCurrentDate(): void {
-    this.currentDate.date = new Date(this.dateNow);
-    this.currentDate.isToday = true;
-    this.currentDate.isActive = true;
-  }
-
-  navigateToDate(direction: 'prev' | 'next'): void {
-    const newDate = new Date(this.currentDate.date);
-    if (direction === 'prev') {
-      newDate.setDate(newDate.getDate() - 1);
-    } else {
-      newDate.setDate(newDate.getDate() + 1);
+  
+  getSpaces(){
+    const spaces: any[] = [];
+    
+    const today = new Date(this.dateNow);
+    const dayOfWeek = today.getDay();
+    const daysToMonday = dayOfWeek === 0 ? -6 : -(dayOfWeek - 1);
+    
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + daysToMonday);
+    
+    
+    for (let i = 0; i < 20; i++) {
+      const space = new Space();
+      space.id = i; 
+      space.name = 'Space ' + i;
+      space.description = 'Description ' + i;
+      space.isActive = false;
+      
+      spaces.push(space);
     }
     
-    this.currentDate.date = newDate;
-    this.currentDate.isToday = newDate.toDateString() === this.dateNow.toDateString();
+    return spaces;
+  } 
+
+  setActiveDate(date: DateItem = new DateItem()   ){
+    this.dates.forEach(date => date.isActive = false);
+    date.isActive = true;
+    this.activeDate = date;
   }
 
   getHoursRange(): number[] {
@@ -98,17 +113,19 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
 
   onBookingCreated(booking: Booking): void {
     this.bookings.push(booking);
-    this.snackBar.open('Reserva creada exitosamente', 'Cerrar', {
+    this.snackBar.open('Booking created successfully', 'Cerrar', {
       duration: 3000,
+     
       panelClass: 'snackbar-success'
     });
+  
   }
 
   onBookingCancelled(): void {
     console.log('Creación de cita cancelada');
   }
 
-  getStaticBookings(): void {
+  getStaticBookings(){
     const booking1 = new Booking();
     booking1.id = '1';
     booking1.customerId = '1';
@@ -116,13 +133,13 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
     booking1.serviceId = 'service-1';
     booking1.bookingReference = 'Haircut and Styling';
     booking1.bookingDate.year = 2025;
-    booking1.bookingDate.month = 1;
-    booking1.bookingDate.day = new Date().getDate();
+    booking1.bookingDate.month = 6;
+    booking1.bookingDate.day = 21;
     booking1.startTime.hour = 12;
     booking1.startTime.minute = 0;
     booking1.endTime.hour = 14;
     booking1.endTime.minute = 0;
-    booking1.durationMinutes = 120;
+    booking1.durationMinutes = 60;
     booking1.totalPrice = 120;
     booking1.status = BookingStatus.Pending;
     booking1.services = [new Service()];
@@ -139,13 +156,13 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
     booking2.serviceId = 'service-1';
     booking2.bookingReference = 'Keratin Treatment';
     booking2.bookingDate.year = 2025;
-    booking2.bookingDate.month = 1;
-    booking2.bookingDate.day = new Date().getDate();
+    booking2.bookingDate.month = 6;
+    booking2.bookingDate.day = 21;
     booking2.startTime.hour = 8;
     booking2.startTime.minute = 0;
     booking2.endTime.hour = 10;
     booking2.endTime.minute = 0;
-    booking2.durationMinutes = 120;
+    booking2.durationMinutes = 60;
     booking2.totalPrice = 260;
     booking2.status = BookingStatus.Confirmed;
     booking2.services = [new Service()];
@@ -162,13 +179,13 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
     booking3.serviceId = 'service-1';
     booking3.bookingReference = 'Bridal and Event Hair Styling';
     booking3.bookingDate.year = 2025;
-    booking3.bookingDate.month = 1;
-    booking3.bookingDate.day = new Date().getDate();
-    booking3.startTime.hour = 16;
+    booking3.bookingDate.month = 6;
+    booking3.bookingDate.day = 20;
+    booking3.startTime.hour = 8;
     booking3.startTime.minute = 0;
-    booking3.endTime.hour = 18;
+    booking3.endTime.hour = 10;
     booking3.endTime.minute = 0;
-    booking3.durationMinutes = 120;
+    booking3.durationMinutes = 60;
     booking3.totalPrice = 100;
     booking3.status = BookingStatus.InProgress;
     booking3.services = [new Service()];
@@ -186,14 +203,14 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
       const bookingHour = booking.startTime.hour;
       
-      return bookingDate.toDateString() === date.toDateString() && bookingHour === hour;
+      return bookingDate.toString() === date.toString() && bookingHour === hour;
     });
   }
 
   getBookingsForDate(date: Date): Booking[] {
     return this.bookings.filter(booking => {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
-      return bookingDate.toDateString() === date.toDateString();
+      return bookingDate.toString() === date.toString();
     });
   }
 
@@ -210,31 +227,5 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
       case BookingStatus.Cancelled: return '#dc3545'; // Rojo
       default: return '#6c757d';
     }
-  }
-
-  getCurrentDayName(): string {
-    return this.currentDate.date.toLocaleString('es-ES', { weekday: 'long' });
-  }
-
-  getCurrentMonthName(): string {
-    return this.currentDate.date.toLocaleString('es-ES', { month: 'long' });
-  }
-
-  getConfirmedBookingsCount(date: Date): number {
-    return this.getBookingsForDate(date).filter(booking => 
-      booking.status === BookingStatus.Confirmed
-    ).length;
-  }
-
-  getPendingBookingsCount(date: Date): number {
-    return this.getBookingsForDate(date).filter(booking => 
-      booking.status === BookingStatus.Pending
-    ).length;
-  }
-
-  getTotalRevenue(date: Date): number {
-    return this.getBookingsForDate(date).reduce((total, booking) => 
-      total + booking.totalPrice, 0
-    );
   }
 }

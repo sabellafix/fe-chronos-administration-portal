@@ -59,6 +59,7 @@ import { SkelletonsSimpleComponent } from './components/shared/skelletons/skelle
 import { OffcanvasCreateBookingComponent } from './components/shared/offcanvas/offcanvas-create-booking/offcanvas-create-booking.component';
 import { CustomersListComponent } from './components/customers/customers-list/customers-list.component';
 import { CustomersCreateComponent } from './components/customers/customers-create/customers-create.component';
+import { BookingsFloorComponent } from './components/booking/bookingsCalendar/bookings-floor/bookings-floor.component';
 
 
 const routes: Routes = [
@@ -186,7 +187,8 @@ const routes: Routes = [
     ChatComponent,
     OffcanvasCreateBookingComponent,
     CustomersListComponent,
-    CustomersCreateComponent
+    CustomersCreateComponent,
+    BookingsFloorComponent
   ],
   imports: [
     CommonModule,

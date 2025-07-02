@@ -7,6 +7,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 })
 export class BookingsCalendarComponent implements OnInit, OnDestroy {
 
+  tabs: string[] = ['Month', 'Week', 'Day', 'Floor'];
+  tabActive: string = 'Floor';
+  tabIndex: number = 1;
   dateNow: Date = new Date();
   private scrollListener?: () => void;
 
@@ -36,4 +39,9 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
       window.addEventListener("scroll", this.scrollListener);
     }
   }
+
+  onTabChanged(tab: string): void {
+    this.tabActive = tab;
+    this.tabIndex = this.tabs.indexOf(tab);
+  } 
 }

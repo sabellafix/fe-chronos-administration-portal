@@ -8,25 +8,32 @@
                 <div class="col-xl-4">
                     <div class="card bg-light mt-1">
                         <ul class="nav nav-pills nav-justified p-1" role="tablist">
-                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation">
-                                <a class="nav-link" data-bs-toggle="tab" href="#home-1" role="tab" aria-selected="false"
-                                    tabindex="-1">
+                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Month'}">
+                                <a class="nav-link" data-bs-toggle="tab" href="#home-1" role="tab" 
+                                aria-selected="false" (click)="tabActive = 'Month'">
                                     <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
                                     <span class="d-none d-sm-block">Month</span>
                                 </a>
                             </li>
-                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation">
-                                <a class="nav-link active" data-bs-toggle="tab" href="#profile-1" role="tab"
-                                    aria-selected="true">
+                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Week'}">
+                                <a class="nav-link" data-bs-toggle="tab" href="#profile-1" role="tab"
+                                    aria-selected="false" (click)="tabActive = 'Week'">
                                     <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
                                     <span class="d-none d-sm-block">Week</span>
                                 </a>
                             </li>
-                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation">
+                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Day'}">
                                 <a class="nav-link" data-bs-toggle="tab" href="#messages-1" role="tab" aria-selected="false"
-                                    tabindex="-1">
+                                    tabindex="-1" (click)="tabActive = 'Day'">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">Day</span>
+                                </a>
+                            </li>
+                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
+                                <a class="nav-link" data-bs-toggle="tab" href="#floors-1" role="tab" aria-selected="false"
+                                    tabindex="-1" (click)="tabActive = 'Floor'">
+                                    <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                    <span class="d-none d-sm-block">Floor</span>
                                 </a>
                             </li>
                         </ul>
@@ -45,5 +52,8 @@
 </div>
 
 <div class="calendar-content">
-    <app-calendar-weekly></app-calendar-weekly>
+    <app-calendar-weekly *ngIf="tabActive === 'Week'"></app-calendar-weekly>
+    <app-calendar-monthly *ngIf="tabActive === 'Month'"></app-calendar-monthly>
+    <app-calendar-daily *ngIf="tabActive === 'Day'"></app-calendar-daily>
+    <app-bookings-floor *ngIf="tabActive === 'Floor'"></app-bookings-floor>
 </div>

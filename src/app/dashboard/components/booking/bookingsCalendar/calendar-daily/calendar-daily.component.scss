@@ -1,0 +1,555 @@
+// Navegación de fechas
+.date-navigation {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  .current-date-info {
+    flex: 1;
+    
+    h4 {
+      color: #1a293c;
+      font-weight: 700;
+    }
+    
+    .badge {
+      font-size: 12px;
+      padding: 4px 8px;
+    }
+  }
+  
+  .btn {
+    border-radius: 8px;
+    font-weight: 500;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// Contenedor principal del calendario diario
+.calendar-container-daily {
+  max-width: 50%;
+  margin: 0 auto;
+  min-width: 600px;
+  padding: 0 16px;
+}
+
+// Estilos para la tabla del calendario diario
+.calendar-table-daily {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-family: inherit;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+// Header del calendario
+.time-header-daily {
+  width: 100px;
+  text-align: center;
+  font-weight: 600;
+  color: #495057;
+  padding: 16px 12px;
+  font-size: 14px;
+  background: #f8f9fa;
+  border-right: 1px solid #dee2e6;
+}
+
+.day-header-daily {
+  text-align: center;
+  font-weight: 600;
+  color: #495057;
+  padding: 16px;
+  background: #f8f9fa;
+}
+
+.time-header-space-daily {
+  width: 20px;
+  background: #f8f9fa;
+}
+
+.day-header-content-daily {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+// Tarjeta de fecha
+.card-date-daily {
+  width: 100%;
+  color: #000;
+  border-radius: 16px;
+  margin: 0;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  backdrop-filter: blur(24px);
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 2px solid #f1f3f7;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #f5f6f8;
+    border-color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  &.today {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border-color: #007bff;
+    color: #fff;
+    
+    p {
+      color: #fff !important;
+    }
+  }
+}
+
+.card-date-day-daily p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.card-date-number-daily p {
+  margin: 0;
+  font-weight: 700;
+}
+
+.card-date-month-daily p {
+  margin: 0;
+  font-weight: 400;
+}
+
+// Filas de tiempo
+.time-row-daily {
+  height: 80px;
+  border-bottom: 1px solid #e9ecef;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(0, 123, 255, 0.03);
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// Celda de tiempo
+.time-cell-daily {
+  background-color: #f8f9fa;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+  position: relative;
+  border-right: 1px solid #dee2e6;
+}
+
+.time-label-daily {
+  font-size: 14px;
+  color: #495057;
+  display: block;
+  padding: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+// Celda del día
+.day-cell-daily {
+  vertical-align: top;
+  padding: 4px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+  
+  &:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      border: 2px dashed #007bff;
+      border-radius: 12px;
+      pointer-events: none;
+      animation: dashMove 2s linear infinite;
+    }
+    
+    &::after {
+      content: '+';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      font-weight: 300;
+      color: #007bff;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+  }
+}
+
+@keyframes dashMove {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 20; }
+}
+
+// Contenido de la celda
+.cell-content-daily {
+  width: 100%;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+  overflow: visible;
+  position: relative;
+}
+
+// Items de booking
+.booking-item-daily {
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 4px;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+    pointer-events: none;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    
+    &::after {
+      content: '✏️';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 16px;
+      opacity: 0.8;
+    }
+  }
+}
+
+// Información del booking
+.booking-info-daily {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  position: relative;
+  z-index: 2;
+}
+
+.booking-service {
+  font-weight: 600;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.booking-time-daily {
+  font-size: 12px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.booking-price-daily {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.booking-customer-info-daily {
+  margin-top: 4px;
+  
+  img {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.2s ease;
+  }
+  
+  &:hover img {
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+}
+
+.booking-customer-name {
+  font-size: 12px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+// Slot vacío
+.empty-slot-daily {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: #6c757d;
+  font-size: 14px;
+  
+  .day-cell-daily:hover & {
+    opacity: 1;
+  }
+  
+  i {
+    font-size: 18px;
+    margin-right: 4px;
+  }
+}
+
+// // Sticky header
+// .sticky {
+//   position: fixed !important;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   z-index: 1000;
+//   background: rgba(255, 255, 255, 0.98);
+//   backdrop-filter: blur(24px);
+//   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+//   border-bottom: 1px solid #dee2e6;
+  
+//   .calendar-container-daily {
+//     max-width: none;
+//     width: 100%;
+//     padding: 0 20px;
+//   }
+// }
+
+// Resumen del día
+.daily-summary {
+  .card {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    
+    .card-body {
+      padding: 24px;
+    }
+    
+    .card-title {
+      color: #1a293c;
+      font-weight: 700;
+      margin-bottom: 20px;
+      
+      i {
+        color: #007bff;
+      }
+    }
+    
+    h4 {
+      font-weight: 700;
+      font-size: 2rem;
+    }
+    
+    .text-muted {
+      font-weight: 500;
+      font-size: 14px;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1200px) {
+  .calendar-container-daily {
+    max-width: 70%;
+    min-width: 500px;
+  }
+}
+
+@media (max-width: 992px) {
+  .calendar-container-daily {
+    max-width: 85%;
+    min-width: 450px;
+  }
+  
+  .date-navigation {
+    .current-date-info h4 {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-container-daily {
+    max-width: 95%;
+    min-width: 350px;
+    padding: 0 8px;
+  }
+  
+  .time-header-daily {
+    width: 70px;
+    font-size: 12px;
+    padding: 12px 8px;
+  }
+  
+  .day-header-daily {
+    padding: 12px 8px;
+  }
+  
+  .time-row-daily {
+    height: 60px;
+  }
+  
+  .cell-content-daily {
+    min-height: 52px;
+  }
+  
+  .time-label-daily {
+    font-size: 12px;
+  }
+  
+  .booking-item-daily {
+    padding: 8px;
+    font-size: 11px;
+  }
+  
+  .booking-service {
+    font-size: 12px;
+  }
+  
+  .booking-time-daily {
+    font-size: 10px;
+  }
+  
+  .booking-price-daily {
+    font-size: 11px;
+  }
+  
+  .booking-customer-name {
+    font-size: 10px;
+  }
+  
+  .date-navigation {
+    padding: 12px;
+    
+    .current-date-info h4 {
+      font-size: 1.25rem;
+    }
+    
+    .btn {
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+  }
+  
+  .daily-summary .card .card-body {
+    padding: 16px;
+    
+    h4 {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .calendar-container-daily {
+    max-width: 100%;
+    min-width: 320px;
+  }
+  
+  .date-navigation {
+    flex-direction: column;
+    gap: 12px;
+    
+    .current-date-info {
+      order: -1;
+    }
+    
+    .btn {
+      width: 100%;
+    }
+  }
+  
+  .daily-summary .row > div {
+    margin-bottom: 16px;
+  }
+}
+
+// Animaciones
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.calendar-canvas {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.booking-item-daily {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+// Estados de la hora actual
+.time-row-daily.current-hour {
+  background-color: rgba(0, 123, 255, 0.08);
+  
+  .time-cell-daily {
+    background-color: rgba(0, 123, 255, 0.12);
+  }
+  
+  .time-label-daily {
+    color: #007bff;
+    font-weight: 700;
+  }
+}
+
+// Efectos de hover mejorados
+.booking-item-daily:hover {
+  .booking-info-daily {
+    transform: translateY(-1px);
+  }
+}
+
+// Mejoras visuales para el estado today
+.card-date-daily.today {
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+  
+  &:hover {
+    box-shadow: 0 12px 28px rgba(0, 123, 255, 0.4);
+  }
+}
