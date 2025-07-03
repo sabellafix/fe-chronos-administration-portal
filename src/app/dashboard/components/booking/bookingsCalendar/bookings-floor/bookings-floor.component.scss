@@ -54,8 +54,8 @@
     background-color: transparent;
     border-radius: 8px;
     animation: fadeInUp 0.3s ease-out;
-    perspective: 1200px;
-    perspective-origin: center center;
+    perspective: 2500px;
+    perspective-origin: center top;
     transform-style: preserve-3d;
 }
 
@@ -67,28 +67,32 @@
     box-shadow: none;
 }
 
+// Perspectiva de tres puntos configurada:
+// - Dos puntos horizontales alineados (rotateY: 0deg)  
+// - Un punto inferior centrado y equidistante (rotateX: 60deg, transform-origin: center top)
+// - Plano alejado para que el lado más cercano cubra 80% del contenedor
 .calendar-container {
     min-width: 100%;
     padding: 0;
     transform-style: preserve-3d;
     transform: 
-        perspective(1200px)
-        rotateX(45deg) 
-        rotateY(-15deg) 
-        rotateZ(5deg)
-        scale3d(0.8, 0.8, 0.8);
-    transform-origin: center center;
-    transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        perspective(3500px)
+        rotateX(60deg) 
+        rotateY(0deg) 
+        rotateZ(0deg)
+        scale3d(0.5, 0.5, 0.5);
+    transform-origin: center top;
+    // transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-.calendar-container:hover {
-    transform: 
-        perspective(1200px)
-        rotateX(40deg) 
-        rotateY(-10deg) 
-        rotateZ(2deg)
-        scale3d(0.85, 0.85, 0.85);
-}
+// .calendar-container:hover {
+//     transform: 
+//         perspective(3500px)
+//         rotateX(58deg) 
+//         rotateY(0deg) 
+//         rotateZ(0deg)
+//         scale3d(0.5, 0.5, 0.5);
+// }
 
 .calendar-table {
     width: 100%;
@@ -99,9 +103,10 @@
     transform-style: preserve-3d;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-radius: 12px;
+    margin: 0 auto;
     box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.1),
-        0 10px 20px rgba(0, 0, 0, 0.05),
+        0 25px 50px rgba(0, 0, 0, 0.12),
+        0 15px 30px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
@@ -137,53 +142,8 @@
     transform: translateZ(5px);
 }
 
-.day-header {
-    text-align: center;
-    font-weight: 600;
-    color: #495057;
-    padding: 6px 4px;
-    min-width: 120px;
-    transform: translateZ(15px);
-    background: linear-gradient(145deg, #ffffff, #f1f3f4);
-    border-radius: 8px;
-    box-shadow: 
-        2px 2px 8px rgba(0, 0, 0, 0.12),
-        inset 1px 1px 3px rgba(255, 255, 255, 0.9);
-    transition: all 0.3s ease;
-}
-
-.day-header:hover {
-    transform: translateZ(20px) scale(1.02);
-    box-shadow: 
-        4px 4px 12px rgba(0, 0, 0, 0.18),
-        inset 1px 1px 3px rgba(255, 255, 255, 0.9);
-}
-
-.day-header:last-child {
-    border-right: none;
-}
-
-.day-header-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-}
-
-.day-name {
-    font-size: 12px;
-    text-transform: capitalize;
-    color: #6c757d;
-}
-
-.day-number {
-    font-size: 16px;
-    font-weight: 700;
-    color: #495057;
-}
-
 .time-row {
-    height: 80px;
+    height: 90px;
     transform-style: preserve-3d;
     transition: all 0.3s ease;
 }
@@ -202,7 +162,6 @@
 }
 
 .time-label {
-   
     left: 15px;
     font-size: 14px;
     color: #1a293c;
@@ -213,7 +172,7 @@
 
 .day-cell {    
     vertical-align: top;
-    padding: 4px;
+    padding: 0px;
     position: relative;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
@@ -225,6 +184,13 @@
     box-shadow: 
         2px 2px 6px rgba(0, 0, 0, 0.08),
         inset 1px 1px 2px rgba(255, 255, 255, 0.9);
+    
+    // Hacer las celdas siempre cuadradas
+    width: 80px;
+    height: 80px;
+    aspect-ratio: 1;
+    min-width: 80px;
+    min-height: 80px;
 }
 
 .day-cell:last-child {
@@ -249,7 +215,7 @@
         border: 2px dashed #39557a;
         border-radius: 12px;
         pointer-events: none;
-        animation: pulse-border 2s infinite;
+        opacity: 0.8;
     }
     
     &::after {
@@ -263,7 +229,7 @@
         color: #39557a;
         pointer-events: none;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        animation: pulse-icon 2s infinite;
+        opacity: 0.9;
     }
 }
 
@@ -289,12 +255,13 @@
 
 .cell-content {
     width: 100%;
-    height: 56px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 2px;
+    padding: 4px;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 // Estilos para los elementos de booking
@@ -346,7 +313,7 @@
         z-index: 20;
         pointer-events: none;
         text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-        animation: float 3s ease-in-out infinite;
+        opacity: 0.9;
     }
 }
 
@@ -388,25 +355,27 @@
 @media (max-width: 768px) {
     .calendar-canvas {
         margin-top: 15px;
-        perspective: 800px;
+        perspective: 1800px;
+        perspective-origin: center top;
     }
     
     .calendar-container {
         transform: 
-            perspective(800px)
-            rotateX(35deg) 
-            rotateY(-10deg) 
-            rotateZ(3deg)
-            scale3d(0.9, 0.9, 0.9);
+            perspective(1800px)
+            rotateX(55deg) 
+            rotateY(0deg) 
+            rotateZ(0deg)
+            scale3d(0.75, 0.75, 0.75);
+        transform-origin: center top;
     }
     
     .calendar-container:hover {
         transform: 
-            perspective(800px)
-            rotateX(30deg) 
-            rotateY(-5deg) 
-            rotateZ(1deg)
-            scale3d(0.95, 0.95, 0.95);
+            perspective(1800px)
+            rotateX(52deg) 
+            rotateY(0deg) 
+            rotateZ(0deg)
+            scale3d(0.78, 0.78, 0.78);
     }
     
     .time-header {
@@ -429,11 +398,19 @@
     }
     
     .time-row {
-        height: 50px;
+        height: 60px;
+    }
+    
+    .day-cell {
+        width: 60px;
+        height: 60px;
+        min-width: 60px;
+        min-height: 60px;
     }
     
     .cell-content {
-        height: 46px;
+        height: 100%;
+        padding: 2px;
     }
     
     .time-label {
@@ -578,6 +555,96 @@ body[data-sidebar-size=sm] .calendar-weekly {
 
 .calendar-container {
     filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.1));
+}
+
+// Estilos para la celda central con modelo 3D
+.central-cell {
+    background: linear-gradient(145deg, #e3f2fd, #bbdefb) !important;
+    border: 2px solid #2196f3 !important;
+    border-radius: 12px !important;
+    transform: translateZ(30px) scale(1.1) !important;
+    box-shadow: 
+        0 8px 25px rgba(33, 150, 243, 0.3),
+        0 4px 12px rgba(0, 0, 0, 0.15),
+        inset 1px 1px 3px rgba(255, 255, 255, 0.8) !important;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, #2196f3, #64b5f6, #2196f3);
+        border-radius: 14px;
+        z-index: -1;
+        animation: glowing-border 2s infinite;
+    }
+    
+    .cell-content {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        border-radius: 10px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+// Contenedor del modelo 3D
+.threejs-container {
+    width: 100%;
+    height: 100%;
+    min-height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    background: transparent;
+    
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    &:hover canvas {
+        transform: scale(1.05);
+        filter: brightness(1.1);
+    }
+}
+
+// Animación del borde brillante para la celda central
+@keyframes glowing-border {
+    0%, 100% { 
+        opacity: 0.8; 
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 1; 
+        transform: scale(1.02);
+    }
+}
+
+// Indicador de celda especial
+.central-cell:hover {
+    &::after {
+        content: '3D Model' !important;
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        transform: translateX(-50%) translateZ(5px);
+        font-size: 10px;
+        font-weight: 600;
+        color: #2196f3;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2px 6px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        pointer-events: none;
+        z-index: 100;
+    }
 }
 
 

@@ -20,11 +20,13 @@
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
     "@ng-select/ng-select": "^12.0.7",
+    "@types/three": "^0.178.0",
     "crypto-js": "^4.2.0",
     "ngx-bootstrap": "^12.0.0",
     "ngx-cookie-service": "^17.0.0",
     "ngx-skeleton-loader": "^9.0.0",
     "rxjs": "~7.8.0",
+    "three": "^0.178.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },

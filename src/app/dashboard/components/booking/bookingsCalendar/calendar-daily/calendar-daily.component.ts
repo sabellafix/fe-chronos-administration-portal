@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { BookingStatus } from '@app/core/models/bussiness/enums';
-import { OffcanvasCreateBookingComponent } from '../../../shared/offcanvas/offcanvas-create-booking/offcanvas-create-booking.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Service } from '@app/core/models/bussiness/service';
+import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-calendar-daily',
@@ -13,26 +14,35 @@ import { Service } from '@app/core/models/bussiness/service';
 })
 export class CalendarDailyComponent implements OnInit, OnDestroy {
 
-  @ViewChild(OffcanvasCreateBookingComponent) offcanvasCreateBooking!: OffcanvasCreateBookingComponent;
-
   dateNow: Date = new Date();
   currentDate: DateItem = new DateItem();
   bookings: Booking[] = [];
   private scrollListener?: () => void;
+  private subscriptions: Subscription[] = [];
 
-  constructor(private snackBar: MatSnackBar){
+  constructor(private snackBar: MatSnackBar, private offcanvasBookingService: OffcanvasBookingService){
     this.initCurrentDate();
     this.getStaticBookings();
   }
 
   ngOnInit(): void {
     this.initStickyHeader();
+    this.subscribeToBookingService();
   }
 
   ngOnDestroy(): void {
     if (this.scrollListener) {
       window.removeEventListener("scroll", this.scrollListener);
     }
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  private subscribeToBookingService(): void {
+    const bookingCreatedSubscription = this.offcanvasBookingService.bookingCreated$.subscribe((booking: Booking) => {
+      this.onBookingCreated(booking);
+    });
+
+    this.subscriptions.push(bookingCreatedSubscription);
   }
 
   private initStickyHeader(): void {
@@ -71,7 +81,7 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
 
   getHoursRange(): number[] {
     const hours: number[] = [];
-    for (let i = 6; i <= 22; i++) {
+    for (let i = 7; i <= 22; i++) {
       hours.push(i);
     }
     return hours;
@@ -90,10 +100,11 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
   }
 
   openBookingModal(date: Date, hour?: number): void {
-    this.offcanvasCreateBooking.selectedDate = date;
-    this.offcanvasCreateBooking.selectedHour = hour;
+    console.log("openBookingModal");
+    console.log("hour", hour);
+    console.log("date", date);
     
-    this.offcanvasCreateBooking.show();
+    this.offcanvasBookingService.openBookingModal(date, hour);
   }
 
   onBookingCreated(booking: Booking): void {

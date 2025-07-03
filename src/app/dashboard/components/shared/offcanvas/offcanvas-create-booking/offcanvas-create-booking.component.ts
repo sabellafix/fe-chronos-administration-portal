@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { CreateBookingDto } from '@app/core/models/bussiness';
@@ -12,6 +12,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CustomerService } from '@app/core/services/http/customer.service';
 import { User } from '@app/core/models/bussiness/user';
 import { UserService } from '@app/core/services/http/user.service';
+import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
+import { Subscription } from 'rxjs';
 
 declare var bootstrap: any;
 
@@ -20,7 +22,7 @@ declare var bootstrap: any;
   templateUrl: './offcanvas-create-booking.component.html',
   styleUrl: './offcanvas-create-booking.component.scss'
 })
-export class OffcanvasCreateBookingComponent implements OnInit {
+export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   
   @Input() selectedDate?: Date;
   @Input() selectedHour?: number;
@@ -32,6 +34,7 @@ export class OffcanvasCreateBookingComponent implements OnInit {
   BookingStatus = BookingStatus; 
   loading: boolean = false;
   private offcanvasInstance: any;
+  private subscriptions: Subscription[] = [];
   services: Service[] = [];
   service: Service = new Service();
   customers: Customer[] = [];
@@ -50,7 +53,8 @@ export class OffcanvasCreateBookingComponent implements OnInit {
     private bookingService: BookingService,
     private customerService: CustomerService,
     private userService: UserService,
-    private snackBar: MatSnackBar) {
+    private snackBar: MatSnackBar,
+    private offcanvasBookingService: OffcanvasBookingService) {
     this.defaultDate = this.selectedDate ? 
       this.selectedDate.toISOString().split('T')[0] : 
       new Date().toISOString().split('T')[0];
@@ -73,6 +77,22 @@ export class OffcanvasCreateBookingComponent implements OnInit {
     if (offcanvasElement) {
       this.offcanvasInstance = new bootstrap.Offcanvas(offcanvasElement);
     }
+    this.subscribeToOffcanvasService();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  private subscribeToOffcanvasService(): void {
+    // Suscribirse al evento de mostrar offcanvas
+    const showSubscription = this.offcanvasBookingService.showOffcanvas$.subscribe(() => {
+      this.selectedDate = this.offcanvasBookingService.selectedDate || undefined;
+      this.selectedHour = this.offcanvasBookingService.selectedHour || undefined;
+      this.show();
+    });
+
+    this.subscriptions.push(showSubscription);
   }
 
   getServices(): void {
@@ -167,6 +187,7 @@ export class OffcanvasCreateBookingComponent implements OnInit {
   onCancel(): void {
     this.hide();
     this.cancelled.emit();
+    this.offcanvasBookingService.onCancelled();
   }
 
   onConfirm(): void {
@@ -212,6 +233,7 @@ export class OffcanvasCreateBookingComponent implements OnInit {
           this.snackBar.open('Reserva creada exitosamente', 'Cerrar', {duration: 4000});
           this.hide();
           this.bookingCreated.emit(createdBooking);
+          this.offcanvasBookingService.onBookingCreated(createdBooking);
           this.resetForm();
         },
         error: (error) => {
