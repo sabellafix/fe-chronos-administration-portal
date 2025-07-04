@@ -39,22 +39,28 @@ export class CreateBlockedTimeDto {
     }
 }
 
+export interface BookingServiceRequest {
+    serviceId: string;
+    order: number;
+    durationInMinutes: number;
+}
+
 export class CreateBookingDto {
     customerId: string;
     serviceId: string;
-    bookingDate: DateOnly;
+    bookingDate: string; // Cambiar a string para compatibilidad con System.DateOnly
     durationMinutes?: number;
     startTime: TimeOnly;
     endTime?: TimeOnly;
     totalPrice: number;
     currency?: string;
     clientNotes?: string;
-    services?: any[];
+    services?: BookingServiceRequest[];
 
     constructor() {
         this.customerId = "";
         this.serviceId = "";
-        this.bookingDate = new DateOnly();
+        this.bookingDate = "";
         this.durationMinutes = undefined;
         this.startTime = new TimeOnly();
         this.endTime = undefined;

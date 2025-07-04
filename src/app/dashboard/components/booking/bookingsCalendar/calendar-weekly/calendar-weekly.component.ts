@@ -136,74 +136,245 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
   }
 
   getStaticBookings(){
+    // Booking 1: Múltiples servicios de peluquería
     const booking1 = new Booking();
     booking1.id = '1';
     booking1.customerId = '1';
     booking1.supplierId = 'supplier-1';
-    booking1.serviceId = 'service-1';
-    booking1.bookingReference = 'Haircut and Styling';
+    booking1.serviceId = 'service-1'; // Servicio principal
+    booking1.bookingReference = 'Haircut and Styling Package';
     booking1.bookingDate.year = 2025;
-    booking1.bookingDate.month = 6;
-    booking1.bookingDate.day = 21;
+    booking1.bookingDate.month = 7;
+    booking1.bookingDate.day = 1;
     booking1.startTime.hour = 12;
     booking1.startTime.minute = 0;
     booking1.endTime.hour = 14;
-    booking1.endTime.minute = 0;
-    booking1.durationMinutes = 60;
-    booking1.totalPrice = 120;
+    booking1.endTime.minute = 30;
+    booking1.durationMinutes = 150; // Total de múltiples servicios
+    booking1.totalPrice = 180; // Precio total combinado
+    booking1.currency = 'USD';
     booking1.status = BookingStatus.Pending;
-    booking1.services = [new Service()];
-    booking1.services[0].serviceName = 'Haircut and Styling';
-    booking1.services[0].color = '#5d77a2';
     booking1.customer.photo = '../assets/images/users/user3.png';
     booking1.customer.firstName = 'Rick';
     booking1.customer.lastName = 'Sanchez';
+    
+    // Servicios asociados al booking
+    booking1.bookingServices = [
+      {
+        bookingId: '1',
+        serviceId: 'service-1',
+        order: 1,
+        durationInMinutes: 60
+      },
+      {
+        bookingId: '1',
+        serviceId: 'service-2',
+        order: 2,
+        durationInMinutes: 45
+      },
+      {
+        bookingId: '1',
+        serviceId: 'service-3',
+        order: 3,
+        durationInMinutes: 45
+      }
+    ];
+    
+    // Información completa de los servicios
+    booking1.services = [
+      {
+        id: 'service-1',
+        providerId: 'supplier-1',
+        categoryId: 1,
+        serviceName: 'Haircut',
+        serviceDescription: 'Professional haircut service',
+        durationMinutes: 60,
+        price: 80,
+        color: '#5d77a2',
+        currency: 'USD',
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+        category: null as any,
+        provider: null as any
+      },
+      {
+        id: 'service-2',
+        providerId: 'supplier-1',
+        categoryId: 1,
+        serviceName: 'Hair Styling',
+        serviceDescription: 'Professional hair styling',
+        durationMinutes: 45,
+        price: 60,
+        color: '#5d77a2',
+        currency: 'USD',
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+        category: null as any,
+        provider: null as any
+      },
+      {
+        id: 'service-3',
+        providerId: 'supplier-1',
+        categoryId: 1,
+        serviceName: 'Hair Wash',
+        serviceDescription: 'Premium hair wash and conditioning',
+        durationMinutes: 45,
+        price: 40,
+        color: '#5d77a2',
+        currency: 'USD',
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+        category: null as any,
+        provider: null as any
+      }
+    ];
 
+    // Booking 2: Servicio único (Keratin Treatment)
     const booking2 = new Booking();
     booking2.id = '2';
     booking2.customerId = '2';
     booking2.supplierId = 'supplier-1';
-    booking2.serviceId = 'service-1';
+    booking2.serviceId = 'service-4';
     booking2.bookingReference = 'Keratin Treatment';
     booking2.bookingDate.year = 2025;
-    booking2.bookingDate.month = 6;
-    booking2.bookingDate.day = 21;
+    booking2.bookingDate.month = 7;
+    booking2.bookingDate.day = 2;
     booking2.startTime.hour = 8;
     booking2.startTime.minute = 0;
     booking2.endTime.hour = 10;
     booking2.endTime.minute = 0;
-    booking2.durationMinutes = 60;
+    booking2.durationMinutes = 120;
     booking2.totalPrice = 260;
+    booking2.currency = 'USD';
     booking2.status = BookingStatus.Confirmed;
-    booking2.services = [new Service()];
-    booking2.services[0].serviceName = 'Keratin Treatment';
-    booking2.services[0].color = '#6bbe60';
     booking2.customer.photo = '../assets/images/users/user5.png';
     booking2.customer.firstName = 'Morty';
     booking2.customer.lastName = 'Smith';
+    
+    booking2.bookingServices = [
+      {
+        bookingId: '2',
+        serviceId: 'service-4',
+        order: 1,
+        durationInMinutes: 120
+      }
+    ];
+    
+    booking2.services = [
+      {
+        id: 'service-4',
+        providerId: 'supplier-1',
+        categoryId: 2,
+        serviceName: 'Keratin Treatment',
+        serviceDescription: 'Professional keratin hair treatment',
+        durationMinutes: 120,
+        price: 260,
+        color: '#6bbe60',
+        currency: 'USD',
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+        category: null as any,
+        provider: null as any
+      }
+    ];
 
+    // Booking 3: Múltiples servicios de evento
     const booking3 = new Booking();
     booking3.id = '3';
     booking3.customerId = '3';
     booking3.supplierId = 'supplier-1';
-    booking3.serviceId = 'service-1';
-    booking3.bookingReference = 'Bridal and Event Hair Styling';
+    booking3.serviceId = 'service-5';
+    booking3.bookingReference = 'Bridal Hair & Makeup Package';
     booking3.bookingDate.year = 2025;
-    booking3.bookingDate.month = 6;
-    booking3.bookingDate.day = 20;
+    booking3.bookingDate.month = 7;
+    booking3.bookingDate.day = 3;
     booking3.startTime.hour = 8;
     booking3.startTime.minute = 0;
-    booking3.endTime.hour = 10;
+    booking3.endTime.hour = 11;
     booking3.endTime.minute = 0;
-    booking3.durationMinutes = 60;
-    booking3.totalPrice = 100;
+    booking3.durationMinutes = 180;
+    booking3.totalPrice = 350;
+    booking3.currency = 'USD';
     booking3.status = BookingStatus.InProgress;
-    booking3.services = [new Service()];
-    booking3.services[0].serviceName = 'Bridal and Event Hair Styling';
-    booking3.services[0].color = '#c44f4f';
     booking3.customer.photo = '../assets/images/users/user21.png';
     booking3.customer.firstName = 'Summer';
     booking3.customer.lastName = 'Smith';
+    
+    booking3.bookingServices = [
+      {
+        bookingId: '3',
+        serviceId: 'service-5',
+        order: 1,
+        durationInMinutes: 90
+      },
+      {
+        bookingId: '3',
+        serviceId: 'service-6',
+        order: 2,
+        durationInMinutes: 60
+      },
+      {
+        bookingId: '3',
+        serviceId: 'service-7',
+        order: 3,
+        durationInMinutes: 30
+      }
+    ];
+    
+    booking3.services = [
+      {
+        id: 'service-5',
+        providerId: 'supplier-1',
+        categoryId: 3,
+        serviceName: 'Bridal Hair Styling',
+        serviceDescription: 'Elegant bridal hair styling',
+        durationMinutes: 90,
+        price: 150,
+        color: '#c44f4f',
+        currency: 'USD',
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+        category: null as any,
+        provider: null as any
+      },
+      {
+        id: 'service-6',
+        providerId: 'supplier-1',
+        categoryId: 3,
+        serviceName: 'Bridal Makeup',
+        serviceDescription: 'Professional bridal makeup',
+        durationMinutes: 60,
+        price: 120,
+        color: '#c44f4f',
+        currency: 'USD',
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+        category: null as any,
+        provider: null as any
+      },
+      {
+        id: 'service-7',
+        providerId: 'supplier-1',
+        categoryId: 3,
+        serviceName: 'Final Touch-up',
+        serviceDescription: 'Final hair and makeup touch-up',
+        durationMinutes: 30,
+        price: 80,
+        color: '#c44f4f',
+        currency: 'USD',
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+        category: null as any,
+        provider: null as any
+      }
+    ];
 
     this.bookings = [booking1, booking2, booking3];
   }
@@ -237,5 +408,15 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
       case BookingStatus.Cancelled: return '#dc3545'; // Rojo
       default: return '#6c757d';
     }
+  }
+
+  getBookingTooltip(booking: Booking): string {
+    const customerName = `${booking.customer.firstName} ${booking.customer.lastName}`;
+    const timeRange = `${this.formatHour(booking.startTime.hour)} - ${this.formatHour(booking.endTime.hour)}`;
+    const services = booking.services?.map(s => s.serviceName).join(', ') || 'Sin servicios';
+    const duration = `${booking.durationMinutes} min`;
+    const price = `$${booking.totalPrice}`;
+    
+    return `Cliente: ${customerName} | ${timeRange} | Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
   }
 }

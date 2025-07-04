@@ -68,7 +68,7 @@ export class BookingService {
         return this.http.get<Booking[]>(url, this.getHttpOptions());
     }
   
-    createBooking(entity: CreateBookingDto): Observable<Booking> {
+    createBooking(entity: CreateBookingDto | any): Observable<Booking> {
         const url = `${this.apiUrl}/${this.controller}/create-booking`;
         return this.http.post<Booking>(url, entity, this.getHttpOptions());
     } 
