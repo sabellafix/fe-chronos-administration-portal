@@ -537,4 +537,90 @@ body[data-sidebar-size=sm] .calendar-weekly {
     }
 }
 
+// Estilos para navegación de fechas
+.date-navigation {
+    .btn-outline-secondary {
+        border-color: #d0d5dd;
+        color: #495057;
+        background-color: transparent;
+        backdrop-filter: blur(24px);
+        
+        &:hover {
+            background-color: rgba(237, 237, 237, 0.72);
+            border-color: #d0d5dd;
+            color: #495057;
+        }
+    }
+    
+    .btn-primary {
+        background-color: rgb(26, 41, 60);
+        border-color: rgb(26, 41, 60);
+        
+        &:hover {
+            background-color: rgb(20, 30, 45);
+            border-color: rgb(20, 30, 45);
+        }
+    }
+    
+    h4 {
+        color: #1a293c;
+        font-weight: 600;
+        min-width: 280px;
+        text-align: center;
+    }
+}
+
+// Estilos para cards de proveedores
+.card-supplier {
+    width: 12.7%;
+    color: #000;
+    border-radius: 12px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    align-items: center;
+    box-shadow: none;
+    cursor: pointer;
+    backdrop-filter: blur(24px);
+    background-color: rgba(237, 237, 237, 0.72);
+    border-color: #f1f3f7 !important;
+    min-height: 70px;
+    
+    .supplier-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        
+        .supplier-name {
+            p {
+                color: #1a293c;
+                font-weight: 600;
+                line-height: 1.2;
+                word-wrap: break-word;
+            }
+        }
+        
+        .supplier-rating {
+            .d-flex {
+                align-items: center;
+                gap: 2px;
+            }
+            
+            .text-muted {
+                color: #6c757d !important;
+                font-size: 11px;
+            }
+        }
+    }
+}
+
+.card-supplier:hover {
+    background-color: #f5f6f8 !important;
+    border-color: #f5f6f8 !important;
+    
+    .supplier-info .supplier-name p {
+        color: #1a293c;
+    }
+}
+
 
