@@ -7,7 +7,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 })
 export class BookingsCalendarComponent implements OnInit, OnDestroy {
 
-  tabs: string[] = ['Month', 'Week', 'Day', 'Floor'];
+  tabs: string[] = ['Month', 'Week', 'Day', 'Suppliers', 'Floor'];
   tabActive: string = 'Week';
   tabIndex: number = 1;
   dateNow: Date = new Date();

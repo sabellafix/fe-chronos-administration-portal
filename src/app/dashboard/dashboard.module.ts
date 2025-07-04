@@ -60,6 +60,7 @@ import { OffcanvasCreateBookingComponent } from './components/shared/offcanvas/o
 import { CustomersListComponent } from './components/customers/customers-list/customers-list.component';
 import { CustomersCreateComponent } from './components/customers/customers-create/customers-create.component';
 import { BookingsFloorComponent } from './components/booking/bookingsCalendar/bookings-floor/bookings-floor.component';
+import { BookingsSupplierComponent } from './components/booking/bookingsCalendar/bookings-supplier/bookings-supplier.component';
 
 
 const routes: Routes = [
@@ -188,7 +189,8 @@ const routes: Routes = [
     OffcanvasCreateBookingComponent,
     CustomersListComponent,
     CustomersCreateComponent,
-    BookingsFloorComponent
+    BookingsFloorComponent,
+    BookingsSupplierComponent
   ],
   imports: [
     CommonModule,

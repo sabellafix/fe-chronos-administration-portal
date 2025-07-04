@@ -6,12 +6,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
 import { Subscription } from 'rxjs';
 
+
 @Component({
-  selector: 'app-calendar-weekly',
-  templateUrl: './calendar-weekly.component.html',
-  styleUrl: './calendar-weekly.component.scss'
+  selector: 'app-bookings-supplier',
+  templateUrl: './bookings-supplier.component.html',
+  styleUrl: './bookings-supplier.component.scss'
 })
-export class CalendarWeeklyComponent implements OnInit, OnDestroy {
+export class BookingsSupplierComponent {
 
   dateNow : Date = new Date();
   dates: DateItem[] = [];

@@ -68,7 +68,7 @@
               </div>
               <div class="col-6">
                 <small class="text-muted">Precio total:</small>
-                <p class="mb-0 fw-bold">{{calculateTotalPrice()}} {{selectedServices[0]?.currency || 'USD'}}</p>
+                <p class="mb-0 fw-bold">{{calculateTotalPrice()}} {{selectedServices[0]!.currency || 'USD'}}</p>
               </div>
             </div>
           </div>

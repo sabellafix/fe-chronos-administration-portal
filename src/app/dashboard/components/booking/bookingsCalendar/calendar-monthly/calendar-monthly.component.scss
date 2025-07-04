@@ -23,30 +23,7 @@
     color: #fff !important;
 }
 
-.card-next{
-    width: 3.4%;
-    color: #000;
-    border-radius: 12px;
-    margin: 0px;
-    margin-top: 0px;
-    align-items: center;
-    height: 84px;
-}
 
-.calendar-weekly{
-    position: fixed;
-    top: 150px;
-    right: 0;
-    left: 255px;
-    z-index: 948;
-    width: auto;
-    background-color: #fff;
-    -webkit-transition: all .2s;
-    transition: all .2s;
-    -webkit-box-shadow: 0 2px 3px rgba(26, 41, 60, .06);
-    box-shadow: 0 2px 3px rgba(26, 41, 60, .06);
-    border-bottom: 1px solid #e9ebef;
-}
 
 .calendar-canvas {
     margin-top: 20px;
@@ -90,18 +67,7 @@
     }
   }
 
-.time-header {
-    width: 80px;
-    text-align: center;
-    font-weight: 600;
-    color: #495057;
-    padding: 12px 8px;
-    font-size: 14px;
-}
 
-.time-hedaer-space{
-    width: 30px;
-}
 
 .day-header {
     text-align: center;
@@ -122,44 +88,7 @@
     gap: 2px;
 }
 
-.day-name {
-    font-size: 12px;
-    text-transform: capitalize;
-    color: #6c757d;
-}
 
-.day-number {
-    font-size: 16px;
-    font-weight: 700;
-    color: #495057;
-}
-
-.time-row {
-    height: 80px;
-    border-bottom: 1px solid rgb(208, 213, 225);
-}
-
-.time-row:hover {
-    background-color: rgba(0, 123, 255, 0.05);
-}
-
-.time-cell {
-    background-color: transparent;
-    text-align: center;
-    vertical-align: middle;
-    padding: 0;
-    position: relative;
-}
-
-.time-label {
-   
-    left: 15px;
-    font-size: 14px;
-    color: #1a293c;
-    display: block;
-    padding: 4px;
-    font-weight: 600;
-}
 
 .day-cell {    
     vertical-align: top;
@@ -207,7 +136,6 @@
     }
 }
 
-// Estilos para celdas con citas
 .day-cell.has-bookings {
     background-color: rgba(40, 167, 69, 0.1);
     border-left: 3px solid #28a745;
@@ -217,225 +145,11 @@
     background-color: rgba(40, 167, 69, 0.2);
 }
 
-.cell-content {
-    width: 100%;
-    height: 56px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 2px;
-    overflow: hidden;
-}
-
-// Estilos para los elementos de booking
-.booking-item {
-    position: absolute;
-    top:0;
-    height: 250px !important;
-    width: 98%;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 2px;
-    color: black;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    z-index: 850;
-}
-
-.booking-item:hover {
-    background-color: transparent !important;
-    border: 1.5px dashed #39557a;
-    border-radius: 16px;
-    
-    .booking-info {
-        opacity: 0.3;
-    }
-    
-    &::before {
-        content: '+';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 24px;
-        font-weight: normal ;
-        color: #39557a;
-        z-index: 10;
-        pointer-events: none;
-    }
-}
-
-.booking-info {
-
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-}
-
-.booking-customer {
-    height: 20px;
-    font-weight: 600;
-    font-size: 16px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    margin-bottom: 10px;
-}
-
-.booking-time {
-    font-size: 14px;
-    opacity: 0.9;
-    margin-top: 1px;
-}
-
-.booking-price {
-    font-size: 14px;
-    font-weight: 500;
-    margin-top: 1px;
-}
-
-.day-header-collapse{
-    height: 0px !important; 
-    padding: 0px !important; 
-    margin: 0px !important;
-    width: 0px !important;
-}
 
 
-@media (max-width: 768px) {
-    .calendar-canvas {
-        margin-top: 15px;
-    }
-    
-    .time-header {
-        width: 60px;
-        font-size: 12px;
-        padding: 8px 4px;
-    }
-    
-    .day-header {
-        min-width: 80px;
-        padding: 6px 2px;
-    }
-    
-    .day-name {
-        font-size: 10px;
-    }
-    
-    .day-number {
-        font-size: 14px;
-    }
-    
-    .time-row {
-        height: 50px;
-    }
-    
-    .cell-content {
-        height: 46px;
-    }
-    
-    .time-label {
-        font-size: 10px;
-    }
-    
-    .booking-item {
-        padding: 2px 4px;
-        font-size: 9px;
-    }
-    
-    .booking-customer {
-        font-size: 8px;
-    }
-    
-    .booking-time {
-        font-size: 7px;
-    }
-    
-    .booking-price {
-        font-size: 8px;
-    }
-}
 
-.time-row.current-hour {
-    background-color: rgba(0, 123, 255, 0.1);
-    
-    .time-cell {
-        background-color: rgba(0, 123, 255, 0.2);
-    }
-    
-    .time-label {
-        color: #007bff;
-        font-weight: 600;
-    }
-}
 
-@media (max-width:991.98px) {
-    .calendar-weekly {
-        left: 40px;
-    }
-}
 
-body[data-sidebar-size=sm] .calendar-weekly {
-    left: 110px;
-}
-
-@media (max-width:991.98px) {
-    body[data-sidebar-size=sm] .calendar-weekly {
-        left: 40px;
-    }
-}
-
-.calendar-weekly {
-    // background-color: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(24px);
-    border-bottom: 1px solid #dee2e6;
-}
-
-.calendar-body {
-    margin-top: 80px;
-}
-
-.calendar-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.day-header {
-    padding: 10px;
-    text-align: center;
-    min-width: 120px;
-}
-
-.day-header-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.card-date {
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.card-date.today {
-    background-color: #1d2c3f !important;
-    color: white !important;
-}
-
-.time-header {
-    width: 80px;
-    padding: 10px;
-    text-align: center;
-    vertical-align: middle;
-}
-
-// =====================================
-// CALENDARIO MENSUAL - ESTILOS
-// =====================================
-
-// Header del calendario
 .calendar-monthly {
     position: fixed;
     top: 150px;
@@ -471,38 +185,9 @@ body[data-sidebar-size=sm] .calendar-weekly {
     padding: 0;
 }
 
-// Navegación del mes
-.month-navigation {
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(24px);
-    border-radius: 12px;
-    margin: 0 15px;
-    border: 1px solid rgba(26, 41, 60, 0.1);
-    
-    .month-title {
-        color: #1a293c;
-        font-size: 1.5rem;
-    }
-    
-    .btn {
-        border-radius: 8px;
-        font-weight: 500;
-        
-        &:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-    }
-}
 
-// Tabla del calendario
-.calendar-table {
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 0;
-    font-family: inherit;
-}
+
+
 
 // Header con días de la semana
 .day-header {
@@ -552,11 +237,6 @@ body[data-sidebar-size=sm] .calendar-weekly {
     
     &:hover {
         background-color: rgba(59, 130, 246, 0.05);
-        
-        .day-add-indicator {
-            opacity: 1;
-            transform: scale(1);
-        }
     }
     
     // Días de hoy
@@ -564,7 +244,7 @@ body[data-sidebar-size=sm] .calendar-weekly {
         background-color: rgba(59, 130, 246, 0.1);
         
         .day-number {
-            background-color: #3b82f6;
+            background-color: rgb(26, 41, 60);
             color: white;
             font-weight: 600;
         }
@@ -592,11 +272,6 @@ body[data-sidebar-size=sm] .calendar-weekly {
         
         &:hover {
             background-color: rgba(248, 250, 252, 0.6);
-            
-            .day-add-indicator {
-                opacity: 0;
-                transform: scale(0.8);
-            }
         }
         
         // Los bookings en días desactivados también se ven desactivados
@@ -686,6 +361,15 @@ body[data-sidebar-size=sm] .calendar-weekly {
     line-height: 1.2;
 }
 
+// Fila header con customer info y hora
+.booking-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 2px;
+}
+
 // Hora del booking
 .booking-time {
     display: flex;
@@ -700,14 +384,12 @@ body[data-sidebar-size=sm] .calendar-weekly {
     }
 }
 
-// Detalles del booking
 .booking-details {
     display: flex;
     flex-direction: column;
     gap: 2px;
 }
 
-// Información del cliente
 .customer-info {
     display: flex;
     align-items: center;
@@ -723,7 +405,7 @@ body[data-sidebar-size=sm] .calendar-weekly {
     }
     
     .customer-name {
-        font-size: 8px;
+        font-size: 10px;
         font-weight: 500;
         color: white;
         white-space: nowrap;
@@ -733,7 +415,16 @@ body[data-sidebar-size=sm] .calendar-weekly {
     }
 }
 
-// Servicios compactos
+.booking-header-row .customer-info {
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.booking-header-row .booking-time {
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
 .services-compact {
     display: flex;
     flex-wrap: wrap;
@@ -741,7 +432,7 @@ body[data-sidebar-size=sm] .calendar-weekly {
     margin-bottom: 2px;
     
     .service-badge {
-        font-size: 7px;
+        font-size: 9px;
         padding: 1px 3px;
         border-radius: 3px;
         font-weight: 500;
@@ -762,7 +453,6 @@ body[data-sidebar-size=sm] .calendar-weekly {
     }
 }
 
-// Precio del booking
 .booking-price {
     text-align: right;
     
@@ -772,22 +462,8 @@ body[data-sidebar-size=sm] .calendar-weekly {
     }
 }
 
-// Indicador para agregar booking
-.day-add-indicator {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0;
-    transition: all 0.2s ease;
-    color: #6b7280;
-    font-size: 20px;
-    pointer-events: none;
-}
 
-// =====================================
-// RESPONSIVE DESIGN
-// =====================================
+
 
 @media (max-width: 1200px) {
     .calendar-monthly {
@@ -816,19 +492,7 @@ body[data-sidebar-size=sm] .calendar-weekly {
         right: 20px;
     }
     
-    .month-navigation {
-        padding: 15px !important;
-        margin: 0 10px;
-        
-        .month-title {
-            font-size: 1.2rem;
-        }
-        
-        .btn {
-            font-size: 12px;
-            padding: 6px 10px;
-        }
-    }
+
     
     .week-row {
         height: 80px;
@@ -881,7 +545,6 @@ body[data-sidebar-size=sm] .calendar-weekly {
         font-size: 8px;
     }
     
-    // Días desactivados en móvil
     .day-cell.disabled {
         .day-number {
             opacity: 0.3;
@@ -893,9 +556,6 @@ body[data-sidebar-size=sm] .calendar-weekly {
     }
 }
 
-// =====================================
-// SIDEBAR RESPONSIVE
-// =====================================
 
 body[data-sidebar-size=sm] .calendar-monthly {
     left: 110px;
@@ -911,21 +571,8 @@ body[data-sidebar-size=sm] .calendar-monthly {
     }
 }
 
-// Header body spacing
 .calendar-body {
     margin-top: 140px; // Ajustado para calendario mensual
-}
-
-// =====================================
-// UTILIDADES
-// =====================================
-
-.text-capitalize {
-    text-transform: capitalize;
-}
-
-.cursor-pointer {
-    cursor: pointer;
 }
 
 

@@ -18,8 +18,8 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
 
   dateNow: Date = new Date();
   currentMonth: Date = new Date();
-  monthDays: DateItem[][] = []; // Array de semanas, cada semana tiene 7 días
-  daysOfWeek: string[] = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  monthDays: DateItem[][] = [];
+  daysOfWeek: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   bookings: Booking[] = [];
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
@@ -162,16 +162,12 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
   }
 
   openBookingModal(date: Date): void {
-    // Solo permitir crear bookings en días del mes actual
     const dateMonth = date.getMonth();
     const dateYear = date.getFullYear();
     const currentMonth = this.currentMonth.getMonth();
     const currentYear = this.currentMonth.getFullYear();
     
     if (dateMonth === currentMonth && dateYear === currentYear) {
-      console.log("openBookingModal");
-      console.log("date", date);
-      
       this.offcanvasBookingService.openBookingModal(date);
     }
   }
@@ -189,7 +185,6 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
   }
 
   getStaticBookings(): void {
-    // Booking 1: Múltiples servicios de peluquería
     const booking1 = new Booking();
     booking1.id = '1';
     booking1.customerId = '1';
@@ -198,7 +193,7 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
     booking1.bookingReference = 'Haircut and Styling Package';
     booking1.bookingDate.year = this.currentMonth.getFullYear();
     booking1.bookingDate.month = this.currentMonth.getMonth() + 1;
-    booking1.bookingDate.day = 15;
+    booking1.bookingDate.day = 8;
     booking1.startTime.hour = 12;
     booking1.startTime.minute = 0;
     booking1.endTime.hour = 14;
@@ -370,5 +365,18 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
   trackByBooking(index: number, booking: Booking): any {
     return booking.id;
   }
+
+  isToday(dayName: string): boolean {
+    const today = new Date().toLocaleString('en-US', { weekday: 'long' });
+    if(dayName.toLowerCase() == today.toLowerCase()){
+      console.log("today", today.toLowerCase());
+      console.log("dayName", dayName.toLowerCase());
+      console.log("_________________________");
+      console.log(true);
+      return true;
+    }
+
+    return false;
+  } 
 }
 
