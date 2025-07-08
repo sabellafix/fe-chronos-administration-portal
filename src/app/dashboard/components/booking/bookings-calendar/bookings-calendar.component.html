@@ -36,13 +36,13 @@
                                     <span class="d-none d-sm-block">Suppliers</span>
                                 </a>
                             </li>
-                            <!-- <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
+                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
                                 <a class="nav-link" data-bs-toggle="tab" href="#floors-1" role="tab" aria-selected="false"
                                     tabindex="-1" (click)="tabActive = 'Floor'">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">Floor</span>
                                 </a>
-                            </li> -->
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -63,5 +63,5 @@
     <app-calendar-monthly *ngIf="tabActive === 'Month'"></app-calendar-monthly>
     <app-calendar-daily *ngIf="tabActive === 'Day'"></app-calendar-daily>
     <app-bookings-supplier *ngIf="tabActive === 'Suppliers'"></app-bookings-supplier>
-    <!-- <app-bookings-floor *ngIf="tabActive === 'Floor'"></app-bookings-floor> -->
+    <app-bookings-floor *ngIf="tabActive === 'Floor'"></app-bookings-floor>
 </div>

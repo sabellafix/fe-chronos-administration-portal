@@ -581,8 +581,8 @@ body[data-sidebar-size=sm] .calendar-weekly {
     box-shadow: none;
     cursor: pointer;
     backdrop-filter: blur(24px);
-    background-color: rgba(237, 237, 237, 0.72);
-    border-color: #f1f3f7 !important;
+    background-color: #1a293c;
+    border-color: #1a293c !important;
     min-height: 70px;
     
     .supplier-info {
@@ -593,7 +593,7 @@ body[data-sidebar-size=sm] .calendar-weekly {
         
         .supplier-name {
             p {
-                color: #1a293c;
+                color: #fff;
                 font-weight: 600;
                 line-height: 1.2;
                 word-wrap: break-word;
@@ -607,20 +607,9 @@ body[data-sidebar-size=sm] .calendar-weekly {
             }
             
             .text-muted {
-                color: #6c757d !important;
+                color: #b1bec9 !important;
                 font-size: 11px;
             }
         }
     }
 }
-
-.card-supplier:hover {
-    background-color: #f5f6f8 !important;
-    border-color: #f5f6f8 !important;
-    
-    .supplier-info .supplier-name p {
-        color: #1a293c;
-    }
-}
-
-

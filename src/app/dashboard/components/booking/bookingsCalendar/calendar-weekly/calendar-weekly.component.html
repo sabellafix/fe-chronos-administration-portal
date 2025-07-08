@@ -60,16 +60,12 @@
                                  [style.background-color]="booking.services?.[0]?.color || '#23324d'"
                                  [title]="getBookingTooltip(booking)">
                                 <div class="booking-info">
-                                    <!-- Servicios como badges -->
                                    
-                                    
-                                    <!-- Horario y precio -->
                                     <div class="booking-time-price d-flex justify-content-between align-items-center mb-2">
                                         <span class="text-white booking-time">{{formatHour(booking.startTime.hour)}} - {{formatHour(booking.endTime.hour)}}</span>
                                         <span class="text-white booking-price fw-bold">${{booking.totalPrice}}</span>
                                     </div>
                                     
-                                    <!-- Cliente -->
                                     <div class="booking-customer-info d-flex align-items-center mb-2">
                                         <img class="rounded-circle header-profile-user me-2" width="20" height="20" [src]="booking.customer.photo" alt="Header Avatar">
                                         <span class="text-white customer-name">{{booking.customer.firstName}} {{booking.customer.lastName}}</span>

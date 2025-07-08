@@ -135,7 +135,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
     booking1.id = '1';
     booking1.customerId = '1';
     booking1.supplierId = 'supplier-1';
-    booking1.serviceId = 'service-1'; // Servicio principal
+    booking1.serviceId = 'service-1'; 
     booking1.bookingReference = 'Haircut and Styling Package';
     booking1.bookingDate.year = 2025;
     booking1.bookingDate.month = 7;
@@ -144,8 +144,8 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
     booking1.startTime.minute = 0;
     booking1.endTime.hour = 14;
     booking1.endTime.minute = 30;
-    booking1.durationMinutes = 150; // Total de múltiples servicios
-    booking1.totalPrice = 180; // Precio total combinado
+    booking1.durationMinutes = 150; 
+    booking1.totalPrice = 180;
     booking1.currency = 'USD';
     booking1.status = BookingStatus.Pending;
     booking1.customer.photo = '../assets/images/users/user3.png';

@@ -22,24 +22,35 @@
                                 <div class="col-md-12 col-sm-12">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Name *</label>
-                                            <input type="text" class="form-control" (input)="capitalize('name')" placeholder="Indique un primer nombre" formControlName="name">
-                                            <div class="invalid-feedback" *ngIf="form.controls['name'].hasError('required') && form.controls['name'].touched">
-                                                <strong>*</strong> El primer nombre es requerido
+                                            <label class="form-label">First name *</label>
+                                            <input type="text" class="form-control" (input)="capitalize('firstName')" placeholder="Enter the first name" formControlName="firstName">
+                                            <div class="invalid-feedback" *ngIf="form.controls['firstName'].hasError('required') && form.controls['firstName'].touched">
+                                                <strong>*</strong> The first name is required
                                             </div>
-                                            <div class="invalid-feedback" *ngIf="getValidation('name') != undefined && send">
-                                                <strong>*</strong> {{getValidation('name')?.message}}
+                                            <div class="invalid-feedback" *ngIf="getValidation('firstName') != undefined && send">
+                                                <strong>*</strong> {{getValidation('firstName')?.message}}
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Correo electrónico *</label>
-                                            <input type="text" class="form-control" placeholder="Indique un correo electrónico" formControlName="email">
+                                            <label class="form-label">Last name *</label>
+                                            <input type="text" class="form-control" (input)="capitalize('lastName')" placeholder="Enter the last name" formControlName="lastName">
+                                            <div class="invalid-feedback" *ngIf="form.controls['lastName'].hasError('required') && form.controls['lastName'].touched">
+                                                <strong>*</strong> The last name is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('lastName') != undefined && send">
+                                                <strong>*</strong> {{getValidation('lastName')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Email *</label>
+                                            <input type="text" class="form-control" placeholder="Enter the email" formControlName="email">
                                             <div class="invalid-feedback" *ngIf="form.controls['email'].hasError('required') && form.controls['email'].touched">
-                                                <strong>*</strong> El correo electrónico es requerido
+                                                <strong>*</strong> The email is required
                                             </div>
                                             <div class="invalid-feedback" *ngIf="form.controls['email'].hasError('email') && form.controls['email'].touched">
-                                                <strong>*</strong> El formato del correo no es válido
+                                                    <strong>*</strong> The email is not valid
                                             </div>
                                             <div class="invalid-feedback" *ngIf="getValidation('email') != undefined && send">
                                                 <strong>*</strong> {{getValidation('email')?.message}}
@@ -47,23 +58,38 @@
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Telefóno móvil *</label>
-                                            <input type="text" class="form-control" placeholder="Indique un telefóno móvil" formControlName="mobilePhone">
-                                            <div class="invalid-feedback" *ngIf="form.controls['mobilePhone'].hasError('required') && form.controls['mobilePhone'].touched">
-                                                <strong>*</strong> El telefóno móvil es requerido
+                                            <label class="form-label">Mobile phone *</label>
+                                            <input type="text" class="form-control" placeholder="Enter the mobile phone" formControlName="phone">
+                                            <div class="invalid-feedback" *ngIf="form.controls['phone'].hasError('required') && form.controls['phone'].touched">
+                                                <strong>*</strong> The mobile phone is required
                                             </div>
-                                            <div class="invalid-feedback" *ngIf="form.controls['mobilePhone'].hasError('pattern') && form.controls['mobilePhone'].touched">
-                                                <strong>*</strong> El telefóno móvil debe tener 9 números
+                                            <div class="invalid-feedback" *ngIf="form.controls['phone'].hasError('pattern') && form.controls['phone'].touched">
+                                                <strong>*</strong> The mobile phone must have 9 numbers
                                             </div>
-                                            <div class="invalid-feedback" *ngIf="getValidation('mobilePhone') != undefined && send">
-                                                <strong>*</strong> {{getValidation('mobilePhone')?.message}}
+                                            <div class="invalid-feedback" *ngIf="getValidation('phone') != undefined && send">
+                                                <strong>*</strong> {{getValidation('phone')?.message}}
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Perfil *</label>
-                                            <select type="text" class="form-select" placeholder="Indique un perfil" formControlName="roleId" >
-                                                <option value="">Indique un perfil</option>
+                                            <label class="form-label">Password *</label>
+                                            <input type="password" class="form-control" placeholder="Enter the password" formControlName="password">
+                                            <div class="invalid-feedback" *ngIf="form.controls['password'].hasError('required') && form.controls['password'].touched">
+                                                <strong>*</strong> The password is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="form.controls['password'].hasError('minlength') && form.controls['password'].touched">
+                                                <strong>*</strong> The password must have at least 8 characters
+                                            </div>
+                                                <div class="invalid-feedback" *ngIf="getValidation('password') != undefined && send">
+                                                <strong>*</strong> {{getValidation('password')?.message}}
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-6 mb-3">
+                                                <label class="form-label">Role *</label>
+                                                <select class="form-select" formControlName="roleId">
+                                                    <option value="">Select a role</option>
                                                 <option *ngFor="let rol of roles" [value]="rol.id">{{rol.name}}</option>
                                             </select>
                                             <div class="invalid-feedback" *ngIf="form.controls['roleId'].hasError('required') && form.controls['roleId'].touched">

@@ -369,10 +369,6 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
   isToday(dayName: string): boolean {
     const today = new Date().toLocaleString('en-US', { weekday: 'long' });
     if(dayName.toLowerCase() == today.toLowerCase()){
-      console.log("today", today.toLowerCase());
-      console.log("dayName", dayName.toLowerCase());
-      console.log("_________________________");
-      console.log(true);
       return true;
     }
 

@@ -8,9 +8,8 @@ import { Pagination } from '@app/core/models/interfaces/pagination.interface';
 import { Response } from '@app/core/models/dtos/response';
 import { Option } from '@app/core/models/interfaces/option.interface';
 import { ParametricService } from '@app/core/services/shared/parametric.service';
-import { MockUserService } from '@app/core/services/mock/mock-user.service';
-import { Rol } from '@app/core/models/bussiness/rol';
 import { Validation } from '@app/core/models/dtos/validation';
+import { UserService } from '@app/core/services/http/user.service';
 
 @Component({
   selector: 'app-users-create',
@@ -33,25 +32,18 @@ export class UsersCreateComponent {
   country? : Option;
   roles: any[] = [];
 
-  constructor(private userService: MockUserService,
+  constructor(private userService: UserService,
               private parametricService: ParametricService,
               private router: Router,
               private snackBar: MatSnackBar
   ){
     this.form = new FormGroup({
-      name : new FormControl("", Validators.required),
-      phoneNumber : new FormControl("", [Validators.required]),
+      firstName : new FormControl("", Validators.required),
+      lastName : new FormControl("", Validators.required),
       email : new FormControl("", [Validators.required, Validators.email]),
-      address : new FormControl("", Validators.required),
-      userType : new FormControl("", Validators.required),
-      department : new FormControl(""),
-      employeeId : new FormControl(""),
-      companyName : new FormControl(""),
-      entraId : new FormControl(""),
-      b2CId : new FormControl(""),
-      isActive : new FormControl(true),
-      isVerified : new FormControl(false),
-      isDeleted : new FormControl(false),
+      phone : new FormControl("", [Validators.required, Validators.pattern(/^\d{9}$/)]),
+      password : new FormControl("", [Validators.required, Validators.minLength(8)]),
+      roleId : new FormControl("", Validators.required),
     });
 
   }
@@ -68,31 +60,19 @@ export class UsersCreateComponent {
       { id: 3, name: 'Administrador', code: 'Admin' }
     ];
     
-    // Inicializar valores por defecto del formulario
-    this.form.patchValue({
-      isActive: true,
-      isVerified: false,
-      isDeleted: false
-    });
+    
   }
 
   post(){
     this.form.markAllAsTouched();
     if( this.form.valid){
       let post = {
-        name : this.form.get('name')?.value,
-        phoneNumber : this.form.get('phoneNumber')?.value,
+        firstName : this.form.get('firstName')?.value,
+        lastName : this.form.get('lastName')?.value,  
         email : this.form.get('email')?.value,
-        address : this.form.get('address')?.value,
-        userType : this.form.get('userType')?.value,
-        department : this.form.get('department')?.value,
-        employeeId : this.form.get('employeeId')?.value,
-        companyName : this.form.get('companyName')?.value,
-        entraId : this.form.get('entraId')?.value,
-        b2CId : this.form.get('b2CId')?.value,
-        isActive : this.form.get('isActive')?.value,
-        isVerified : this.form.get('isVerified')?.value,
-        isDeleted : this.form.get('isDeleted')?.value,
+        phone : this.form.get('phone')?.value,
+        roleId : this.form.get('roleId')?.value,
+        password : this.form.get('password')?.value,
       }
       this.charge = true;
       this.send = false;
@@ -195,14 +175,6 @@ export class UsersCreateComponent {
       control.setValue(!control.value);
       this.form.markAsDirty();
     }
-  }
-
-  getUserTypes(): Option[] {
-    return [
-      { name: 'Comprador', code: 'Buyer' },
-      { name: 'Proveedor', code: 'Supplier' },
-      { name: 'Administrador', code: 'Admin' }
-    ];
   }
 
   resetForm(): void {

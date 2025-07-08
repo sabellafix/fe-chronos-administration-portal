@@ -8,10 +8,10 @@
                     <th class="time-header"><p class="font-size-24 mt-3 fw-lighter"><i class="bx bx-time"></i></p></th>
                     <th class="day-header pe-1 ps-1 pb-2" *ngFor="let supplier of suppliers">
                         <div class="day-header-content">
-                            <div class="card w-100 bg-light p-2 pt-3 card-supplier text-center">
+                            <div class="card w-100 bg-dark p-2 pt-3 card-supplier text-center">
                                 <div class="supplier-info">
                                     <div class="supplier-name mb-1">
-                                        <p class="font-size-14 fw-semibold mb-0">{{ supplier.companyName }}</p>
+                                        <p class="font-size-14 fw-semibold text-white mb-0">{{ supplier.companyName }}</p>
                                     </div>
                                     <div class="supplier-rating" *ngIf="supplier.rating">
                                         <div class="d-flex align-items-center justify-content-center">

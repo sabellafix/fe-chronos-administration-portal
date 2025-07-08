@@ -1,16 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
+import { UserService } from '@app/core/services/http/user.service';
+import { ParametricService } from '@app/core/services/shared/parametric.service';
 import { User } from '@app/core/models/bussiness/user';
 import { Pagination } from '@app/core/models/interfaces/pagination.interface';
 import { Response } from '@app/core/models/dtos/response';
-import { Option } from '@app/core/models/interfaces/option.interface';
-import { ParametricService } from '@app/core/services/shared/parametric.service';
-import { MockUserService } from '@app/core/services/mock/mock-user.service';
-import { Rol } from '@app/core/models/bussiness/rol';
 import { Validation } from '@app/core/models/dtos/validation';
+import { Option } from '@app/core/models/interfaces/option.interface';
 
 @Component({
   selector: 'app-users-update',
@@ -29,32 +28,29 @@ export class UsersUpdateComponent {
   form: FormGroup; 
   id: string = "";
   user: User = new User();
+  validPhoto : boolean = true;
+  photoUrl : string = "";
+  srcImage :  string | ArrayBuffer | null = "assets/images/user-image.jpg";
   now : Date = new Date();
-  roles: Rol[] = [];
-  loadingRoles: boolean = true;
   codephones : Option[] = [];
   country? : Option;
+  roles: any[] = [];
+  showPasswordFields: boolean = false;
 
-  constructor(private userService: MockUserService,
+  constructor(private userService: UserService,
               private parametricService: ParametricService,
               private router: Router,
               private snackBar: MatSnackBar,
               private route: ActivatedRoute,
   ){
     this.form = new FormGroup({
-      name : new FormControl("", Validators.required),
-      phoneNumber : new FormControl("", [Validators.required]),
+      firstName : new FormControl("", Validators.required),
+      lastName : new FormControl("", Validators.required),
       email : new FormControl("", [Validators.required, Validators.email]),
-      address : new FormControl("", Validators.required),
-      userType : new FormControl("", Validators.required),
-      department : new FormControl(""),
-      employeeId : new FormControl(""),
-      companyName : new FormControl(""),
-      entraId : new FormControl(""),
-      b2CId : new FormControl(""),
-      isActive : new FormControl(false),
-      isVerified : new FormControl(false),
-      isDeleted : new FormControl(false),
+      phone : new FormControl("", [Validators.required, Validators.pattern(/^\d{9}$/)]),
+      userRole : new FormControl("", Validators.required),
+      newPassword : new FormControl(""),
+      confirmPassword : new FormControl(""),
     });
 
     this.route.params.subscribe(params => { if (params['id']) this.id = params['id'] });
@@ -69,9 +65,12 @@ export class UsersUpdateComponent {
     this.country = { id : 52, name : "Colombia", code: "+57"}
     this.load();
     this.loadValues();
+    
+    // Inicializar roles
     this.roles = [
-      { id: 1, name: 'Comprador', code: 'Buyer', description: 'Comprador', active: true, reserved: false, defaultValue: false, createdAt: new Date(), updatedAt: new Date() },
-      { id: 2, name: 'Proovedor', code: 'Supplier', description: 'Proovedor', active: true, reserved: false, defaultValue: false, createdAt: new Date(), updatedAt: new Date() },
+      { id: 1, name: 'Comprador', code: 'client' },
+      { id: 2, name: 'Proveedor', code: 'supplier' },
+      { id: 3, name: 'Administrador', code: 'admin' }
     ];
   }
 
@@ -93,19 +92,13 @@ export class UsersUpdateComponent {
   async setForm(){
     if(this.user){
       let object : Object = {
-        name : this.user.name,
-        phoneNumber : this.user.phoneNumber,
+        firstName : this.user.firstName,
+        lastName : this.user.lastName,
         email : this.user.email,
-        address : this.user.address,
-        userType : this.user.userType,
-        department : this.user.department,
-        employeeId : this.user.employeeId,
-        companyName : this.user.companyName,
-        entraId : this.user.entraId,
-        b2CId : this.user.b2CId,
-        isActive : this.user.isActive,
-        isVerified : this.user.isVerified,
-        isDeleted : this.user.isDeleted,
+        phone : this.user.phone,
+        userRole : this.user.userRole,
+        newPassword : "",
+        confirmPassword : "",
       };
       this.form.setValue(object);
     }
@@ -114,22 +107,37 @@ export class UsersUpdateComponent {
 
   put(){
     this.form.markAllAsTouched();
+    
+    // Validar contraseñas si están siendo cambiadas
+    if (this.showPasswordFields) {
+      const newPassword = this.form.get('newPassword')?.value;
+      const confirmPassword = this.form.get('confirmPassword')?.value;
+      
+      if (newPassword && newPassword.length < 8) {
+        this.snackBar.open('La nueva contraseña debe tener al menos 8 caracteres', 'Cerrar', {duration: 4000});
+        return;
+      }
+      
+      if (newPassword !== confirmPassword) {
+        this.snackBar.open('Las contraseñas no coinciden', 'Cerrar', {duration: 4000});
+        return;
+      }
+    }
+    
     if( this.form.valid){
       let put = {
-        name : this.form.get('name')?.value,
-        phoneNumber : this.form.get('phoneNumber')?.value,
+        firstName : this.form.get('firstName')?.value,
+        lastName : this.form.get('lastName')?.value,
         email : this.form.get('email')?.value,
-        address : this.form.get('address')?.value,
-        userType : this.form.get('userType')?.value,
-        department : this.form.get('department')?.value,
-        employeeId : this.form.get('employeeId')?.value,
-        companyName : this.form.get('companyName')?.value,
-        entraId : this.form.get('entraId')?.value,
-        b2CId : this.form.get('b2CId')?.value,
-        isActive : this.form.get('isActive')?.value,
-        isVerified : this.form.get('isVerified')?.value,
-        isDeleted : this.form.get('isDeleted')?.value,
+        phone : this.form.get('phone')?.value,
+        userRole : this.form.get('userRole')?.value,
       }
+      
+      // Solo incluir password si se está cambiando
+      if (this.showPasswordFields && this.form.get('newPassword')?.value) {
+        (put as any).password = this.form.get('newPassword')?.value;
+      }
+      
       this.charge = true;
       this.send = false;
       this.response = new Response();
@@ -172,8 +180,11 @@ export class UsersUpdateComponent {
     .subscribe({
       next: ({options}) => {
         this.codephones = options.codephones;
-        console.log("codephones", this.codephones);
         this.loading = false;
+      },
+      error: (error) => {
+        this.loading = false;
+        this.snackBar.open('Error al cargar los datos', 'Cerrar', {duration: 4000});
       }
     });
   }
@@ -186,7 +197,12 @@ export class UsersUpdateComponent {
         this.snackBar.open('Por favor selecciona un archivo de imagen.', 'Cerrar', {duration: 4000});
         return;
       }
-      // Funcionalidad de carga de imagen removida para simplificar el componente
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.srcImage = e.target?.result!;
+      };
+      reader.readAsDataURL(file);
+      // Note: photo field is not part of User entity, this is just for UI preview
     }
   }
 
@@ -225,6 +241,30 @@ export class UsersUpdateComponent {
       { name: 'Proveedor', code: 'Supplier' },
       { name: 'Administrador', code: 'Admin' }
     ];
+  }
+
+  togglePasswordFields(): void {
+    this.showPasswordFields = !this.showPasswordFields;
+    
+    if (this.showPasswordFields) {
+      this.form.get('newPassword')?.setValidators([Validators.required, Validators.minLength(8)]);
+      this.form.get('confirmPassword')?.setValidators([Validators.required]);
+    } else {
+      this.form.get('newPassword')?.clearValidators();
+      this.form.get('confirmPassword')?.clearValidators();
+      this.form.get('newPassword')?.setValue('');
+      this.form.get('confirmPassword')?.setValue('');
+    }
+    
+    this.form.get('newPassword')?.updateValueAndValidity();
+    this.form.get('confirmPassword')?.updateValueAndValidity();
+  }
+
+  resetForm(): void {
+    this.setForm();
+    this.showPasswordFields = false;
+    this.togglePasswordFields();
+    this.srcImage = "assets/images/user-image.jpg";
   }
 
 }

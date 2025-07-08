@@ -26,6 +26,9 @@ export class CustomersCreateComponent {
   users: User[] = [];
   imageUser: string | ArrayBuffer | null = "../assets/images/user-image.jpg";
 
+
+  
+
   genderOptions = [
     { value: 'M', label: 'Male' },
     { value: 'F', label: 'Female' },
@@ -70,6 +73,7 @@ export class CustomersCreateComponent {
     this.userService.getUsers().subscribe({
       next: (response: User[]) => {
         this.users = response;
+        this.users = this.users.filter(user => user.userRole === 'client');
         this.loading = false;
       },error: (response) =>{
         this.snackBar.open('Error getting users', 'Close', {duration: 4000});
