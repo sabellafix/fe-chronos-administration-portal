@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { StorageService } from '../shared/storage.service';
-import { Availability, CreateAvailabilityDto, UpdateAvailabilityDto } from '@app/core/models/bussiness';
+import { Availability, CreateAvailabilityDto, UpdateAvailabilityDto, DateOnly } from '@app/core/models/bussiness';
 
 @Injectable({
     providedIn: 'root'
@@ -30,15 +30,33 @@ export class AvailabilityService {
         return this.http.get<Availability[]>(url, this.getHttpOptions());
     }
 
+    getAvailability(id: string): Observable<Availability> {
+        const url = `${this.apiUrl}/${this.controller}/get-availability/${id}`;
+        return this.http.get<Availability>(url, this.getHttpOptions());
+    } 
+
     getAvailabilitiesByProvider(providerId: string): Observable<Availability[]> {
         const url = `${this.apiUrl}/${this.controller}/get-availabilities-by-provider/${providerId}`;
         return this.http.get<Availability[]>(url, this.getHttpOptions());
     }
 
-    getAvailability(id: string): Observable<Availability> {
-        const url = `${this.apiUrl}/${this.controller}/get-availability/${id}`;
-        return this.http.get<Availability>(url, this.getHttpOptions());
-    } 
+    getAvailabilitiesByMonth(searchMonth: DateOnly): Observable<DateOnly[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-availabilities-by-month`;
+        const params = new HttpParams().set('searchMonth', JSON.stringify(searchMonth));
+        return this.http.get<DateOnly[]>(url, { ...this.getHttpOptions(), params });
+    }
+
+    getAvailabilitiesByDay(dateToSearch: DateOnly): Observable<Availability[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-availabilities-by-day`;
+        const params = new HttpParams().set('dateToSearch', JSON.stringify(dateToSearch));
+        return this.http.get<Availability[]>(url, { ...this.getHttpOptions(), params });
+    }
+
+    getAvailabilitiesByWeek(dateToSearch: DateOnly): Observable<Availability[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-availabilities-by-week`;
+        const params = new HttpParams().set('dateToSearch', JSON.stringify(dateToSearch));
+        return this.http.get<Availability[]>(url, { ...this.getHttpOptions(), params });
+    }
   
     createAvailability(entity: CreateAvailabilityDto): Observable<Availability> {
         const url = `${this.apiUrl}/${this.controller}/create-availability`;

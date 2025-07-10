@@ -8,7 +8,7 @@ export class BlockedTime{
     endTime: TimeOnly;
     reason: string | null;
     isActive: boolean;
-    createdAt: string;
+    createdAt: string; // format: date-time
 
     constructor() {
         this.blockedTimeId = "";

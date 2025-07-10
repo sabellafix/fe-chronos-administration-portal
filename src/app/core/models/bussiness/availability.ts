@@ -10,8 +10,8 @@ export class Availability{
     effectiveFromDate: DateOnly;
     effectiveToDate: DateOnly;
     isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: string; // format: date-time
+    updatedAt: string; // format: date-time
 
     constructor() {
         this.availabilityId = "";

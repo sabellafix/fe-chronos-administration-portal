@@ -42,7 +42,6 @@ export class Booking{
     cancellationReason: string | null;
     bookingServices: BookingServiceDTO[] | null;
     services: Service[] | null;
-    supplier: Supplier;
 
     constructor() {
         this.id = "";
@@ -68,6 +67,5 @@ export class Booking{
         this.cancellationReason = null;
         this.bookingServices = null;
         this.services = null;
-        this.supplier = new Supplier();
     }
 } 

@@ -46,6 +46,7 @@ export class ServicesUpdateComponent {
       serviceDescription : new FormControl(""),
       categoryId : new FormControl(1, [Validators.required, Validators.min(1)]),
       durationMinutes : new FormControl(60, [Validators.required, Validators.min(1)]),
+      processingTime : new FormControl(0, [Validators.min(0)]),
       price : new FormControl(0, [Validators.required, Validators.min(0)]),
       color : new FormControl("#23324d", Validators.required),
       isActive : new FormControl(true),
@@ -97,6 +98,7 @@ export class ServicesUpdateComponent {
         serviceDescription : this.service.serviceDescription,
         categoryId : this.service.categoryId,
         durationMinutes : this.service.durationMinutes,
+        processingTime : this.service.processingTime,
         price : this.service.price,
         color : this.service.color,
         isActive : this.service.isActive,
@@ -114,6 +116,7 @@ export class ServicesUpdateComponent {
       updateDto.serviceDescription = this.form.get('serviceDescription')?.value;
       updateDto.categoryId = this.form.get('categoryId')?.value;
       updateDto.durationMinutes = this.form.get('durationMinutes')?.value;
+      updateDto.processingTime = this.form.get('processingTime')?.value;
       updateDto.price = this.form.get('price')?.value;
       updateDto.color = this.form.get('color')?.value;
       updateDto.currency = "USD";
@@ -200,6 +203,7 @@ export class ServicesUpdateComponent {
     this.form.patchValue({
       categoryId: 1,
       durationMinutes: 60,
+      processingTime: 0,
       price: 0,
       color: "#000000",
       isActive: true

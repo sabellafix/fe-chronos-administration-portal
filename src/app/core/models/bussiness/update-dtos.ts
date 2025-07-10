@@ -1,10 +1,11 @@
 import { DateOnly, TimeOnly } from './availability';
 import { BookingStatus, UserRole } from './enums';
+import { ServiceModifier } from './service-modifier';
 
 // DTOs de Actualización del Swagger Chronos
 
 export class UpdateAvailabilityDto {
-    dayOfWeek?: number; // 1-7
+    dayOfWeek?: number; // minimum: 1, maximum: 7, nullable
     startTime?: TimeOnly;
     endTime?: TimeOnly;
     isRecurring?: boolean;
@@ -27,7 +28,7 @@ export class UpdateBlockedTimeDto {
     blockedDate?: DateOnly;
     startTime?: TimeOnly;
     endTime?: TimeOnly;
-    reason?: string;
+    reason?: string; // maxLength: 255, nullable
     isActive?: boolean;
 
     constructor() {
@@ -80,11 +81,12 @@ export class UpdateCategoryDto {
 export class UpdateCustomerDto {
     firstName?: string;
     lastName?: string;
-    preferredLanguage?: string;
+    preferredLanguage?: string; // maxLength: 10
     isActive?: boolean;
     phoneNumber?: string;
-    email?: string;
+    email?: string; // maxLength: 500
     notes?: string;
+    serviceModifiers?: ServiceModifier[];
 
     constructor() {
         this.firstName = undefined;
@@ -94,6 +96,7 @@ export class UpdateCustomerDto {
         this.phoneNumber = undefined;
         this.email = undefined;
         this.notes = undefined;
+        this.serviceModifiers = undefined;
     }
 }
 
@@ -101,9 +104,10 @@ export class UpdateServiceDto {
     categoryId?: number;
     serviceName?: string;
     serviceDescription?: string;
-    durationMinutes?: number;
-    price?: number;
-    color?: string;
+    durationMinutes?: number; // minimum: 1, maximum: 2147483647
+    processingTime?: number; // minimum: 0, maximum: 2147483647
+    price?: number; // minimum: 0
+    color?: string; // maxLength: 7, minLength: 0
     currency?: string;
     isActive?: boolean;
 
@@ -112,10 +116,19 @@ export class UpdateServiceDto {
         this.serviceName = undefined;
         this.serviceDescription = undefined;
         this.durationMinutes = undefined;
+        this.processingTime = undefined;
         this.price = undefined;
         this.color = undefined;
         this.currency = undefined;
         this.isActive = undefined;
+    }
+}
+
+export class UpdateServiceModifierDto {
+    modifiedDurationInMinutes?: number; // minimum: 1, maximum: 2147483647
+
+    constructor() {
+        this.modifiedDurationInMinutes = undefined;
     }
 }
 
@@ -124,7 +137,7 @@ export class UpdateSupplierDto {
     businessDescription?: string;
     businessAddress?: string;
     website?: string;
-    businessEmail?: string;
+    businessEmail?: string; // format: email
     businessPhone?: string;
     isVerified?: boolean;
     rating?: number;

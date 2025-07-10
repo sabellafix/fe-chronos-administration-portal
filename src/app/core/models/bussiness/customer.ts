@@ -1,3 +1,5 @@
+import { ServiceModifier } from './service-modifier';
+
 export class Customer{
     id: string;
     userId: string;
@@ -9,8 +11,9 @@ export class Customer{
     notes: string | null;
     preferredLanguage: string | null;
     isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: string; // format: date-time
+    updatedAt: string; // format: date-time
+    serviceModifiers: ServiceModifier[] | null;
 
     constructor() {
         this.id = "";
@@ -25,5 +28,6 @@ export class Customer{
         this.isActive = false;
         this.createdAt = "";
         this.updatedAt = "";
+        this.serviceModifiers = null;
     }
 } 

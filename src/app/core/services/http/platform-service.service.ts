@@ -25,18 +25,23 @@ export class ServiceService {
         };
     }
 
-    getService(id: string): Observable<Service> {
-        const url = `${this.apiUrl}/${this.controller}/get-service/${id}`;
-        return this.http.get<Service>(url, this.getHttpOptions());
-    }
-
     getServices(): Observable<Service[]> {
         const url = `${this.apiUrl}/${this.controller}/get-services`;
         return this.http.get<Service[]>(url, this.getHttpOptions());
     }
 
+    getService(id: string): Observable<Service> {
+        const url = `${this.apiUrl}/${this.controller}/get-service/${id}`;
+        return this.http.get<Service>(url, this.getHttpOptions());
+    }
+
     getServicesByCategory(categoryId: number): Observable<Service[]> {
         const url = `${this.apiUrl}/${this.controller}/get-services-by-category/${categoryId}`;
+        return this.http.get<Service[]>(url, this.getHttpOptions());
+    }
+
+    getServicesByProvider(providerId: string): Observable<Service[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-services-by-provider/${providerId}`;
         return this.http.get<Service[]>(url, this.getHttpOptions());
     }
   

@@ -8,12 +8,13 @@ export class Service{
     serviceName : string | null;
     serviceDescription : string | null;
     durationMinutes : number;
+    processingTime : number;
     price : number;
     color : string | null;
     currency : string | null;
     isActive : boolean;
-    createdAt : string;
-    updatedAt : string;
+    createdAt : string; // format: date-time
+    updatedAt : string; // format: date-time
     category: Category;
     provider: Supplier;
 
@@ -24,6 +25,7 @@ export class Service{
         this.serviceName = null;
         this.serviceDescription = null;
         this.durationMinutes = 0;
+        this.processingTime = 0;
         this.price = 0;
         this.color = null;
         this.currency = null;

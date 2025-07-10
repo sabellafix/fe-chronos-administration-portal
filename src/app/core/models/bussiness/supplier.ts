@@ -11,8 +11,8 @@ export class Supplier{
     rating : number;
     totalReviews : number;
     isActive : boolean;
-    createdAt : string;
-    updatedAt : string;
+    createdAt : string; // format: date-time
+    updatedAt : string; // format: date-time
 
     constructor() {
         this.id = "";

@@ -42,6 +42,7 @@ export class ServicesCreateComponent {
       serviceDescription : new FormControl(""),
       categoryId : new FormControl(1, [Validators.required, Validators.min(1)]),
       durationMinutes : new FormControl(60, [Validators.required, Validators.min(1)]),
+      processingTime : new FormControl(0, [Validators.min(0)]),
       price : new FormControl(0, [Validators.required, Validators.min(0)]),
       color : new FormControl("#23324d", Validators.required),
     });
@@ -53,6 +54,7 @@ export class ServicesCreateComponent {
     this.form.patchValue({
       categoryId: 1,
       durationMinutes: 60,
+      processingTime: 0,
       price: 0,
       isActive: true
     });
@@ -76,6 +78,7 @@ export class ServicesCreateComponent {
       createDto.providerId = this.providerId;
       createDto.categoryId = this.form.get('categoryId')?.value;
       createDto.durationMinutes = this.form.get('durationMinutes')?.value;
+      createDto.processingTime = this.form.get('processingTime')?.value;
       createDto.price = this.form.get('price')?.value;
       createDto.color = this.form.get('color')?.value;
       createDto.currency = "USD";
@@ -160,6 +163,7 @@ export class ServicesCreateComponent {
       currency: "USD",
       categoryId: 1,
       durationMinutes: 60,
+      processingTime: 0,
       isActive: true
     });
   }

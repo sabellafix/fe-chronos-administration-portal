@@ -3,7 +3,7 @@ export class Category{
     name: string | null;
     description: string | null;
     isActive: boolean;
-    createdAt: string;
+    createdAt: string; // format: date-time
 
     constructor() {
         this.id = 0;

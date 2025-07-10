@@ -137,53 +137,42 @@
         </div>
       </div>
 
-      <!-- Duración y estado -->
-      <div class="row">
-        <div class="col-md-6">
-          <div class="mb-3">
-            <label class="form-label">Duración (minutos) *</label>
-            <input type="number" class="form-control" formControlName="durationMinutes" min="15" max="480" placeholder="60" [readonly]="selectedServices.length > 0">
-            <div *ngIf="bookingForm.get('durationMinutes')?.invalid && bookingForm.get('durationMinutes')?.touched" class="text-danger small mt-1">
-              <span *ngIf="bookingForm.get('durationMinutes')?.errors?.['required']">Duración requerida</span>
-              <span *ngIf="bookingForm.get('durationMinutes')?.errors?.['min']">Duración mínima: 15 minutos</span>
-              <span *ngIf="bookingForm.get('durationMinutes')?.errors?.['max']">Duración máxima: 8 horas</span>
-            </div>
-           
-          </div>
+      <!-- Duración -->
+      <div class="mb-3">
+        <label class="form-label">Duración (minutos) *</label>
+        <input type="number" 
+               class="form-control" 
+               formControlName="durationMinutes" 
+               min="15" 
+               max="480" 
+               placeholder="60" 
+               [readonly]="selectedServices.length > 0">
+        <div *ngIf="bookingForm.get('durationMinutes')?.invalid && bookingForm.get('durationMinutes')?.touched" class="text-danger small mt-1">
+          <span *ngIf="bookingForm.get('durationMinutes')?.errors?.['required']">Duración requerida</span>
+          <span *ngIf="bookingForm.get('durationMinutes')?.errors?.['min']">Duración mínima: 15 minutos</span>
+          <span *ngIf="bookingForm.get('durationMinutes')?.errors?.['max']">Duración máxima: 8 horas</span>
         </div>
-        <div class="col-md-6">
-          <div class="mb-3">
-            <label class="form-label">Estado</label>
-            <select class="form-select" formControlName="status">
-              <option [value]="BookingStatus.Pending">
-                <i class="bx bx-time-five"></i> Pendiente
-              </option>
-              <option [value]="BookingStatus.Confirmed">
-                <i class="bx bx-check"></i> Confirmada
-              </option>
-              <option [value]="BookingStatus.InProgress">
-                <i class="bx bx-play"></i> En progreso
-              </option>
-              <option [value]="BookingStatus.Completed">
-                <i class="bx bx-check-double"></i> Completada
-              </option>
-              <option [value]="BookingStatus.Cancelled">
-                <i class="bx bx-x"></i> Cancelada
-              </option>
-            </select>
-          </div>
+        <div *ngIf="selectedServices.length > 0" class="form-text">
+          <i class="bx bx-info-circle me-1"></i>
+          La duración se calcula automáticamente basada en los servicios seleccionados
         </div>
       </div>
 
       <!-- Notas -->
       <div class="mb-3">
         <label class="form-label">Notas del cliente</label>
-        <textarea class="form-control" formControlName="clientNotes" rows="3" placeholder="Notas adicionales del cliente..."></textarea>
+        <textarea class="form-control" 
+                  formControlName="clientNotes" 
+                  rows="3" 
+                  placeholder="Notas adicionales del cliente..."></textarea>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Notas del proveedor</label>
-        <textarea class="form-control" formControlName="providerNotes" rows="3" placeholder="Notas internas del proveedor..."></textarea>
+        <textarea class="form-control" 
+                  formControlName="providerNotes" 
+                  rows="3" 
+                  placeholder="Notas internas del proveedor..."></textarea>
       </div>
 
       <!-- Botón de acción -->
@@ -192,10 +181,21 @@
                 (click)="onConfirm()" 
                 [disabled]="!isFormValid() || loading"
                 class="btn btn-primary waves-effect waves-light">
-          <i class="bx bx-calendar-plus me-2"></i>
+          <i class="bx bx-calendar-plus me-2" *ngIf="!loading"></i>
+          <div class="spinner-border spinner-border-sm me-2" role="status" *ngIf="loading">
+            <span class="visually-hidden">Loading...</span>
+          </div>
           <span *ngIf="!loading">Crear reserva</span>
           <span *ngIf="loading">Creando...</span>
-        </button>       
+        </button>
+        
+        <button type="button" 
+                (click)="onCancel()" 
+                class="btn btn-outline-secondary waves-effect waves-light"
+                [disabled]="loading">
+          <i class="bx bx-x me-2"></i>
+          Cancelar
+        </button>
       </div>
     </form>
   </div>
