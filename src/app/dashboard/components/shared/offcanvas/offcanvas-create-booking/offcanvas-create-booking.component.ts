@@ -191,15 +191,12 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       const createBookingDto: CreateBookingDto = new CreateBookingDto();
       createBookingDto.customerId = formValue.customerId;
       
-      // createBookingDto.serviceId = this.selectedServices[0].id;
       
       const bookingDate = new Date(formValue.bookingDate);
       createBookingDto.bookingDate = bookingDate.toISOString().split('T')[0];
       
       const [startHour, startMinute] = formValue.startTime.split(':').map(Number);
-      createBookingDto.startTime = new TimeOnly();
-      createBookingDto.startTime.hour = startHour;
-      createBookingDto.startTime.minute = startMinute;
+      createBookingDto.startTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}:00`;
       
       const totalDuration = this.calculateTotalDuration();
       const totalPrice = this.calculateTotalPrice();
@@ -207,52 +204,43 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       const endMinutes = startMinute + totalDuration;
       const endHour = startHour + Math.floor(endMinutes / 60);
       const finalMinutes = endMinutes % 60;
-      createBookingDto.endTime = new TimeOnly();
-      createBookingDto.endTime.hour = endHour % 24;
-      createBookingDto.endTime.minute = finalMinutes;
+      createBookingDto.endTime = `${endHour.toString().padStart(2, '0')}:${finalMinutes.toString().padStart(2, '0')}:00`;
       
       createBookingDto.durationMinutes = totalDuration;
-      createBookingDto.totalPrice = totalPrice;
-      createBookingDto.currency = this.selectedServices[0].currency || 'USD';
-      createBookingDto.clientNotes = formValue.clientNotes || null;
       
       createBookingDto.services = this.selectedServices.map((service, index): BookingServiceRequest => ({
         color: service.color || '#23324d',
         durationInMinutes: service.durationMinutes,
         name: service.serviceName || 'Sin nombre',
-        order: index + 1,
+        order: index,
         serviceId: service.id
       }));
-      
-      const requestPayload = {
-        createBookingDto: createBookingDto
-      };
-      
-      console.log("Request payload:", requestPayload);
         
-      this.bookingService.createBooking(requestPayload).subscribe({
+      this.bookingService.createBooking(createBookingDto).subscribe({
         next: (response: Booking) => {
-          const mappedBooking = this.mapCreateBookingDtoToBooking(createBookingDto, requestPayload);
-          this.snackBar.open('Reserva creada exitosamente', 'Cerrar', {duration: 4000});
+          const booking = response;
+          console.log("booking", booking);
           this.hide();
-          this.bookingCreated.emit(mappedBooking);
-          this.offcanvasBookingService.onBookingCreated(mappedBooking);
+          this.bookingCreated.emit(booking);
+          this.offcanvasBookingService.onBookingCreated(booking);
           this.resetForm();
+          this.snackBar.open('Appointment created successfully', 'Cerrar', {duration: 4000, panelClass: 'snackbar-success'});
         },
         error: (error) => {
-          const fallbackBooking = this.mapCreateBookingDtoToBooking(createBookingDto, requestPayload);
-          this.snackBar.open('Error al crear la reserva', 'Cerrar', {duration: 4000});
-          console.error('Error creating booking:', error);
-          // En caso de error, aún podemos emitir la reserva simulada para testing
+          if(error.status === 400){
+            this.snackBar.open(error.error, 'Cerrar', {duration: 4000});
+          }else{
+            this.snackBar.open('Error to create the appointment', 'Cerrar', {duration: 4000});
+          }
           this.hide();
-          this.bookingCreated.emit(fallbackBooking);
-          this.offcanvasBookingService.onBookingCreated(fallbackBooking);
+          this.bookingCreated.emit(null as any);
+          this.offcanvasBookingService.onBookingCreated(null as any);
           this.resetForm();
         }
       });
     } else {
       if (this.selectedServices.length === 0) {
-        this.snackBar.open('Debe seleccionar al menos un servicio', 'Cerrar', {duration: 4000});
+        this.snackBar.open('You must select at least one service', 'Cerrar', {duration: 4000});
       }
       this.markFormGroupTouched();
     }
@@ -358,7 +346,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     return `REF-${year}${month}${day}-${random}`;
   }
 
-  private mapCreateBookingDtoToBooking(createDto: CreateBookingDto, payload: any): Booking {
+  private mapCreateBookingDtoToBooking(createDto: CreateBookingDto): Booking {
     const booking = new Booking();
     
     // Propiedades básicas
@@ -366,10 +354,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     booking.customerId = createDto.customerId;
     booking.serviceId = this.selectedServices[0]?.id || '';
     booking.durationMinutes = createDto.durationMinutes || 0;
-    booking.totalPrice = createDto.totalPrice;
-    booking.currency = createDto.currency || 'USD';
     booking.status = BookingStatus.Confirmed;
-    booking.clientNotes = createDto.clientNotes || null;
     booking.bookingReference = this.generateBookingReference();
     
     // Fecha de reserva
@@ -380,8 +365,12 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     booking.bookingDate.day = bookingDate.getDate();
     
     // Horas
-    booking.startTime = createDto.startTime;
-    booking.endTime = createDto.endTime || new TimeOnly();
+    booking.startTime = new TimeOnly();
+    booking.startTime.hour = parseInt(createDto.startTime.split(':')[0]);
+    booking.startTime.minute = parseInt(createDto.startTime.split(':')[1]);
+    booking.endTime = new TimeOnly();
+    booking.endTime.hour = parseInt(createDto.endTime?.split(':')[0] || '0');
+    booking.endTime.minute = parseInt(createDto.endTime?.split(':')[1] || '0');
     
     // Datos adicionales
     const now = new Date().toISOString();

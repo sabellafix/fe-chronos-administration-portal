@@ -116,14 +116,16 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
     this.offcanvasBookingService.openBookingModal(date, hour);
   }
 
-  onBookingCreated(booking: Booking): void {
-    this.bookings.push(booking);
-    this.snackBar.open('Booking created successfully', 'Cerrar', {
-      duration: 3000,
-     
-      panelClass: 'snackbar-success'
-    });
-  
+  onBookingCreated(booking: Booking | null): void {
+    console.log("booking created", booking);
+    if(booking !== null){
+      this.bookings.push(booking);
+      this.snackBar.open('Booking created successfully', 'Cerrar', {
+        duration: 3000,
+      
+        panelClass: 'snackbar-success'
+      });
+    }
   }
 
   onBookingCancelled(): void {

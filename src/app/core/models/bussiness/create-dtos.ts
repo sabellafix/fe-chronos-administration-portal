@@ -48,25 +48,25 @@ export interface BookingServiceRequest {
 }
 
 export class CreateBookingDto {
-    customerId: string;
     bookingDate: string; // Cambiar a string para compatibilidad con System.DateOnly
+    customerId: string;
     durationMinutes?: number;
-    startTime: TimeOnly;
-    endTime?: TimeOnly;
-    totalPrice: number;
-    currency?: string;
-    clientNotes?: string;
+    startTime: string;
+    endTime?: string;
+    // totalPrice: number;
+    // currency?: string;
+    // clientNotes?: string;
     services?: BookingServiceRequest[];
 
     constructor() {
         this.customerId = "";
         this.bookingDate = "";
         this.durationMinutes = undefined;
-        this.startTime = new TimeOnly();
+        this.startTime = "";
         this.endTime = undefined;
-        this.totalPrice = 0;
-        this.currency = undefined;
-        this.clientNotes = undefined;
+        // this.totalPrice = 0;
+        // this.currency = undefined;
+        // this.clientNotes = undefined;
         this.services = undefined;
     }
 }

@@ -134,6 +134,153 @@
         }
       }
     },
+    "/api/Availabilities/get-availabilities-by-month": {
+      "get": {
+        "tags": [
+          "Availabilities"
+        ],
+        "parameters": [
+          {
+            "name": "searchMonth",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "$ref": "#/components/schemas/DateOnly"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DateOnly"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DateOnly"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DateOnly"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Availabilities/get-availabilities-by-day": {
+      "get": {
+        "tags": [
+          "Availabilities"
+        ],
+        "parameters": [
+          {
+            "name": "dateToSearch",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "$ref": "#/components/schemas/DateOnly"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Availabilities/get-availabilities-by-week": {
+      "get": {
+        "tags": [
+          "Availabilities"
+        ],
+        "parameters": [
+          {
+            "name": "dateToSearch",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "$ref": "#/components/schemas/DateOnly"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Availabilities/create-availability": {
       "post": {
         "tags": [
@@ -1477,6 +1624,347 @@
         }
       }
     },
+    "/api/ServiceModifiers/get-service-modifiers": {
+      "get": {
+        "tags": [
+          "ServiceModifiers"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceModifierDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceModifierDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceModifierDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ServiceModifiers/get-service-modifier/{customerId}/{serviceId}": {
+      "get": {
+        "tags": [
+          "ServiceModifiers"
+        ],
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceModifierDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceModifierDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceModifierDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ServiceModifiers/get-service-modifiers-by-customer/{customerId}": {
+      "get": {
+        "tags": [
+          "ServiceModifiers"
+        ],
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceModifierDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceModifierDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceModifierDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ServiceModifiers/get-service-modifiers-by-service/{serviceId}": {
+      "get": {
+        "tags": [
+          "ServiceModifiers"
+        ],
+        "parameters": [
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceModifierDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceModifierDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceModifierDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ServiceModifiers/create-service-modifier": {
+      "post": {
+        "tags": [
+          "ServiceModifiers"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceModifierDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceModifierDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceModifierDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceModifierDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceModifierDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceModifierDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ServiceModifiers/update-service-modifier/{customerId}/{serviceId}": {
+      "put": {
+        "tags": [
+          "ServiceModifiers"
+        ],
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServiceModifierDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServiceModifierDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServiceModifierDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceModifierDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceModifierDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceModifierDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ServiceModifiers/delete-service-modifier/{customerId}/{serviceId}": {
+      "delete": {
+        "tags": [
+          "ServiceModifiers"
+        ],
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Services/get-service/{id}": {
       "get": {
         "tags": [
@@ -2196,15 +2684,10 @@
           "dayOfWeek",
           "effectiveFromDate",
           "endTime",
-          "providerId",
           "startTime"
         ],
         "type": "object",
         "properties": {
-          "providerId": {
-            "type": "string",
-            "format": "uuid"
-          },
           "dayOfWeek": {
             "maximum": 7,
             "minimum": 1,
@@ -2225,6 +2708,9 @@
           },
           "effectiveToDate": {
             "$ref": "#/components/schemas/DateOnly"
+          },
+          "isActive": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -2358,6 +2844,13 @@
           "notes": {
             "type": "string",
             "nullable": true
+          },
+          "serviceModifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceModifierDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2393,6 +2886,12 @@
             "type": "integer",
             "format": "int32"
           },
+          "processingTime": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
           "price": {
             "minimum": 0,
             "type": "number",
@@ -2407,6 +2906,31 @@
           "currency": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateServiceModifierDto": {
+        "required": [
+          "customerId",
+          "modifiedDurationInMinutes",
+          "serviceId"
+        ],
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "serviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modifiedDurationInMinutes": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -2495,6 +3019,13 @@
           "notes": {
             "type": "string",
             "nullable": true
+          },
+          "serviceModifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceModifierDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2570,6 +3101,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "processingTime": {
+            "type": "integer",
+            "format": "int32"
+          },
           "price": {
             "type": "number",
             "format": "double"
@@ -2598,6 +3133,30 @@
           },
           "provider": {
             "$ref": "#/components/schemas/SupplierDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceModifierDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "serviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modifiedDurationInMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerDto"
+          },
+          "service": {
+            "$ref": "#/components/schemas/ServiceDto"
           }
         },
         "additionalProperties": false
@@ -2852,6 +3411,13 @@
           "notes": {
             "type": "string",
             "nullable": true
+          },
+          "serviceModifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceModifierDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2879,6 +3445,13 @@
             "format": "int32",
             "nullable": true
           },
+          "processingTime": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "price": {
             "minimum": 0,
             "type": "number",
@@ -2897,6 +3470,19 @@
           },
           "isActive": {
             "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateServiceModifierDto": {
+        "type": "object",
+        "properties": {
+          "modifiedDurationInMinutes": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },

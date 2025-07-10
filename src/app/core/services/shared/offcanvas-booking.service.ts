@@ -27,8 +27,10 @@ export class OffcanvasBookingService {
     this._showOffcanvas.next();
   }
 
-  onBookingCreated(booking: Booking): void {
-    this._bookingCreated.next(booking);
+  onBookingCreated(booking: Booking | null): void {
+    if(booking !== null){
+      this._bookingCreated.next(booking);
+    }
   }
 
   onCancelled(): void {
