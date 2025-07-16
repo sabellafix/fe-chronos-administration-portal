@@ -50,11 +50,11 @@ export class BookingService {
     }
 
 
-    getByMonth(dateToSearch: Date): Observable<DateOnly[]> {
+    getByMonth(dateToSearch: Date): Observable<Booking[]> {
         const url = `${this.apiUrl}/${this.controller}/get-by-month`;
         const formattedDate = `${dateToSearch.getFullYear()}/${dateToSearch.getMonth() + 1}/${dateToSearch.getDate()}`;
-        const params = new HttpParams().set('month', JSON.stringify(formattedDate));
-        return this.http.get<DateOnly[]>(url, { ...this.getHttpOptions(), params });
+        const params = new HttpParams().set('month', formattedDate);
+        return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params });
     }
 
     getByWeek(dateToSearch: Date): Observable<Booking[]> {

@@ -25,12 +25,12 @@
 <div class="calendar-canvas calendar-body mt-0 no-border no-box-shadow animated fadeIn fast">
     <div class="calendar-container">
         <!-- Indicador de carga -->
-        <div *ngIf="isLoadingBookings" class="d-flex justify-content-center align-items-center p-4">
+        <!-- <div *ngIf="isLoadingBookings" class="d-flex justify-content-center align-items-center p-4">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Cargando citas...</span>
             </div>
             <span class="ms-2 text-muted">Cargando citas...</span>
-        </div>
+        </div> -->
         
         <!-- Contenido del calendario -->
         <table class="calendar-table mt-1 animated fadeIn fast" *ngIf="!isLoadingBookings">

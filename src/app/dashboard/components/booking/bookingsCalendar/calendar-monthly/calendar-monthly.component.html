@@ -18,7 +18,16 @@
 
 <div style="margin-top: 52px !important" class="calendar-canvas calendar-body mt-0 no-border no-box-shadow animated fadeIn fast">
     <div class="calendar-container">
-        <table class="calendar-table">
+
+        <!-- Indicador de carga -->
+        <!-- <div *ngIf="isLoadingBookings" class="d-flex justify-content-center align-items-center p-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando citas...</span>
+            </div>
+            <span class="ms-2 text-muted">Cargando citas...</span>
+        </div> -->
+
+        <table class="calendar-table animated fadeIn fast" *ngIf="!isLoadingBookings">
             <tbody>
                 <tr class="week-row" *ngFor="let week of monthDays; trackBy: trackByWeek">
                     <td class="day-cell" 
@@ -46,7 +55,7 @@
                                     <div class="booking-compact-info">
                                         <div class="booking-header-row">
                                             <div class="customer-info">
-                                                <img class="customer-photo" [src]="booking.customer.photo" alt="Customer">
+                                                <!-- <img class="customer-photo" [src]="booking.customer.photo" alt="Customer"> -->
                                                 <span class="customer-name">{{booking.customer.firstName}}</span>
                                             </div>
                                             
@@ -56,7 +65,7 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="booking-details">
+                                        <!-- <div class="booking-details">
                                             <div class="services-compact" *ngIf="booking.services && booking.services.length > 0">
                                                 <span class="service-badge"  
                                                       *ngFor="let service of booking.services.slice(0, 2); let serviceIndex = index"
@@ -66,7 +75,7 @@
                                                 </span>
                                                
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>

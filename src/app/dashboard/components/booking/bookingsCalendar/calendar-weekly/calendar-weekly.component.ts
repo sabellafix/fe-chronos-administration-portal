@@ -1,12 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
 import { Booking } from '@app/core/models/bussiness/booking';
-import { BookingStatus } from '@app/core/models/bussiness/enums';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
 import { BookingService } from '@app/core/services/http/booking.service';
 import { Subscription } from 'rxjs';
-import { DateOnly } from '@app/core/models/bussiness';
 import { TimeUtils } from '@app/core/utils/time.utils';
 import { DateUtils } from '@app/core/utils/date.utils';
 
@@ -128,7 +126,6 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
   }
 
   onBookingCreated(booking: Booking | null): void {
-    console.log("booking created", booking);
     if(booking !== null){
       this.bookings.push(booking);
       this.loadBookingsForCurrentWeek();
@@ -151,7 +148,6 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
       next: (bookings: Booking[]) => {
         this.bookings = bookings;
         this.isLoadingBookings = false;
-        console.log('Bookings cargados:', bookings);
       },
       error: (error) => {
         console.error('Error al cargar bookings:', error);

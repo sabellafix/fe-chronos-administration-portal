@@ -2,10 +2,12 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
 import { Booking } from '@app/core/models/bussiness/booking';
-import { BookingStatus } from '@app/core/models/bussiness/enums';
 import { OffcanvasCreateBookingComponent } from '../../../shared/offcanvas/offcanvas-create-booking/offcanvas-create-booking.component';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
 import { Subscription } from 'rxjs';
+import { BookingService } from '@app/core/services/http/booking.service';
+import { TimeUtils } from '@app/core/utils/time.utils';
+import { DateUtils } from '@app/core/utils/date.utils';
 
 @Component({
   selector: 'app-calendar-monthly',
@@ -21,13 +23,16 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
   monthDays: DateItem[][] = [];
   daysOfWeek: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   bookings: Booking[] = [];
+  isLoadingBookings: boolean = false;
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
 
-  constructor(private snackBar: MatSnackBar, private offcanvasBookingService: OffcanvasBookingService) {
+  constructor(private snackBar: MatSnackBar, 
+              private offcanvasBookingService: OffcanvasBookingService, 
+              private bookingService: BookingService) {
     this.currentMonth = new Date(this.dateNow.getFullYear(), this.dateNow.getMonth(), 1);
     this.generateMonthDays();
-    this.getStaticBookings();
+    this.loadBookingsForCurrentMoenth();
   }
 
   ngOnInit(): void {
@@ -110,7 +115,7 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
       weeks.push(weekDays);
     }
     
-    while (weeks.length < 6) {
+    while (weeks.length < 5) {
       const lastWeek = weeks[weeks.length - 1];
       const nextWeekStart = new Date(lastWeek[6].date);
       nextWeekStart.setDate(nextWeekStart.getDate() + 1);
@@ -174,18 +179,40 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
 
   onBookingCreated(booking: Booking): void {
     this.bookings.push(booking);
-    this.snackBar.open('Reserva creada exitosamente', 'Cerrar', {
+    this.snackBar.open('Booking created successfully', 'Close', {
       duration: 3000,
       panelClass: 'snackbar-success'
     });
   }
 
   onBookingCancelled(): void {
-    console.log('Creación de cita cancelada');
+    console.log('Booking cancelled');
   }
 
-  getStaticBookings(): void {
+  private loadBookingsForCurrentMoenth(): void {
+    this.isLoadingBookings = true;
+    const month = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), 1);
 
+    const bookingsSubscription = this.bookingService.getByMonth(month).subscribe({
+      next: (allBookings: Booking[]) => {
+        this.bookings = allBookings;
+        this.bookings.map(booking => {
+          booking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
+          booking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
+          booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+        });
+        this.isLoadingBookings = false;
+      },
+      error: (error) => {
+        console.error('Error loading bookings for the month:', error);
+        this.isLoadingBookings = false;
+        this.snackBar.open('Error loading bookings for the month', 'Close', {
+          duration: 5000,
+          panelClass: 'snackbar-error'
+        });
+      }
+    });
+    this.subscriptions.push(bookingsSubscription);
   }
 
   getBookingsForDate(date: Date): Booking[] {
