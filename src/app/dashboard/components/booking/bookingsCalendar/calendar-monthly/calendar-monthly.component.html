@@ -52,7 +52,7 @@
                                             
                                             <div class="booking-time align-items-end">
                                                 <i class="bx bx-time text-white me-1"></i>
-                                                <span class="text-white">{{formatHour(booking.startTime.hour)}}</span>
+                                                <span class="text-white">{{booking.startTime | timeOnly}} - {{booking.endTime | timeOnly}}</span>
                                             </div>
                                         </div>
                                         

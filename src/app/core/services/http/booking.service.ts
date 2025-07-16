@@ -36,11 +36,45 @@ export class BookingService {
         return this.http.get<DateOnly[]>(url, { ...this.getHttpOptions(), params });
     }
 
+    getBookingsByWeek(dateToSearch: Date): Observable<Booking[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-bookings-by-week`;
+        const formattedDate = `${dateToSearch.getFullYear()}/${dateToSearch.getMonth() + 1}/${dateToSearch.getDate()}`;
+        const params = new HttpParams().set('dateToSearch', formattedDate);
+        return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params });
+    }
+     
     getBookingsByDay(dateToSearch: DateOnly): Observable<Booking[]> {
         const url = `${this.apiUrl}/${this.controller}/get-bookings-by-day`;
         const params = new HttpParams().set('dateToSearch', JSON.stringify(dateToSearch));
         return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params });
     }
+
+
+    getByMonth(dateToSearch: Date): Observable<DateOnly[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-by-month`;
+        const formattedDate = `${dateToSearch.getFullYear()}/${dateToSearch.getMonth() + 1}/${dateToSearch.getDate()}`;
+        const params = new HttpParams().set('month', JSON.stringify(formattedDate));
+        return this.http.get<DateOnly[]>(url, { ...this.getHttpOptions(), params });
+    }
+
+    getByWeek(dateToSearch: Date): Observable<Booking[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-by-week`;
+        const formattedDate = `${dateToSearch.getFullYear()}/${dateToSearch.getMonth() + 1}/${dateToSearch.getDate()}`;
+        const params = new HttpParams().set('week', formattedDate);
+        return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params });
+    }
+     
+    getByDay(dateToSearch: Date): Observable<Booking[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-by-day`;
+        const formattedDate = `${dateToSearch.getFullYear()}/${dateToSearch.getMonth() + 1}/${dateToSearch.getDate()}`;
+        const params = new HttpParams().set('day', formattedDate);
+        return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params });
+    }
+
+    create(entity: CreateBookingDto | any): Observable<Booking> {
+        const url = `${this.apiUrl}/${this.controller}/create`;
+        return this.http.post<Booking>(url, entity, this.getHttpOptions());
+    } 
 
     getBookingsCountWeek(dateToSearch: DateOnly): Observable<number> {
         const url = `${this.apiUrl}/${this.controller}/get-bookings-count-week`;

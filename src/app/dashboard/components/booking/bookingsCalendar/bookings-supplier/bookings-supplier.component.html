@@ -53,7 +53,7 @@
             <tbody>
                 <tr class="time-row" *ngFor="let hour of getHoursRange()">
                     <td class="time-cell">
-                        <span class="time-label fw-semibold">{{ formatHour(hour) }}</span>
+                        <span class="time-label fw-semibold">{{ formatHour(hour.toString()) }}</span>
                     </td>
                     <td class="day-cell" 
                         *ngFor="let supplier of suppliers" 
@@ -69,7 +69,7 @@
                                 <div class="booking-info">
                                     <!-- Horario y precio -->
                                     <div class="booking-time-price d-flex justify-content-between align-items-center mb-2">
-                                        <span class="text-white booking-time">{{ formatHour(booking.startTime.hour) }} - {{ formatHour(booking.endTime.hour) }}</span>
+                                        <span class="text-white booking-time">{{ booking.startTime | timeOnly }} - {{ booking.endTime | timeOnly }}</span>
                                         <span class="text-white booking-price fw-bold">${{ booking.totalPrice }}</span>
                                     </div>
                                     

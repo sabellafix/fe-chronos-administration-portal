@@ -4,7 +4,11 @@ import { Booking } from '@app/core/models/bussiness/booking';
 import { BookingStatus } from '@app/core/models/bussiness/enums';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
+import { BookingService } from '@app/core/services/http/booking.service';
 import { Subscription } from 'rxjs';
+import { DateOnly } from '@app/core/models/bussiness';
+import { TimeUtils } from '@app/core/utils/time.utils';
+import { DateUtils } from '@app/core/utils/date.utils';
 
 @Component({
   selector: 'app-calendar-weekly',
@@ -17,17 +21,23 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
   dates: DateItem[] = [];
   activeDate: DateItem = new DateItem();
   bookings: Booking[] = [];
+  isLoadingBookings: boolean = false;
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
+  imageUser: string = "../assets/images/user-image.jpg";
 
-  constructor(private snackBar: MatSnackBar, private offcanvasBookingService: OffcanvasBookingService){
+  constructor(
+    private snackBar: MatSnackBar, 
+    private offcanvasBookingService: OffcanvasBookingService,
+    private bookingService: BookingService
+  ){
     this.dates = this.getDates();
-    this.getStaticBookings();
   }
 
   ngOnInit(): void {
     this.initStickyHeader();
     this.subscribeToBookingService();
+    this.loadBookingsForCurrentWeek();
   }
 
   ngOnDestroy(): void {
@@ -100,15 +110,16 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
     return hours;
   }
 
-  formatHour(hour: number): string {
-    if (hour === 0) {
+  formatHour(hour: string): string {
+    const hourNumber = parseInt(hour.split(":")[0]);
+    if (hourNumber === 0) {
       return '12 am';
-    } else if (hour < 12) {
+    } else if (hourNumber < 12) {
       return `${hour} am`;
-    } else if (hour === 12) {
+    } else if (hourNumber === 12) {
       return '12 pm';
     } else {
-      return `${hour} pm`;
+      return `${hourNumber} pm`;
     }
   }
 
@@ -120,9 +131,10 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
     console.log("booking created", booking);
     if(booking !== null){
       this.bookings.push(booking);
-      this.snackBar.open('Booking created successfully', 'Cerrar', {
-        duration: 3000,
+      this.loadBookingsForCurrentWeek();
       
+      this.snackBar.open('Cita creada exitosamente', 'Cerrar', {
+        duration: 3000,
         panelClass: 'snackbar-success'
       });
     }
@@ -132,14 +144,68 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
     console.log('Creación de cita cancelada');
   }
 
-  getStaticBookings(){
+  private loadBookings(): void {
+    this.isLoadingBookings = true;
+    
+    const bookingsSubscription = this.bookingService.getBookings().subscribe({
+      next: (bookings: Booking[]) => {
+        this.bookings = bookings;
+        this.isLoadingBookings = false;
+        console.log('Bookings cargados:', bookings);
+      },
+      error: (error) => {
+        console.error('Error al cargar bookings:', error);
+        this.isLoadingBookings = false;
+        this.snackBar.open('Error al cargar las citas', 'Cerrar', {
+          duration: 5000,
+          panelClass: 'snackbar-error'
+        });
+      }
+    });
 
+    this.subscriptions.push(bookingsSubscription);
+  }
+
+  reloadBookings(): void {
+    this.loadBookings();
+  }
+
+  private loadBookingsForCurrentWeek(): void {
+    if (this.dates.length === 0) return;
+    this.isLoadingBookings = true;
+
+    const bookingsSubscription = this.bookingService.getByWeek(this.dates[0].date).subscribe({
+      next: (allBookings: Booking[]) => {
+        this.bookings = allBookings;
+        this.bookings.map(booking => {
+          booking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
+          booking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
+          booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+        });
+        this.isLoadingBookings = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar bookings de la semana:', error);
+        this.isLoadingBookings = false;
+        this.snackBar.open('Error al cargar las citas de la semana', 'Cerrar', {
+          duration: 5000,
+          panelClass: 'snackbar-error'
+        });
+      }
+    });
+    this.subscriptions.push(bookingsSubscription);
+  }
+
+  refreshCalendar(): void {
+    this.dates = this.getDates();
+    this.loadBookingsForCurrentWeek();
   }
 
   getBookingsForDateTime(date: Date, hour: number): Booking[] {
     return this.bookings.filter(booking => {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
       const bookingHour = booking.startTime.hour;
+
       
       return bookingDate.toDateString() === date.toDateString() && bookingHour === hour;
     });
@@ -158,12 +224,14 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
 
 
   getBookingTooltip(booking: Booking): string {
-    const customerName = `${booking.customer.firstName} ${booking.customer.lastName}`;
-    const timeRange = `${this.formatHour(booking.startTime.hour)} - ${this.formatHour(booking.endTime.hour)}`;
+    // const customerName = `${booking.customer.firstName} ${booking.customer.lastName}`;
+    // const timeRange = `${booking.startTime | date:'H'}} - ${booking.endTime | date:'H'}}`;
     const services = booking.services?.map(s => s.serviceName).join(', ') || 'Sin servicios';
     const duration = `${booking.durationMinutes} min`;
     const price = `$${booking.totalPrice}`;
     
-    return `Cliente: ${customerName} | ${timeRange} | Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
+    // return `Cliente: ${customerName} | ${timeRange} | Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
+    // return `${timeRange} | Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
+    return ` Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
   }
 }

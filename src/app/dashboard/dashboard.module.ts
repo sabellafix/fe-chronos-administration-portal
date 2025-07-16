@@ -61,6 +61,7 @@ import { CustomersListComponent } from './components/customers/customers-list/cu
 import { CustomersCreateComponent } from './components/customers/customers-create/customers-create.component';
 import { BookingsFloorComponent } from './components/booking/bookingsCalendar/bookings-floor/bookings-floor.component';
 import { BookingsSupplierComponent } from './components/booking/bookingsCalendar/bookings-supplier/bookings-supplier.component';
+import { TimeOnlyPipe } from '../core/pipes/time-only.pipe';
 
 
 const routes: Routes = [
@@ -190,7 +191,8 @@ const routes: Routes = [
     CustomersListComponent,
     CustomersCreateComponent,
     BookingsFloorComponent,
-    BookingsSupplierComponent
+    BookingsSupplierComponent,
+    TimeOnlyPipe
   ],
   imports: [
     CommonModule,

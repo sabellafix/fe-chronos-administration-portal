@@ -134,78 +134,10 @@ export class BookingsFloorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   getStaticBookings(){
-    const booking1 = new Booking();
-    booking1.id = '1';
-    booking1.customerId = '1';
-    booking1.supplierId = 'supplier-1';
-    booking1.serviceId = 'service-1';
-    booking1.bookingReference = 'Haircut and Styling';
-    booking1.bookingDate.year = 2025;
-    booking1.bookingDate.month = 6;
-    booking1.bookingDate.day = 21;
-    booking1.startTime.hour = 12;
-    booking1.startTime.minute = 0;
-    booking1.endTime.hour = 14;
-    booking1.endTime.minute = 0;
-    booking1.durationMinutes = 60;
-    booking1.totalPrice = 120;
-    booking1.status = BookingStatus.Pending;
-    booking1.services = [new Service()];
-    booking1.services[0].serviceName = 'Haircut and Styling';
-    booking1.services[0].color = '#5d77a2';
-    booking1.customer.photo = '../assets/images/users/user3.png';
-    booking1.customer.firstName = 'Rick';
-    booking1.customer.lastName = 'Sanchez';
 
-    const booking2 = new Booking();
-    booking2.id = '2';
-    booking2.customerId = '2';
-    booking2.supplierId = 'supplier-1';
-    booking2.serviceId = 'service-1';
-    booking2.bookingReference = 'Keratin Treatment';
-    booking2.bookingDate.year = 2025;
-    booking2.bookingDate.month = 6;
-    booking2.bookingDate.day = 21;
-    booking2.startTime.hour = 8;
-    booking2.startTime.minute = 0;
-    booking2.endTime.hour = 10;
-    booking2.endTime.minute = 0;
-    booking2.durationMinutes = 60;
-    booking2.totalPrice = 260;
-    booking2.status = BookingStatus.Confirmed;
-    booking2.services = [new Service()];
-    booking2.services[0].serviceName = 'Keratin Treatment';
-    booking2.services[0].color = '#6bbe60';
-    booking2.customer.photo = '../assets/images/users/user5.png';
-    booking2.customer.firstName = 'Morty';
-    booking2.customer.lastName = 'Smith';
-
-    const booking3 = new Booking();
-    booking3.id = '3';
-    booking3.customerId = '3';
-    booking3.supplierId = 'supplier-1';
-    booking3.serviceId = 'service-1';
-    booking3.bookingReference = 'Bridal and Event Hair Styling';
-    booking3.bookingDate.year = 2025;
-    booking3.bookingDate.month = 6;
-    booking3.bookingDate.day = 20;
-    booking3.startTime.hour = 8;
-    booking3.startTime.minute = 0;
-    booking3.endTime.hour = 10;
-    booking3.endTime.minute = 0;
-    booking3.durationMinutes = 60;
-    booking3.totalPrice = 100;
-    booking3.status = BookingStatus.InProgress;
-    booking3.services = [new Service()];
-    booking3.services[0].serviceName = 'Bridal and Event Hair Styling';
-    booking3.services[0].color = '#c44f4f';
-    booking3.customer.photo = '../assets/images/users/user21.png';
-    booking3.customer.firstName = 'Summer';
-    booking3.customer.lastName = 'Smith';
-
-    this.bookings = [booking1, booking2, booking3];
   }
 
+  
   getBookingsForDateTime(date: Date, hour: number): Booking[] {
     return this.bookings.filter(booking => {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);

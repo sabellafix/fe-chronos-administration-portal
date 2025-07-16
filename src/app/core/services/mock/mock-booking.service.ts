@@ -3,6 +3,9 @@ import { Observable, of, delay } from 'rxjs';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { Pagination } from '@app/core/models/interfaces/pagination.interface';
 import { StorageService } from '../shared/storage.service';
+import { TimeUtils } from '@app/core/utils/time.utils';
+import { DateOnly } from '@app/core/models/bussiness/availability';
+import { BookingStatus } from '@app/core/models/bussiness/enums';
 
 @Injectable({
     providedIn: 'root'
@@ -31,17 +34,20 @@ export class MockBookingService {
                 booking.serviceId = `service-${((i % 15) + 1).toString().padStart(3, '0')}`;
                 
                 const bookingDate = new Date(Date.now() + (i - 10) * 24 * 60 * 60 * 1000);
-                booking.bookingDate = bookingDate.toISOString().split('T')[0];
+                booking.bookingDate = new DateOnly();
+                booking.bookingDate.year = bookingDate.getFullYear();
+                booking.bookingDate.month = bookingDate.getMonth() + 1;
+                booking.bookingDate.day = bookingDate.getDate();
                 
                 const startHour = 8 + (i % 10);
-                booking.startTime = `${startHour.toString().padStart(2, '0')}:00`;
+                booking.startTime = TimeUtils.stringToTimeOnly(`${startHour.toString().padStart(2, '0')}:00:00`);
                 const endHour = startHour + Math.ceil(Math.random() * 3);
-                booking.endTime = `${endHour.toString().padStart(2, '0')}:00`;
+                booking.endTime = TimeUtils.stringToTimeOnly(`${endHour.toString().padStart(2, '0')}:00:00`);
                 
                 booking.durationMinutes = (endHour - startHour) * 60;
                 booking.totalPrice = Math.round((100 + Math.random() * 400) * 100) / 100;
                 booking.currency = currencies[i % currencies.length];
-                booking.status = statuses[i % statuses.length];
+                booking.status = statuses[i % statuses.length] as unknown as BookingStatus;
                 booking.clientNotes = `Notas del cliente para la reserva ${i}`;
                 booking.providerNotes = i % 3 === 0 ? `Notas del proveedor para la reserva ${i}` : '';
                 booking.bookingReference = `REF-${Date.now()}-${i}`;
@@ -49,13 +55,13 @@ export class MockBookingService {
                 booking.createdAt = new Date(Date.now() - i * 96 * 60 * 60 * 1000).toISOString();
                 booking.updatedAt = new Date(Date.now() - i * 48 * 60 * 60 * 1000).toISOString();
                 
-                if (booking.status === 'Confirmed') {
+                if (booking.status === BookingStatus.Confirmed) {
                     booking.confirmedAt = new Date(Date.now() - i * 36 * 60 * 60 * 1000).toISOString();
                 }
-                if (booking.status === 'Completed') {
+                if (booking.status === BookingStatus.Completed) {
                     booking.completedAt = new Date(Date.now() - i * 12 * 60 * 60 * 1000).toISOString();
                 }
-                if (booking.status === 'Cancelled') {
+                if (booking.status === BookingStatus.Cancelled) {
                     booking.cancelledAt = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString();
                     booking.cancellationReason = `Razón de cancelación ${i}`;
                 }
@@ -79,11 +85,11 @@ export class MockBookingService {
                 if (key && value) {
                     if (key === 'fromDate') {
                         filteredBookings = filteredBookings.filter(booking => 
-                            booking.bookingDate >= value
+                            booking.bookingDate.year >= Number(value)
                         );
                     } else if (key === 'toDate') {
                         filteredBookings = filteredBookings.filter(booking => 
-                            booking.bookingDate <= value
+                            booking.bookingDate.year <= Number(value)
                         );
                     } else {
                         filteredBookings = filteredBookings.filter(booking => 
@@ -100,8 +106,8 @@ export class MockBookingService {
                 const aValue = a[field as keyof Booking];
                 const bValue = b[field as keyof Booking];
                 return direction === 'desc' 
-                    ? bValue > aValue ? 1 : -1 
-                    : aValue > bValue ? 1 : -1;
+                    ? (bValue ?? 0) > (aValue ?? 0) ? 1 : -1 
+                    : (aValue ?? 0) > (bValue ?? 0) ? 1 : -1;
             });
         }
 

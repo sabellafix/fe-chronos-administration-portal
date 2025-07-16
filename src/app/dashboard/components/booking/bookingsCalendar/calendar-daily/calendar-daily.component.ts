@@ -87,15 +87,16 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
     return hours;
   }
 
-  formatHour(hour: number): string {
-    if (hour === 0) {
+  formatHour(hour: string): string {
+    const hourNumber = parseInt(hour.split(":")[0]);
+    if (hourNumber === 0) {
       return '12 am';
-    } else if (hour < 12) {
-      return `${hour} am`;
-    } else if (hour === 12) {
+    } else if (hourNumber < 12) {
+      return `${hourNumber} am`;
+    } else if (hourNumber === 12) {
       return '12 pm';
     } else {
-      return `${hour} pm`;
+      return `${hourNumber} pm`;
     }
   }
 

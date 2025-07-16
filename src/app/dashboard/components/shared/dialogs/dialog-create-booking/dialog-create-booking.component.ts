@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { BookingStatus } from '@app/core/models/bussiness/enums';
 import { DateOnly, TimeOnly } from '@app/core/models/bussiness/availability';
+import { TimeUtils } from '@app/core/utils/time.utils';
 
 @Component({
   selector: 'app-dialog-create-booking',
@@ -209,19 +210,11 @@ export class DialogCreateBookingComponent implements OnInit {
       booking.bookingDate.month = bookingDate.getMonth() + 1;
       booking.bookingDate.day = bookingDate.getDate();
       
-      // Convertir hora de inicio - crear instancia y asignar propiedades
-      const [startHour, startMinute] = formValue.startTime.split(':').map(Number);
-      booking.startTime = new TimeOnly();
-      booking.startTime.hour = startHour;
-      booking.startTime.minute = startMinute;
+      // Convertir hora de inicio usando TimeUtils
+      booking.startTime = TimeUtils.htmlTimeInputToTimeOnly(formValue.startTime);
       
-      // Calcular hora de fin basada en la duración
-      const endMinutes = startMinute + formValue.durationMinutes;
-      const endHour = startHour + Math.floor(endMinutes / 60);
-      const finalMinutes = endMinutes % 60;
-      booking.endTime = new TimeOnly();
-      booking.endTime.hour = endHour;
-      booking.endTime.minute = finalMinutes;
+      // Calcular hora de fin basada en la duración usando TimeUtils
+      booking.endTime = TimeUtils.addMinutes(booking.startTime, formValue.durationMinutes);
       
       booking.durationMinutes = formValue.durationMinutes;
       booking.totalPrice = formValue.totalPrice;

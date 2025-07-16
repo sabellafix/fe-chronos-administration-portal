@@ -3,13 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { CreateBookingDto, BookingServiceRequest } from '@app/core/models/bussiness';
 import { BookingStatus } from '@app/core/models/bussiness/enums';
-import { DateOnly, TimeOnly } from '@app/core/models/bussiness/availability';
 import { Service } from '@app/core/models/bussiness/service';
 import { Customer } from '@app/core/models/bussiness/customer';
+import { Supplier } from '@app/core/models/bussiness/supplier';
 import { ServiceService } from '@app/core/services/http/platform-service.service';
 import { BookingService } from '@app/core/services/http/booking.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CustomerService } from '@app/core/services/http/customer.service';
+import { SupplierService } from '@app/core/services/http/supplier.service';
 import { User } from '@app/core/models/bussiness/user';
 import { UserService } from '@app/core/services/http/user.service';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
@@ -39,6 +40,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   selectedServices: Service[] = [];
   customers: Customer[] = [];
   customer: Customer | null = null;
+  suppliers: Supplier[] = [];
   users: User[] = []; 
   imageUser: string = "../assets/images/user-image.jpg";
   userImages: string[] = [
@@ -52,6 +54,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     private serviceService: ServiceService, 
     private bookingService: BookingService,
     private customerService: CustomerService,
+    private supplierService: SupplierService,
     private userService: UserService,
     private snackBar: MatSnackBar,
     private offcanvasBookingService: OffcanvasBookingService) {
@@ -61,6 +64,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
 
     this.bookingForm = this.formBuilder.group({
       customerId: [null, [Validators.required]],
+      supplierId: [null, [Validators.required]],
       bookingDate: [this.defaultDate, [Validators.required]],
       startTime: [this.getDefaultTime(), [Validators.required]],
       durationMinutes: [60, [Validators.required, Validators.min(15), Validators.max(480)]],
@@ -97,10 +101,10 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     this.serviceService.getServices().subscribe({
       next: (response: Service[]) => {
         this.services = response;
-        this.getCustomers();
+        this.getSuppliers();
       },error: (response) =>{
         this.snackBar.open('Error al obtener los servicios', 'Cerrar', {duration: 4000});
-        this.getCustomers();
+        this.getSuppliers();
       }
     });
   }
@@ -117,6 +121,19 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       }
     });
   } 
+
+  getSuppliers(): void {
+    this.loading = true;
+    this.supplierService.getSuppliers().subscribe({
+      next: (response: Supplier[]) => {
+        this.suppliers = response;
+        this.getCustomers();
+      },error: (response) =>{
+        this.snackBar.open('Error al obtener los proveedores', 'Cerrar', {duration: 4000});
+        this.getCustomers();
+      }
+    });
+  }
 
   getUsers(): void {
     this.userService.getUsers().subscribe({
@@ -188,6 +205,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       
       const createBookingDto: CreateBookingDto = new CreateBookingDto();
       createBookingDto.customerId = formValue.customerId;
+      createBookingDto.supplierId = formValue.supplierId;
       
       // Configurar serviceId con el primer servicio seleccionado
       createBookingDto.serviceId = this.selectedServices[0].id;
@@ -259,6 +277,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   private resetForm(): void {
     this.bookingForm.reset({
       customerId: null,
+      supplierId: null,
       bookingDate: this.defaultDate,
       startTime: this.getDefaultTime(),
       durationMinutes: 60,
@@ -323,6 +342,10 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
 
   getCustomerPhoto(customer: Customer): string {
     return (customer as any).photo || this.imageUser;
+  }
+
+  getSupplierName(supplier: Supplier): string {
+    return supplier.companyName || 'Proveedor sin nombre';
   }
 
   getUserForCustomer(customer: Customer): User | null {

@@ -31,7 +31,7 @@
                 <!-- Filas de horas -->
                 <tr class="time-row-daily" *ngFor="let hour of getHoursRange()">
                     <td width="15%" class="time-cell-daily">
-                        <span class="time-label-daily fw-semibold">{{formatHour(hour)}}</span>
+                        <span class="time-label-daily fw-semibold">{{formatHour(hour.toString())}}</span>
                     </td>
                     <td class="day-cell-daily" 
                         [attr.data-hour]="hour" 
@@ -40,8 +40,7 @@
                         <div class="cell-content-daily">
                             <div class="booking-item-daily" 
                                  *ngFor="let booking of getBookingsForDateTime(currentDate.date, hour)"
-                                 [style.background-color]="booking.services?.[0]?.color || '#23324d'"
-                                 [title]="'Cliente: ' + booking.customer.firstName + ' ' + booking.customer.lastName + ' | ' + formatHour(booking.startTime.hour) + ' - ' + formatHour(booking.endTime.hour)">
+                                 [style.background-color]="booking.services?.[0]?.color || '#23324d'">
                                 <div class="booking-info-daily">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <span class="text-white booking-service fw-bold">
@@ -54,7 +53,7 @@
                                     
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <span class="text-white booking-time-daily">
-                                            {{formatHour(booking.startTime.hour)}} - {{formatHour(booking.endTime.hour)}}
+                                            {{booking.startTime | timeOnly}} - {{booking.endTime | timeOnly}}
                                         </span>
                                         <span class="badge" 
                                               [style.background-color]="getBookingStatusColor(booking)"

@@ -19,7 +19,7 @@
                             
                             <!-- Contenido normal de las celdas -->
                             <ng-container *ngIf="!isCentralCell(space.id, hour)">
-                                <div class="booking-item" 
+                                <!-- <div class="booking-item" 
                                     *ngFor="let booking of getBookingsForDateTime(space.id, hour)"
                                      [style.background-color]="booking.services?.[0]?.color || '#23324d'"
                                      [title]="'Cliente: ' + booking.customerId + ' | ' + formatHour(booking.startTime.hour) + ' - ' + formatHour(booking.endTime.hour)">
@@ -32,7 +32,7 @@
                                             <p class="text-white ms-2 mt-2">{{booking.customer.firstName}} {{booking.customer.lastName}}</p>
                                         </span>
                                     </div>
-                                </div>
+                                </div> -->
                             </ng-container>
                         </div>
                     </td>

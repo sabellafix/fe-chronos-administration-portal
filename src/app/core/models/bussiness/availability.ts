@@ -53,15 +53,15 @@ export class DateOnly {
     month: number;
     day: number;
     dayOfWeek: DayOfWeek;
-    readonly dayOfYear: number;
-    readonly dayNumber: number;
+    // readonly dayOfYear: number;
+    // readonly dayNumber: number;
 
     constructor() {
         this.year = new Date().getFullYear();
         this.month = new Date().getMonth() + 1;
         this.day = new Date().getDate();
         this.dayOfWeek = new Date().getDay();
-        this.dayOfYear = 0;
-        this.dayNumber = 0;
+        // this.dayOfYear = 0;
+        // this.dayNumber = 0;
     }
 } 

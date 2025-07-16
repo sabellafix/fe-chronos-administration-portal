@@ -199,26 +199,28 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
     return this.getBookingsForDate(date).length > 0;
   }
 
-  formatHour(hour: number): string {
-    if (hour === 0) {
+  formatHour(hour: string): string {
+    const hourNumber = parseInt(hour.split(":")[0]);
+    if (hourNumber === 0) {
       return '12 am';
-    } else if (hour < 12) {
-      return `${hour} am`;
-    } else if (hour === 12) {
+    } else if (hourNumber < 12) {
+      return `${hourNumber} am`;
+    } else if (hourNumber === 12) {
       return '12 pm';
     } else {
-      return `${hour - 12} pm`;
+      return `${hourNumber - 12} pm`;
     }
   }
 
   getBookingTooltip(booking: Booking): string {
     const customerName = `${booking.customer.firstName} ${booking.customer.lastName}`;
-    const timeRange = `${this.formatHour(booking.startTime.hour)} - ${this.formatHour(booking.endTime.hour)}`;
+    // const timeRange = `${this.formatHour(booking.startTime)} - ${this.formatHour(booking.endTime)}`;
     const services = booking.services?.map(s => s.serviceName).join(', ') || 'Sin servicios';
     const duration = `${booking.durationMinutes} min`;
     const price = `$${booking.totalPrice}`;
     
-    return `Cliente: ${customerName} | ${timeRange} | Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
+    // return `Cliente: ${customerName} | ${timeRange} | Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
+    return ` Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
   }
 
   // Métodos trackBy para optimizar el rendimiento de Angular
