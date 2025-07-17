@@ -10,6 +10,7 @@ import { Option } from '@app/core/models/interfaces/option.interface';
 import { ParametricService } from '@app/core/services/shared/parametric.service';
 import { Validation } from '@app/core/models/dtos/validation';
 import { UserService } from '@app/core/services/http/user.service';
+import { RolesConst } from '@app/core/models/constants/roles.const';
 
 @Component({
   selector: 'app-users-create',
@@ -17,7 +18,7 @@ import { UserService } from '@app/core/services/http/user.service';
   styleUrl: './users-create.component.scss'
 })
 export class UsersCreateComponent {
-  titleComponent: string = "Crear usuario";
+  titleComponent: string = "Create stylist";
   loading: boolean = true;
   charge: boolean = false;
   pagination: Pagination = { offset: 0, limit: 100, items: 0, filters: ``, sort: 'id,desc' };
@@ -29,8 +30,6 @@ export class UsersCreateComponent {
   srcImage :  string | ArrayBuffer | null = "assets/images/user-image.jpg";
   now : Date = new Date();
   codephones : Option[] = [];
-  country? : Option;
-  roles: any[] = [];
 
   constructor(private userService: UserService,
               private parametricService: ParametricService,
@@ -43,22 +42,13 @@ export class UsersCreateComponent {
       email : new FormControl("", [Validators.required, Validators.email]),
       phone : new FormControl("", [Validators.required, Validators.pattern(/^\d{9}$/)]),
       password : new FormControl("", [Validators.required, Validators.minLength(8)]),
-      roleId : new FormControl("", Validators.required),
     });
 
   }
 
   ngOnInit(): void {
     this.loading = true;
-    this.country = { id : 52, name : "Colombia", code: "+57"}
     this.loadValues();
-    
-    // Inicializar roles
-    this.roles = [
-      { id: 1, name: 'Comprador', code: 'Buyer' },
-      { id: 2, name: 'Proveedor', code: 'Supplier' },
-      { id: 3, name: 'Administrador', code: 'Admin' }
-    ];
     
     
   }
@@ -71,8 +61,8 @@ export class UsersCreateComponent {
         lastName : this.form.get('lastName')?.value,  
         email : this.form.get('email')?.value,
         phone : this.form.get('phone')?.value,
-        roleId : this.form.get('roleId')?.value,
         password : this.form.get('password')?.value,
+        userRole : RolesConst._STYLIST,
       }
       this.charge = true;
       this.send = false;
@@ -81,7 +71,7 @@ export class UsersCreateComponent {
         next: (data: any) => {
           let user = <User>data;          
           this.charge = false;
-          this.snackBar.open('Usuario creado correctamente.', 'Cerrar', {duration: 4000});
+          this.snackBar.open('Stylist created successfully.', 'Close', {duration: 4000});
           this.return();
         },
         error: (error: any) =>{
@@ -94,7 +84,7 @@ export class UsersCreateComponent {
             message = error.error.message;
           }
           this.charge = false;
-          this.snackBar.open('Error ejecutando la creación ' + message, 'Cerrar', {duration: 4000});
+          this.snackBar.open('Error executing the creation ' + message, 'Close', {duration: 4000});
         }
       });
     }
@@ -125,7 +115,7 @@ export class UsersCreateComponent {
       },
       error: (error) => {
         this.loading = false;
-        this.snackBar.open('Error al cargar los datos', 'Cerrar', {duration: 4000});
+        this.snackBar.open('Error loading data', 'Close', {duration: 4000});
       }
     });
   }
@@ -135,7 +125,7 @@ export class UsersCreateComponent {
     if (input.files && input.files[0]) {
       const file = input.files[0];
       if (!file.type.startsWith('image/')) {
-        this.snackBar.open('Por favor selecciona un archivo de imagen.', 'Cerrar', {duration: 4000});
+        this.snackBar.open('Please select an image file.', 'Close', {duration: 4000});
         return;
       }
       const reader = new FileReader();
@@ -143,7 +133,6 @@ export class UsersCreateComponent {
         this.srcImage = e.target?.result!;
       };
       reader.readAsDataURL(file);
-      // Note: photo field is not part of User entity, this is just for UI preview
     }
   }
 

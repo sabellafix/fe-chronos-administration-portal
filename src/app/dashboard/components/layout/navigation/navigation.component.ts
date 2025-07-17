@@ -53,20 +53,19 @@ export class NavigationComponent implements OnInit{
         }
       ]
     },
-    
     {
-      title: 'Suppliers',
+      title: 'Stylists',
       icon: 'bx bx-face',
       children: [
         {
           title: 'List',
           icon: 'bx bx-face',
-          route: 'suppliers'
+          route: 'users'
         },
         {
           title: 'Create',
           icon: 'bx bx-face',
-          route: 'suppliers/create'
+          route: 'users/create'
         }
       ]
     },
@@ -117,24 +116,7 @@ export class NavigationComponent implements OnInit{
           route: 'customers/create'
         }
       ]
-    },
-    {
-      title: 'Users',
-      icon: 'bx bx-group',
-      children: [
-        {
-          title: 'List',
-          icon: 'bx bx-group',
-          route: 'users'
-        },
-        {
-          title: 'Create',
-          icon: 'bx bx-group',
-          route: 'users/create'
-        }
-      ]
-    },
-   
+    }
   ];
 
   constructor(

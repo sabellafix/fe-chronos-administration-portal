@@ -10,11 +10,11 @@ import { ServiceService } from '@app/core/services/http/platform-service.service
 import { BookingService } from '@app/core/services/http/booking.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CustomerService } from '@app/core/services/http/customer.service';
-import { SupplierService } from '@app/core/services/http/supplier.service';
 import { User } from '@app/core/models/bussiness/user';
 import { UserService } from '@app/core/services/http/user.service';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
 import { Subscription } from 'rxjs';
+import { RolesConst } from '@app/core/models/constants/roles.const';
 
 declare var bootstrap: any;
 
@@ -40,7 +40,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   selectedServices: Service[] = [];
   customers: Customer[] = [];
   customer: Customer | null = null;
-  suppliers: Supplier[] = [];
   users: User[] = []; 
   imageUser: string = "../assets/images/user-image.jpg";
   userImages: string[] = [
@@ -54,7 +53,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     private serviceService: ServiceService, 
     private bookingService: BookingService,
     private customerService: CustomerService,
-    private supplierService: SupplierService,
     private userService: UserService,
     private snackBar: MatSnackBar,
     private offcanvasBookingService: OffcanvasBookingService) {
@@ -74,6 +72,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
     this.getServices();
     const offcanvasElement = document.getElementById('offcanvasCreateBooking');
     if (offcanvasElement) {
@@ -92,6 +91,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       this.selectedHour = this.offcanvasBookingService.selectedHour || undefined;
       this.show();
     });
+    
 
     this.subscriptions.push(showSubscription);
   }
@@ -101,10 +101,10 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     this.serviceService.getServices().subscribe({
       next: (response: Service[]) => {
         this.services = response;
-        this.getSuppliers();
+        this.getCustomers();
       },error: (response) =>{
-        this.snackBar.open('Error al obtener los servicios', 'Cerrar', {duration: 4000});
-        this.getSuppliers();
+        this.snackBar.open('Error loading services', 'Close', {duration: 4000});
+        this.getCustomers();
       }
     });
   }
@@ -116,42 +116,24 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
         this.customers = response;
         this.getUsers();
       },error: (response) =>{
-        this.snackBar.open('Error al obtener los clientes', 'Cerrar', {duration: 4000});
+        this.snackBar.open('Error loading customers', 'Close', {duration: 4000});
         this.getUsers();
       }
     });
   } 
 
-  getSuppliers(): void {
+  getUsers(): void {
     this.loading = true;
-    this.supplierService.getSuppliers().subscribe({
-      next: (response: Supplier[]) => {
-        this.suppliers = response;
-        this.getCustomers();
+    this.userService.getUsersByRole(RolesConst._STYLIST).subscribe({
+      next: (response: User[]) => {
+        this.users = response;
+        this.loading = false;
       },error: (response) =>{
-        this.snackBar.open('Error al obtener los proveedores', 'Cerrar', {duration: 4000});
-        this.getCustomers();
+        this.snackBar.open('Error loading users', 'Close', {duration: 4000});
       }
     });
   }
 
-  getUsers(): void {
-    this.userService.getUsers().subscribe({
-      next: (response: User[]) => {
-        this.users = response;
-        this.users = this.users.filter(user => user.userRole === 'client');
-        this.customers.forEach((customer, index) => {
-          if (index < this.userImages.length) {
-            (customer as any).photo = this.userImages[index];
-          }
-        });
-        this.loading = false;
-      },error: (response) =>{
-        this.snackBar.open('Error al obtener los usuarios', 'Cerrar', {duration: 4000});
-        this.loading = false;
-      }
-    });
-  }
 
   private getDefaultTime(): string {
     if (this.selectedHour) {
@@ -183,9 +165,9 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   private updateDateAndTime(): void {
-    const newDate = this.selectedDate ? 
-      this.selectedDate.toISOString().split('T')[0] : 
-      new Date().toISOString().split('T')[0];
+    let dateToUse = this.selectedDate ? new Date(this.selectedDate) : new Date();
+    dateToUse.setDate(dateToUse.getDate() - 1);
+    const newDate = dateToUse.toISOString().split('T')[0];
     
     this.bookingForm.patchValue({
       bookingDate: newDate,
@@ -244,7 +226,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
         durationInMinutes: service.durationMinutes
       }));
         
-      this.bookingService.createBooking(createBookingDto).subscribe({
+      this.bookingService.create(createBookingDto).subscribe({
         next: (response: Booking) => {
           const booking = response;
           console.log("booking", booking);
@@ -252,13 +234,13 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
           this.bookingCreated.emit(booking);
           this.offcanvasBookingService.onBookingCreated(booking);
           this.resetForm();
-          this.snackBar.open('Cita creada exitosamente', 'Cerrar', {duration: 4000, panelClass: 'snackbar-success'});
+          this.snackBar.open('Booking created successfully', 'Close', {duration: 4000, panelClass: 'snackbar-success'});
         },
         error: (error) => {
           if(error.status === 400){
-            this.snackBar.open(error.error, 'Cerrar', {duration: 4000});
+            this.snackBar.open(error.error, 'Close', {duration: 4000});
           }else{
-            this.snackBar.open('Error al crear la cita', 'Cerrar', {duration: 4000});
+            this.snackBar.open('Error creating booking', 'Close', {duration: 4000});
           }
           this.hide();
           this.bookingCreated.emit(null as any);
@@ -268,7 +250,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       });
     } else {
       if (this.selectedServices.length === 0) {
-        this.snackBar.open('Debe seleccionar al menos un servicio', 'Cerrar', {duration: 4000});
+          this.snackBar.open('You must select at least one service', 'Close', {duration: 4000});
       }
       this.markFormGroupTouched();
     }
@@ -308,8 +290,11 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   onCustomerChange(event: any): void {
+    console.log("event", event);
     const customerId = event.target.value;
     this.customer = this.customers.find(c => c.id === customerId) || null;
+    console.log("this.customers", this.customers);
+    console.log("customerId", this.bookingForm.get('customerId')?.value);
   }
 
   private updateTotalDuration(): void {
@@ -338,6 +323,10 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
 
   getCustomerFullName(customer: Customer): string {
     return `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || 'Cliente sin nombre';
+  }
+
+  getUserFullName(user: User): string {
+    return `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Stylist sin nombre';
   }
 
   getCustomerPhoto(customer: Customer): string {

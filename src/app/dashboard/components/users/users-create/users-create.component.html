@@ -84,21 +84,7 @@
                                                 <strong>*</strong> {{getValidation('password')?.message}}
                                             </div>
                                         </div>
-
-
-                                        <div class="col-md-6 mb-3">
-                                                <label class="form-label">Role *</label>
-                                                <select class="form-select" formControlName="roleId">
-                                                    <option value="">Select a role</option>
-                                                <option *ngFor="let rol of roles" [value]="rol.id">{{rol.name}}</option>
-                                            </select>
-                                            <div class="invalid-feedback" *ngIf="form.controls['roleId'].hasError('required') && form.controls['roleId'].touched">
-                                                <strong>*</strong> El perfil es requerido
-                                            </div>
-                                            <div class="invalid-feedback" *ngIf="getValidation('roleId') != undefined && send">
-                                                <strong>*</strong> {{getValidation('roleId')?.message}}
-                                            </div>                                            
-                                        </div>
+                                      
                                     </div>
                                 </div>
                             </div>

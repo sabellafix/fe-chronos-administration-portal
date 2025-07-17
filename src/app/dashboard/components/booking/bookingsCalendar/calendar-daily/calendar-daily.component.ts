@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
-import { Booking } from '@app/core/models/bussiness/booking';
-import { BookingStatus } from '@app/core/models/bussiness/enums';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Service } from '@app/core/models/bussiness/service';
+import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
+import { Booking, BookingStatus } from '@app/core/models/bussiness';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
+import { BookingService } from '@app/core/services/http/booking.service';
+import { DateUtils } from '@app/core/utils/date.utils';
+import { TimeUtils } from '@app/core/utils/time.utils';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -17,17 +18,22 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
   dateNow: Date = new Date();
   currentDate: DateItem = new DateItem();
   bookings: Booking[] = [];
+  isLoadingBookings: boolean = false;
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
 
-  constructor(private snackBar: MatSnackBar, private offcanvasBookingService: OffcanvasBookingService){
+  constructor(
+    private snackBar: MatSnackBar, 
+    private offcanvasBookingService: OffcanvasBookingService,
+    private bookingService: BookingService
+  ){
     this.initCurrentDate();
-    this.getStaticBookings();
   }
 
   ngOnInit(): void {
     this.initStickyHeader();
     this.subscribeToBookingService();
+    this.loadBookingsForCurrentDay();
   }
 
   ngOnDestroy(): void {
@@ -77,6 +83,9 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
     
     this.currentDate.date = newDate;
     this.currentDate.isToday = newDate.toDateString() === this.dateNow.toDateString();
+    
+    // Cargar bookings para el nuevo día
+    this.loadBookingsForCurrentDay();
   }
 
   getHoursRange(): number[] {
@@ -104,19 +113,53 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
     this.offcanvasBookingService.openBookingModal(date, hour);
   }
 
-  onBookingCreated(booking: Booking): void {
-    this.bookings.push(booking);
-    this.snackBar.open('Reserva creada exitosamente', 'Cerrar', {
-      duration: 3000,
-      panelClass: 'snackbar-success'
-    });
+  onBookingCreated(booking: Booking | null): void {
+    if(booking !== null){
+      this.bookings.push(booking);
+      this.loadBookingsForCurrentDay();
+      
+      this.snackBar.open('Cita creada exitosamente', 'Cerrar', {
+        duration: 3000,
+        panelClass: 'snackbar-success'
+      });
+    }
   }
 
   onBookingCancelled(): void {
     console.log('Creación de cita cancelada');
   }
 
-  getStaticBookings(){
+  private loadBookingsForCurrentDay(): void {
+    this.isLoadingBookings = true;
+
+    const bookingsSubscription = this.bookingService.getByDay(this.currentDate.date).subscribe({
+      next: (allBookings: Booking[]) => {
+        this.bookings = allBookings;
+        this.bookings.map(booking => {
+          booking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
+          booking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
+          booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+        });
+        this.isLoadingBookings = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar bookings del día:', error);
+        this.isLoadingBookings = false;
+        this.snackBar.open('Error al cargar las citas del día', 'Cerrar', {
+          duration: 5000,
+          panelClass: 'snackbar-error'
+        });
+      }
+    });
+    this.subscriptions.push(bookingsSubscription);
+  }
+
+  refreshCalendar(): void {
+    this.loadBookingsForCurrentDay();
+  }
+
+  reloadBookings(): void {
+    this.loadBookingsForCurrentDay();
   }
 
   getBookingsForDateTime(date: Date, hour: number): Booking[] {
@@ -148,6 +191,14 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
       case BookingStatus.Cancelled: return '#dc3545'; // Rojo
       default: return '#6c757d';
     }
+  }
+
+  getBookingTooltip(booking: Booking): string {
+    const services = booking.services?.map(s => s.serviceName).join(', ') || 'Sin servicios';
+    const duration = `${booking.durationMinutes} min`;
+    const price = `$${booking.totalPrice}`;
+    
+    return ` Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
   }
 
   getCurrentDayName(): string {

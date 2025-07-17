@@ -13,7 +13,7 @@ import { DialogConfirmComponent } from '@app/dashboard/components/shared/dialogs
   styleUrl: './suppliers-list.component.scss'
 })
 export class SuppliersListComponent {
-  titleComponent : string = "Listado de proveedores";
+  titleComponent : string = "List of stylists";
   loading: boolean = false;
   supplier: Supplier = new Supplier();
   suppliers: Supplier[] = [];

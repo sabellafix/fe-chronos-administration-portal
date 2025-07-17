@@ -6,23 +6,19 @@
             <thead>
                 <tr>
                     <th class="time-header"><p class="font-size-24 mt-3 fw-lighter"><i class="bx bx-time"></i></p></th>
-                    <th class="day-header pe-1 ps-1 pb-2" *ngFor="let supplier of suppliers">
+                    <th class="day-header pe-1 ps-1 pb-2" *ngFor="let stylist of getStylistExistInBookings(stylists)">
                         <div class="day-header-content">
                             <div class="card w-100 bg-dark p-2 pt-3 card-supplier text-center">
                                 <div class="supplier-info">
                                     <div class="supplier-name mb-1">
-                                        <p class="font-size-14 fw-semibold text-white mb-0">{{ supplier.companyName }}</p>
+                                        <p class="font-size-14 fw-semibold text-white mb-0">{{ stylist.firstName }} {{ stylist.lastName }}</p>
                                     </div>
-                                    <div class="supplier-rating" *ngIf="supplier.rating">
+                                    <!-- <div class="supplier-rating" *ngIf="supplier.rating">
                                         <div class="d-flex align-items-center justify-content-center">
                                             <i class="bx bxs-star text-warning me-1" style="font-size: 12px;"></i>
                                             <span class="font-size-12 text-muted">{{ supplier.rating }}</span>
-                                            <i class="bx bx-check-circle text-success ms-1" 
-                                               *ngIf="supplier.isVerified" 
-                                               style="font-size: 12px;" 
-                                               title="Verificado"></i>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -35,15 +31,22 @@
 
 <div class="calendar-canvas calendar-body mt-0 no-border no-box-shadow animated fadeIn fast">
     <div class="calendar-container">
-        <table class="calendar-table mt-1">
+        <!-- Indicador de carga -->
+        <!-- <div *ngIf="isLoadingBookings" class="d-flex justify-content-center align-items-center p-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando citas...</span>
+            </div>
+            <span class="ms-2 text-muted">Cargando citas...</span>
+        </div> -->
+        <table class="calendar-table mt-1 animated fadeIn fast" *ngIf="!loading">
             <thead>
                 <tr style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
                     <th class="time-header" style="height: 0px !important; padding: 0px !important; margin: 0px !important;"></th>
-                    <th class="day-header" *ngFor="let supplier of suppliers" style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
+                    <th class="day-header" *ngFor="let stylist of getStylistExistInBookings(stylists)" style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
                         <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="day-header-content">
                             <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card w-100 bg-light p-1 pt-2 card-supplier text-center">
                                 <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="supplier-info">
-                                    <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="font-size-16 text-light fw-normal mb-1">{{ supplier.companyName }}</p>
+                                    <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="font-size-16 text-light fw-normal mb-1">{{ stylist.firstName }} {{ stylist.lastName }}</p>
                                 </div>
                             </div>
                         </div>
@@ -56,30 +59,27 @@
                         <span class="time-label fw-semibold">{{ formatHour(hour.toString()) }}</span>
                     </td>
                     <td class="day-cell" 
-                        *ngFor="let supplier of suppliers" 
+                        *ngFor="let stylist of getStylistExistInBookings(stylists)" 
                         [attr.data-hour]="hour" 
-                        [attr.data-supplier]="supplier.id"
-                        (click)="openBookingModal(supplier.id, hour)">
+                        [attr.data-supplier]="stylist.id"
+                        (click)="openBookingModal(stylist.id, hour)">
                         <div class="cell-content">
                             <div class="booking-item" 
-                                 *ngFor="let booking of getBookingsForSupplierAndHour(supplier.id, hour)"
+                                 *ngFor="let booking of getBookingsForStylistAndHour(stylist.id, hour)"
                                  [class.multiple-services]="booking.services && booking.services.length > 1"
                                  [style.background-color]="booking.services?.[0]?.color || '#23324d'"
                                  [title]="getBookingTooltip(booking)">
                                 <div class="booking-info">
-                                    <!-- Horario y precio -->
                                     <div class="booking-time-price d-flex justify-content-between align-items-center mb-2">
                                         <span class="text-white booking-time">{{ booking.startTime | timeOnly }} - {{ booking.endTime | timeOnly }}</span>
                                         <span class="text-white booking-price fw-bold">${{ booking.totalPrice }}</span>
                                     </div>
                                     
-                                    <!-- Cliente -->
                                     <div class="booking-customer-info d-flex align-items-center mb-2">
                                         <img class="rounded-circle header-profile-user me-2" width="20" height="20" [src]="booking.customer.photo" alt="Header Avatar">
                                         <span class="text-white customer-name">{{ booking.customer.firstName }} {{ booking.customer.lastName }}</span>
                                     </div>
 
-                                    <!-- Servicios como badges -->
                                     <div class="services-badges">
                                         <span class="badge badge-service me-1 mb-1" 
                                               *ngFor="let service of booking.services; let i = index"

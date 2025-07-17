@@ -27,9 +27,8 @@ export class TopbarComponent {
   breadcrumbs: string = '';
   routes: Navigation[] = [
     { name: 'dashboard',            icon: 'panel',    route: '/dashboard',            module: "dashboard",            active: false },
-    { name: 'users',                icon: 'panel',    route: '/users',                module: "users",                active: false },
+    { name: 'styilist',             icon: 'panel',    route: '/users',                module: "users",                active: false },
     { name: 'services',             icon: 'panel',    route: '/services',             module: "services",             active: false },
-    { name: 'estilistas',           icon: 'panel',    route: '/suppliers',            module: "suppliers",            active: false },
     { name: 'categories',           icon: 'panel',    route: '/categories',           module: "categories",           active: false },
     { name: 'companies',            icon: 'panel',    route: '/companies',            module: "companies",            active: false },
     { name: 'bookings',             icon: 'panel',    route: '/bookings',             module: "bookings",             active: false },

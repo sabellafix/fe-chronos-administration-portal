@@ -9,6 +9,7 @@ import { Option } from '@app/core/models/interfaces/option.interface';
 import { EntiesConst } from '@app/core/models/constants/entity.const';
 import { Rol } from '@app/core/models/bussiness/rol';
 import { UserRole } from '@app/core/models/bussiness/enums';
+import { RolesConst } from '@app/core/models/constants/roles.const';
 
 @Component({
   selector: 'app-users-list',
@@ -16,12 +17,13 @@ import { UserRole } from '@app/core/models/bussiness/enums';
   styleUrl: './users-list.component.scss'
 })
 export class UsersListComponent {
-  titleComponent : string = "Users list";
+  titleComponent : string = "Stylist list";
   entity : string = EntiesConst._USER;
   loading: boolean = false;
   user: User = new User();
   users: User[] = [];
   roles: Rol[] = [];
+  rol : string = RolesConst._STYLIST;
    
   attributes : Option[] = [ 
     {name: "Name", code : "firstName"}, 
@@ -61,9 +63,9 @@ export class UsersListComponent {
 
   load(): void {
     this.loading = true;
-    this.userService.getUsers().subscribe({
+    this.userService.getUsersByRole(this.rol).subscribe({
       next: (response: User[]) => {
-        this.users = response;
+        this.users = response;  
         this.totalItems = response.length;
         this.loading = false;
       },error: (response) =>{
