@@ -1,6 +1,4 @@
-
-
-<div class="calendar-canvas calendar-weekly mt-0 no-border no-box-shadow animated fadeIn fast" id="calendar-weekly-header">
+<div *ngIf="!loading" class="calendar-canvas calendar-weekly mt-0 no-border no-box-shadow animated fadeIn fast" id="calendar-weekly-header">
     <div class="calendar-container">
         <table class="calendar-table">
             <thead>
@@ -76,7 +74,7 @@
                                     </div>
                                     
                                     <div class="booking-customer-info d-flex align-items-center mb-2">
-                                        <img class="rounded-circle header-profile-user me-2" width="20" height="20" [src]="booking.customer.photo" alt="Header Avatar">
+                                        <img class="rounded-circle header-profile-user me-2" width="20" height="20" [src]="imageUser" alt="Header Avatar">
                                         <span class="text-white customer-name">{{ booking.customer.firstName }} {{ booking.customer.lastName }}</span>
                                     </div>
 

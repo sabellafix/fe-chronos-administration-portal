@@ -62,9 +62,9 @@ export class UsersUpdateComponent {
 
   ngOnInit(): void {
     this.loading = true;
-    this.country = { id : 52, name : "Colombia", code: "+57"}
+    this.country = { id : "52", name : "Colombia", code: "+57"}
     this.load();
-    this.loadValues();
+    this.loadValues();  
     
     // Inicializar roles
     this.roles = [

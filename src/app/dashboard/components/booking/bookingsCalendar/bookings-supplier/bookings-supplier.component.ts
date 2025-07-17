@@ -25,6 +25,7 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy {
   loading: boolean = false;
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
+  imageUser: string = "../assets/images/user-image.jpg";
 
   constructor(
     private snackBar: MatSnackBar, 

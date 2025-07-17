@@ -15,6 +15,7 @@ import { UserService } from '@app/core/services/http/user.service';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
 import { Subscription } from 'rxjs';
 import { RolesConst } from '@app/core/models/constants/roles.const';
+import { Option } from '@app/core/models/interfaces/option.interface';
 
 declare var bootstrap: any;
 
@@ -40,7 +41,9 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   selectedServices: Service[] = [];
   customers: Customer[] = [];
   customer: Customer | null = null;
+  customerOptions: Option[] = [];
   users: User[] = []; 
+  usersOptions: Option[] = [];
   imageUser: string = "../assets/images/user-image.jpg";
   userImages: string[] = [
     "../assets/images/users/user1.jpg",
@@ -114,6 +117,11 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     this.customerService.getCustomers().subscribe({
       next: (response: Customer[]) => {
         this.customers = response;
+        this.customerOptions = this.customers.map(customer => ({
+          id: customer.id,
+          name: customer.firstName + ' ' + customer.lastName,
+          code: customer.id.toString()
+        }));
         this.getUsers();
       },error: (response) =>{
         this.snackBar.open('Error loading customers', 'Close', {duration: 4000});
@@ -127,6 +135,11 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     this.userService.getUsersByRole(RolesConst._STYLIST).subscribe({
       next: (response: User[]) => {
         this.users = response;
+        this.usersOptions = this.users.map(user => ({
+          id: user.id,
+          name: user.firstName + ' ' + user.lastName,
+          code: user.id.toString()
+        }));
         this.loading = false;
       },error: (response) =>{
         this.snackBar.open('Error loading users', 'Close', {duration: 4000});
@@ -287,6 +300,10 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   removeService(serviceId: string): void {
     this.selectedServices = this.selectedServices.filter(s => s.id !== serviceId);
     this.updateTotalDuration();
+  }
+
+  asignAutoComplete(option: Option, controlName: string){
+    this.bookingForm.get(controlName)?.setValue(option.code!);
   }
 
   onCustomerChange(event: any): void {

@@ -21,7 +21,8 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
   isLoadingBookings: boolean = false;
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
-
+  imageUser: string = "../assets/images/user-image.jpg";
+  
   constructor(
     private snackBar: MatSnackBar, 
     private offcanvasBookingService: OffcanvasBookingService,

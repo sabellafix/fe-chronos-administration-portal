@@ -80,10 +80,14 @@
         <label class="form-label">Client *</label>
         <div class="row">
           <div class="col-md-10">
-            <select class="form-select" (change)="onCustomerChange($event)" formControlName="customerId">
+            <!-- <select class="form-select" (change)="onCustomerChange($event)" formControlName="customerId">
               <option [value]="null">Select client</option>
               <option [value]="customer.id" *ngFor="let customer of customers">{{getCustomerFullName(customer)}}</option>
-            </select>
+            </select> -->
+
+            <app-autocomplete [options]="customerOptions" [placeholder]="'Select client'" [mode]="true" [disabled]="customers.length == 0" (result)="asignAutoComplete($event, 'customerId')"></app-autocomplete>
+
+
             <div *ngIf="bookingForm.get('customerId')?.invalid && bookingForm.get('customerId')?.touched" class="text-danger small mt-1">
               Client required
             </div>
@@ -115,10 +119,12 @@
         <label class="form-label">Stylist *</label>
         <div class="row">
           <div class="col-md-12">
-            <select class="form-select" formControlName="supplierId">
+            <!-- <select class="form-select" formControlName="supplierId">
               <option [value]="null">Select stylist</option>
               <option [value]="user.id" *ngFor="let user of users">{{getUserFullName(user)}}</option>
-            </select>
+            </select> -->
+
+            <app-autocomplete [options]="usersOptions" [placeholder]="'Select stylist'" [mode]="true" [disabled]="users.length == 0" (result)="asignAutoComplete($event, 'supplierId')"></app-autocomplete>
             <div *ngIf="bookingForm.get('supplierId')?.invalid && bookingForm.get('supplierId')?.touched" class="text-danger small mt-1">
               Stylist required
             </div>

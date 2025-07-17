@@ -1,6 +1,6 @@
 export interface Option {
   companyId?: string;
-  id?: number;
+  id?: string;
   name?: string;
   code?: string;
   active?: boolean;

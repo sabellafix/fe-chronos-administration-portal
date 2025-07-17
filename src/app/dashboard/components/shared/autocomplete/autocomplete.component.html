@@ -1,0 +1,9 @@
+<div class="autocomplete-container">
+    <input type="text" class="form-control mb-0" [placeholder]="placeholder" [(ngModel)]="searchTerm"
+      (input)="filterOptions()" (focus)="showOptions = true" (blur)="onBlur()" [disabled]="disabled" />
+    <ul *ngIf="showOptions" class="options-list">
+      <li *ngFor="let option of filteredOptions" (click)="selectOption(option)">
+      {{ option.name! }}
+    </li>
+  </ul>
+</div>

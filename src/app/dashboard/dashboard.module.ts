@@ -62,6 +62,7 @@ import { CustomersCreateComponent } from './components/customers/customers-creat
 import { BookingsFloorComponent } from './components/booking/bookingsCalendar/bookings-floor/bookings-floor.component';
 import { BookingsSupplierComponent } from './components/booking/bookingsCalendar/bookings-supplier/bookings-supplier.component';
 import { TimeOnlyPipe } from '../core/pipes/time-only.pipe';
+import { AutocompleteComponent } from './components/shared/autocomplete/autocomplete.component';
 
 
 const routes: Routes = [
@@ -192,7 +193,8 @@ const routes: Routes = [
     CustomersCreateComponent,
     BookingsFloorComponent,
     BookingsSupplierComponent,
-    TimeOnlyPipe
+    TimeOnlyPipe,
+    AutocompleteComponent
   ],
   imports: [
     CommonModule,
