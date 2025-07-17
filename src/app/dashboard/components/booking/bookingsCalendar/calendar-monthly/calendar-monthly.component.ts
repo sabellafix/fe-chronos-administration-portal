@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
 import { Booking } from '@app/core/models/bussiness/booking';
-import { OffcanvasCreateBookingComponent } from '../../../shared/offcanvas/offcanvas-create-booking/offcanvas-create-booking.component';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
 import { Subscription } from 'rxjs';
 import { BookingService } from '@app/core/services/http/booking.service';
@@ -14,11 +13,10 @@ import { DateUtils } from '@app/core/utils/date.utils';
   templateUrl: './calendar-monthly.component.html',
   styleUrl: './calendar-monthly.component.scss'
 })
-export class CalendarMonthlyComponent implements OnInit, OnDestroy {
+export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
 
-  @ViewChild(OffcanvasCreateBookingComponent) offcanvasCreateBooking!: OffcanvasCreateBookingComponent;
-
-  dateNow: Date = new Date();
+  @Input('date') date: Date = new Date();
+  dateNow: Date = new Date(); 
   currentMonth: Date = new Date();
   monthDays: DateItem[][] = [];
   daysOfWeek: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -30,12 +28,21 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
   constructor(private snackBar: MatSnackBar, 
               private offcanvasBookingService: OffcanvasBookingService, 
               private bookingService: BookingService) {
-    this.currentMonth = new Date(this.dateNow.getFullYear(), this.dateNow.getMonth(), 1);
-    this.generateMonthDays();
-    this.loadBookingsForCurrentMoenth();
+    
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['date'] && !changes['date'].firstChange) {
+      this.updateCurrentMonth();
+      this.generateMonthDays();
+      this.loadBookingsForCurrentMoenth();
+    }
   }
 
   ngOnInit(): void {
+    this.updateCurrentMonth();
+    this.generateMonthDays();
+    this.loadBookingsForCurrentMoenth();
     this.initStickyHeader();
     this.subscribeToBookingService();
   }
@@ -69,6 +76,10 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
       
       window.addEventListener("scroll", this.scrollListener);
     }
+  }
+
+  private updateCurrentMonth(): void {
+    this.currentMonth = new Date(this.date.getFullYear(), this.date.getMonth(), 1);
   }
   
   generateMonthDays(): void {
@@ -167,14 +178,7 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy {
   }
 
   openBookingModal(date: Date): void {
-    const dateMonth = date.getMonth();
-    const dateYear = date.getFullYear();
-    const currentMonth = this.currentMonth.getMonth();
-    const currentYear = this.currentMonth.getFullYear();
-    
-    if (dateMonth === currentMonth && dateYear === currentYear) {
-      this.offcanvasBookingService.openBookingModal(date);
-    }
+    this.offcanvasBookingService.openBookingModal(date);
   }
 
   onBookingCreated(booking: Booking): void {

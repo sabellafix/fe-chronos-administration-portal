@@ -13,6 +13,8 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   dateNow: Date = new Date();
 
   dateCalendarDaily: Date = new Date();
+  dateCalendarWeekly: Date = new Date();
+  dateCalendarMonthly: Date = new Date();
   dateBookingsSupplier: Date = new Date();
 
   
@@ -50,6 +52,31 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   } 
 
 
+  changeDateCalendarMonthly(isLeft: boolean): void {
+    if(isLeft){
+      this.dateCalendarMonthly = new Date(this.dateCalendarMonthly.setMonth(this.dateCalendarMonthly.getMonth() - 1));
+    }else{
+      this.dateCalendarMonthly = new Date(this.dateCalendarMonthly.setMonth(this.dateCalendarMonthly.getMonth() + 1));
+    }
+   }
+
+   setTodayDateCalendarMonthly(): void {
+    this.dateCalendarMonthly = new Date();
+   }
+
+  changeDateCalendarWeekly(isLeft: boolean): void {
+    if(isLeft){
+      this.dateCalendarWeekly = new Date(this.dateCalendarWeekly.setDate(this.dateCalendarWeekly.getDate() - 7));
+    }else{
+      this.dateCalendarWeekly = new Date(this.dateCalendarWeekly.setDate(this.dateCalendarWeekly.getDate() + 7));
+    }
+   }
+
+   setTodayDateCalendarWeekly(): void {
+    this.dateCalendarWeekly = new Date();
+   }
+
+
    changeDateCalendarDaily(isLeft: boolean): void {
     if(isLeft){
       this.dateCalendarDaily = new Date(this.dateCalendarDaily.setDate(this.dateCalendarDaily.getDate() - 1));
@@ -61,7 +88,6 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
    setTodayDateCalendarDaily(): void {
     this.dateCalendarDaily = new Date();
    }
-
 
 
    changeDateBookingsSupplier(isLeft: boolean): void {

@@ -12,7 +12,6 @@ export class OffcanvasBookingService {
   private _bookingCreated = new Subject<Booking>();
   private _cancelled = new Subject<void>();
 
-  // Observables públicos
   selectedDate$ = this._selectedDate.asObservable();
   selectedHour$ = this._selectedHour.asObservable();
   showOffcanvas$ = this._showOffcanvas.asObservable();
@@ -37,7 +36,6 @@ export class OffcanvasBookingService {
     this._cancelled.next();
   }
 
-  // Getters para valores actuales
   get selectedDate(): Date | null {
     return this._selectedDate.value;
   }

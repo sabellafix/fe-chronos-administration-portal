@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,8 +13,9 @@ import { DateUtils } from '@app/core/utils/date.utils';
   templateUrl: './calendar-weekly.component.html',
   styleUrl: './calendar-weekly.component.scss'
 })
-export class CalendarWeeklyComponent implements OnInit, OnDestroy {
+export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
 
+  @Input('date') date: Date = new Date();
   dateNow : Date = new Date();
   dates: DateItem[] = [];
   activeDate: DateItem = new DateItem();
@@ -29,10 +30,18 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
     private offcanvasBookingService: OffcanvasBookingService,
     private bookingService: BookingService
   ){
-    this.dates = this.getDates();
+    
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['date'] && !changes['date'].firstChange) {
+      this.updateDates();
+      this.loadBookingsForCurrentWeek();
+    }
   }
 
   ngOnInit(): void {
+    this.updateDates();
     this.initStickyHeader();
     this.subscribeToBookingService();
     this.loadBookingsForCurrentWeek();
@@ -68,11 +77,15 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
       window.addEventListener("scroll", this.scrollListener);
     }
   }
+
+  private updateDates(): void {
+    this.dates = this.getDates();
+  }
   
   getDates(){
     const dates: DateItem[] = [];
     
-    const today = new Date(this.dateNow);
+    const today = new Date(this.date); // Usar this.date en lugar de this.dateNow
     const dayOfWeek = today.getDay();
     const daysToMonday = dayOfWeek === 0 ? -6 : -(dayOfWeek - 1);
     
@@ -86,7 +99,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy {
       weekDate.setDate(monday.getDate() + i);
       
       dateItem.date = weekDate;
-      dateItem.isToday = weekDate.toDateString() === today.toDateString();
+      dateItem.isToday = weekDate.toDateString() === this.dateNow.toDateString(); // Mantener dateNow para la comparación con "hoy"
       
       dates.push(dateItem);
     }
