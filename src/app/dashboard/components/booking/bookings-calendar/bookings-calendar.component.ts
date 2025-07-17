@@ -11,8 +11,11 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   tabActive: string = 'Suppliers';
   tabIndex: number = 1;
   dateNow: Date = new Date();
+
   dateCalendarDaily: Date = new Date();
   dateBookingsSupplier: Date = new Date();
+
+  
   private scrollListener?: () => void;
 
   ngOnInit(): void {
