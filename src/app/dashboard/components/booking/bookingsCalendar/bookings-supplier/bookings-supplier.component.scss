@@ -177,7 +177,7 @@
     border-right: none;
 }
 
-.day-cell:hover {
+.day-cell:not(:has(.booking-item)):hover {
     background-color: transparent;
     
     &::before {
@@ -241,28 +241,28 @@
     z-index: 850;
 }
 
-.booking-item:hover {
-    background-color: transparent !important;
-    border: 1.5px dashed #39557a;
-    border-radius: 16px;
+// .booking-item:hover {
+//     background-color: transparent !important;
+//     border: 1.5px dashed #39557a;
+//     border-radius: 16px;
     
-    .booking-info {
-        opacity: 0.3;
-    }
+//     .booking-info {
+//         opacity: 0.3;
+//     }
     
-    &::before {
-        content: '+';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 24px;
-        font-weight: normal ;
-        color: #39557a;
-        z-index: 10;
-        pointer-events: none;
-    }
-}
+//     &::before {
+//         content: '+';
+//         position: absolute;
+//         top: 50%;
+//         left: 50%;
+//         transform: translate(-50%, -50%);
+//         font-size: 24px;
+//         font-weight: normal ;
+//         color: #39557a;
+//         z-index: 10;
+//         pointer-events: none;
+//     }
+// }
 
 .booking-info {
 

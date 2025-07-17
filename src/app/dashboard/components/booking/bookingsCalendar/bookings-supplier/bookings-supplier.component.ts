@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { BookingStatus } from '@app/core/models/bussiness/enums';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,15 +11,17 @@ import { Subscription } from 'rxjs';
 import { forkJoin } from 'rxjs';
 import { TimeUtils } from '@app/core/utils/time.utils';
 import { DateUtils } from '@app/core/utils/date.utils';
+import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
 
 @Component({
   selector: 'app-bookings-supplier',
   templateUrl: './bookings-supplier.component.html',
   styleUrl: './bookings-supplier.component.scss'
 })
-export class BookingsSupplierComponent implements OnInit, OnDestroy {
+export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
 
-  currentDate: Date = new Date();
+  @Input('date') date: Date = new Date();
+  currentDate: DateItem = new DateItem();
   stylists: User[] = [];
   bookings: Booking[] = [];
   loading: boolean = false;
@@ -36,10 +38,18 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy {
     
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['date'] && !changes['date'].firstChange) {
+      this.initCurrentDate();
+      this.loadBookingsForCurrentDate();
+    }
+  }
+
   ngOnInit(): void {
+    this.initCurrentDate();
     this.initStickyHeader();
     this.subscribeToBookingService();
-    this.loadData();
+    this.loadBookingsForCurrentDate();
   }
 
   ngOnDestroy(): void {
@@ -73,12 +83,23 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadData(): void {
+  initBookings(): void {
+    this.bookings = [];
+  }
+
+  initCurrentDate(): void {
+    this.currentDate.date = new Date(this.date);
+    const today = new Date();
+    this.currentDate.isToday = this.currentDate.date.toDateString() === today.toDateString();
+    this.currentDate.isActive = true;
+  }
+
+  loadBookingsForCurrentDate(): void {
     this.loading = true;
     
     forkJoin({
       stylists: this.userService.getUsersByRole(RolesConst._STYLIST),
-      bookings: this.bookingService.getByDay(this.currentDate)
+      bookings: this.bookingService.getByDay(this.currentDate.date)
     }).subscribe({
       next: ({ stylists, bookings }) => {
         this.stylists = stylists;
@@ -99,36 +120,8 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy {
     });
   }
 
-  changeDate(days: number): void {
-    const newDate = new Date(this.currentDate);
-    newDate.setDate(newDate.getDate() + days);
-    this.currentDate = newDate;
-    this.loadBookingsForCurrentDate();
-  }
-
-  goToToday(): void {
-    this.currentDate = new Date();
-    this.loadBookingsForCurrentDate();
-  }
-
-  private loadBookingsForCurrentDate(): void {
-    this.loading = true;
-    this.bookingService.getByDay(this.currentDate).subscribe({
-      next: (bookings) => {
-        this.bookings = bookings;
-        console.log("bookings", this.bookings);
-        this.loading = false;
-      },
-      error: (error) => {
-        this.snackBar.open('Error al cargar las reservas', 'Cerrar', { duration: 4000 });
-        this.loading = false;
-        console.error('Error loading bookings:', error);
-      }
-    });
-  }
-
   getFormattedCurrentDate(): string {
-    return this.currentDate.toLocaleDateString('es-ES', {
+    return this.currentDate.date.toLocaleDateString('es-ES', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -158,7 +151,7 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy {
   }
 
   openBookingModal(userId: string, hour?: number): void {
-    this.offcanvasBookingService.openBookingModal(this.currentDate, hour);
+    this.offcanvasBookingService.openBookingModal(this.currentDate.date, hour);
   }
 
   onBookingCreated(booking: Booking): void {
@@ -178,7 +171,7 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
       const bookingHour = booking.startTime.hour;
       
-      return bookingDate.toDateString() == this.currentDate.toDateString() && 
+      return bookingDate.toDateString() == this.currentDate.date.toDateString() && 
              booking.supplierId == userId && 
              bookingHour == hour;
     });
@@ -187,7 +180,7 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy {
   getBookingsForStylist(userId: string): Booking[] {
     return this.bookings.filter(booking => {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
-      return bookingDate.toDateString() === this.currentDate.toDateString() && 
+      return bookingDate.toDateString() === this.currentDate.date.toDateString() && 
              booking.supplierId === userId;
     });
   }

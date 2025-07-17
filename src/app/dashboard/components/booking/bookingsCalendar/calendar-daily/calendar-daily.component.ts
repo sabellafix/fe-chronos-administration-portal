@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
 import { Booking, BookingStatus } from '@app/core/models/bussiness';
@@ -13,9 +13,9 @@ import { Subscription } from 'rxjs';
   templateUrl: './calendar-daily.component.html',
   styleUrl: './calendar-daily.component.scss'
 })
-export class CalendarDailyComponent implements OnInit, OnDestroy {
+export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
 
-  dateNow: Date = new Date();
+  @Input('date') date: Date = new Date();
   currentDate: DateItem = new DateItem();
   bookings: Booking[] = [];
   isLoadingBookings: boolean = false;
@@ -28,10 +28,17 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
     private offcanvasBookingService: OffcanvasBookingService,
     private bookingService: BookingService
   ){
-    this.initCurrentDate();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['date'] && !changes['date'].firstChange) {
+      this.initCurrentDate();
+      this.loadBookingsForCurrentDay();
+    }
   }
 
   ngOnInit(): void {
+    this.initCurrentDate();
     this.initStickyHeader();
     this.subscribeToBookingService();
     this.loadBookingsForCurrentDay();
@@ -69,24 +76,10 @@ export class CalendarDailyComponent implements OnInit, OnDestroy {
   }
 
   initCurrentDate(): void {
-    this.currentDate.date = new Date(this.dateNow);
-    this.currentDate.isToday = true;
+    this.currentDate.date = new Date(this.date);
+    const today = new Date();
+    this.currentDate.isToday = this.currentDate.date.toDateString() === today.toDateString();
     this.currentDate.isActive = true;
-  }
-
-  navigateToDate(direction: 'prev' | 'next'): void {
-    const newDate = new Date(this.currentDate.date);
-    if (direction === 'prev') {
-      newDate.setDate(newDate.getDate() - 1);
-    } else {
-      newDate.setDate(newDate.getDate() + 1);
-    }
-    
-    this.currentDate.date = newDate;
-    this.currentDate.isToday = newDate.toDateString() === this.dateNow.toDateString();
-    
-    // Cargar bookings para el nuevo día
-    this.loadBookingsForCurrentDay();
   }
 
   getHoursRange(): number[] {

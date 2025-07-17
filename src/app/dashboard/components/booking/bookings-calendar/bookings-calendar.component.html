@@ -1,43 +1,46 @@
 <div class="calend-header" id="calendar-header">
     <div class="page-content" style="padding-top: 16px;">
         <div class="container-fluid">
-            <div class="row ">
-                <div class="col-xl-4">
+            <div class="row">
+                <div class="col-xl-2">
                     <h1 class="mb-0 mt-2">{{dateNow | date}}</h1>
+                </div>
+                <div class="col-xl-2">
+                    <!-- <h1 class="mb-0 mt-2">{{tabActive}}</h1> -->
                 </div>
                 <div class="col-xl-4">
                     <div class="card bg-light mt-1">
                         <ul class="nav nav-pills nav-justified p-1" role="tablist">
                             <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Month'}">
-                                <a class="nav-link" data-bs-toggle="tab" href="#month-1" role="tab" 
+                                <a class="nav-link" data-bs-toggle="tab" href="#month" role="tab" 
                                 aria-selected="false" (click)="tabActive = 'Month'">
                                     <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
                                     <span class="d-none d-sm-block">Month</span>
                                 </a>
                             </li>
                             <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Week'}">
-                                <a class="nav-link" data-bs-toggle="tab" href="#week-1" role="tab"
+                                <a class="nav-link" data-bs-toggle="tab" href="#week" role="tab"
                                     aria-selected="false" (click)="tabActive = 'Week'">
                                     <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
                                     <span class="d-none d-sm-block">Week</span>
                                 </a>
                             </li>
                             <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Day'}">
-                                <a class="nav-link" data-bs-toggle="tab" href="#day-1" role="tab" aria-selected="false"
+                                <a class="nav-link" data-bs-toggle="tab" href="#day" role="tab" aria-selected="false"
                                     tabindex="-1" (click)="tabActive = 'Day'">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">Day</span>
                                 </a>
                             </li>
                             <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Suppliers'}">
-                                <a class="nav-link" data-bs-toggle="tab" href="#suppliers-1" role="tab" aria-selected="false"
+                                <a class="nav-link" data-bs-toggle="tab" href="#suppliers" role="tab" aria-selected="false"
                                     tabindex="-1" (click)="tabActive = 'Suppliers'">
                                     <span class="d-block d-sm-none"><i class="far fa-face-smile"></i></span>
                                     <span class="d-none d-sm-block">Suppliers</span>
                                 </a>
                             </li>
                             <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
-                                <a class="nav-link" data-bs-toggle="tab" href="#floors-1" role="tab" aria-selected="false"
+                                <a class="nav-link" data-bs-toggle="tab" href="#floors" role="tab" aria-selected="false"
                                     tabindex="-1" (click)="tabActive = 'Floor'">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">Floor</span>
@@ -46,13 +49,47 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-xl-4">
+
+                <div *ngIf="tabActive === 'Month'" class="col-xl-4 animated fadeIn fast">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
                         <button style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
-                        <button style="height: 46px !important" class="btn btn-light shadow-sm w-25">Today</button>
+                        <button style="height: 46px !important" class="btn btn-light shadow-sm w-25">July</button>
                         <button style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-right"></i></button>
                     </div>
                 </div>
+
+                <div *ngIf="tabActive === 'Week'" class="col-xl-4 animated fadeIn fast">
+                    <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
+                        <button style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
+                        <button style="height: 46px !important" class="btn btn-light shadow-sm w-25">First week</button>
+                        <button style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <div *ngIf="tabActive === 'Day'" class="col-xl-4 animated fadeIn fast">
+                    <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
+                        <button (click)="changeDateCalendarDaily(true)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
+                        <button (click)="setTodayDateCalendarDaily()" [ngClass]="{'btn-dark': dateCalendarDaily.getDate() == dateNow.getDate(), 'btn-light': dateCalendarDaily.getDate() != dateNow.getDate()}" style="height: 46px !important" class="btn shadow-sm w-25">{{dateCalendarDaily.getDate()}}</button>
+                        <button (click)="changeDateCalendarDaily(false)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <div *ngIf="tabActive === 'Suppliers'" class="col-xl-4">
+                    <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
+                        <button (click)="changeDateBookingsSupplier(true)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
+                        <button (click)="setTodayDateBookingsSupplier()" [ngClass]="{'btn-dark': dateBookingsSupplier.getDate() == dateNow.getDate(), 'btn-light': dateBookingsSupplier.getDate() != dateNow.getDate()}" style="height: 46px !important" class="btn shadow-sm w-25">{{dateBookingsSupplier.getDate()}}</button>
+                        <button (click)="changeDateBookingsSupplier(false)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <div *ngIf="tabActive === 'Floor'" class="col-xl-4 animated fadeIn fast">
+                    <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
+                        <button style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
+                        <button style="height: 46px !important" class="btn btn-light shadow-sm w-25">First Floor</button>
+                        <button style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-right"></i></button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -61,7 +98,7 @@
 <div class="calendar-content">
     <app-calendar-weekly *ngIf="tabActive === 'Week'"></app-calendar-weekly>
     <app-calendar-monthly *ngIf="tabActive === 'Month'"></app-calendar-monthly>
-    <app-calendar-daily *ngIf="tabActive === 'Day'"></app-calendar-daily>
-    <app-bookings-supplier *ngIf="tabActive === 'Suppliers'"></app-bookings-supplier>
+    <app-calendar-daily *ngIf="tabActive === 'Day'" [date]="dateCalendarDaily"></app-calendar-daily>
+    <app-bookings-supplier *ngIf="tabActive === 'Suppliers'" [date]="dateBookingsSupplier"></app-bookings-supplier>
     <app-bookings-floor *ngIf="tabActive === 'Floor'"></app-bookings-floor>
 </div>

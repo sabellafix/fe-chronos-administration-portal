@@ -1,24 +1,15 @@
 <div class="calendar-canvas calendar-daily mt-0 no-border no-box-shadow animated fadeIn fast" id="calendar-daily-header">
     <div class="calendar-container-daily">
         <div [ngClass]="{'bg-dark': currentDate.isToday, 'text-light': !currentDate.isToday}" class="date-navigation d-flex justify-content-between align-items-center mb-0">
-            <button class="btn btn-outline-primary btn-sm" (click)="navigateToDate('prev')">
-                <i class="bx bx-chevron-left"></i> Anterior
-            </button>
             
             <div class="current-date-info text-center">
                 <div class="card-date-day">
-                    <p [ngClass]="{'text-light': currentDate.isToday}" class="font-size-16 fw-normal mb-1 capitalize">{{currentDate.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
+                    <p [ngClass]="{'text-light': currentDate.isToday, 'text-dark': !currentDate.isToday}" class="font-size-16 fw-normal mb-1 capitalize">{{currentDate.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
                 </div>
                 <div class="card-date-number">
-                    <p [ngClass]="{'text-light': currentDate.isToday}"  class="font-size-26 fw-semibold mb-0">{{currentDate.date.getDate()}}</p>
+                    <p [ngClass]="{'text-light': currentDate.isToday, 'text-dark': !currentDate.isToday}"  class="font-size-26 fw-semibold mb-0">{{currentDate.date.getDate()}}</p>
                 </div>
-
-                
             </div>
-            
-            <button class="btn btn-outline-primary btn-sm" (click)="navigateToDate('next')">
-                Siguiente <i class="bx bx-chevron-right"></i>
-            </button>
         </div>
     </div>
 </div>
@@ -34,7 +25,7 @@
             <span class="ms-2 text-muted">Cargando citas...</span>
         </div> -->
 
-        <table class="calendar-table-daily mt-1 animated fadeIn fast" *ngIf="!isLoadingBookings">
+        <table class="calendar-table-daily mt-1" >
            
             <tbody>
                 <!-- Filas de horas -->
@@ -46,8 +37,8 @@
                         [attr.data-hour]="hour" 
                         [attr.data-date]="currentDate.date.toISOString()"
                         (click)="openBookingModal(currentDate.date, hour)">
-                        <div class="cell-content-daily">
-                            <div class="booking-item-daily" 
+                        <div class="cell-content-daily" *ngIf="!isLoadingBookings">
+                            <div class="booking-item-daily animated fadeIn fast" 
                                  *ngFor="let booking of getBookingsForDateTime(currentDate.date, hour)"
                                  [style.background-color]="booking.services?.[0]?.color || '#23324d'">
                                 <div class="booking-info-daily">
