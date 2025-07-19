@@ -1,42 +1,53 @@
-import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Booking } from '@app/core/models/bussiness/booking';
-import { CreateBookingDto, BookingServiceRequest } from '@app/core/models/bussiness';
-import { BookingStatus } from '@app/core/models/bussiness/enums';
-import { Service } from '@app/core/models/bussiness/service';
-import { Customer } from '@app/core/models/bussiness/customer';
-import { Supplier } from '@app/core/models/bussiness/supplier';
-import { ServiceService } from '@app/core/services/http/platform-service.service';
-import { BookingService } from '@app/core/services/http/booking.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
+
+// Services
+import { BookingService } from '@app/core/services/http/booking.service';
+import { ServiceService } from '@app/core/services/http/platform-service.service';
 import { CustomerService } from '@app/core/services/http/customer.service';
-import { User } from '@app/core/models/bussiness/user';
 import { UserService } from '@app/core/services/http/user.service';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
-import { Subscription } from 'rxjs';
-import { RolesConst } from '@app/core/models/constants/roles.const';
+
+// Models
+import { Booking } from '@app/core/models/bussiness/booking';
+import { UpdateBookingDto, BookingServiceRequest } from '@app/core/models/bussiness';
+import { Service } from '@app/core/models/bussiness/service';
+import { Customer } from '@app/core/models/bussiness/customer';
+import { User } from '@app/core/models/bussiness/user';
+import { Supplier } from '@app/core/models/bussiness/supplier';
+import { BookingStatus } from '@app/core/models/bussiness/enums';
+import { DateOnly, TimeOnly } from '@app/core/models/bussiness/availability';
 import { Option } from '@app/core/models/interfaces/option.interface';
+import { RolesConst } from '@app/core/models/constants/roles.const';
+
+// Utils
+import { DateUtils } from '@app/core/utils/date.utils';
+import { TimeUtils } from '@app/core/utils/time.utils';
 
 declare var bootstrap: any;
 
 @Component({
-  selector: 'app-offcanvas-create-booking',
-  templateUrl: './offcanvas-create-booking.component.html',
-  styleUrl: './offcanvas-create-booking.component.scss'
+  selector: 'app-offcanvas-update-booking',
+  templateUrl: './offcanvas-update-booking.component.html',
+  styleUrl: './offcanvas-update-booking.component.scss'
 })
-export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
+export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
   
-  @Input() selectedDate?: Date;
-  @Input() selectedHour?: number;
-  @Output() bookingCreated = new EventEmitter<Booking>();
+  @Input() bookingId?: string;
+  @Output() bookingUpdated = new EventEmitter<Booking>();
   @Output() cancelled = new EventEmitter<void>();
 
   bookingForm: FormGroup;
-  defaultDate: string;
   BookingStatus = BookingStatus; 
   loading: boolean = false;
+  loadingBooking: boolean = false;
   private offcanvasInstance: any;
   private subscriptions: Subscription[] = [];
+  
+  // Data
+  booking: Booking | null = null;
   services: Service[] = [];
   selectedServices: Service[] = [];
   customers: Customer[] = [];
@@ -44,6 +55,8 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   customerOptions: Option[] = [];
   users: User[] = []; 
   usersOptions: Option[] = [];
+  
+  // UI
   imageUser: string = "../assets/images/user-image.jpg";
   userImages: string[] = [
     "../assets/images/users/user1.jpg",
@@ -52,36 +65,30 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     "../assets/images/users/user4.png",
   ];
   
-  constructor(private formBuilder: FormBuilder, 
+  constructor(
+    private formBuilder: FormBuilder, 
     private serviceService: ServiceService, 
     private bookingService: BookingService,
     private customerService: CustomerService,
     private userService: UserService,
     private snackBar: MatSnackBar,
-    private offcanvasBookingService: OffcanvasBookingService) {
-    // Crear una fecha base (selectedDate o fecha actual) y agregar un día
-    const baseDate = this.selectedDate ? new Date(this.selectedDate) : new Date();
-    baseDate.setDate(baseDate.getDate() + 1);
-    console.log("baseDate", baseDate);
-    this.defaultDate = baseDate.toISOString().split('T')[0];
-    console.log("this.defaultDate", this.defaultDate);
-    
-
+    private offcanvasBookingService: OffcanvasBookingService
+  ) {
     this.bookingForm = this.formBuilder.group({
       customerId: [null, [Validators.required]],
       supplierId: [null, [Validators.required]],
-      bookingDate: [this.defaultDate, [Validators.required]],
-      startTime: [this.getDefaultTime(), [Validators.required]],
+      bookingDate: ['', [Validators.required]],
+      startTime: ['', [Validators.required]],
       durationMinutes: [60, [Validators.required, Validators.min(15), Validators.max(480)]],
       clientNotes: [''],
-      providerNotes: ['']
+      providerNotes: [''],
+      status: [BookingStatus.Confirmed]
     });
   }
 
   ngOnInit(): void {
-
     this.getServices();
-    const offcanvasElement = document.getElementById('offcanvasCreateBooking');
+    const offcanvasElement = document.getElementById('offcanvasUpdateBooking');
     if (offcanvasElement) {
       this.offcanvasInstance = new bootstrap.Offcanvas(offcanvasElement);
     }
@@ -93,14 +100,73 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToOffcanvasService(): void {
-    const showSubscription = this.offcanvasBookingService.showOffcanvas$.subscribe(() => {
-      this.selectedDate = this.offcanvasBookingService.selectedDate || undefined;
-      this.selectedHour = this.offcanvasBookingService.selectedHour || undefined;
+    const showSubscription = this.offcanvasBookingService.showUpdateOffcanvas$.subscribe((bookingId: string) => {
+      this.bookingId = bookingId;
+      this.loadBooking();
       this.show();
     });
-    
 
     this.subscriptions.push(showSubscription);
+  }
+
+  loadBooking(): void {
+    if (!this.bookingId) {
+      this.snackBar.open('ID de booking no proporcionado', 'Cerrar', {duration: 4000});
+      return;
+    }
+
+    this.loadingBooking = true;
+    this.bookingService.getBooking(this.bookingId).subscribe({
+      next: (booking: Booking) => {
+        this.booking = booking;
+        this.populateForm();
+        this.loadingBooking = false;
+      },
+      error: (error) => {
+        this.snackBar.open('Error al cargar el booking', 'Cerrar', {duration: 4000});
+        this.loadingBooking = false;
+        this.hide();
+      }
+    });
+  }
+
+  private populateForm(): void {
+    if (!this.booking) return;
+
+    // Formatear la fecha para el input date
+    const bookingDate = typeof this.booking.bookingDate === 'string' 
+      ? this.booking.bookingDate 
+      : DateUtils.dateOnlyToHtmlDateInput(this.booking.bookingDate);
+
+    // Formatear la hora para el input time
+    const startTime = typeof this.booking.startTime === 'string'
+      ? (this.booking.startTime as string).substring(0, 5) // Solo HH:MM
+      : TimeUtils.timeOnlyToHtmlTimeInput(this.booking.startTime as TimeOnly);
+
+    this.bookingForm.patchValue({
+      customerId: this.booking.customerId,
+      supplierId: this.booking.supplierId,
+      bookingDate: bookingDate,
+      startTime: startTime,
+      durationMinutes: this.booking.durationMinutes,
+      clientNotes: this.booking.clientNotes || '',
+      providerNotes: this.booking.providerNotes || '',
+      status: this.booking.status
+    });
+
+    // Cargar servicios seleccionados
+    if (this.booking.services && this.booking.services.length > 0) {
+      this.selectedServices = [...this.booking.services];
+    } else if (this.booking.serviceId) {
+      // Si solo hay un serviceId, buscar el servicio en la lista
+      const service = this.services.find(s => s.id === this.booking!.serviceId);
+      if (service) {
+        this.selectedServices = [service];
+      }
+    }
+
+    // Cargar información del cliente
+    this.customer = this.booking.customer;
   }
 
   getServices(): void {
@@ -109,8 +175,9 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       next: (response: Service[]) => {
         this.services = response;
         this.getCustomers();
-      },error: (response) =>{
-        this.snackBar.open('Error loading services', 'Close', {duration: 4000});
+      },
+      error: (response) => {
+        this.snackBar.open('Error al cargar servicios', 'Cerrar', {duration: 4000});
         this.getCustomers();
       }
     });
@@ -127,8 +194,9 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
           code: customer.id.toString()
         }));
         this.getUsers();
-      },error: (response) =>{
-        this.snackBar.open('Error loading customers', 'Close', {duration: 4000});
+      },
+      error: (response) => {
+        this.snackBar.open('Error al cargar clientes', 'Cerrar', {duration: 4000});
         this.getUsers();
       }
     });
@@ -145,18 +213,12 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
           code: user.id.toString()
         }));
         this.loading = false;
-      },error: (response) =>{
-        this.snackBar.open('Error loading users', 'Close', {duration: 4000});
+      },
+      error: (response) => {
+        this.snackBar.open('Error al cargar usuarios', 'Cerrar', {duration: 4000});
+        this.loading = false;
       }
     });
-  }
-
-
-  private getDefaultTime(): string {
-    if (this.selectedHour) {
-      return `${this.selectedHour.toString().padStart(2, '0')}:00`;
-    }
-    return '09:00';
   }
 
   private markFormGroupTouched(): void {
@@ -169,7 +231,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   public show(): void {
-    this.updateDateAndTime();
     if (this.offcanvasInstance) {
       this.offcanvasInstance.show();
     }
@@ -181,93 +242,62 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     }
   }
 
-  private updateDateAndTime(): void {
-    let dateToUse = this.selectedDate ? new Date(this.selectedDate) : new Date();
-    dateToUse.setDate(dateToUse.getDate());
-    const newDate = dateToUse.toISOString().split('T')[0];
-    
-    this.bookingForm.patchValue({
-      bookingDate: newDate,
-      startTime: this.getDefaultTime()
-    });
-  }
-
   onCancel(): void {
     this.hide();
     this.cancelled.emit();
-    this.offcanvasBookingService.onCancelled();
+    this.resetForm();
   }
 
   onConfirm(): void {
-    if (this.bookingForm.valid && this.selectedServices.length > 0) {
+    if (this.bookingForm.valid && this.selectedServices.length > 0 && this.bookingId) {
       const formValue = this.bookingForm.value;
       
-      const createBookingDto: CreateBookingDto = new CreateBookingDto();
-      createBookingDto.customerId = formValue.customerId;
-      createBookingDto.supplierId = formValue.supplierId;
+      const updateBookingDto: UpdateBookingDto = new UpdateBookingDto();
       
-      // Configurar serviceId con el primer servicio seleccionado
-      createBookingDto.serviceId = this.selectedServices[0].id;
+      // Configurar bookingDate como DateOnly
+      updateBookingDto.bookingDate = DateUtils.htmlDateInputToDateOnly(formValue.bookingDate);
       
-      // Configurar bookingDate como string (YYYY-MM-DD)
-      const bookingDate = new Date(formValue.bookingDate);
-      createBookingDto.bookingDate = bookingDate.toISOString().split('T')[0];
-      
-      // Configurar startTime como string (HH:MM:SS)
-      const [startHour, startMinute] = formValue.startTime.split(':').map(Number);
-      createBookingDto.startTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}:00`;
+      // Configurar startTime como TimeOnly
+      updateBookingDto.startTime = TimeUtils.htmlTimeInputToTimeOnly(formValue.startTime);
       
       // Calcular duración total y precio total
       const totalDuration = this.calculateTotalDuration();
       const totalPrice = this.calculateTotalPrice();
       
-      createBookingDto.durationMinutes = totalDuration;
-      createBookingDto.totalPrice = totalPrice;
-      createBookingDto.currency = 'COP'; // Configurar moneda por defecto
+      updateBookingDto.durationMinutes = totalDuration;
+      updateBookingDto.totalPrice = totalPrice;
+      updateBookingDto.currency = 'COP';
       
-      // Configurar endTime como string (HH:MM:SS)
-      const totalMinutes = startMinute + totalDuration;
-      const endHour = startHour + Math.floor(totalMinutes / 60);
-      const finalMinutes = totalMinutes % 60;
-      createBookingDto.endTime = `${endHour.toString().padStart(2, '0')}:${finalMinutes.toString().padStart(2, '0')}:00`;
+      // Configurar endTime como TimeOnly (calculado añadiendo duración al startTime)
+      updateBookingDto.endTime = TimeUtils.addMinutes(updateBookingDto.startTime!, totalDuration);
       
-      // Configurar notas
-      createBookingDto.clientNotes = formValue.clientNotes || undefined;
+      // Configurar notas y estado
+      updateBookingDto.clientNotes = formValue.clientNotes || undefined;
+      updateBookingDto.providerNotes = formValue.providerNotes || undefined;
+      updateBookingDto.status = formValue.status;
       
-      // Configurar servicios para la reserva
-      createBookingDto.services = this.selectedServices.map((service, index): BookingServiceRequest => ({
-        serviceId: service.id,
-        name: service.serviceName || 'Sin nombre',
-        color: service.color || '#23324d',
-        order: index,
-        durationInMinutes: service.durationMinutes
-      }));
-        
-      this.bookingService.create(createBookingDto).subscribe({
+      this.bookingService.updateBooking(this.bookingId, updateBookingDto).subscribe({
         next: (response: Booking) => {
           const booking = response;
-          console.log("booking", booking);
           this.hide();
-          this.bookingCreated.emit(booking);
-          this.offcanvasBookingService.onBookingCreated(booking);
+          this.bookingUpdated.emit(booking);
           this.resetForm();
-          this.snackBar.open('Booking created successfully', 'Close', {duration: 4000, panelClass: 'snackbar-success'});
+          this.snackBar.open('Booking actualizado exitosamente', 'Cerrar', {
+            duration: 4000, 
+            panelClass: 'snackbar-success'
+          });
         },
         error: (error) => {
           if(error.status === 400){
-            this.snackBar.open(error.error, 'Close', {duration: 4000});
-          }else{
-            this.snackBar.open('Error creating booking', 'Close', {duration: 4000});
+            this.snackBar.open(error.error, 'Cerrar', {duration: 4000});
+          } else {
+            this.snackBar.open('Error al actualizar booking', 'Cerrar', {duration: 4000});
           }
-          this.hide();
-          this.bookingCreated.emit(null as any);
-          this.offcanvasBookingService.onBookingCreated(null as any);
-          this.resetForm();
         }
       });
     } else {
       if (this.selectedServices.length === 0) {
-          this.snackBar.open('You must select at least one service', 'Close', {duration: 4000});
+        this.snackBar.open('Debe seleccionar al menos un servicio', 'Cerrar', {duration: 4000});
       }
       this.markFormGroupTouched();
     }
@@ -277,14 +307,16 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     this.bookingForm.reset({
       customerId: null,
       supplierId: null,
-      bookingDate: this.defaultDate,
-      startTime: this.getDefaultTime(),
+      bookingDate: '',
+      startTime: '',
       durationMinutes: 60,
       clientNotes: '',
-      providerNotes: ''
+      providerNotes: '',
+      status: BookingStatus.Confirmed
     });
     this.selectedServices = [];
     this.customer = null;
+    this.booking = null;
   }
 
   onServiceChange(event: any): void {
@@ -293,7 +325,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     
     if (service && !this.selectedServices.find(s => s.id === serviceId)) {
       this.selectedServices.push(service);
-      // Actualizar duración total
       this.updateTotalDuration();
     }
     
@@ -306,12 +337,11 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     this.updateTotalDuration();
   }
 
-  asignAutoComplete(option: Option, controlName: string){
+  asignAutoComplete(option: Option, controlName: string): void {
     this.bookingForm.get(controlName)?.setValue(option.code!);
   }
 
   onCustomerChange(event: any): void {
-    console.log("event", event);
     const customerId = event.target.value;
     this.customer = this.customers.find(c => c.id === customerId) || null;
   }
@@ -360,7 +390,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     return this.users.find(u => u.id === customer.userId) || null;
   }
 
-  // Métodos para manejar los servicios seleccionados
   isFormValid(): boolean {
     return this.bookingForm.valid && this.selectedServices.length > 0;
   }
@@ -371,8 +400,19 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     );
   }
 
-  private generateBookingId(): string {
-    return 'BK-' + Date.now().toString() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
+  // Métodos para manejar estados de booking
+  getStatusOptions(): {value: BookingStatus, label: string}[] {
+    return [
+      { value: BookingStatus.Pending, label: 'Pendiente' },
+      { value: BookingStatus.Confirmed, label: 'Confirmado' },
+      { value: BookingStatus.InProgress, label: 'En Progreso' },
+      { value: BookingStatus.Completed, label: 'Completado' },
+      { value: BookingStatus.Cancelled, label: 'Cancelado' }
+    ];
   }
 
+  getStatusLabel(status: BookingStatus): string {
+    const statusOption = this.getStatusOptions().find(option => option.value === status);
+    return statusOption ? statusOption.label : 'Desconocido';
+  }
 }

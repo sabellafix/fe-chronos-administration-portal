@@ -241,28 +241,31 @@
     z-index: 850;
 }
 
-// .booking-item:hover {
-//     background-color: transparent !important;
-//     border: 1.5px dashed #39557a;
-//     border-radius: 16px;
+.booking-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.8);
     
-//     .booking-info {
-//         opacity: 0.3;
-//     }
+    .booking-info {
+        opacity: 0.95;
+    }
     
-//     &::before {
-//         content: '+';
-//         position: absolute;
-//         top: 50%;
-//         left: 50%;
-//         transform: translate(-50%, -50%);
-//         font-size: 24px;
-//         font-weight: normal ;
-//         color: #39557a;
-//         z-index: 10;
-//         pointer-events: none;
-//     }
-// }
+    &::after {
+        content: '✏️';
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 14px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.9;
+    }
+}
 
 .booking-info {
 

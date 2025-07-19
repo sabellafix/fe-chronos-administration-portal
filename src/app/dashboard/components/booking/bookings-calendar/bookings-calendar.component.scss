@@ -47,3 +47,100 @@ body[data-sidebar-size=sm] .calend-header {
     color: #000 !important;
     font-weight: 600;
 }
+
+.select-filter{
+    width: 100%;
+    height: 47px;
+    padding: 0 10px;
+    border: 1px solid rgb(239, 240, 242);
+    box-shadow: rgb(241, 243, 247) 0px 2px 3px 0px;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #495057;
+}
+
+// Contenedor del select y círculo de color
+.service-select-container {
+    margin-top: 4px;
+    border-radius: 12px !important;
+    box-shadow: rgb(241, 243, 247) 0px 2px 3px 0px;
+    border: 1px solid rgb(239, 240, 242);
+}
+
+// Wrapper del select personalizado
+.custom-select-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    position: relative;
+}
+
+// Indicador de color del servicio (a la izquierda)
+.service-color-indicator-left {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+// Círculo que muestra el color del servicio
+.service-color-circle {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+// Select personalizado
+.select-filter-custom {
+    width: 100%;
+    height: 40px;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-left: 35px; // Espacio para el círculo
+    padding-right: 35px; // Espacio para la flecha
+    font-size: 14px;
+    color: #495057;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    
+    &:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    
+    // Cuando no hay servicio seleccionado, ajustar padding
+    &:invalid {
+        padding-left: 12px;
+    }
+}
+
+// Flecha personalizada del select
+.custom-select-arrow {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 2;
+    color: #6c757d;
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+// Ajuste del padding cuando no hay servicio seleccionado
+.custom-select-wrapper:not(:has(.service-color-indicator-left)) .select-filter-custom {
+    padding-left: 12px;
+}

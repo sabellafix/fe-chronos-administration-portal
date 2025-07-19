@@ -59,7 +59,11 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
       this.onBookingCreated(booking);
     });
 
-    this.subscriptions.push(bookingCreatedSubscription);
+    const bookingUpdatedSubscription = this.offcanvasBookingService.bookingUpdated$.subscribe((booking: Booking) => {
+      this.onBookingUpdated(booking);
+    });
+
+    this.subscriptions.push(bookingCreatedSubscription, bookingUpdatedSubscription);
   }
 
   private initStickyHeader(): void {
@@ -152,6 +156,32 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
 
   onBookingCancelled(): void {
     console.log('Creación de cita cancelada');
+  }
+
+  editBooking(bookingId: string, event: Event): void {
+    // Prevenir que el evento se propague al elemento padre (td)
+    event.stopPropagation();
+    
+    // Abrir el modal de actualización con el ID del booking
+    this.offcanvasBookingService.openUpdateBookingModal(bookingId);
+  }
+
+  onBookingUpdated(booking: Booking): void {
+    // Actualizar el booking en la lista local
+    const index = this.bookings.findIndex(b => b.id === booking.id);
+    if (index !== -1) {
+      this.bookings[index] = booking;
+      // Convertir fechas para mantener consistencia
+      this.bookings[index].startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
+      this.bookings[index].endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
+      this.bookings[index].bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+    }
+    
+    // Mostrar mensaje de éxito
+    this.snackBar.open('Cita actualizada exitosamente', 'Cerrar', {
+      duration: 3000,
+      panelClass: 'snackbar-success'
+    });
   }
 
   private loadBookings(): void {

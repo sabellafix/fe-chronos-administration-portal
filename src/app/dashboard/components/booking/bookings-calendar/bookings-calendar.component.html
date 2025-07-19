@@ -3,10 +3,21 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xl-2">
-                    <h1 class="mb-0 mt-2">{{dateNow | date}}</h1>
+                    <h1 class="mb-0 mt-2">{{dateNow | date:'dd/MM'}}</h1>
                 </div>
                 <div class="col-xl-2">
-                    <!-- <h1 class="mb-0 mt-2">{{tabActive}}</h1> -->
+                    <!-- Nuevo componente SelectImageComponent para servicios -->
+                    <app-select-image
+                        [options]="serviceOptions"
+                        [placeholder]="'Seleccionar servicio'"
+                        [multiSelect]="true"
+                        [showAllOption]="true"
+                        [showColors]="true"
+                        [showImages]="false"
+                        [cardBackgroundClass]="'bg-light'"
+                        [autoSelectFirst]="true"
+                        (singleSelectionChange)="onSingleServiceSelectionChange($event)">
+                    </app-select-image>
                 </div>
                 <div class="col-xl-4">
                     <div class="card bg-light mt-1">
@@ -50,7 +61,17 @@
                     </div>
                 </div>
 
-                <div *ngIf="tabActive === 'Month'" class="col-xl-4 animated fadeIn fast">
+                <div class="col-xl-2">
+                    <div class="d-flex flex-wrap gap-2 mt-1 justify-content-end align-items-start h-100">
+                        <select (change)="onChangeStylist($event)" class="form-select select-filter bg-light">
+                            <option value="">Select stylist</option>
+                            <option value="all">All stylists</option>
+                            <option *ngFor="let stylist of stylists" [value]="stylist.id">{{stylist.firstName}} {{stylist.lastName}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div *ngIf="tabActive === 'Month'" class="col-xl-2 animated fadeIn fast">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
                         <button (click)="changeDateCalendarMonthly(true)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
                         <button (click)="setTodayDateCalendarMonthly()" [ngClass]="{'btn-dark': dateCalendarMonthly.getMonth() == dateNow.getMonth() && dateCalendarMonthly.getFullYear() == dateNow.getFullYear(), 'btn-light': dateCalendarMonthly.getMonth() != dateNow.getMonth() || dateCalendarMonthly.getFullYear() != dateNow.getFullYear()}" style="height: 46px !important" class="btn shadow-sm w-25">{{dateCalendarMonthly.toLocaleDateString('es-ES', { month: 'short' })}}</button>
@@ -58,7 +79,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="tabActive === 'Week'" class="col-xl-4 animated fadeIn fast">
+                <div *ngIf="tabActive === 'Week'" class="col-xl-2 animated fadeIn fast">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
                         <button (click)="changeDateCalendarWeekly(true)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
                         <button (click)="setTodayDateCalendarWeekly()" [ngClass]="{'btn-dark': dateCalendarWeekly.getDate() == dateNow.getDate(), 'btn-light': dateCalendarWeekly.getDate() != dateNow.getDate()}" style="height: 46px !important" class="btn shadow-sm w-25">{{dateCalendarWeekly.getDate()}}</button>
@@ -66,7 +87,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="tabActive === 'Day'" class="col-xl-4 animated fadeIn fast">
+                <div *ngIf="tabActive === 'Day'" class="col-xl-2 animated fadeIn fast">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
                         <button (click)="changeDateCalendarDaily(true)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
                         <button (click)="setTodayDateCalendarDaily()" [ngClass]="{'btn-dark': dateCalendarDaily.getDate() == dateNow.getDate(), 'btn-light': dateCalendarDaily.getDate() != dateNow.getDate()}" style="height: 46px !important" class="btn shadow-sm w-25">{{dateCalendarDaily.getDate()}}</button>
@@ -74,7 +95,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="tabActive === 'Suppliers'" class="col-xl-4">
+                <div *ngIf="tabActive === 'Suppliers'" class="col-xl-2">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
                         <button (click)="changeDateBookingsSupplier(true)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
                         <button (click)="setTodayDateBookingsSupplier()" [ngClass]="{'btn-dark': dateBookingsSupplier.getDate() == dateNow.getDate(), 'btn-light': dateBookingsSupplier.getDate() != dateNow.getDate()}" style="height: 46px !important" class="btn shadow-sm w-25">{{dateBookingsSupplier.getDate()}}</button>
@@ -82,7 +103,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="tabActive === 'Floor'" class="col-xl-4 animated fadeIn fast">
+                <div *ngIf="tabActive === 'Floor'" class="col-xl-2 animated fadeIn fast">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
                         <button style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
                         <button style="height: 46px !important" class="btn btn-light shadow-sm w-25">First Floor</button>

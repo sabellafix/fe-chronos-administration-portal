@@ -12,11 +12,19 @@ export class OffcanvasBookingService {
   private _bookingCreated = new Subject<Booking>();
   private _cancelled = new Subject<void>();
 
+  // Nuevas propiedades para el offcanvas de actualización
+  private _showUpdateOffcanvas = new Subject<string>();
+  private _bookingUpdated = new Subject<Booking>();
+
   selectedDate$ = this._selectedDate.asObservable();
   selectedHour$ = this._selectedHour.asObservable();
   showOffcanvas$ = this._showOffcanvas.asObservable();
   bookingCreated$ = this._bookingCreated.asObservable();
   cancelled$ = this._cancelled.asObservable();
+
+  // Nuevos observables para el offcanvas de actualización
+  showUpdateOffcanvas$ = this._showUpdateOffcanvas.asObservable();
+  bookingUpdated$ = this._bookingUpdated.asObservable();
 
   constructor() { }
 
@@ -34,6 +42,15 @@ export class OffcanvasBookingService {
 
   onCancelled(): void {
     this._cancelled.next();
+  }
+
+  // Nuevos métodos para el offcanvas de actualización
+  openUpdateBookingModal(bookingId: string): void {
+    this._showUpdateOffcanvas.next(bookingId);
+  }
+
+  onBookingUpdated(booking: Booking): void {
+    this._bookingUpdated.next(booking);
   }
 
   get selectedDate(): Date | null {

@@ -9,3 +9,9 @@ export interface Option {
   updated_at?: string;
   region_id?: number;
 }
+
+export interface VisualOption extends Option {
+  color?: string;
+  imageUrl?: string;
+  selected?: boolean;
+}

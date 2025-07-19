@@ -57,12 +57,14 @@ import { CalendarMonthlyComponent } from './components/booking/bookingsCalendar/
 import { ChatComponent } from './components/chat/chat.component';
 import { SkelletonsSimpleComponent } from './components/shared/skelletons/skelletons-simple/skelletons-simple.component';
 import { OffcanvasCreateBookingComponent } from './components/shared/offcanvas/offcanvas-create-booking/offcanvas-create-booking.component';
+import { OffcanvasUpdateBookingComponent } from './components/shared/offcanvas/offcanvas-update-booking/offcanvas-update-booking.component';
 import { CustomersListComponent } from './components/customers/customers-list/customers-list.component';
 import { CustomersCreateComponent } from './components/customers/customers-create/customers-create.component';
 import { BookingsFloorComponent } from './components/booking/bookingsCalendar/bookings-floor/bookings-floor.component';
 import { BookingsSupplierComponent } from './components/booking/bookingsCalendar/bookings-supplier/bookings-supplier.component';
 import { TimeOnlyPipe } from '../core/pipes/time-only.pipe';
 import { AutocompleteComponent } from './components/shared/autocomplete/autocomplete.component';
+import { SelectImageComponent } from './components/shared/selects/select-image/select-image.component';
 
 
 const routes: Routes = [
@@ -189,12 +191,14 @@ const routes: Routes = [
     CalendarMonthlyComponent,
     ChatComponent,
     OffcanvasCreateBookingComponent,
+    OffcanvasUpdateBookingComponent,
     CustomersListComponent,
     CustomersCreateComponent,
     BookingsFloorComponent,
     BookingsSupplierComponent,
     TimeOnlyPipe,
-    AutocompleteComponent
+    AutocompleteComponent,
+    SelectImageComponent,
   ],
   imports: [
     CommonModule,
