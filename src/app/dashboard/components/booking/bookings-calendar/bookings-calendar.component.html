@@ -46,11 +46,11 @@
                                     <span class="d-none d-sm-block">Day</span>
                                 </a>
                             </li>
-                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Suppliers'}">
-                                <a class="nav-link" data-bs-toggle="tab" href="#suppliers" role="tab" aria-selected="false"
-                                    tabindex="-1" (click)="tabActive = 'Suppliers'">
+                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Stylists'}">
+                                <a class="nav-link" data-bs-toggle="tab" href="#stylists" role="tab" aria-selected="false"
+                                    tabindex="-1" (click)="tabActive = 'Stylists'">
                                     <span class="d-block d-sm-none"><i class="far fa-face-smile"></i></span>
-                                    <span class="d-none d-sm-block">Suppliers</span>
+                                    <span class="d-none d-sm-block">Stylists</span>
                                 </a>
                             </li>
                             <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
@@ -106,7 +106,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="tabActive === 'Suppliers'" class="col-xl-2">
+                <div *ngIf="tabActive === 'Stylists'" class="col-xl-2">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
                         <button (click)="changeDateBookingsSupplier(true)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
                         <button (click)="setTodayDateBookingsSupplier()" [ngClass]="{'btn-dark': dateBookingsSupplier.getDate() == dateNow.getDate(), 'btn-light': dateBookingsSupplier.getDate() != dateNow.getDate()}" style="height: 46px !important" class="btn shadow-sm w-25">{{dateBookingsSupplier.getDate()}}</button>
@@ -128,9 +128,9 @@
 </div>
 
 <div class="calendar-content">
-    <app-calendar-monthly [ngStyle]="{'display': tabActive === 'Month' ? 'block' : 'none' }"  [date]="dateCalendarMonthly" [services]="servicesSelected" [stylists]="stylistsSelected"></app-calendar-monthly>
+    <!-- <app-calendar-monthly [ngStyle]="{'display': tabActive === 'Month' ? 'block' : 'none' }"  [date]="dateCalendarMonthly" [services]="servicesSelected" [stylists]="stylistsSelected"></app-calendar-monthly>
     <app-calendar-weekly [ngStyle]="{'display': tabActive === 'Week' ? 'block' : 'none' }"  [date]="dateCalendarWeekly"  [services]="servicesSelected" [stylists]="stylistsSelected"></app-calendar-weekly>
     <app-calendar-daily [ngStyle]="{'display': tabActive === 'Day' ? 'block' : 'none' }"  [date]="dateCalendarDaily" [services]="servicesSelected" [stylists]="stylistsSelected"></app-calendar-daily>
-    <app-bookings-supplier [ngStyle]="{'display': tabActive === 'Suppliers' ? 'block' : 'none' }"  [date]="dateBookingsSupplier" [services]="servicesSelected" [stylists]="stylistsSelected"></app-bookings-supplier>
-    <!-- <app-bookings-floor [ngStyle]="{'display': tabActive === 'Floor' ? 'block' : 'none' }"></app-bookings-floor> -->
+    <app-bookings-supplier [ngStyle]="{'display': tabActive === 'Stylists' ? 'block' : 'none' }"  [date]="dateBookingsSupplier" [services]="servicesSelected" [stylists]="stylistsSelected"></app-bookings-supplier> -->
+    <app-bookings-floor [ngStyle]="{'display': tabActive === 'Floor' ? 'block' : 'none' }"></app-bookings-floor>
 </div>
