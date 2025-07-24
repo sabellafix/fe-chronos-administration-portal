@@ -7,6 +7,8 @@ import { BookingService } from '@app/core/services/http/booking.service';
 import { Subscription } from 'rxjs';
 import { TimeUtils } from '@app/core/utils/time.utils';
 import { DateUtils } from '@app/core/utils/date.utils';
+import { Service } from '@app/core/models/bussiness/service';
+import { User } from '@app/core/models/bussiness/user';
 
 @Component({
   selector: 'app-calendar-weekly',
@@ -16,10 +18,14 @@ import { DateUtils } from '@app/core/utils/date.utils';
 export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input('date') date: Date = new Date();
+  @Input('loading') loading: boolean = false;
+  @Input('services') services: Service[] = [];
+  @Input('stylists') stylists: User[] = [];
   dateNow : Date = new Date();
   dates: DateItem[] = [];
   activeDate: DateItem = new DateItem();
   bookings: Booking[] = [];
+  bookingsFiltered: Booking[] = [];
   isLoadingBookings: boolean = false;
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
@@ -37,6 +43,10 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     if (changes['date'] && !changes['date'].firstChange) {
       this.updateDates();
       this.loadBookingsForCurrentWeek();
+    }
+    if((changes['services'] && !changes['services'].firstChange) || 
+       (changes['stylists'] && !changes['stylists'].firstChange)){
+      this.filterBookings();
     }
   }
 
@@ -221,6 +231,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
           booking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
           booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
         });
+        this.filterBookings();
         this.isLoadingBookings = false;
       },
       error: (error) => {
@@ -235,23 +246,39 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     this.subscriptions.push(bookingsSubscription);
   }
 
+  filterBookings(){
+    let filteredBookings = this.bookings;
+    
+    if(this.services.length > 0){
+      filteredBookings = filteredBookings.filter(booking => 
+        this.services.some(service => service.id === booking.services?.[0]?.id)
+      );
+    }
+    
+    if(this.stylists.length > 0){
+      filteredBookings = filteredBookings.filter(booking => 
+        this.stylists.some(stylist => stylist.id === booking.supplierId)
+      );
+    }
+    
+    this.bookingsFiltered = filteredBookings;
+  }
+
   refreshCalendar(): void {
     this.dates = this.getDates();
     this.loadBookingsForCurrentWeek();
   }
 
   getBookingsForDateTime(date: Date, hour: number): Booking[] {
-    return this.bookings.filter(booking => {
+    return this.bookingsFiltered.filter(booking => {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
       const bookingHour = booking.startTime.hour;
-
-      
       return bookingDate.toDateString() === date.toDateString() && bookingHour === hour;
     });
   }
 
   getBookingsForDate(date: Date): Booking[] {
-    return this.bookings.filter(booking => {
+    return this.bookingsFiltered.filter(booking => {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
       return bookingDate.toDateString() === date.toDateString();
     });
@@ -272,5 +299,106 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     // return `Cliente: ${customerName} | ${timeRange} | Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
     // return `${timeRange} | Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
     return ` Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
+  }
+
+  /**
+   * Calcula la posición vertical (top) de un booking dentro de su celda horaria
+   * basada en los minutos del tiempo de inicio
+   */
+  getBookingTopPosition(booking: Booking): string {
+    const minutes = booking.startTime.minute;
+    // Cada celda representa 60 minutos, calculamos el porcentaje
+    const percentage = (minutes / 60) * 100;
+    return `${percentage}%`;
+  }
+
+  /**
+   * Calcula la altura de un booking basada en su duración
+   * para que represente visualmente el tiempo real
+   */
+  getBookingHeight(booking: Booking): string {
+    const totalMinutes = booking.durationMinutes;
+    // Altura mínima para legibilidad
+    const minHeightPx = 40;
+    // Altura base por hora (aproximadamente 60px por hora)
+    const pixelsPerMinute = 1;
+    
+    let calculatedHeight = totalMinutes * pixelsPerMinute;
+    
+    // Aplicar altura mínima
+    calculatedHeight = Math.max(calculatedHeight, minHeightPx);
+    
+    return `${calculatedHeight}px`;
+  }
+
+  /**
+   * Calcula el índice de superposición para bookings que se solapan
+   * en la misma celda horaria
+   */
+  getBookingZIndex(booking: Booking, allBookingsInCell: Booking[]): number {
+    const baseZIndex = 1000;
+    const bookingIndex = allBookingsInCell.findIndex(b => b.id === booking.id);
+    return baseZIndex + bookingIndex;
+  }
+
+  /**
+   * Calcula el offset horizontal cuando hay múltiples bookings superpuestos
+   */
+  getBookingLeftOffset(booking: Booking, allBookingsInCell: Booking[]): string {
+    if (allBookingsInCell.length <= 1) return '0%';
+    
+    const bookingIndex = allBookingsInCell.findIndex(b => b.id === booking.id);
+    const offsetPercentage = (bookingIndex * 5); // 5% de offset por cada booking adicional
+    
+    return `${offsetPercentage}%`;
+  }
+
+  /**
+   * Calcula el ancho de la tarjeta cuando hay superposición
+   */
+  getBookingWidth(allBookingsInCell: Booking[]): string {
+    if (allBookingsInCell.length <= 1) return '100%';
+    
+    // Reducir el ancho cuando hay múltiples bookings
+    const widthReduction = Math.min(allBookingsInCell.length * 3, 15); // Máximo 15% de reducción
+    return `${100 - widthReduction}%`;
+  }
+
+  /**
+   * Función auxiliar para mejorar el rendimiento.
+   * Retorna los bookings de una celda específica para evitar múltiples cálculos
+   */
+  getCellBookings(date: Date, hour: number): Booking[] {
+    return this.getBookingsForDateTime(date, hour);
+  }
+
+  /**
+   * Verifica si un booking se extiende más allá de la hora actual
+   * (para bookings que duran más de 60 minutos)
+   */
+  bookingExtendsToNextHour(booking: Booking): boolean {
+    const startMinutes = booking.startTime.hour * 60 + booking.startTime.minute;
+    const endMinutes = startMinutes + booking.durationMinutes;
+    const nextHourMinutes = (booking.startTime.hour + 1) * 60;
+    
+    return endMinutes > nextHourMinutes;
+  }
+
+  /**
+   * Calcula cuántas horas adicionales ocupa un booking
+   * (para bookings que se extienden más allá de su hora de inicio)
+   */
+  getBookingAdditionalHours(booking: Booking): number {
+    if (booking.durationMinutes <= 60) return 0;
+    
+    const remainingMinutes = booking.durationMinutes - (60 - booking.startTime.minute);
+    return Math.ceil(remainingMinutes / 60);
+  }
+
+  /**
+   * Función trackBy para mejorar el rendimiento de Angular con *ngFor
+   */
+  trackByBooking(index: number, booking: Booking): string {
+    return booking.id;
   }
 }

@@ -152,7 +152,6 @@
 }
 
 .time-label {
-   
     left: 15px;
     font-size: 14px;
     color: #1a293c;
@@ -164,12 +163,13 @@
 .day-cell {    
     vertical-align: top;
     padding: 2px;
-    position: relative;
+    position: relative; // Importante para posicionamiento absoluto
     cursor: pointer;
     transition: background-color 0.2s ease;
     border-left: none;
     border-right: none;
     border-bottom: 1px solid rgb(208, 213, 225);
+    height: 80px; // Altura fija para cálculos de posicionamiento
     // width: 298px;
 }
 
@@ -218,14 +218,31 @@
 
 .cell-content {
     width: 100%;
-    height: 56px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 2px;
-    overflow: hidden;
+    height: 100%; // Altura completa para posicionamiento absoluto
+    position: relative; // Contenedor para posicionamiento absoluto
+    display: block; // Cambio de flex a block para posicionamiento absoluto
+    overflow: visible; // Permitir que las tarjetas se extiendan fuera si es necesario
+    padding: 0; // Sin padding para mejor control de posicionamiento
 }
 
+// Estilos antiguos de booking-item (mantenidos para compatibilidad)
+.booking-item-legacy {
+    position: absolute;
+    top:0;
+    height: 250px !important;
+    width: 98%;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 2px;
+    color: black;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 850;
+}
+
+// ESTILOS ANTIGUOS COMENTADOS - Ahora manejados por CardBookingComponent
+/*
 .booking-item {
     position: absolute;
     top:0;
@@ -268,7 +285,6 @@
 }
 
 .booking-info {
-
     display: flex;
     flex-direction: column;
     line-height: 1.2;
@@ -295,6 +311,7 @@
     font-weight: 500;
     margin-top: 1px;
 }
+*/
 
 .day-header-collapse{
     height: 0px !important; 

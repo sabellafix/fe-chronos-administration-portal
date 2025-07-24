@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
-import { Booking, BookingStatus } from '@app/core/models/bussiness';
+import { Booking, BookingStatus, Service, User } from '@app/core/models/bussiness';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
 import { BookingService } from '@app/core/services/http/booking.service';
 import { DateUtils } from '@app/core/utils/date.utils';
@@ -16,8 +16,12 @@ import { Subscription } from 'rxjs';
 export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input('date') date: Date = new Date();
-  currentDate: DateItem = new DateItem();
+  @Input('loading') loading: boolean = false;
+  @Input('services') services: Service[] = [];
+  @Input('stylists') stylists: User[] = [];
+  currentDate: DateItem = new DateItem(); 
   bookings: Booking[] = [];
+  bookingsFiltered: Booking[] = [];
   isLoadingBookings: boolean = false;
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
@@ -34,6 +38,10 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
     if (changes['date'] && !changes['date'].firstChange) {
       this.initCurrentDate();
       this.loadBookingsForCurrentDay();
+    }
+    if((changes['services'] && !changes['services'].firstChange) || 
+       (changes['stylists'] && !changes['stylists'].firstChange)){
+      this.filterBookings();
     }
   }
 
@@ -112,7 +120,7 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
       this.bookings.push(booking);
       this.loadBookingsForCurrentDay();
       
-      this.snackBar.open('Cita creada exitosamente', 'Cerrar', {
+      this.snackBar.open('Booking created successfully', 'Close', {
         duration: 3000,
         panelClass: 'snackbar-success'
       });
@@ -120,7 +128,7 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onBookingCancelled(): void {
-    console.log('Creación de cita cancelada');
+    console.log('Booking creation cancelled');
   }
 
   private loadBookingsForCurrentDay(): void {
@@ -134,18 +142,37 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
           booking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
           booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
         });
+        this.filterBookings();
         this.isLoadingBookings = false;
       },
       error: (error) => {
-        console.error('Error al cargar bookings del día:', error);
+        console.error('Error to charge bookings of the day:', error);
         this.isLoadingBookings = false;
-        this.snackBar.open('Error al cargar las citas del día', 'Cerrar', {
+        this.snackBar.open('Error to charge bookings of the day', 'Close', {
           duration: 5000,
           panelClass: 'snackbar-error'
         });
       }
     });
     this.subscriptions.push(bookingsSubscription);
+  }
+
+  filterBookings(){
+    let filteredBookings = this.bookings;
+    
+    if(this.services.length > 0){
+      filteredBookings = filteredBookings.filter(booking => 
+        this.services.some(service => service.id === booking.services?.[0]?.id)
+      );
+    }
+    
+    if(this.stylists.length > 0){
+      filteredBookings = filteredBookings.filter(booking => 
+        this.stylists.some(stylist => stylist.id === booking.supplierId)
+      );
+    }
+    
+    this.bookingsFiltered = filteredBookings;
   }
 
   refreshCalendar(): void {
@@ -157,16 +184,15 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getBookingsForDateTime(date: Date, hour: number): Booking[] {
-    return this.bookings.filter(booking => {
+    return this.bookingsFiltered.filter(booking => {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
       const bookingHour = booking.startTime.hour;
-      
       return bookingDate.toDateString() === date.toDateString() && bookingHour === hour;
     });
   }
 
   getBookingsForDate(date: Date): Booking[] {
-    return this.bookings.filter(booking => {
+    return this.bookingsFiltered.filter(booking => {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
       return bookingDate.toDateString() === date.toDateString();
     });

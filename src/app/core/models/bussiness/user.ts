@@ -5,6 +5,7 @@ export class User{
     firstName: string;
     lastName: string;
     phone: string;
+    photo: string;
     isActive: boolean;
     createdAt: string;
     updatedAt: string;
@@ -31,6 +32,7 @@ export class User{
         this.firstName = "";
         this.lastName = "";
         this.phone = "";
+        this.photo = "";
         this.isActive = false;
         this.createdAt = "";
         this.updatedAt = "";

@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs';
 import { BookingService } from '@app/core/services/http/booking.service';
 import { TimeUtils } from '@app/core/utils/time.utils';
 import { DateUtils } from '@app/core/utils/date.utils';
+import { Service } from '@app/core/models/bussiness/service';
+import { User } from '@app/core/models/bussiness/user';
 
 @Component({
   selector: 'app-calendar-monthly',
@@ -16,11 +18,15 @@ import { DateUtils } from '@app/core/utils/date.utils';
 export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input('date') date: Date = new Date();
+  @Input('loading') loading: boolean = false;
+  @Input('services') services: Service[] = [];
+  @Input('stylists') stylists: User[] = [];
   dateNow: Date = new Date(); 
   currentMonth: Date = new Date();
   monthDays: DateItem[][] = [];
   daysOfWeek: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   bookings: Booking[] = [];
+  bookingsFiltered: Booking[] = [];
   isLoadingBookings: boolean = false;
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
@@ -36,6 +42,10 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
       this.updateCurrentMonth();
       this.generateMonthDays();
       this.loadBookingsForCurrentMoenth();
+    }
+    if((changes['services'] && !changes['services'].firstChange) || 
+       (changes['stylists'] && !changes['stylists'].firstChange)){
+      this.filterBookings();
     }
   }
 
@@ -203,8 +213,9 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
         this.bookings.map(booking => {
           booking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
           booking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
-          booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+          booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());          
         });
+        this.filterBookings();
         this.isLoadingBookings = false;
       },
       error: (error) => {
@@ -219,8 +230,26 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
     this.subscriptions.push(bookingsSubscription);
   }
 
+  filterBookings(){
+    let filteredBookings = this.bookings;
+    
+    if(this.services.length > 0){
+      filteredBookings = filteredBookings.filter(booking => 
+        this.services.some(service => service.id === booking.services?.[0]?.id)
+      );
+    }
+    
+    if(this.stylists.length > 0){
+      filteredBookings = filteredBookings.filter(booking => 
+        this.stylists.some(stylist => stylist.id === booking.supplierId)
+      );
+    }
+    
+    this.bookingsFiltered = filteredBookings;
+  }
+
   getBookingsForDate(date: Date): Booking[] {
-    return this.bookings.filter(booking => {
+    return this.bookingsFiltered.filter(booking => {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
       return this.isSameDate(bookingDate, date);
     });

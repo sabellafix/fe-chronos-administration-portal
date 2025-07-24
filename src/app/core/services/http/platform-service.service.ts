@@ -25,6 +25,11 @@ export class ServiceService {
         };
     }
 
+    get(): Observable<Service[]> {
+        const url = `${this.apiUrl}/${this.controller}/get`;
+        return this.http.get<Service[]>(url, this.getHttpOptions());
+    }
+
     getServices(): Observable<Service[]> {
         const url = `${this.apiUrl}/${this.controller}/get-services`;
         return this.http.get<Service[]>(url, this.getHttpOptions());

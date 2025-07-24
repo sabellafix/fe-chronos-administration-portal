@@ -1,0 +1,382 @@
+/* Estilos para formato SM (small) - Compacto como en calendar-monthly */
+.booking-item-compact {
+  background: #23324d;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  // Estilos para posicionamiento absoluto
+  &.absolute-positioned {
+    margin-bottom: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    
+    &:hover {
+      transform: scale(1.02);
+      z-index: 10000 !important;
+    }
+  }
+  
+  .booking-compact-info {
+    .booking-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      
+      .customer-info {
+        .customer-name {
+          color: white;
+          font-weight: 500;
+          font-size: 11px;
+        }
+      }
+      
+      .booking-time {
+        display: flex;
+        align-items: center;
+        
+        span {
+          font-size: 10px;
+          font-weight: 400;
+        }
+        
+        i {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
+/* Estilos para formato MD (medium) - Intermedio como en calendar-weekly con altura proporcional */
+.booking-item {
+  background: #23324d;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 100%;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  // Estilos específicos para posicionamiento absoluto
+  &.absolute-positioned {
+    margin-bottom: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 3px solid rgba(255, 255, 255, 0.6);
+    padding: 8px;
+    min-height: 40px;
+    overflow: hidden;
+    
+    &:hover {
+      transform: scale(1.03);
+      z-index: 10000 !important;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    // Barra lateral para bookings absolutamente posicionados
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 8px 0 0 8px;
+    }
+  }
+  
+  .booking-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    
+    // Información compacta para posicionamiento absoluto
+    &.compact-info {
+      justify-content: flex-start;
+      gap: 2px;
+      
+      .booking-time-price {
+        margin-bottom: 2px;
+        
+        .booking-time {
+          font-size: 10px;
+          font-weight: 600;
+        }
+        
+        .booking-price {
+          font-size: 11px;
+          font-weight: 700;
+        }
+      }
+      
+      .booking-customer-info {
+        margin-bottom: 2px;
+        
+        .header-profile-user {
+          width: 14px;
+          height: 14px;
+          margin-right: 4px;
+        }
+        
+        .customer-name {
+          font-size: 10px;
+          font-weight: 500;
+        }
+      }
+      
+      .services-badges {
+        .badge-service {
+          font-size: 8px;
+          padding: 1px 4px;
+          margin-bottom: 2px;
+        }
+      }
+    }
+    
+    .booking-time-price {
+      .booking-time {
+        font-size: 12px;
+        font-weight: 500;
+      }
+      
+      .booking-price {
+        font-size: 13px;
+      }
+    }
+    
+    .booking-customer-info {
+      .header-profile-user {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+      
+      .customer-name {
+        font-size: 12px;
+        font-weight: 500;
+      }
+    }
+    
+    .services-badges {
+      .badge-service {
+        font-size: 10px;
+        padding: 3px 6px;
+        border-radius: 12px;
+        font-weight: 500;
+      }
+    }
+    
+    // Estilos para el indicador de duración
+    .duration-indicator {
+      margin-top: auto; // Empuja el indicador hacia abajo
+      align-self: flex-end; // Alinea a la derecha
+      
+      small {
+        font-size: 9px;
+        font-weight: 400;
+        opacity: 0.8;
+        
+        i {
+          font-size: 10px;
+        }
+      }
+    }
+  }
+  
+  // Indicador visual lateral para duraciones largas (solo para posicionamiento normal)
+  &:not(.absolute-positioned)::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+    border-radius: 8px 0 0 8px;
+  }
+  
+  // Estilos especiales para diferentes duraciones
+  &[style*="min-height: 125px"], // 45-60 min
+  &[style*="min-height: 145px"] { // 75-90 min
+    .booking-info {
+      .duration-indicator {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 4px 8px;
+        
+        small {
+          font-weight: 500;
+          opacity: 1;
+        }
+      }
+    }
+  }
+  
+  &[style*="min-height: 165px"], // 105+ min
+  &[style*="min-height: 185px"],
+  &[style*="min-height: 200px"] {
+    // &::before {
+    //   background: linear-gradient(
+    //     to bottom,
+    //     #ffd700 0%,
+    //     rgba(255, 215, 0, 0.6) 50%,
+    //     rgba(255, 215, 0, 0.2) 100%
+    //   );
+    // }
+    
+    .booking-info {
+      .duration-indicator {
+        background: rgba(255, 215, 0, 0.2);
+        border: 1px solid rgba(255, 215, 0, 0.4);
+        border-radius: 12px;
+        padding: 4px 8px;
+        
+        small {
+          color: #ffd700;
+          font-weight: 600;
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
+
+.booking-item-daily {
+  background: #23324d;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 120px;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  }
+  
+  // Estilos para posicionamiento absoluto
+  &.absolute-positioned {
+    margin-bottom: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    
+    &:hover {
+      transform: scale(1.02);
+      z-index: 10000 !important;
+    }
+  }
+  
+  .booking-info-daily {
+    .booking-service {
+      font-size: 14px;
+      line-height: 1.2;
+    }
+    
+    .booking-price-daily {
+      font-size: 15px;
+    }
+    
+    .booking-customer-info-daily {
+      img {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+      
+      .booking-customer-name {
+        font-size: 13px;
+        font-weight: 500;
+      }
+    }
+    
+    .services-badges {
+      .badge-service {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 14px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* Estilos comunes */
+.customer-info,
+.booking-customer-info,
+.booking-customer-info-daily {
+  img {
+    object-fit: cover;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animated.fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.fast {
+  animation-duration: 0.2s;
+}
+
+/* Estilos responsive para diferentes alturas */
+@media (max-width: 768px) {
+  .booking-item {
+    // En móviles, limitar la altura máxima para mejor visualización
+    max-height: 150px;
+    
+    &.absolute-positioned {
+      min-height: 35px;
+      padding: 6px;
+    }
+    
+    .booking-info {
+      .duration-indicator {
+        font-size: 8px;
+        padding: 2px 6px;
+      }
+      
+      &.compact-info {
+        .booking-time-price {
+          .booking-time {
+            font-size: 9px;
+          }
+          
+          .booking-price {
+            font-size: 10px;
+          }
+        }
+      }
+    }
+  }
+}

@@ -12,6 +12,7 @@ import { forkJoin } from 'rxjs';
 import { TimeUtils } from '@app/core/utils/time.utils';
 import { DateUtils } from '@app/core/utils/date.utils';
 import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
+import { Service } from '@app/core/models/bussiness/service';
 
 @Component({
   selector: 'app-bookings-supplier',
@@ -21,10 +22,12 @@ import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
 export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input('date') date: Date = new Date();
+  @Input('loading') loading: boolean = false;
+  @Input('services') services: Service[] = [];
+  @Input('stylists') stylists: User[] = [];
   currentDate: DateItem = new DateItem();
-  stylists: User[] = [];
   bookings: Booking[] = [];
-  loading: boolean = false;
+  bookingsFiltered: Booking[] = [];
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
   imageUser: string = "../assets/images/user-image.jpg";
@@ -43,6 +46,10 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
       this.initCurrentDate();
       this.loadBookingsForCurrentDate();
     }
+    if((changes['services'] && !changes['services'].firstChange) || 
+    (changes['stylists'] && !changes['stylists'].firstChange)){
+   this.filterBookings();
+ }
   }
 
   ngOnInit(): void {
@@ -110,6 +117,7 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
           booking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
           booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
         });
+        this.filterBookings();
         this.loading = false;
       },
       error: (error) => {
@@ -120,6 +128,23 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
+  filterBookings(){
+    let filteredBookings = this.bookings;
+    
+    if(this.services.length > 0){
+      filteredBookings = filteredBookings.filter(booking => 
+        this.services.some(service => service.id === booking.services?.[0]?.id)
+      );
+    }
+    
+    if(this.stylists.length > 0){
+      filteredBookings = filteredBookings.filter(booking => 
+        this.stylists.some(stylist => stylist.id === booking.supplierId)
+      );
+    }
+    
+    this.bookingsFiltered = filteredBookings;
+  }
   getFormattedCurrentDate(): string {
     return this.currentDate.date.toLocaleDateString('es-ES', {
       weekday: 'long',
@@ -167,7 +192,7 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getBookingsForStylistAndHour(userId: string, hour: number): Booking[] {
-    return this.bookings.filter(booking => {
+    return this.bookingsFiltered.filter(booking => {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
       const bookingHour = booking.startTime.hour;
       
@@ -178,7 +203,7 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getBookingsForStylist(userId: string): Booking[] {
-    return this.bookings.filter(booking => {
+    return this.bookingsFiltered.filter(booking => {
       const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
       return bookingDate.toDateString() === this.currentDate.date.toDateString() && 
              booking.supplierId === userId;

@@ -65,6 +65,7 @@ import { BookingsSupplierComponent } from './components/booking/bookingsCalendar
 import { TimeOnlyPipe } from '../core/pipes/time-only.pipe';
 import { AutocompleteComponent } from './components/shared/autocomplete/autocomplete.component';
 import { SelectImageComponent } from './components/shared/selects/select-image/select-image.component';
+import { CardBookingComponent } from './components/shared/cards/card-booking/card-booking.component';
 
 
 const routes: Routes = [
@@ -199,6 +200,7 @@ const routes: Routes = [
     TimeOnlyPipe,
     AutocompleteComponent,
     SelectImageComponent,
+    CardBookingComponent,
   ],
   imports: [
     CommonModule,

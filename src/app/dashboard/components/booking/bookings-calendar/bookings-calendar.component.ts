@@ -1,7 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Customer, Service, User } from '@app/core/models/bussiness';
-import { BookingService } from '@app/core/services/http/booking.service';
-import { CompanyService } from '@app/core/services/http/company.service';
 import { CustomerService } from '@app/core/services/http/customer.service';
 import { ServiceService } from '@app/core/services/http/platform-service.service';
 import { UserService } from '@app/core/services/http/user.service';
@@ -20,6 +18,7 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   tabIndex: number = 1;
   dateNow: Date = new Date();
   loading: boolean = false;
+  imageUser: string = "../assets/images/user-image.jpg";
 
   dateCalendarDaily: Date = new Date();
   dateCalendarWeekly: Date = new Date();
@@ -39,9 +38,11 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   stylistSelected: User = new User();
   customerSelected: Customer = new Customer();
 
+  servicesSelected: Service[] = [];
+  stylistsSelected: User[] = [];
+  customersSelected: Customer[] = [];
+
   constructor(
-    private bookingService: BookingService,
-    private companyService: CompanyService,
     private userService: UserService,
     private customerService: CustomerService,
     private serviceService: ServiceService, 
@@ -80,13 +81,17 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   loadData(): void {
     this.loading = true;
     forkJoin([
-      this.serviceService.getServices(),
+      this.serviceService.get(),
       this.userService.getUsers(),
       this.customerService.getCustomers()
     ]).subscribe(([services, stylists, customers]) => {
       this.services = services;
       this.stylists = stylists;
       this.customers = customers;
+
+      this.stylists.map(stylist => {
+        stylist.photo = this.imageUser;
+      });
       
       // Convertir los datos a VisualOption para el nuevo componente
       this.prepareSelectOptions();
@@ -114,7 +119,7 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
       id: stylist.id,
       name: `${stylist.firstName} ${stylist.lastName}`,
       code: stylist.id,
-      // imageUrl: stylist.profileImage, // Si tienes imagen de perfil
+      imageUrl: stylist.photo,
       selected: false
     }));
 
@@ -127,23 +132,22 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
     }));
   }
 
-  // Método para manejar la selección de servicios con el nuevo componente
   onServiceSelectionChange(selectedServices: VisualOption[]): void {
-    if (selectedServices.length === 1) {
-      this.serviceSelected = this.services.find(service => service.id === selectedServices[0].id) || new Service();
-    } else {
-      this.serviceSelected = new Service(); // Reset si múltiples o ninguno seleccionado
-    }
-    console.log('Servicios seleccionados:', selectedServices);
+    this.servicesSelected = selectedServices.map(service => this.services.find(s => s.id === service.id) || new Service());
   }
 
-  // Método para manejar selección única de servicio
   onSingleServiceSelectionChange(selectedService: VisualOption): void {
     this.serviceSelected = this.services.find(service => service.id === selectedService.id) || new Service();
-    console.log('Servicio seleccionado:', selectedService);
+  }
+  
+  onStylistSelectionChange(selectedStylists: VisualOption[]): void {
+    this.stylistsSelected = selectedStylists.map(stylist => this.stylists.find(s => s.id === stylist.id) || new User());
   }
 
-  // Métodos existentes (mantenidos para compatibilidad)
+  onSingleStylistSelectionChange(selectedStylist: VisualOption): void {
+    this.stylistSelected = this.stylists.find(stylist => stylist.id === selectedStylist.id) || new User();
+  }
+
   onChangeService(event: any): void {
     this.serviceSelected = this.services.find(service => service.id === event.target.value) || new Service();
   }

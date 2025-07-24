@@ -9,20 +9,20 @@ import { VisualOption } from '@app/core/models/interfaces/option.interface';
 export class SelectImageComponent implements OnChanges {
   
   @Input("options") options: VisualOption[] = [];
-  @Input("placeholder") placeholder: string = 'Seleccionar elementos';
+  @Input("placeholder") placeholder: string = 'Select elements';
   @Input("disabled") disabled: boolean = false;
   @Input("multiSelect") multiSelect: boolean = true;
   @Input("showAllOption") showAllOption: boolean = true;
-  @Input("allOptionText") allOptionText: string = 'Todos';
-  @Input("noneOptionText") noneOptionText: string = 'Ninguno';
+  @Input("allOptionText") allOptionText: string = 'All';
+  @Input("noneOptionText") noneOptionText: string = 'None';
   @Input("showImages") showImages: boolean = true;
   @Input("showColors") showColors: boolean = true;
   @Input("cardBackgroundClass") cardBackgroundClass: string = 'bg-light';
   
-  // Nuevos inputs para valores por defecto
   @Input("defaultValue") defaultValue: string | string[] | null = null; // ID o array de IDs
   @Input("autoSelectFirst") autoSelectFirst: boolean = false; // Auto-seleccionar el primer elemento
   @Input("selectAllByDefault") selectAllByDefault: boolean = false; // Seleccionar todos por defecto (solo multiSelect)
+  @Input("noInitialSelection") noInitialSelection: boolean = false; // Cargar opciones sin selección inicial
   
   @Output() selectionChange = new EventEmitter<VisualOption[]>();
   @Output() singleSelectionChange = new EventEmitter<VisualOption>();
@@ -55,6 +55,14 @@ export class SelectImageComponent implements OnChanges {
   private setDefaultValues(): void {
     // Solo establecer valores por defecto una vez y cuando hay opciones disponibles
     if (this.hasSetDefaults || this.options.length === 0) {
+      return;
+    }
+
+    // Si noInitialSelection está activado, cargar opciones sin selección inicial
+    if (this.noInitialSelection) {
+      this.clearAllSelections();
+      this.updateSelectedOptions();
+      this.hasSetDefaults = true;
       return;
     }
 
@@ -207,6 +215,17 @@ export class SelectImageComponent implements OnChanges {
     }, 200);
   }
 
+  onComponentBlur(event: FocusEvent): void {
+    // Verificar si el elemento que recibe el foco está dentro del componente
+    const relatedTarget = event.relatedTarget as HTMLElement;
+    const currentTarget = event.currentTarget as HTMLElement;
+    
+    // Si no hay relatedTarget o el nuevo foco está fuera del componente, cerrar dropdown
+    if (!relatedTarget || !currentTarget.contains(relatedTarget)) {
+      this.closeDropdown();
+    }
+  }
+
   onOptionClick(option: VisualOption, event: Event): void {
     event.stopPropagation();
     
@@ -270,6 +289,7 @@ export class SelectImageComponent implements OnChanges {
   }
 
   private emitSelectionChange(): void {
+    console.log('selectedOptions', this.selectedOptions);
     this.selectionChange.emit([...this.selectedOptions]);
     
     if (!this.multiSelect && this.selectedOptions.length > 0) {

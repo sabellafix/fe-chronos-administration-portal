@@ -1,36 +1,33 @@
-.select-image-container {
-  border: none;
-  transition: all 0.3s ease;
-
-  &:hover {
-    border-color: none;
-  }
-}
-
 .custom-select-wrapper {
+  &:focus {
+    outline: none;
+  }
+  
   .select-filter-custom {
-    cursor: pointer;
+    cursor: pointer;   
+    min-height: 47px;
+    background-color: #f5f6f8 !important;
     border: none;
-    border-radius: 0.375rem;
-    padding: 0.5rem 0.75rem;
-    background-color: #fff;
-    min-height: 38px;
+    border: 1px solid rgb(239, 240, 242);
     transition: all 0.15s ease-in-out;
 
     &:hover {
       border-color: #86b7fe;
+      background-color: #ffffff;
     }
 
     &:focus,
     &:focus-within {
       border-color: #86b7fe;
       box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      background-color: #ffffff;
       outline: 0;
     }
 
     &.disabled {
       background-color: #e9ecef;
-      opacity: 1;
+      color: rgb(40, 63, 92);
+      opacity: 0.6;
       cursor: not-allowed;
     }
 
@@ -39,19 +36,22 @@
       overflow: hidden;
       
       .select-text {
+        color: rgb(40, 63, 92);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         
         &.placeholder {
-          color: #6c757d;
+          color: rgb(40, 63, 92);
+          background-color: #f5f6f8 !important;
+          cursor: pointer !important;
         }
       }
     }
 
     .custom-select-arrow {
       margin-left: 0.5rem;
-      color: #6c757d;
+      color: rgb(40, 63, 92);
       transition: transform 0.15s ease-in-out;
       
       i {
@@ -66,10 +66,11 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: #fff;
-    border: 1px solid #ced4da;
+    background: #ffffff;
+    color: rgb(40, 63, 92);
+    border: 1px solid #dee2e6;
     border-top: none;
-    border-radius: 0 0 0.375rem 0.375rem;
+    border-radius: 0 0 16px 16px;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     z-index: 1000;
     max-height: 300px;
@@ -82,6 +83,7 @@
     .dropdown-option {
       padding: 0.5rem 0.75rem;
       cursor: pointer;
+      color: rgb(40, 63, 92);
       transition: background-color 0.15s ease-in-out;
       border-bottom: 1px solid #f8f9fa;
 
@@ -103,6 +105,7 @@
       }
 
       &.disabled-option {
+        color: #6c757d;
         cursor: not-allowed;
         opacity: 0.6;
       }
@@ -128,6 +131,12 @@
           .form-check-input {
             margin: 0;
             cursor: pointer;
+            border-color: #ced4da;
+            
+            &:checked {
+              background-color: #1a293c;
+              border-color: #1a293c;
+            }
             
             &:focus {
               border-color: #86b7fe;
@@ -137,6 +146,7 @@
         }
 
         .option-text {
+          color: rgb(40, 63, 92);
           font-size: 0.875rem;
           line-height: 1.25;
           white-space: nowrap;
@@ -171,9 +181,9 @@
   .image-indicator {
     width: 24px;
     height: 24px;
-    border-radius: 4px;
+    border-radius: 50%;
     object-fit: cover;
-    border: 1px solid #dee2e6;
+    border: 0px solid #fff;
     flex-shrink: 0;
   }
 }
@@ -209,41 +219,95 @@
   }
 }
 
-// Dark mode support (if needed)
+// Sobrescribir modo oscuro para mantener el estilo light
 @media (prefers-color-scheme: dark) {
   .select-image-container {
-    background-color: #1a293c !important;
-    border-color: none;
+    background-color: #f8f9fa !important;
+    color: rgb(40, 63, 92) !important;
+    border-color: #dee2e6 !important;
     
-    .select-filter-custom {
-      background-color: #1a293c;
-      border-color: none;
-      color: #fff;
-      
-      &.disabled {
-        background-color: #6c757d;
-      }
-    }
-    
-    .dropdown-options {
-      background-color: #1a293c;
-      border-color: #6c757d;
-      
-      .dropdown-option {
-        color: #fff;
-        border-bottom-color: #6c757d;
+    .custom-select-wrapper {
+      .select-filter-custom {
+        background-color: #f8f9fa !important;
+        color: rgb(40, 63, 92) !important;
+        border-color: #dee2e6 !important;
         
-        &:hover:not(.disabled-option) {
-          background-color: #6c757d;
+        &:hover {
+          background-color: #ffffff !important;
         }
         
-        &.all-option {
-          background-color: #6c757d;
-          border-bottom-color: #adb5bd;
-          
-          &:hover {
-            background-color: #adb5bd;
+        &:focus,
+        &:focus-within {
+          background-color: #ffffff !important;
+        }
+        
+        &.disabled {
+          background-color: #e9ecef !important;
+          color: rgb(40, 63, 92) !important;
+        }
+        
+        .select-content {
+          .select-text {
+            color: rgb(40, 63, 92) !important;
+            
+            &.placeholder {
+              color: #6c757d !important;
+              background-color: transparent !important;
+            }
           }
+        }
+        
+        .custom-select-arrow {
+          color: rgb(40, 63, 92) !important;
+        }
+      }
+      
+      .dropdown-options {
+        background-color: #ffffff !important;
+        color: rgb(40, 63, 92) !important;
+        border-color: #dee2e6 !important;
+        
+        .dropdown-option {
+          color: rgb(40, 63, 92) !important;
+          border-bottom-color: #f8f9fa !important;
+          
+          &:hover:not(.disabled-option) {
+            background-color: #f8f9fa !important;
+          }
+          
+          &.all-option {
+            background-color: #f8f9fa !important;
+            border-bottom-color: #dee2e6 !important;
+            
+            &:hover {
+              background-color: #e9ecef !important;
+            }
+          }
+          
+          &.disabled-option {
+            color: #6c757d !important;
+          }
+          
+          .option-content {
+            .option-text {
+              color: rgb(40, 63, 92) !important;
+            }
+            
+            .checkbox-container {
+              .form-check-input {
+                border-color: #ced4da !important;
+                
+                &:checked {
+                  background-color: #0d6efd !important;
+                  border-color: #0d6efd !important;
+                }
+              }
+            }
+          }
+        }
+        
+        .dropdown-divider {
+          border-color: #dee2e6 !important;
         }
       }
     }

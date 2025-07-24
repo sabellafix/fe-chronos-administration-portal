@@ -1,23 +1,19 @@
-<div class="select-image-container" [class]="cardBackgroundClass + ' p-2 mt-1 rounded'">
-  <div class="custom-select-wrapper position-relative">
-    <!-- Select Visual Display -->
+  <div 
+    class="custom-select-wrapper position-relative card bg-light mt-1 animated fadeIn fast"
+    tabindex="0"
+    (blur)="onComponentBlur($event)">
     <div 
       class="form-select select-filter-custom d-flex align-items-center justify-content-between" 
       [class.disabled]="disabled"
-      (click)="toggleDropdown()"
-      (blur)="closeDropdown()">
+      (click)="toggleDropdown()">
       
-      <!-- Contenido del select -->
       <div class="select-content d-flex align-items-center">
-        <!-- Indicador visual para selección única -->
         <div class="visual-indicator me-2" *ngIf="!multiSelect && selectedOptions.length === 1 && hasVisualIndicator(selectedOptions[0])">
-          <!-- Color indicator -->
           <div 
             class="color-circle" 
             *ngIf="showColors && selectedOptions[0].color"
             [style.background-color]="selectedOptions[0].color">
           </div>
-          <!-- Image indicator -->
           <img 
             class="image-indicator" 
             *ngIf="showImages && selectedOptions[0].imageUrl"
@@ -25,36 +21,25 @@
             [alt]="selectedOptions[0].name">
         </div>
         
-        <!-- Texto de visualización -->
         <span class="select-text" [class.placeholder]="selectedOptions.length === 0">
           {{ displayText }}
         </span>
       </div>
-      
-      <!-- Flecha del dropdown -->
-      <div class="custom-select-arrow">
-        <i class="bx" [class.bx-chevron-down]="!isDropdownOpen" [class.bx-chevron-up]="isDropdownOpen"></i>
-      </div>
     </div>
 
-    <!-- Dropdown Options -->
     <div class="dropdown-options" *ngIf="isDropdownOpen" [class.show]="isDropdownOpen">
       
-      <!-- Opción Todos/Ninguno -->
       <div 
         class="dropdown-option all-option" 
         *ngIf="showAllOption && multiSelect"
         (click)="onAllOptionsClick()">
         <div class="option-content d-flex align-items-center justify-content-between">
-          <!-- Contenido izquierdo -->
           <div class="option-left-content d-flex align-items-center">
-            <!-- Texto -->
             <span class="option-text fw-bold">
               {{ areAllSelected() ? noneOptionText : allOptionText }}
             </span>
           </div>
           
-          <!-- Checkbox alineado a la derecha -->
           <div class="checkbox-container">
             <input 
               type="checkbox" 
@@ -66,27 +51,21 @@
         </div>
       </div>
 
-      <!-- Separador -->
       <hr class="dropdown-divider" *ngIf="showAllOption && multiSelect && options.length > 0">
 
-      <!-- Opciones individuales -->
       <div 
         class="dropdown-option" 
         *ngFor="let option of options"
         (click)="onOptionClick(option, $event)">
         <div class="option-content d-flex align-items-center justify-content-between">
           
-          <!-- Contenido izquierdo -->
           <div class="option-left-content d-flex align-items-center">
-            <!-- Indicador visual -->
             <div class="visual-indicator me-3" *ngIf="hasVisualIndicator(option)">
-              <!-- Color indicator -->
               <div 
                 class="color-circle" 
                 *ngIf="showColors && option.color"
                 [style.background-color]="option.color">
               </div>
-              <!-- Image indicator -->
               <img 
                 class="image-indicator" 
                 *ngIf="showImages && option.imageUrl"
@@ -94,11 +73,9 @@
                 [alt]="option.name">
             </div>
             
-            <!-- Nombre de la opción -->
             <span class="option-text">{{ option.name }}</span>
           </div>
 
-          <!-- Checkbox alineado a la derecha -->
           <div class="checkbox-container">
             <input 
               type="checkbox" 
@@ -109,10 +86,8 @@
         </div>
       </div>
 
-      <!-- Mensaje si no hay opciones -->
       <div class="dropdown-option disabled-option" *ngIf="options.length === 0">
-        <span class="text-muted">No hay opciones disponibles</span>
+        <span class="text-muted">No options available</span>
       </div>
     </div>
   </div>
-</div>
