@@ -7,6 +7,7 @@ import { BookingService } from '@app/core/services/http/booking.service';
 import { DateUtils } from '@app/core/utils/date.utils';
 import { TimeUtils } from '@app/core/utils/time.utils';
 import { Subscription } from 'rxjs';
+import { UserService } from '@app/core/services/http/user.service';
 
 @Component({
   selector: 'app-calendar-daily',
@@ -30,7 +31,8 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private snackBar: MatSnackBar, 
     private offcanvasBookingService: OffcanvasBookingService,
-    private bookingService: BookingService
+    private bookingService: BookingService,
+    private userService: UserService
   ){
   }
 
@@ -142,8 +144,19 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
           booking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
           booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
         });
-        this.filterBookings();
-        this.isLoadingBookings = false;
+        this.userService.getUsers().subscribe({
+          next: (users: User[]) => {
+            let usersMap = new Map<string, User>();
+            users.forEach(user => {
+              usersMap.set(user.id, user);
+            });
+            this.bookings.forEach(booking => {
+              booking.user = usersMap.get(booking.supplierId) || new User();
+            });
+            this.filterBookings();
+            this.isLoadingBookings = false;
+          }
+        });
       },
       error: (error) => {
         console.error('Error to charge bookings of the day:', error);

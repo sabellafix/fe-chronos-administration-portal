@@ -2,7 +2,7 @@ import { BookingStatus } from './enums';
 import { DateOnly, TimeOnly } from './availability';
 import { Service } from './service';
 import { Customer } from './customer';
-import { Supplier } from './supplier';
+import { User } from './user';
 
 export class BookingServiceDTO {
     bookingId: string;
@@ -42,6 +42,7 @@ export class Booking{
     cancellationReason: string | null;
     bookingServices: BookingServiceDTO[] | null;
     services: Service[] | null;
+    user: User;
 
     constructor() {
         this.id = "";
@@ -67,5 +68,6 @@ export class Booking{
         this.cancellationReason = null;
         this.bookingServices = null;
         this.services = null;
+        this.user = new User(); 
     }
 } 

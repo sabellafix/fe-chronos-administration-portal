@@ -13,9 +13,13 @@
                 <span class="customer-name">{{booking.customer.firstName}}</span>
             </div>
             
+            <div class="stylist-info" *ngIf="booking.user && booking.user.firstName">
+                <span class="stylist-name text-white-75">{{booking.user.firstName}}</span>
+            </div>
+            
             <div class="booking-time align-items-end">
-                <i class="bx bx-time text-white me-1"></i>
-                <span class="text-white">{{booking.startTime | timeOnly}} - {{booking.endTime | timeOnly}}</span>
+                <!-- <i class="bx bx-time text-white me-1"></i> -->
+                <span class="text-white">{{booking.startTime | timeOnly}}</span>
             </div>
         </div>
     </div>
@@ -40,6 +44,9 @@
         <div class="booking-customer-info d-flex align-items-center mb-1" *ngIf="!absolutePosition || height && height !== '40px'">
             <img class="rounded-circle header-profile-user me-2" width="16" height="16" [src]="imageUser" alt="Header Avatar">
             <span class="text-white customer-name">{{booking.customer.firstName}} {{booking.customer.lastName}}</span>
+            <span class="text-white-75 stylist-name" *ngIf="booking.user && booking.user.firstName">
+                {{booking.user.firstName}} {{booking.user.lastName}}
+            </span>
         </div>
 
         <div class="services-badges" *ngIf="!absolutePosition || height && height !== '40px'">
@@ -86,6 +93,9 @@
                  alt="Foto del cliente">
             <span class="text-white booking-customer-name">
                 {{booking.customer.firstName}} {{booking.customer.lastName}}
+            </span>
+            <span class="text-white-75 stylist-name" *ngIf="booking.user && booking.user.firstName">
+                {{booking.user.firstName}} {{booking.user.lastName}}
             </span>
         </div>
         

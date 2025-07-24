@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Booking } from '@app/core/models/bussiness/booking';
+import { User } from '@app/core/models/bussiness/user';
 
 @Component({
   selector: 'app-card-booking',
@@ -8,7 +9,7 @@ import { Booking } from '@app/core/models/bussiness/booking';
 })
 export class CardBookingComponent {
   @Input() booking!: Booking;
-  @Input() size: 'sm' | 'md' | 'lg' = 'md';
+  @Input() size: 'sm' | 'md' | 'lg' = 'md';  
   
   // Inputs para posicionamiento absoluto (opcional - solo para calendario semanal)
   @Input() absolutePosition?: boolean = false;

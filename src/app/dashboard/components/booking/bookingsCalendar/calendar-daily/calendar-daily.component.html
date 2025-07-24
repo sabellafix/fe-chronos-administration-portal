@@ -38,7 +38,7 @@
                         [attr.data-date]="currentDate.date.toISOString()"
                         (click)="openBookingModal(currentDate.date, hour)">
                         <div class="cell-content-daily" *ngIf="!isLoadingBookings">
-                            <div class="booking-item-daily animated fadeIn fast" 
+                            <!-- <div class="booking-item-daily animated fadeIn fast" 
                                  *ngFor="let booking of getBookingsForDateTime(currentDate.date, hour)"
                                  [style.background-color]="booking.services?.[0]?.color || '#23324d'">
                                 <div class="booking-info-daily">
@@ -51,7 +51,7 @@
                                         </span>
                                     </div>
                                     
-                                    <!-- <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
                                         <span class="text-white booking-time-daily">
                                             {{booking.startTime | timeOnly}} - {{booking.endTime | timeOnly}}
                                         </span>
@@ -60,7 +60,7 @@
                                               style="color: #000 !important;">
                                             {{booking.status}}
                                         </span>
-                                    </div> -->
+                                    </div>
                                     
                                     <div class="booking-customer-info-daily d-flex align-items-center mb-2">
                                         <img class="rounded-circle me-2" 
@@ -70,6 +70,9 @@
                                              alt="Foto del cliente">
                                         <span class="text-white booking-customer-name">
                                             {{booking.customer.firstName}} {{booking.customer.lastName}}
+                                        </span>
+                                        <span class="text-white-75 stylist-name ms-2" *ngIf="booking.user && booking.user.firstName">
+                                            - {{booking.user.firstName}} {{booking.user.lastName}}
                                         </span>
                                     </div>
                                     <div class="services-badges ">
@@ -81,7 +84,13 @@
                                         </span>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
+                        
+                            <app-card-booking 
+                                *ngFor="let booking of getBookingsForDateTime(currentDate.date, hour)"
+                                [booking]="booking"
+                                size="lg">
+                            </app-card-booking> 
                         </div>
                     </td>
                 </tr>

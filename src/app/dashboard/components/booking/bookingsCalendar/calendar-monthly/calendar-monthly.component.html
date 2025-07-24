@@ -46,38 +46,11 @@
                             </div>
                             
                             <div class="day-bookings" *ngIf="hasBookings(dayItem.date)">
-                                <div class="booking-item-compact" 
-                                     *ngFor="let booking of getBookingsForDate(dayItem.date); let i = index; trackBy: trackByBooking"
-                                     [class.multiple-services]="booking.services && booking.services.length > 1"
-                                     [style.background-color]="booking.services?.[0]?.color || '#23324d'"
-                                     [title]="getBookingTooltip(booking)">
-                                    
-                                    <div class="booking-compact-info">
-                                        <div class="booking-header-row">
-                                            <div class="customer-info">
-                                                <!-- <img class="customer-photo" [src]="booking.customer.photo" alt="Customer"> -->
-                                                <span class="customer-name">{{booking.customer.firstName}}</span>
-                                            </div>
-                                            
-                                            <div class="booking-time align-items-end">
-                                                <i class="bx bx-time text-white me-1"></i>
-                                                <span class="text-white">{{booking.startTime | timeOnly}} - {{booking.endTime | timeOnly}}</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- <div class="booking-details">
-                                            <div class="services-compact" *ngIf="booking.services && booking.services.length > 0">
-                                                <span class="service-badge"  
-                                                      *ngFor="let service of booking.services.slice(0, 2); let serviceIndex = index"
-                                                      [style.background-color]="serviceIndex === 0 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)'"
-                                                     >
-                                                    {{service.serviceName}}
-                                                </span>
-                                               
-                                            </div>
-                                        </div> -->
-                                    </div>
-                                </div>
+                                <app-card-booking 
+                                    *ngFor="let booking of getBookingsForDate(dayItem.date); let i = index; trackBy: trackByBooking"
+                                    [booking]="booking"
+                                    size="sm">
+                                </app-card-booking>
                             </div>
                         </div>
                     </td>
