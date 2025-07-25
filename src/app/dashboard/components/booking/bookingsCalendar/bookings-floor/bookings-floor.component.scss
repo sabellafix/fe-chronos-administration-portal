@@ -627,24 +627,5 @@ body[data-sidebar-size=sm] .calendar-weekly {
     }
 }
 
-// Indicador de celda especial
-.central-cell:hover {
-    &::after {
-        content: '3D Model' !important;
-        position: absolute;
-        bottom: 5px;
-        left: 50%;
-        transform: translateX(-50%) translateZ(5px);
-        font-size: 10px;
-        font-weight: 600;
-        color: #2196f3;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 2px 6px;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        pointer-events: none;
-        z-index: 100;
-    }
-}
 
 

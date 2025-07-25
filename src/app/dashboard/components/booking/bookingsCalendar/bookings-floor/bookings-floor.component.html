@@ -8,17 +8,17 @@
                         *ngFor="let space of spaces" 
                         [attr.data-hour]="hour" 
                         [attr.data-space]="space.id"
-                        
+                        [class.has-chair]="itsCentralSpace(space, hour)"
+                        [class.central-cell]="itsCentralSpace(space, hour)"
                         (click)="openBookingModal(space.id, hour)">
                         <div class="cell-content">
-                            <!-- <div class="cell-content-inner" *ngIf="itsCentralSpace(space)">
-                                <img [src]="chairImg" alt="Chair" class="chair-img">
-                            </div> -->
-
                             <div class="cell-content-inner" *ngIf="itsCentralSpace(space, hour)">
-                                <img width="80px" height="80px" [src]="chairImg" alt="Chair" class="chair-img">
+                                <img width="80px" height="80px" 
+                                     [src]="chairImg" 
+                                     alt="Chair" 
+                                     class="chair-img"
+                                     [style.--chair-delay]="(space.id + hour) % 4">
                             </div>
-                        
                         </div>
                     </td>
                     <th class="time-hedaer-space"></th>
