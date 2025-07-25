@@ -33,10 +33,11 @@
   height: 84px;
 }
 
-.calendar-weekly{
+.calendar-daily{
   position: fixed;
   top: 150px;
-  right: 0;
+  // right: 0;
+  width: 100%;
   left: 255px;
   z-index: 948;
   width: auto;
@@ -317,22 +318,22 @@
 }
 
 @media (max-width:991.98px) {
-  .calendar-weekly {
+  .calendar-daily {
       left: 40px;
   }
 }
 
-body[data-sidebar-size=sm] .calendar-weekly {
+body[data-sidebar-size=sm] .calendar-daily {
   left: 110px;
 }
 
 @media (max-width:991.98px) {
-  body[data-sidebar-size=sm] .calendar-weekly {
+  body[data-sidebar-size=sm] .calendar-daily {
       left: 40px;
   }
 }
 
-.calendar-weekly {
+.calendar-daily {
   backdrop-filter: blur(24px);
   border-bottom: 1px solid #dee2e6;
 }

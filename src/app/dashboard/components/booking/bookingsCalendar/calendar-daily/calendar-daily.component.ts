@@ -364,7 +364,7 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
     if (allBookingsInCell.length <= 1) return '100%';
     
     // Reducir el ancho cuando hay múltiples bookings
-    const widthReduction = Math.min(allBookingsInCell.length * 3, 15); // Máximo 15% de reducción
+    const widthReduction = Math.min(allBookingsInCell.length * 3, 20); // Máximo 20% de reducción
     return `${100 - widthReduction}%`;
   }
 
