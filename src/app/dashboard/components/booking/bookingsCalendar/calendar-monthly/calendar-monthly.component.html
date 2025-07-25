@@ -3,6 +3,7 @@
         <table class="calendar-table mt-1">
             <thead>
                 <tr>
+                    <th class="time-header"><p class="font-size-24 mt-1 mb-0  fw-lighter"><i class="bx bx-calendar"></i></p></th>
                     <th class="day-header text-center" *ngFor="let dayName of daysOfWeek" >
                         <div class="day-header-content" >
                             <div class="card w-100 bg-light p-2 card-date text-center" [ngClass]="{'today': isToday(dayName)}">
@@ -29,7 +30,10 @@
 
         <table class="calendar-table animated fadeIn fast" *ngIf="!isLoadingBookings">
             <tbody>
-                <tr class="week-row" *ngFor="let week of monthDays; trackBy: trackByWeek">
+                <tr class="week-row" *ngFor="let week of monthDays; trackBy: trackByWeek; let i = index;">
+                    <td class="time-cell">
+                        <span class="time-label fw-semibold">{{i + 1}}</span>
+                    </td>
                     <td class="day-cell" 
                         *ngFor="let dayItem of week; trackBy: trackByDay"
                         [class.today]="dayItem.isToday"

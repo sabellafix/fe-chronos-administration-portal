@@ -24,7 +24,6 @@
 }
 
 
-
 .calendar-canvas {
     margin-top: 20px;
     overflow-x: hidden;
@@ -55,6 +54,33 @@
     font-family: inherit;
 }
 
+.time-header {
+    width: 80px;
+    text-align: center;
+    font-weight: 600;
+    color: #495057;
+    padding: 2px 4px;
+    font-size: 14px;
+}
+
+.time-cell {
+    width: 80px;
+    background-color: transparent;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+    position: relative;
+}
+
+.time-label {
+    left: 15px;
+    font-size: 14px;
+    color: #1a293c;
+    display: block;
+    padding: 4px;
+    font-weight: 600;
+}
+
 // Animaciones
 @keyframes fadeInUp {
     from {
@@ -74,7 +100,7 @@
     font-weight: 600;
     color: #495057;
     padding: 6px 4px;
-    min-width: 120px;
+    min-width: 116px;
 }
 
 .day-header:last-child {

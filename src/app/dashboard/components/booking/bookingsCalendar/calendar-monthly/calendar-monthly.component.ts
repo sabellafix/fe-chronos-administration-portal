@@ -10,6 +10,7 @@ import { DateUtils } from '@app/core/utils/date.utils';
 import { Service } from '@app/core/models/bussiness/service';
 import { User } from '@app/core/models/bussiness/user';
 import { UserService } from '@app/core/services/http/user.service';
+import { DateOnly } from '@app/core/models/bussiness';
 
 @Component({
   selector: 'app-calendar-monthly',
@@ -289,6 +290,17 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       return `${hourNumber - 12} pm`;
     }
+  }
+
+  formatNumberWeek(week: DateItem[]): string {
+    if(!week[0]?.date){
+      return '';
+    }
+    const weekNumber = DateUtils.getWeekNumber(DateUtils.dateToDateOnly(week[0]?.date));
+    if(weekNumber < 10){ 
+      return `0${weekNumber}`;
+    }
+    return weekNumber.toString();
   }
 
   getBookingTooltip(booking: Booking): string {

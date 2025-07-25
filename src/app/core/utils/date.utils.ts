@@ -244,7 +244,7 @@ export class DateUtils {
    * Obtiene el nombre del día de la semana en español
    */
   static getDayName(date: DateOnly): string {
-    const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     return dayNames[date.dayOfWeek];
   }
 
@@ -319,5 +319,14 @@ export class DateUtils {
     if (jsDate1 < jsDate2) return -1;
     if (jsDate1 > jsDate2) return 1;
     return 0;
+  }
+
+  /**
+   * Obtiene el número de de semanna del mes de un DateOnly 
+   */
+  static getWeekNumber(date: DateOnly): number {
+    const firstDayOfMonth = this.getFirstDayOfMonth(date);
+    const firstDayOfWeek = firstDayOfMonth.dayOfWeek;
+    return firstDayOfWeek;
   }
 }
