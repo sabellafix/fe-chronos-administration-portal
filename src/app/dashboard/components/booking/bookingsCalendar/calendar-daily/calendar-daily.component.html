@@ -1,96 +1,81 @@
-<div class="calendar-canvas calendar-daily mt-0 no-border no-box-shadow animated fadeIn fast" id="calendar-daily-header">
-    <div class="calendar-container-daily">
-        <div [ngClass]="{'bg-dark': currentDate.isToday, 'text-light': !currentDate.isToday}" class="date-navigation d-flex justify-content-between align-items-center mb-0">
-            
-            <div class="current-date-info text-center">
-                <div class="card-date-day">
-                    <p [ngClass]="{'text-light': currentDate.isToday, 'text-dark': !currentDate.isToday}" class="font-size-16 fw-normal mb-1 capitalize">{{currentDate.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
-                </div>
-                <div class="card-date-number">
-                    <p [ngClass]="{'text-light': currentDate.isToday, 'text-dark': !currentDate.isToday}"  class="font-size-26 fw-semibold mb-0">{{currentDate.date.getDate()}}</p>
-                </div>
-            </div>
-        </div>
+<div class="calendar-canvas calendar-weekly mt-0 no-border no-box-shadow animated fadeIn fast" id="calendar-weekly-header">
+    <div class="calendar-container">
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th class="time-header"><p class="font-size-24 mt-3 fw-lighter"><i class="bx bx-calendar"></i></p></th>
+                    <th class="day-header pe-1 ps-1 pb-2" *ngFor="let date of dates">
+                        <div class="day-header-content">
+                            <div class="card w-100 bg-light p-1 pt-2 card-date text-center" [ngClass]="{'today': date.isToday}">
+                                <div class="card-date-day">
+                                    <p class="font-size-14 fw-normal mb-1 capitalize">{{date.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
+                                </div>
+                                <div class="card-date-number">
+                                    <p class="font-size-22 fw-semibold mb-0">{{date.date.getDate()}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+        </table>
     </div>
 </div>
 
-<div class="calendar-canvas calendar-body-daily mt-0 no-border no-box-shadow animated fadeIn fast">
-    <div class="calendar-container-daily">
-        
-       <!-- Indicador de carga -->
+<div class="calendar-canvas calendar-body mt-0 no-border no-box-shadow animated fadeIn fast">
+    <div class="calendar-container">
+        <!-- Indicador de carga -->
         <!-- <div *ngIf="isLoadingBookings" class="d-flex justify-content-center align-items-center p-4">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Cargando citas...</span>
             </div>
             <span class="ms-2 text-muted">Cargando citas...</span>
         </div> -->
-
-        <table class="calendar-table-daily mt-1" >
-           
-            <tbody>
-                <!-- Filas de horas -->
-                <tr class="time-row-daily" *ngFor="let hour of getHoursRange()">
-                    <td width="15%" class="time-cell-daily">
-                        <span class="time-label-daily fw-semibold">{{formatHour(hour.toString())}}</span>
-                    </td>
-                    <td class="day-cell-daily" 
-                        [attr.data-hour]="hour" 
-                        [attr.data-date]="currentDate.date.toISOString()"
-                        (click)="openBookingModal(currentDate.date, hour)">
-                        <div class="cell-content-daily" *ngIf="!isLoadingBookings">
-                            <!-- <div class="booking-item-daily animated fadeIn fast" 
-                                 *ngFor="let booking of getBookingsForDateTime(currentDate.date, hour)"
-                                 [style.background-color]="booking.services?.[0]?.color || '#23324d'">
-                                <div class="booking-info-daily">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <span class="text-white booking-service fw-bold">
-                                            {{booking.services?.[0]?.serviceName || 'Sin servicio'}}
-                                        </span>
-                                        <span class="text-white booking-price-daily fw-semibold">
-                                            ${{booking.totalPrice}}
-                                        </span>
-                                    </div>
-                                    
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="text-white booking-time-daily">
-                                            {{booking.startTime | timeOnly}} - {{booking.endTime | timeOnly}}
-                                        </span>
-                                        <span class="badge" 
-                                              [style.background-color]="getBookingStatusColor(booking)"
-                                              style="color: #000 !important;">
-                                            {{booking.status}}
-                                        </span>
-                                    </div>
-                                    
-                                    <div class="booking-customer-info-daily d-flex align-items-center mb-2">
-                                        <img class="rounded-circle me-2" 
-                                             width="24" 
-                                             height="24" 
-                                             [src]="imageUser" 
-                                             alt="Foto del cliente">
-                                        <span class="text-white booking-customer-name">
-                                            {{booking.customer.firstName}} {{booking.customer.lastName}}
-                                        </span>
-                                        <span class="text-white-75 stylist-name ms-2" *ngIf="booking.user && booking.user.firstName">
-                                            - {{booking.user.firstName}} {{booking.user.lastName}}
-                                        </span>
-                                    </div>
-                                    <div class="services-badges ">
-                                        <span class="badge badge-service me-1 mb-1" 
-                                              *ngFor="let service of booking.services; let i = index"
-                                              [style.background-color]="i === 0 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)'"
-                                              [style.color]="booking.services?.[0]?.color || '#23324d'">
-                                            {{service.serviceName}}
-                                        </span>
-                                    </div>
+        
+        <table class="calendar-table mt-1 animated fadeIn fast" *ngIf="!isLoadingBookings">
+            <thead>
+                <tr style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
+                    <th class="time-header" style="height: 0px !important; padding: 0px !important; margin: 0px !important;"></th>
+                    <th class="day-header" *ngFor="let date of dates" style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
+                        <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="day-header-content">
+                            <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card w-100 bg-light p-1 pt-2 card-date text-center" >
+                                <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card-date-day">
+                                    <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="font-size-16 text-light fw-normal mb-1 capitalize">{{date.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
                                 </div>
-                            </div> -->
-                        
-                            <app-card-booking 
-                                *ngFor="let booking of getBookingsForDateTime(currentDate.date, hour)"
-                                [booking]="booking"
-                                size="lg">
-                            </app-card-booking> 
+                                <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card-date-number">
+                                    <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="font-size-26 text-light fw-semibold mb-0">{{date.date.getDate()}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="time-row"dashbpoar *ngFor="let hour of getHoursRange()">
+                    <td class="time-cell">
+                        <span class="time-label fw-semibold">{{formatHour(hour.toString())}}</span>
+                    </td>
+                    <td class="day-cell" 
+                        *ngFor="let date of dates" 
+                        [attr.data-hour]="hour" 
+                        [attr.data-date]="date.date.toISOString()"                        
+                        (click)="openBookingModal(date.date, hour)">
+                        <div class="cell-content">
+                            <ng-container *ngIf="getCellBookings(date.date, hour) as cellBookings">
+                                <ng-container *ngFor="let booking of cellBookings; let i = index; trackBy: trackByBooking">
+                                    <app-card-booking 
+                                        [booking]="booking" 
+                                        [size]="'md'"
+                                        [absolutePosition]="true"
+                                        [topPosition]="getBookingTopPosition(booking)"
+                                        [leftOffset]="getBookingLeftOffset(booking, cellBookings)"
+                                        [width]="getBookingWidth(cellBookings)"
+                                        [height]="getBookingHeight(booking)"
+                                        [zIndex]="getBookingZIndex(booking, cellBookings)"
+                                        (click)="editBooking(booking.id, $event)">
+                                    </app-card-booking>
+                                </ng-container>
+                            </ng-container>
                         </div>
                     </td>
                 </tr>
@@ -99,4 +84,8 @@
     </div>
 </div>
 
-
+<!-- Componente de actualización de booking -->
+<app-offcanvas-update-booking
+  (bookingUpdated)="onBookingUpdated($event)"
+  (cancelled)="onBookingCancelled()">
+</app-offcanvas-update-booking>

@@ -14,7 +14,7 @@ import { forkJoin } from 'rxjs';
 export class BookingsCalendarComponent implements OnInit, OnDestroy {
 
   tabs: string[] = ['Month', 'Week', 'Day', 'Stylists', 'Floor'];
-  tabActive: string = 'Floor';
+  tabActive: string = 'Day';
   tabIndex: number = 1;
   dateNow: Date = new Date();
   loading: boolean = false;
