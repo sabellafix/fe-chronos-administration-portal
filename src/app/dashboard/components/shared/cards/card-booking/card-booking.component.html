@@ -35,10 +35,31 @@
      [ngStyle]="getPositionStyles()"
      [title]="getBookingTooltip(booking)">
     
+    <!-- Botón de menú en la esquina superior derecha -->
+  
     <div class="booking-info" [class.compact-info]="absolutePosition">
         <div class="booking-time-price d-flex justify-content-between align-items-center mb-1">
             <span class="text-white booking-time">{{booking.startTime | timeOnly}} - {{booking.endTime | timeOnly}}</span>
             <span class="text-white booking-price fw-bold">${{booking.totalPrice}}</span>
+            <!-- <div class="booking-menu-button">
+                <button type="button" class="btn btn-sm btn-menu"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end pt-0">
+                    <a class="dropdown-item" href="#">
+                        <i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> 
+                        <span class="align-middle">Update</span>
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> 
+                        <span class="align-middle">Detalles</span>
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> 
+                        <span class="align-middle">Delete</span>
+                    </a>
+                </div>
+            </div> -->
         </div>
         
         <div class="booking-customer-info d-flex align-items-center mb-1" *ngIf="!absolutePosition || height && height !== '40px'">
@@ -65,47 +86,8 @@
                 {{booking.durationMinutes}} min
             </small>
         </div>
-    </div>
-</div>
 
-<div *ngIf="size === 'lg'" 
-     class="booking-item" 
-     [class.multiple-services]="booking.services && booking.services.length > 1"
-     [class.absolute-positioned]="absolutePosition"
-     [style.background-color]="booking.services?.[0]?.color || '#23324d'"
-     [style.min-height]="!absolutePosition ? getProportionalHeight() : 'auto'"
-     [ngStyle]="getPositionStyles()"
-     [title]="getBookingTooltip(booking)">
-    
-    <div class="booking-info" [class.compact-info]="absolutePosition">
-        <div class="booking-time-price d-flex justify-content-between align-items-center mb-1">
-            <span class="text-white booking-time">{{booking.startTime | timeOnly}} - {{booking.endTime | timeOnly}}</span>
-            <span class="text-white booking-price fw-bold">${{booking.totalPrice}}</span>
-        </div>
+     
         
-        <div class="booking-customer-info d-flex align-items-center mb-1" *ngIf="!absolutePosition || height && height !== '40px'">
-            <img class="rounded-circle header-profile-user me-2" width="16" height="16" [src]="imageUser" alt="Header Avatar">
-            <span class="text-white customer-name">{{booking.customer.firstName}} {{booking.customer.lastName}}</span>
-            <span class="text-white-75 stylist-name" *ngIf="booking.user && booking.user.firstName">
-                {{booking.user.firstName}} {{booking.user.lastName}}
-            </span>
-        </div>
-
-        <div class="services-badges" *ngIf="!absolutePosition || height && height !== '40px'">
-            <span class="badge badge-service me-1 mb-1" 
-                  *ngFor="let service of booking.services; let i = index"
-                  [style.background-color]="i === 0 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)'"
-                  [style.color]="booking.services?.[0]?.color || '#23324d'">
-                {{service.serviceName}}
-            </span>
-        </div>
-
-        <!-- Indicador visual de duración (opcional) -->
-        <div class="duration-indicator mt-auto" *ngIf="!absolutePosition && booking.durationMinutes > 30">
-            <small class="text-white-50">
-                <i class="bx bx-time-five me-1"></i>
-                {{booking.durationMinutes}} min
-            </small>
-        </div>
     </div>
 </div>

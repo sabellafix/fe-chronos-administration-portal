@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Booking } from '@app/core/models/bussiness/booking';
-import { User } from '@app/core/models/bussiness/user';
+import { Booking } from '@app/core/models/bussiness';
 
 @Component({
   selector: 'app-card-booking',
@@ -9,7 +8,7 @@ import { User } from '@app/core/models/bussiness/user';
 })
 export class CardBookingComponent {
   @Input() booking!: Booking;
-  @Input() size: 'sm' | 'md' | 'lg' = 'md';  
+  @Input() size: 'sm' | 'md' = 'md';  
   
   // Inputs para posicionamiento absoluto (opcional - solo para calendario semanal)
   @Input() absolutePosition?: boolean = false;
@@ -20,6 +19,9 @@ export class CardBookingComponent {
   @Input() zIndex?: number;
   
   imageUser: string = "../assets/images/user-image.jpg";
+  
+  // Estado del menú desplegable
+  showDropdownMenu: boolean = false;
 
   getBookingTooltip(booking: Booking): string {
     const services = booking.services?.map(s => s.serviceName).join(', ') || 'Sin servicios';
@@ -73,5 +75,60 @@ export class CardBookingComponent {
     if (this.zIndex) styles['z-index'] = this.zIndex.toString();
 
     return styles;
+  }
+
+  /**
+   * Alterna la visibilidad del menú desplegable
+   */
+  toggleDropdownMenu(event: Event): void {
+    event.stopPropagation(); // Evita que se propague el evento
+    this.showDropdownMenu = !this.showDropdownMenu;
+  }
+
+  /**
+   * Oculta el menú desplegable
+   */
+  hideDropdownMenu(): void {
+    this.showDropdownMenu = false;
+  }
+
+  /**
+   * Maneja la acción de desplegar
+   */
+  onExpand(event: Event): void {
+    event.stopPropagation();
+    this.hideDropdownMenu();
+    // TODO: Implementar lógica de desplegar
+    console.log('Desplegar booking:', this.booking);
+  }
+
+  /**
+   * Maneja la acción de editar
+   */
+  onEdit(event: Event): void {
+    event.stopPropagation();
+    this.hideDropdownMenu();
+    // TODO: Implementar lógica de editar
+    console.log('Editar booking:', this.booking);
+  }
+
+  /**
+   * Maneja la acción de ver detalle
+   */
+  onDetail(event: Event): void {
+    event.stopPropagation();
+    this.hideDropdownMenu();
+    // TODO: Implementar lógica de detalle
+    console.log('Ver detalle booking:', this.booking);
+  }
+
+  /**
+   * Maneja la acción de eliminar
+   */
+  onDelete(event: Event): void {
+    event.stopPropagation();
+    this.hideDropdownMenu();
+    // TODO: Implementar lógica de eliminar
+    console.log('Eliminar booking:', this.booking);
   }
 }

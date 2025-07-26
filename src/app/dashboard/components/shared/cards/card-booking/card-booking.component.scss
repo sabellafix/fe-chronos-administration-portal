@@ -6,6 +6,7 @@
   margin-bottom: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative; // Para posicionar el botón de menú
   
   &:hover {
     transform: translateY(-1px);
@@ -274,67 +275,48 @@
   }
 }
 
-.booking-item-daily {
-  background: #23324d;
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-height: 120px;
+/* Estilos para el botón de menú */
+.booking-menu-button {
+  // position: absolute;
+  // top: 4px;
+  // right: 4px;
+  z-index: 999999;
   
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-  }
-  
-  // Estilos para posicionamiento absoluto
-  &.absolute-positioned {
-    margin-bottom: 0;
+  .btn-menu {
+    background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: rgba(255, 255, 255, 0.8);
     
     &:hover {
-      transform: scale(1.02);
-      z-index: 10000 !important;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      transform: scale(1.05);
     }
-  }
-  
-  .booking-info-daily {
-    .booking-service {
+    
+    &.active {
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+    }
+    
+    i {
       font-size: 14px;
-      line-height: 1.2;
-    }
-    
-    .booking-price-daily {
-      font-size: 15px;
-    }
-    
-    .booking-customer-info-daily {
-      img {
-        border: 2px solid rgba(255, 255, 255, 0.3);
-      }
-      
-      .booking-customer-name {
-        font-size: 13px;
-        font-weight: 500;
-      }
-    }
-    
-    .services-badges {
-      .badge-service {
-        font-size: 11px;
-        padding: 4px 8px;
-        border-radius: 14px;
-        font-weight: 500;
-      }
+      line-height: 1;
     }
   }
 }
 
+
 /* Estilos comunes */
 .customer-info,
-.booking-customer-info,
-.booking-customer-info-daily {
+.booking-customer-info {
   img {
     object-fit: cover;
   }
@@ -388,6 +370,14 @@
           }
         }
       }
+    }
+  }
+  
+  // Ajustes del menú en móviles
+  .booking-menu-button {
+    .dropdown-menu-custom {
+      right: -10px; // Ajustar posición en pantallas pequeñas
+      min-width: 130px;
     }
   }
 }

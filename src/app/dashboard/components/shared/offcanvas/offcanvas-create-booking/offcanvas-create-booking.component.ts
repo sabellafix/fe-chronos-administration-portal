@@ -62,10 +62,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     // Crear una fecha base (selectedDate o fecha actual) y agregar un día
     const baseDate = this.selectedDate ? new Date(this.selectedDate) : new Date();
     baseDate.setDate(baseDate.getDate() + 1);
-    console.log("baseDate", baseDate);
     this.defaultDate = baseDate.toISOString().split('T')[0];
-    console.log("this.defaultDate", this.defaultDate);
-    
 
     this.bookingForm = this.formBuilder.group({
       customerId: [null, [Validators.required]],
