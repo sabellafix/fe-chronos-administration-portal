@@ -1,6 +1,6 @@
 <!-- Formato SM - Como en calendar-monthly (compacto) -->
 <div *ngIf="size === 'sm'" 
-     class="booking-item-compact" 
+     class="booking-item-compact animated fadeIn fast" 
      [class.multiple-services]="booking.services && booking.services.length > 1"
      [class.absolute-positioned]="absolutePosition"
      [style.background-color]="booking.services?.[0]?.color || '#23324d'"
@@ -27,7 +27,7 @@
 
 <!-- Formato MD - Como en calendar-weekly (intermedio) con altura proporcional -->
 <div *ngIf="size === 'md'" 
-     class="booking-item" 
+     class="booking-item animated fadeIn fast" 
      [class.multiple-services]="booking.services && booking.services.length > 1"
      [class.absolute-positioned]="absolutePosition"
      [style.background-color]="booking.services?.[0]?.color || '#23324d'"
