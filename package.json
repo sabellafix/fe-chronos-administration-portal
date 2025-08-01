@@ -20,7 +20,7 @@
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
     "@ng-select/ng-select": "^12.0.7",
-    "@types/three": "^0.178.0",
+    "@types/three": "^0.178.1",
     "crypto-js": "^4.2.0",
     "ngx-bootstrap": "^12.0.0",
     "ngx-cookie-service": "^17.0.0",

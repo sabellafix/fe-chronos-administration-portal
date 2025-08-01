@@ -67,6 +67,8 @@ import { AutocompleteComponent } from './components/shared/autocomplete/autocomp
 import { SelectImageComponent } from './components/shared/selects/select-image/select-image.component';
 import { CardBookingComponent } from './components/shared/cards/card-booking/card-booking.component';
 import { CalendarFloorComponent } from './components/booking/bookingsCalendar/calendar-floor/calendar-floor.component';
+// Importar servicios mock del floor
+import { FLOOR_MOCK_SERVICES } from '@app/core/services/mock/floor-services.index';
 
 
 const routes: Routes = [
@@ -226,6 +228,10 @@ const routes: Routes = [
     MatBadgeModule,
     MatSnackBarModule,
     NgxSkeletonLoaderModule,
+  ],
+  providers: [
+    // Servicios mock para el sistema de pisos y sitios
+    ...FLOOR_MOCK_SERVICES
   ]
 })
 export class DashboardModule { }

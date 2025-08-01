@@ -8618,7 +8618,7 @@ fieldset:disabled .btn {
     display: inline-block;
     min-height: 1em;
     vertical-align: middle;
-    cursor: wait;
+    /* cursor: wait; */
     background-color: currentcolor;
     opacity: .5
 }

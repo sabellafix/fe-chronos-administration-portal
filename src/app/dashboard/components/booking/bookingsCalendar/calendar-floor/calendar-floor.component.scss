@@ -1,0 +1,283 @@
+// Contenedor principal de la vista 3D
+.three-canvas-container {
+  position: relative;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+  canvas {
+    display: block;
+    cursor: grab;
+    
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}
+
+// Estilos para los controles de piso
+.btn.active {
+  background-color: var(--bs-primary) !important;
+  color: white !important;
+  border-color: var(--bs-primary) !important;
+}
+
+// Leyenda de tipos de sitios
+.legend-item {
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 4px;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: translateX(2px);
+  }
+}
+
+.legend-color {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+// Cards de información
+.card {
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
+  }
+}
+
+.card-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  
+  h6 {
+    color: #495057;
+    font-weight: 600;
+  }
+}
+
+// Badges de estado
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+  font-weight: 500;
+  
+  &.bg-success {
+    background-color: #28a745 !important;
+  }
+  
+  &.bg-danger {
+    background-color: #dc3545 !important;
+  }
+  
+  &.bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+  }
+  
+  &.bg-secondary {
+    background-color: #6c757d !important;
+  }
+  
+  &.bg-dark {
+    background-color: #343a40 !important;
+  }
+}
+
+// Progress bar personalizada
+.progress {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  
+  .progress-bar {
+    transition: width 0.6s ease;
+    border-radius: 4px;
+  }
+}
+
+// Animaciones de carga
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+// Overlay de información de hover
+.position-absolute {
+  &.top-0.start-0 {
+    z-index: 10;
+    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    
+    .fw-semibold {
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+    
+    small {
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+  }
+  
+  &.bottom-0.start-0 {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    
+    small {
+      font-size: 0.7rem;
+      color: #6c757d;
+    }
+  }
+}
+
+// Botones con mejores estilos
+.btn {
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  font-weight: 500;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  &.btn-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border: none;
+    
+    &:hover {
+      background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+    }
+  }
+  
+  &.btn-outline-primary {
+    border-color: #007bff;
+    color: #007bff;
+    
+    &:hover {
+      background: #007bff;
+      border-color: #007bff;
+    }
+    
+    &.active {
+      background: #007bff !important;
+      border-color: #007bff !important;
+      color: white !important;
+    }
+  }
+  
+  &.btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+    
+    &:hover {
+      background: #6c757d;
+      border-color: #6c757d;
+    }
+  }
+}
+
+// Grid responsivo
+@media (max-width: 992px) {
+  .three-canvas-container canvas {
+    height: 400px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .three-canvas-container canvas {
+    height: 300px !important;
+  }
+  
+  .position-absolute {
+    &.top-0.start-0 {
+      font-size: 0.8rem;
+    }
+    
+    &.bottom-0.start-0 {
+      display: none; // Ocultar controles en móvil
+    }
+  }
+}
+
+// Estados de carga
+.loading-container {
+  background: rgba(248, 249, 250, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+// Efectos hover para estadísticas
+.row.text-center .col-6:hover {
+  .fw-bold {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+  }
+}
+
+// Iconos con mejor espaciado
+.bx {
+  font-size: 1.1em;
+  vertical-align: middle;
+}
+
+// Estilo para elementos seleccionados
+.selected-site {
+  border-left: 4px solid #007bff !important;
+  background: rgba(0, 123, 255, 0.05) !important;
+}
+
+// Animaciones suaves
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card, .three-canvas-container {
+  animation: fadeIn 0.4s ease;
+}
+
+// Custom scrollbar para paneles laterales
+.card-body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
