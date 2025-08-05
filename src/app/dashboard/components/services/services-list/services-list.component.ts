@@ -50,7 +50,7 @@ export class ServicesListComponent {
 
   load(): void {
     this.loading = true;
-    this.serviceService.getServices().subscribe({
+    this.serviceService.getAllServices().subscribe({
       next: (response: Service[]) => {
         this.services = response;
         this.totalItems = response.length;

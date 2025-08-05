@@ -531,3 +531,16 @@ body[data-sidebar-size=sm] .calendar-weekly {
 }
 
 
+.dropdown-menu{
+    backdrop-filter: blur(24px);
+    background-color: rgba(237, 237, 237, 0.72);
+    z-index: 9999;
+
+    .dropdown-item:hover{
+        background-color: rgba(237, 237, 237, 0.72) !important;
+        color: #000 !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        border-radius: 8px !important;
+      }
+}

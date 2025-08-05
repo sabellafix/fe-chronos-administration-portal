@@ -27,7 +27,6 @@ export class CalendarFloorComponent implements OnInit, AfterViewInit, OnDestroy 
   
   // Eventos para comunicación con componentes padre
   @Output() siteSelected = new EventEmitter<WorkstationData>();
-  @Output() siteHovered = new EventEmitter<{ site: Site, isHovering: boolean }>();
   @Output() floorClicked = new EventEmitter<{ x: number, y: number }>();
 
   // Three.js core
@@ -51,7 +50,6 @@ export class CalendarFloorComponent implements OnInit, AfterViewInit, OnDestroy 
   // Estado del componente
   public isLoading = true;
   public selectedFloorId = 'floor-001'; // Piso por defecto
-  public hoveredSite: Site | null = null;
   public selectedSite: Site | null = null;
   
   // Configuración 3D
@@ -507,9 +505,6 @@ export class CalendarFloorComponent implements OnInit, AfterViewInit, OnDestroy 
   private setupEventListeners(): void {
     const canvas = this.canvasRef.nativeElement;
     
-    // Mouse move para hover
-    canvas.addEventListener('mousemove', (event) => this.onMouseMove(event));
-    
     // Click para selección
     canvas.addEventListener('click', (event) => this.onMouseClick(event));
     
@@ -517,30 +512,7 @@ export class CalendarFloorComponent implements OnInit, AfterViewInit, OnDestroy 
     window.addEventListener('resize', () => this.onWindowResize());
   }
 
-  /**
-   * Maneja el movimiento del mouse para hover
-   */
-  private onMouseMove(event: MouseEvent): void {
-    const rect = this.canvasRef.nativeElement.getBoundingClientRect();
-    this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersects = this.raycaster.intersectObjects(this.sitesGroup.children, true);
-
-    if (intersects.length > 0) {
-      const intersectedObject = intersects[0].object.parent;
-      const siteData = intersectedObject?.userData;
-      
-      if (siteData?.['site'] && this.hoveredSite?.Id !== siteData['site'].Id) {
-        // Cambió el sitio hovereado
-        this.onSiteHover(siteData['site'], true);
-      }
-    } else if (this.hoveredSite) {
-      // Ya no hay hover
-      this.onSiteHover(this.hoveredSite, false);
-    }
-  }
 
   /**
    * Maneja clicks del mouse
@@ -561,7 +533,20 @@ export class CalendarFloorComponent implements OnInit, AfterViewInit, OnDestroy 
         this.onSiteSelected(siteData['site']);
       }
     } else {
-      // Click en el piso
+      // Click en el piso - deseleccionar sitio actual
+      if (this.selectedSite) {
+        // Restaurar color del sitio seleccionado
+        const siteObject = this.siteObjects.get(this.selectedSite.Id);
+        if (siteObject) {
+          const mesh = siteObject.children[0] as THREE.Mesh;
+          const material = mesh.material as THREE.MeshLambertMaterial;
+          material.color.setHex(parseInt(this.selectedSite.getCurrentColor().replace('#', '0x')));
+        }
+        
+        this.selectedSite = null;
+        this.canvasRef.nativeElement.style.cursor = 'default';
+      }
+      
       const floorIntersects = this.raycaster.intersectObjects(this.floorGroup.children, false);
       if (floorIntersects.length > 0) {
         const point = floorIntersects[0].point;
@@ -570,42 +555,35 @@ export class CalendarFloorComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
-  /**
-   * Maneja hover sobre sitios
-   */
-  private onSiteHover(site: Site, isHovering: boolean): void {
-    if (isHovering) {
-      this.hoveredSite = site;
-      this.canvasRef.nativeElement.style.cursor = 'pointer';
-      
-      // Efecto visual de hover
-      const siteObject = this.siteObjects.get(site.Id);
-      if (siteObject) {
-        const mesh = siteObject.children[0] as THREE.Mesh;
-        const material = mesh.material as THREE.MeshLambertMaterial;
-        material.color.setHex(parseInt(site.threeJsConfig.highlightColor.replace('#', '0x')));
-      }
-    } else {
-      this.hoveredSite = null;
-      this.canvasRef.nativeElement.style.cursor = 'default';
-      
-      // Restaurar color original
-      const siteObject = this.siteObjects.get(site.Id);
-      if (siteObject) {
-        const mesh = siteObject.children[0] as THREE.Mesh;
-        const material = mesh.material as THREE.MeshLambertMaterial;
-        material.color.setHex(parseInt(site.getCurrentColor().replace('#', '0x')));
-      }
-    }
-    
-    this.siteHovered.emit({ site, isHovering });
-  }
+
 
   /**
    * Maneja selección de sitios
    */
   private onSiteSelected(site: Site): void {
+    // Restaurar color del sitio anteriormente seleccionado
+    if (this.selectedSite && this.selectedSite.Id !== site.Id) {
+      const previousSiteObject = this.siteObjects.get(this.selectedSite.Id);
+      if (previousSiteObject) {
+        const mesh = previousSiteObject.children[0] as THREE.Mesh;
+        const material = mesh.material as THREE.MeshLambertMaterial;
+        material.color.setHex(parseInt(this.selectedSite.getCurrentColor().replace('#', '0x')));
+      }
+    }
+    
     this.selectedSite = site;
+    
+    // Aplicar efecto visual de selección al nuevo sitio
+    const siteObject = this.siteObjects.get(site.Id);
+    if (siteObject) {
+      const mesh = siteObject.children[0] as THREE.Mesh;
+      const material = mesh.material as THREE.MeshLambertMaterial;
+      material.color.setHex(parseInt(site.threeJsConfig.highlightColor.replace('#', '0x')));
+    }
+    
+    // Cambiar cursor
+    this.canvasRef.nativeElement.style.cursor = 'pointer';
+    
     const siteType = this.siteTypes.get(site.siteTypeId);
     
     if (siteType) {
@@ -694,8 +672,10 @@ export class CalendarFloorComponent implements OnInit, AfterViewInit, OnDestroy 
       }
     });
     
-    // Limpiar mapa de objetos
+    // Limpiar mapa de objetos y resetear estado
     this.siteObjects.clear();
+    this.selectedSite = null;
+    this.canvasRef.nativeElement.style.cursor = 'default';
   }
 
   /**
@@ -727,9 +707,9 @@ export class CalendarFloorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (site) {
       site.occupancyStatus = status;
       
-      // Actualizar color en 3D
+      // Actualizar color en 3D (solo si no está seleccionado)
       const siteObject = this.siteObjects.get(siteId);
-      if (siteObject) {
+      if (siteObject && (!this.selectedSite || this.selectedSite.Id !== siteId)) {
         const mesh = siteObject.children[0] as THREE.Mesh;
         const material = mesh.material as THREE.MeshLambertMaterial;
         material.color.setHex(parseInt(site.getCurrentColor().replace('#', '0x')));

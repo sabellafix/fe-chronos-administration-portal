@@ -241,78 +241,6 @@
     z-index: 850;
 }
 
-// ESTILOS ANTIGUOS COMENTADOS - Ahora manejados por CardBookingComponent
-/*
-.booking-item {
-    position: absolute;
-    top:0;
-    height: 250px !important;
-    width: 98%;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 2px;
-    color: black;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    z-index: 850;
-}
-
-.booking-item:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    
-    .booking-info {
-        opacity: 0.95;
-    }
-    
-    &::after {
-        content: '✏️';
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        font-size: 14px;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0.9;
-    }
-}
-
-.booking-info {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-}
-
-.booking-customer {
-    height: 20px;
-    font-weight: 600;
-    font-size: 16px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    margin-bottom: 10px;
-}
-
-.booking-time {
-    font-size: 14px;
-    opacity: 0.9;
-    margin-top: 1px;
-}
-
-.booking-price {
-    font-size: 14px;
-    font-weight: 500;
-    margin-top: 1px;
-}
-*/
-
 .day-header-collapse{
     height: 0px !important; 
     padding: 0px !important; 
@@ -558,3 +486,16 @@ body[data-sidebar-size=sm] .calendar-weekly {
 }
 
 
+.dropdown-menu{
+    backdrop-filter: blur(24px);
+    background-color: rgba(237, 237, 237, 0.72);
+    z-index: 9999;
+
+    .dropdown-item:hover{
+        background-color: rgba(237, 237, 237, 0.72) !important;
+        color: #000 !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        border-radius: 8px !important;
+      }
+}

@@ -58,19 +58,19 @@
                         </div>
                     </div>
                     
-                    <!-- Overlay con información del sitio hovereado -->
-                    <div *ngIf="hoveredSite && !isLoading" 
+                    <!-- Overlay con información del sitio clickeado -->
+                    <div *ngIf="selectedSite && !isLoading" 
                          class="position-absolute top-0 start-0 m-3 bg-dark text-white p-2 rounded shadow-sm"
                          style="pointer-events: none; z-index: 10;">
                         <div class="d-flex align-items-center">
                             <i class="bx bx-info-circle me-2"></i>
                             <div>
-                                <div class="fw-semibold">{{hoveredSite.Name}}</div>
-                                <small>{{hoveredSite.Description}}</small>
+                                <div class="fw-semibold">{{selectedSite.Name}}</div>
+                                <small>{{selectedSite.Description}}</small>
                                 <div class="mt-1">
                                     <span class="badge"
-                                          [class]="'bg-' + getSiteStatusColor(hoveredSite.occupancyStatus)">
-                                        {{getSiteStatusText(hoveredSite.occupancyStatus)}}
+                                          [class]="'bg-' + getSiteStatusColor(selectedSite.occupancyStatus)">
+                                        {{getSiteStatusText(selectedSite.occupancyStatus)}}
                                     </span>
                                 </div>
                             </div>

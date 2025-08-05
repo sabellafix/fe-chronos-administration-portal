@@ -79,8 +79,27 @@
                                         [leftOffset]="getBookingLeftOffset(booking, cellBookings)"
                                         [width]="getBookingWidth(cellBookings)"
                                         [height]="getBookingHeight(booking)"
-                                        [zIndex]="getBookingZIndex(booking, cellBookings)">
+                                        [zIndex]="getBookingZIndex(booking, cellBookings)"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button">
                                     </app-card-booking>
+                                    <div class="dropdown-menu dropdown-menu-end pt-0">
+                                        <div class="dropdown-item" href="#">
+                                            <i class="bx bx-expand text-muted font-size-12 align-middle me-1"></i> 
+                                            <span class="align-middle font-size-12 fw-normal">Expand</span>
+                                        </div>
+                                        <div class="dropdown-item" href="#">
+                                            <i class="bx bx-pencil text-muted font-size-12 align-middle me-1"></i> 
+                                            <span class="align-middle font-size-12 fw-normal">Update</span>
+                                        </div>
+                                        <div class="dropdown-item" href="#">
+                                            <i class="bx bx-show-alt text-muted font-size-12 align-middle me-1"></i> 
+                                            <span class="align-middle font-size-12 fw-normal">Details</span>
+                                        </div>
+                                        <div class="dropdown-item" href="#">
+                                            <i class="bx bx-trash text-muted font-size-12 align-middle me-1"></i> 
+                                            <span class="align-middle font-size-12 fw-normal">Delete</span>
+                                        </div>
+                                    </div>
                                 </ng-container>
                             </ng-container>
                         </div>

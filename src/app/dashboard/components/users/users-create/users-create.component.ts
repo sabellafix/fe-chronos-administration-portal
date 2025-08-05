@@ -27,7 +27,8 @@ export class UsersCreateComponent {
   form: FormGroup; 
   validPhoto : boolean = true;
   photoUrl : string = "";
-  srcImage :  string | ArrayBuffer | null = "assets/images/user-image.jpg";
+  srcImage : string = "assets/images/user-image.jpg";
+  photoBase64 : string = "";
   now : Date = new Date();
   codephones : Option[] = [];
 
@@ -55,6 +56,13 @@ export class UsersCreateComponent {
 
   post(){
     this.form.markAllAsTouched();
+    
+    // Validar que la imagen sea válida si se seleccionó una
+    if (!this.validPhoto) {
+      this.snackBar.open('Por favor selecciona una imagen válida.', 'Cerrar', {duration: 4000});
+      return;
+    }
+    
     if( this.form.valid){
       let post = {
         firstName : this.form.get('firstName')?.value,
@@ -63,6 +71,7 @@ export class UsersCreateComponent {
         phone : this.form.get('phone')?.value,
         password : this.form.get('password')?.value,
         userRole : RolesConst._STYLIST,
+        photo : this.photoBase64 || this.srcImage, // Usa photoBase64 si está disponible, sino srcImage por defecto
       }
       this.charge = true;
       this.send = false;
@@ -124,14 +133,55 @@ export class UsersCreateComponent {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
+      
+      // Validar que sea una imagen
       if (!file.type.startsWith('image/')) {
-        this.snackBar.open('Please select an image file.', 'Close', {duration: 4000});
+        this.validPhoto = false;
+        this.snackBar.open('Por favor selecciona un archivo de imagen válido.', 'Cerrar', {duration: 4000});
         return;
       }
+      
+      // Validar el tamaño del archivo (máximo 5MB)
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSizeInBytes) {
+        this.validPhoto = false;
+        this.snackBar.open('La imagen debe ser menor a 5MB.', 'Cerrar', {duration: 4000});
+        return;
+      }
+      
+      // Validar tipos de imagen permitidos
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        this.validPhoto = false;
+        this.snackBar.open('Formato de imagen no permitido. Use: JPEG, PNG, GIF o WebP.', 'Cerrar', {duration: 4000});
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.srcImage = e.target?.result!;
+        const result = e.target?.result as string;
+        if (result) {
+          // Guardar la imagen completa para mostrar en el UI
+          this.srcImage = result;
+          
+          // Extraer solo la parte base64 (sin el prefijo data:image/...;base64,)
+          const base64Index = result.indexOf('base64,');
+          if (base64Index !== -1) {
+            this.photoBase64 = result.substring(base64Index + 7); // +7 para saltar "base64,"
+          } else {
+            this.photoBase64 = result; // Por si acaso no tiene el prefijo
+          }
+          
+          this.validPhoto = true;
+          this.snackBar.open('Imagen cargada correctamente.', 'Cerrar', {duration: 2000});
+        }
       };
+      
+      reader.onerror = () => {
+        this.validPhoto = false;
+        this.snackBar.open('Error al cargar la imagen.', 'Cerrar', {duration: 4000});
+      };
+      
       reader.readAsDataURL(file);
     }
   }

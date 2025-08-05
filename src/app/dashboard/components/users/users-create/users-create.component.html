@@ -19,7 +19,19 @@
                     <div class="card-body">
                         <form novalidate="novalidate" class="mb-2" [formGroup]="form" *ngIf="!loading">
                             <div class="row">
-                                <div class="col-md-12 col-sm-12">
+                                <div class="col-md-4 col-sm-12 ">
+                                    <label class="form-label">Photo profile</label>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <div class="text-center p-3 text-white rounded">
+                                            <div class="mb-3">
+                                                <img [src]="srcImage" style="width: 150px" class="half-width img-thumbnail text-center" alt="Preview" />
+                                            </div>
+                                            <button (click)="fileInput.click()" class="btn btn-outline-primary w-xl waves-effect waves-light">Upload photo</button>
+                                            <input #fileInput  (click)="onFileSelected($event)" type="file" accept=".png, .jpg, .jepg" (change)="onFileSelected($event)" class="hidden">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-sm-12">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">First name *</label>
