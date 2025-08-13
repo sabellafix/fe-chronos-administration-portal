@@ -45,6 +45,9 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   customerOptions: Option[] = [];
   users: User[] = []; 
   usersOptions: Option[] = [];
+  stylistLocked: boolean = false;
+  selectedStylist: User | null = null;
+  loadingServices: boolean = false;
   imageUser: string = "../assets/images/user-image.jpg";
   userImages: string[] = [
     "../assets/images/users/user1.jpg",
@@ -66,8 +69,8 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     this.defaultDate = baseDate.toISOString().split('T')[0];
 
     this.bookingForm = this.formBuilder.group({
-      customerId: [null, [Validators.required]],
       supplierId: [null, [Validators.required]],
+      customerId: [null, [Validators.required]],
       bookingDate: [this.defaultDate, [Validators.required]],
       startTime: [this.getDefaultTime(), [Validators.required]],
       durationMinutes: [60, [Validators.required, Validators.min(15), Validators.max(480)]],
@@ -77,8 +80,10 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
-    this.getServices();
+    // No cargar servicios automáticamente, solo cargar usuarios inicialmente
+    this.getUsers();
+    this.getCustomers();
+    
     const offcanvasElement = document.getElementById('offcanvasCreateBooking');
     if (offcanvasElement) {
       this.offcanvasInstance = new bootstrap.Offcanvas(offcanvasElement);
@@ -89,7 +94,9 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
         this.offcanvasBookingService.onCancelled();
       });
     }
+    
     this.subscribeToOffcanvasService();
+    this.subscribeToStylistChanges();
   }
 
   ngOnDestroy(): void {
@@ -108,21 +115,71 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     this.subscriptions.push(showSubscription);
   }
 
-  getServices(): void {
-    this.loading = true;
-    this.serviceService.getServices().subscribe({
+  private subscribeToStylistChanges(): void {
+    const stylistSubscription = this.bookingForm.get('supplierId')?.valueChanges.subscribe(stylistId => {
+      if (stylistId && !this.stylistLocked) {
+        this.onStylistSelected(stylistId);
+      }
+    });
+
+    if (stylistSubscription) {
+      this.subscriptions.push(stylistSubscription);
+    }
+  }
+
+  private onStylistSelected(stylistId: string): void {
+    this.selectedStylist = this.users.find(u => u.id === stylistId) || null;
+    this.loadServicesByProvider(stylistId);
+    this.lockStylist();
+  }
+
+  private lockStylist(): void {
+    this.stylistLocked = true;
+    // Deshabilitar el control de estilista
+    this.bookingForm.get('supplierId')?.disable();
+  }
+
+  public unlockStylist(): void {
+    this.stylistLocked = false;
+    this.selectedStylist = null;
+    this.services = [];
+    this.selectedServices = [];
+    // Habilitar el control de estilista
+    this.bookingForm.get('supplierId')?.enable();
+    this.bookingForm.get('supplierId')?.setValue(null);
+  }
+
+  private loadServicesByProvider(providerId: string): void {
+    this.loadingServices = true;
+    this.services = [];
+    this.selectedServices = [];
+    
+    this.serviceService.getServicesByProvider(providerId).subscribe({
       next: (response: Service[]) => {
         this.services = response;
-        this.getCustomers();
+        this.loadingServices = false;
+      },
+      error: (error) => {
+        this.snackBar.open('Error loading services for this stylist', 'Close', {duration: 4000});
+        this.loadingServices = false;
+      }
+    });
+  }
+
+  getServices(): void {
+    this.loading = true;
+    this.serviceService.getAllServices().subscribe({
+      next: (response: Service[]) => {
+        this.services = response;
+        this.loading = false;
       },error: (response) =>{
         this.snackBar.open('Error loading services', 'Close', {duration: 4000});
-        this.getCustomers();
+        this.loading = false;
       }
     });
   }
 
   getCustomers(): void {
-    this.loading = true;
     this.customerService.getCustomers().subscribe({
       next: (response: Customer[]) => {
         this.customers = response;
@@ -131,16 +188,13 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
           name: customer.firstName + ' ' + customer.lastName,
           code: customer.id.toString()
         }));
-        this.getUsers();
       },error: (response) =>{
         this.snackBar.open('Error loading customers', 'Close', {duration: 4000});
-        this.getUsers();
       }
     });
   } 
 
   getUsers(): void {
-    this.loading = true;
     this.userService.getUsersByRole(RolesConst._STYLIST).subscribe({
       next: (response: User[]) => {
         this.users = response;
@@ -149,7 +203,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
           name: user.firstName + ' ' + user.lastName,
           code: user.id.toString()
         }));
-        this.loading = false;
       },error: (response) =>{
         this.snackBar.open('Error loading users', 'Close', {duration: 4000});
       }
@@ -216,7 +269,19 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       
       const createBookingDto: CreateBookingDto = new CreateBookingDto();
       createBookingDto.customerId = formValue.customerId;
-      createBookingDto.supplierId = formValue.supplierId;
+      
+      // Asegurar que el supplierId se capture, incluso si el campo está deshabilitado
+      createBookingDto.supplierId = formValue.supplierId || this.bookingForm.get('supplierId')?.value || this.selectedStylist?.id;
+      
+      // Validar que el supplierId esté presente
+      if (!createBookingDto.supplierId) {
+        this.snackBar.open('Please select a stylist', 'Close', {duration: 4000});
+        return;
+      }
+      
+      console.log("createBookingDto", createBookingDto);
+      console.log("formValue.supplierId", formValue.supplierId);
+      console.log("selectedStylist", this.selectedStylist);
       
       // Configurar serviceId con el primer servicio seleccionado
       createBookingDto.serviceId = this.selectedServices[0].id;
@@ -249,7 +314,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       // Configurar servicios para la reserva
       createBookingDto.services = this.selectedServices.map((service, index): BookingServiceRequest => ({
         serviceId: service.id,
-        name: service.serviceName || 'Sin nombre',
+        name: service.serviceName || 'Sin nombre',      
         color: service.color || '#23324d',
         order: index,
         durationInMinutes: service.durationMinutes
@@ -286,9 +351,10 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   private resetForm(): void {
+    this.unlockStylist();
     this.bookingForm.reset({
-      customerId: null,
       supplierId: null,
+      customerId: null,
       bookingDate: this.defaultDate,
       startTime: this.getDefaultTime(),
       durationMinutes: 60,

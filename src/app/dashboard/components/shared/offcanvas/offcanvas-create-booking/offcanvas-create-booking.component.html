@@ -8,19 +8,76 @@
   </div>
   <div class="offcanvas-body shadow-sm p-0">
     <form [formGroup]="bookingForm" class="p-4">
+      <!-- Selección de Estilista - PRIMERO -->
       <div class="mb-3">
-        <label class="form-label">Services *</label>
+        <label class="form-label">Stylist *</label>
         <div class="row">
           <div class="col-md-10">
-            <select class="form-select" (change)="onServiceChange($event)">
-              <option [value]="null">Select service</option>
+            <app-autocomplete 
+              [options]="usersOptions" 
+              [placeholder]="'Select stylist'" 
+              [mode]="true" 
+              [disabled]="users.length == 0 || stylistLocked" 
+              (result)="asignAutoComplete($event, 'supplierId')">
+            </app-autocomplete>
+            <div *ngIf="bookingForm.get('supplierId')?.invalid && bookingForm.get('supplierId')?.touched" class="text-danger small mt-1">
+              Stylist required
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button 
+              *ngIf="stylistLocked && selectedStylist" 
+              type="button" 
+              (click)="unlockStylist()" 
+              class="btn btn-outline-warning btn-rounded waves-effect waves-light"
+              matTooltip="Change stylist">
+              <i class="bx bx-edit"></i>
+            </button>
+            <button 
+              *ngIf="!stylistLocked" 
+              type="button" 
+              style="border: 1px solid #e0e0e0; background-color: white; color: #999" 
+              class="btn btn-light btn-rounded waves-effect waves-light"
+              disabled>
+              <i class="bx bx-user"></i>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="selectedStylist" class="mt-2 p-2 bg-light rounded">
+          <small class="text-muted">Selected stylist:</small>
+          <p class="mb-0 fw-bold">{{getUserFullName(selectedStylist)}}</p>
+        </div>
+      </div>
+
+      <!-- Selección de Servicios - SEGUNDO -->
+      <div class="mb-3">
+        <label class="form-label">Services *</label>
+        <div *ngIf="!stylistLocked" class="alert alert-info">
+          <i class="bx bx-info-circle me-2"></i>
+          Please select a stylist first to see available services
+        </div>
+        <div *ngIf="loadingServices" class="text-center p-3">
+          <div class="spinner-border spinner-border-sm" role="status">
+            <span class="visually-hidden">Loading services...</span>
+          </div>
+          <span class="ms-2">Loading services...</span>
+        </div>
+        <div *ngIf="stylistLocked && !loadingServices" class="row">
+          <div class="col-md-10">
+            <select class="form-select" (change)="onServiceChange($event)" [disabled]="services.length === 0">
+              <option [value]="null">
+                {{services.length === 0 ? 'No services available for this stylist' : 'Select service'}}
+              </option>
               <option [value]="service.id" *ngFor="let service of getAvailableServices()">
                 {{getServiceName(service)}} - {{service.price || 0}} {{service.currency || 'USD'}}
               </option>
             </select>
           </div>
           <div class="col-md-2">
-            <button type="button" class="btn btn-outline-primary btn-rounded waves-effect waves-light">
+            <button 
+              type="button" 
+              class="btn btn-outline-primary btn-rounded waves-effect waves-light"
+              [disabled]="services.length === 0">
               <i class="bx bx-plus"></i>
             </button>
           </div>
@@ -115,22 +172,7 @@
         </div>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Stylist *</label>
-        <div class="row">
-          <div class="col-md-12">
-            <!-- <select class="form-select" formControlName="supplierId">
-              <option [value]="null">Select stylist</option>
-              <option [value]="user.id" *ngFor="let user of users">{{getUserFullName(user)}}</option>
-            </select> -->
 
-            <app-autocomplete [options]="usersOptions" [placeholder]="'Select stylist'" [mode]="true" [disabled]="users.length == 0" (result)="asignAutoComplete($event, 'supplierId')"></app-autocomplete>
-            <div *ngIf="bookingForm.get('supplierId')?.invalid && bookingForm.get('supplierId')?.touched" class="text-danger small mt-1">
-              Stylist required
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div class="row">
         <div class="col-md-6">
