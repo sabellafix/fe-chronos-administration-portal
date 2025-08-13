@@ -281,6 +281,7 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
           const booking = response;
           this.hide();
           this.bookingUpdated.emit(booking);
+          this.offcanvasBookingService.onBookingUpdated(booking);
           this.resetForm();
           this.snackBar.open('Booking actualizado exitosamente', 'Cerrar', {
             duration: 4000, 

@@ -1,0 +1,175 @@
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card animated fadeIn fast">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="d-flex flex-wrap gap-2 justify-content-start align-items-center h-100">
+                                    <button (click)="return()" type="button" class="btn btn-light w-sm bg-gradient waves-effect waves-light">Return</button>
+                                    <h4 class="card-title"> <i class="bx bx-user text-muted font-size-18 me-2"></i> {{titleComponent}}</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+                                    <button (click)="edit()" type="button" class="btn btn-primary w-sm bg-gradient waves-effect waves-light">
+                                        <i class="bx bx-edit me-2"></i>Edit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2 animated fadeIn fast" *ngIf="!loading && customer">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label text-muted">First Name</label>
+                                            <div class="form-control-static">
+                                                <p class="mb-0">{{customer.firstName || 'N/A'}}</p>
+                                            </div>
+                                        </div>
+        
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label text-muted">Last Name</label>
+                                            <div class="form-control-static">
+                                                <p class="mb-0">{{customer.lastName || 'N/A'}}</p>
+                                            </div>
+                                        </div>
+        
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label text-muted">Phone Number</label>
+                                            <div class="form-control-static">
+                                                <p class="mb-0">
+                                                    {{customer.phoneNumber || 'N/A'}}
+                                                </p>
+                                            </div>
+                                        </div>
+        
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label text-muted">Email</label>
+                                            <div class="form-control-static">
+                                                <p class="mb-0">
+                                                    {{customer.email || 'N/A'}}
+                                                </p>
+                                            </div>
+                                        </div>
+        
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label text-muted">Preferred Language</label>
+                                            <div class="form-control-static">
+                                                <p class="mb-0">
+                                                    {{getLanguageLabel(customer.preferredLanguage || 'en')}}
+                                                </p>
+                                            </div>
+                                        </div>
+        
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label text-muted">Status</label>
+                                            <div class="form-control-static bg-white no-border">
+                                                <span class="badge" [class]="customer.isActive ? 'badge-soft-success' : 'badge-soft-danger'">
+                                                    <i class="bx" [class]="customer.isActive ? 'bx-check-circle' : 'bx-x-circle'" [class.me-2]="true"></i>
+                                                    {{customer.isActive ? 'Active' : 'Inactive'}}
+                                                </span>
+                                            </div>
+                                        </div>
+        
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label text-muted">Notes</label>
+                                            <div class="form-control-static">
+                                                <p class="mb-0" *ngIf="customer.notes; else noNotes">{{customer.notes}}</p>
+                                                <ng-template #noNotes>
+                                                    <p class="text-muted mb-0 fst-italic">No notes available</p>
+                                                </ng-template>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-12 mb-3">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h5 class="card-title mb-0">
+                                                            <i class="bx bx-cog text-muted me-2"></i>Service Modifiers
+                                                        </h5>
+                                                        
+                                                    </div>
+                                                    <small class="text-muted">Custom durations and prices configured for this customer</small>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div *ngIf="!customer.serviceModifiers || customer.serviceModifiers.length === 0" class="text-center text-muted py-3">
+                                                        <i class="bx bx-info-circle me-2"></i>No service modifiers configured
+                                                    </div>
+                                                    <div *ngFor="let modifier of customer.serviceModifiers; let i = index" 
+                                                        class="border rounded p-3 mb-3  pb-1 position-relative animated fadeIn fast"
+                                                        [style.border-left]="'6px solid ' + getServiceColor(modifier.serviceId)">
+                                                       
+                                                        <div class="row">
+                                                            <div class="col-md-12 mb-2">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <h6 class="card-title">{{getServiceName(modifier.serviceId)}}</h6>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="col-md-4 mb-2">
+                                                                <label class="form-label text-muted small">Original Duration <small class="text-muted">{{getServiceDuration(modifier.serviceId)}} min</small></label>
+                                                            </div>
+                                                            
+                                                            <div class="col-md-4 mb-2">
+                                                                <label class="form-label text-muted small">Modified Duration <small class="text-muted">{{modifier.modifiedDurationInMinutes}} min</small></label>
+                                                            </div>
+                                                            
+                                                            <div class="col-md-4 mb-2">
+                                                                <div class="text-end">
+                                                                    <span class="badge" 
+                                                                        [class]="modifier.modifiedDurationInMinutes > getServiceDuration(modifier.serviceId) ? 'badge-soft-primary' : modifier.modifiedDurationInMinutes < getServiceDuration(modifier.serviceId) ? 'badge-soft-success' : 'badge-soft-info'">
+                                                                        <span *ngIf="modifier.modifiedDurationInMinutes > getServiceDuration(modifier.serviceId)">+{{modifier.modifiedDurationInMinutes - getServiceDuration(modifier.serviceId)}} min</span>
+                                                                        <span *ngIf="modifier.modifiedDurationInMinutes < getServiceDuration(modifier.serviceId)">{{modifier.modifiedDurationInMinutes - getServiceDuration(modifier.serviceId)}} min</span>
+                                                                        <span *ngIf="modifier.modifiedDurationInMinutes === getServiceDuration(modifier.serviceId)">Same duration</span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="col-md-4">
+                                                                <label class="form-label text-muted small">Original Price <small class="text-muted">${{getServicePrice(modifier.serviceId)}}</small></label>
+                                                            </div>
+                                                            
+                                                            <div class="col-md-4">
+                                                                <label class="form-label text-muted small">Modified Price <small class="text-muted">${{modifier.modifiedPrice}}</small></label>
+                                                            </div>
+                                                            
+                                                            <div class="col-md-4">
+                                                                <div class="text-end">
+                                                                    <span class="badge" 
+                                                                        [class]="modifier.modifiedPrice > getServicePrice(modifier.serviceId) ? 'badge-soft-primary' : modifier.modifiedPrice < getServicePrice(modifier.serviceId) ? 'badge-soft-success' : 'badge-soft-info'">
+                                                                        <span *ngIf="modifier.modifiedPrice > getServicePrice(modifier.serviceId)">+${{modifier.modifiedPrice - getServicePrice(modifier.serviceId)}}</span>
+                                                                        <span *ngIf="modifier.modifiedPrice < getServicePrice(modifier.serviceId)">-${{getServicePrice(modifier.serviceId) - modifier.modifiedPrice}}</span>
+                                                                        <span *ngIf="modifier.modifiedPrice === getServicePrice(modifier.serviceId)">Same price</span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="loadingServices" class="text-center py-3">
+                                                        <i class="bx bx-loader bx-spin me-2"></i>Loading services...
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 mt-4 animated fadeIn fast" *ngIf="loading">
+                            <app-skelletons-simple [row]="3" [col]="2"></app-skelletons-simple>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

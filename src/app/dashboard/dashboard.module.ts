@@ -69,6 +69,8 @@ import { CardBookingComponent } from './components/shared/cards/card-booking/car
 import { CalendarFloorComponent } from './components/booking/bookingsCalendar/calendar-floor/calendar-floor.component';
 // Importar servicios mock del floor
 import { FLOOR_MOCK_SERVICES } from '@app/core/services/mock/floor-services.index';
+import { CustomersUpdateComponent } from './components/customers/customers-update/customers-update.component';
+import { CustomersDetailComponent } from './components/customers/customers-detail/customers-detail.component';
 
 
 const routes: Routes = [
@@ -141,6 +143,9 @@ const routes: Routes = [
         children: [
           { path: '', component: CustomersListComponent, pathMatch: 'full' },
           { path: 'create', component: CustomersCreateComponent },
+          { path: ':id/update', component: CustomersUpdateComponent },
+          { path: ':id/detail', component: CustomersDetailComponent },
+          { path: '**', redirectTo: '' }
         ]
       },
       {
@@ -205,6 +210,8 @@ const routes: Routes = [
     SelectImageComponent,
     CardBookingComponent,
     CalendarFloorComponent,
+    CustomersUpdateComponent,
+    CustomersDetailComponent,
   ],
   imports: [
     CommonModule,

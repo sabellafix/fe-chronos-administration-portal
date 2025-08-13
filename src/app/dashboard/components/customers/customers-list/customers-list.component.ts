@@ -51,7 +51,7 @@ export class CustomersListComponent {
 
   load(): void {
     this.loading = true;
-    this.customerService.getCustomers().subscribe({
+    this.customerService.getAllCustomers().subscribe({
       next: (response: Customer[]) => {
         this.customers = response;
         this.totalItems = response.length;

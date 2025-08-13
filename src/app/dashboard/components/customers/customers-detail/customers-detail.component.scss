@@ -1,0 +1,251 @@
+.form-control-static {
+  padding: 8px 12px;
+  border: 1px solid #e3ebf0;
+  border-radius: 0.375rem;
+  background-color: #fff;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+
+  p {
+    font-weight: 500;
+    color: #495057;
+  }
+
+  i {
+    color: #6c757d;
+  }
+}
+
+.badge-soft-success {
+  color: #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.badge-soft-danger {
+  color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.badge-soft-warning {
+  color: #ffc107;
+  background-color: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.badge-soft-info {
+  color: #17a2b8;
+  background-color: rgba(23, 162, 184, 0.1);
+  border: 1px solid rgba(23, 162, 184, 0.2);
+}
+
+.badge-outline-primary {
+  color: #556ee6;
+  background-color: transparent;
+  border: 1px solid #556ee6;
+}
+
+.service-modifier-card {
+  transition: all 0.3s ease;
+  border-left-width: 6px !important;
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.comparison-value {
+  .original {
+    font-size: 0.875rem;
+    color: #6c757d;
+  }
+  
+  .modified {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+
+
+// Mejoras para responsive
+@media (max-width: 768px) {
+  .service-modifier-card {
+    .row .col-md-4 {
+      margin-bottom: 1rem;
+    }
+  }
+  
+  .card-header-form {
+    .d-flex {
+      flex-direction: column;
+      gap: 1rem;
+      
+      .justify-content-end {
+        justify-content: start !important;
+      }
+    }
+  }
+}
+
+// Animación para los badges de comparación
+.badge {
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// Mejora visual para las fechas
+.date-display {
+  i {
+    width: 20px;
+    text-align: center;
+  }
+}
+
+// Estilos para la tabla de Service Modifiers
+.modifier-table-container {
+  .service-header {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .modifier-table {
+    margin-bottom: 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    thead {
+      th {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-bottom: 2px solid #dee2e6;
+        font-size: 0.875rem;
+        padding: 12px 8px;
+        vertical-align: middle;
+        
+        &:first-child {
+          width: 25%;
+        }
+        
+        &:nth-child(2), &:nth-child(3) {
+          width: 20%;
+        }
+        
+        &:last-child {
+          width: 35%;
+        }
+      }
+    }
+    
+    tbody {
+      tr {
+        transition: background-color 0.2s ease;
+        
+        &:hover {
+          background-color: rgba(0, 123, 255, 0.05);
+        }
+        
+        td {
+          padding: 12px 8px;
+          vertical-align: middle;
+          border-bottom: 1px solid #dee2e6;
+          
+          &:first-child {
+            background-color: rgba(248, 249, 250, 0.7);
+            font-weight: 600;
+          }
+          
+          .badge {
+            font-size: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            
+            &.badge-soft-warning {
+              background-color: rgba(255, 193, 7, 0.15);
+              color: #856404;
+              border: 1px solid rgba(255, 193, 7, 0.3);
+            }
+            
+            &.badge-soft-success {
+              background-color: rgba(40, 167, 69, 0.15);
+              color: #155724;
+              border: 1px solid rgba(40, 167, 69, 0.3);
+            }
+            
+            &.badge-soft-info {
+              background-color: rgba(23, 162, 184, 0.15);
+              color: #0c5460;
+              border: 1px solid rgba(23, 162, 184, 0.3);
+            }
+          }
+        }
+      }
+      
+      // Alternating row colors
+      tr:nth-child(even) {
+        background-color: rgba(248, 249, 250, 0.5);
+      }
+    }
+  }
+}
+
+// Responsive adjustments for modifier tables
+@media (max-width: 768px) {
+  .modifier-table-container {
+    .service-header {
+      padding: 1rem;
+      
+      h6 {
+        font-size: 0.95rem;
+      }
+    }
+    
+    .modifier-table {
+      font-size: 0.875rem;
+      
+      thead th {
+        padding: 8px 4px;
+        font-size: 0.8rem;
+      }
+      
+      tbody td {
+        padding: 8px 4px;
+        
+        .badge {
+          font-size: 0.7rem;
+          padding: 0.3rem 0.6rem;
+        }
+      }
+    }
+  }
+}
+
+// Animation for table appearance
+.modifier-table {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

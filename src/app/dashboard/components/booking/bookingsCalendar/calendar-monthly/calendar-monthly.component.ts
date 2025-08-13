@@ -72,7 +72,11 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
       this.onBookingCreated(booking);
     });
 
-    this.subscriptions.push(bookingCreatedSubscription);
+    const bookingUpdatedSubscription = this.offcanvasBookingService.bookingUpdated$.subscribe((booking: Booking) => {
+      this.onBookingUpdated(booking);
+    });
+
+    this.subscriptions.push(bookingCreatedSubscription, bookingUpdatedSubscription);
   }
 
   private initStickyHeader(): void {
@@ -196,14 +200,47 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
 
   onBookingCreated(booking: Booking): void {
     this.bookings.push(booking);
-    this.snackBar.open('Booking created successfully', 'Close', {
+    // Convertir fechas para mantener consistencia
+    const newBooking = this.bookings[this.bookings.length - 1];
+    newBooking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
+    newBooking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());
+    newBooking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+    
+    this.filterBookings();
+    this.snackBar.open('Cita creada exitosamente', 'Cerrar', {
+      duration: 3000,
+      panelClass: 'snackbar-success'
+    });
+  }
+
+  onBookingUpdated(booking: Booking): void {
+    // Actualizar el booking en la lista local
+    const index = this.bookings.findIndex(b => b.id === booking.id);
+    if (index !== -1) {
+      this.bookings[index] = booking;
+      // Convertir fechas para mantener consistencia
+      this.bookings[index].startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
+      this.bookings[index].endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());
+      this.bookings[index].bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+    }
+    
+    this.filterBookings();
+    this.snackBar.open('Cita actualizada exitosamente', 'Cerrar', {
       duration: 3000,
       panelClass: 'snackbar-success'
     });
   }
 
   onBookingCancelled(): void {
-    console.log('Booking cancelled');
+    console.log('Creación de cita cancelada');
+  }
+
+  editBooking(bookingId: string, event: Event): void {
+    // Prevenir que el evento se propague al elemento padre
+    event.stopPropagation();
+    
+    // Abrir el modal de actualización con el ID del booking
+    this.offcanvasBookingService.openUpdateBookingModal(bookingId);
   }
 
   private loadBookingsForCurrentMoenth(): void {

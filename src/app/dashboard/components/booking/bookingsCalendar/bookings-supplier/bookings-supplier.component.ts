@@ -127,8 +127,13 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
   onBookingCreated(booking: Booking | null): void {
     if(booking !== null){
       this.bookings.push(booking);
-      this.loadBookingsForCurrentDay();
+      // Convertir fechas para mantener consistencia
+      const newBooking = this.bookings[this.bookings.length - 1];
+      newBooking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
+      newBooking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());
+      newBooking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
       
+      this.filterBookings();
       this.snackBar.open('Cita creada exitosamente', 'Cerrar', {
         duration: 3000,
         panelClass: 'snackbar-success'

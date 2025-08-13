@@ -5,6 +5,7 @@ export class ServiceModifier {
     customerId: string;
     serviceId: string;
     modifiedDurationInMinutes: number;
+    modifiedPrice: number;
     customer: Customer | null;
     service: Service | null;
 
@@ -12,6 +13,7 @@ export class ServiceModifier {
         this.customerId = "";
         this.serviceId = "";
         this.modifiedDurationInMinutes = 0;
+        this.modifiedPrice = 0;
         this.customer = null;
         this.service = null;
     }

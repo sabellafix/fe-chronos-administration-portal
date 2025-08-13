@@ -21,7 +21,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form novalidate="novalidate" class="mb-2" [formGroup]="form" *ngIf="!loading">
+                        <form novalidate="novalidate" class="mb-2 animated fadeIn fast" [formGroup]="form" *ngIf="!loading">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="row">
@@ -32,7 +32,7 @@
                                                 <strong>*</strong> {{getValidation('firstName')?.message}}
                                             </div>
                                         </div>
-
+        
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Last Name</label>
                                             <input type="text" class="form-control" (input)="capitalize('lastName')" placeholder="Enter last name" formControlName="lastName">
@@ -40,7 +40,7 @@
                                                 <strong>*</strong> {{getValidation('lastName')?.message}}
                                             </div>
                                         </div>
-
+        
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Phone Number</label>
                                             <input type="tel" class="form-control" placeholder="Enter phone number" formControlName="phoneNumber">
@@ -48,7 +48,7 @@
                                                 <strong>*</strong> {{getValidation('phoneNumber')?.message}}
                                             </div>
                                         </div>
-
+        
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Email</label>
                                             <input type="email" class="form-control" placeholder="Enter email address" formControlName="email">
@@ -62,7 +62,7 @@
                                                 <strong>*</strong> {{getValidation('email')?.message}}
                                             </div>
                                         </div>
-
+        
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Preferred Language</label>
                                             <select class="form-select" formControlName="preferredLanguage">
@@ -72,7 +72,17 @@
                                                 <strong>*</strong> {{getValidation('preferredLanguage')?.message}}
                                             </div>
                                         </div>
-
+        
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Status</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" formControlName="isActive" id="isActiveSwitch">
+                                                <label class="form-check-label" for="isActiveSwitch">
+                                                    {{form.get('isActive')?.value ? 'Active' : 'Inactive'}}
+                                                </label>
+                                            </div>
+                                        </div>
+        
                                         <div class="col-md-12 mb-3">
                                             <label class="form-label">Notes</label>
                                             <textarea class="form-control" rows="4" placeholder="Enter any additional notes about the customer" formControlName="notes"></textarea>
@@ -80,7 +90,7 @@
                                                 <strong>*</strong> {{getValidation('notes')?.message}}
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> 
                                 </div>
                                 <div class="col-md-6">
                                     <div class="row">
@@ -95,21 +105,24 @@
                                                             <i class="bx bx-plus me-1"></i>Add Modifier
                                                         </button>
                                                     </div>
-                                                    <small class="text-muted">Configure custom durations and prices for specific services for this customer</small>
+                                                    <small class="text-muted">Configure custom durations for specific services for this customer</small>
                                                 </div>
                                                 <div class="card-body" formArrayName="serviceModifiers">
                                                     <div *ngIf="serviceModifiersArray.length === 0" class="text-center text-muted py-3">
                                                         <i class="bx bx-info-circle me-2"></i>No service modifiers configured
                                                     </div>
                                                     <div *ngFor="let modifier of serviceModifiersArray.controls; let i = index" 
-                                                        [formGroupName]="i" class="border rounded p-3 mb-3 position-relative animated fadeIn fast">
+                                                        [formGroupName]="i" 
+                                                        class="border rounded p-3 mb-3 position-relative animated fadeIn fast"
+                                                        [style.border-left]="'6px solid ' + getServiceColor(modifier.get('serviceId')?.value)">
                                                        
                                                         <div class="row">
                                                             <div class="col-md-5 mb-2">
                                                                 <label class="form-label">Service *</label>
-                                                                <select class="form-select" formControlName="serviceId">
+                                                                <select class="form-select" formControlName="serviceId" 
+                                                                        (change)="onServiceChange(i, $any($event.target).value)">
                                                                     <option value="">Select a service</option>
-                                                                    <option *ngFor="let service of services" [value]="service.id">
+                                                                    <option *ngFor="let service of getAvailableServices(i)" [value]="service.id">
                                                                         {{service.serviceName}} 
                                                                         <span class="text-muted">({{service.durationMinutes}} min - ${{service.price}})</span>
                                                                     </option>
@@ -164,8 +177,8 @@
                                 </div>
                             </div>
                         </form>
-                        <div class="mb-3 mt-4" *ngIf="loading">
-                            <app-skelleton-user-info></app-skelleton-user-info>
+                        <div class="mb-3 mt-4 animated fadeIn fast" *ngIf="loading">
+                            <app-skelletons-simple [row]="3" [col]="2"></app-skelletons-simple>
                         </div>
                     </div>
                 </div>
