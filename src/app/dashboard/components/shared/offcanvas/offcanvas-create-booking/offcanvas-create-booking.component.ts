@@ -28,6 +28,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   
   @Input() selectedDate?: Date;
   @Input() selectedHour?: number;
+  @Input() selectedStylistId?: string;
   @Output() bookingCreated = new EventEmitter<Booking>();
   @Output() cancelled = new EventEmitter<void>();
 
@@ -81,6 +82,12 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     const offcanvasElement = document.getElementById('offcanvasCreateBooking');
     if (offcanvasElement) {
       this.offcanvasInstance = new bootstrap.Offcanvas(offcanvasElement);
+      
+      // Escuchar eventos de cierre del offcanvas
+      offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
+        // Notificar al servicio que el modal se cerró
+        this.offcanvasBookingService.onCancelled();
+      });
     }
     this.subscribeToOffcanvasService();
   }
@@ -93,6 +100,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     const showSubscription = this.offcanvasBookingService.showOffcanvas$.subscribe(() => {
       this.selectedDate = this.offcanvasBookingService.selectedDate || undefined;
       this.selectedHour = this.offcanvasBookingService.selectedHour || undefined;
+      this.selectedStylistId = this.offcanvasBookingService.selectedStylistId || undefined;
       this.show();
     });
     
@@ -183,10 +191,17 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     dateToUse.setDate(dateToUse.getDate());
     const newDate = dateToUse.toISOString().split('T')[0];
     
-    this.bookingForm.patchValue({
+    const formUpdate: any = {
       bookingDate: newDate,
       startTime: this.getDefaultTime()
-    });
+    };
+
+    // Si se seleccionó un stylist específico, pre-seleccionarlo
+    if (this.selectedStylistId) {
+      formUpdate.supplierId = this.selectedStylistId;
+    }
+    
+    this.bookingForm.patchValue(formUpdate);
   }
 
   onCancel(): void {

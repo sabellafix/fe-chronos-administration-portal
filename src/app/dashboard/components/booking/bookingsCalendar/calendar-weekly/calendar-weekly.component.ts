@@ -154,6 +154,21 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     this.offcanvasBookingService.openBookingModal(date, hour);
   }
 
+  onCellClick(date: Date, hour: number, event: Event): void {
+    // Solo abrir el modal si el clic no fue en un booking
+    const target = event.target as HTMLElement;
+    const isBookingClick = target.closest('app-card-booking') !== null;
+    
+    if (!isBookingClick) {
+      this.openBookingModal(date, hour);
+    }
+  }
+
+  onBookingClick(event: Event): void {
+    // Prevenir que el clic en booking se propague a la celda
+    event.stopPropagation();
+  }
+
   onBookingCreated(booking: Booking | null): void {
     if(booking !== null){
       this.bookings.push(booking);

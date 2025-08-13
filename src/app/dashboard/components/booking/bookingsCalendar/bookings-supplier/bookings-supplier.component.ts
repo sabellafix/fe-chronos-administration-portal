@@ -11,7 +11,6 @@ import { Service } from '@app/core/models/bussiness/service';
 import { User } from '@app/core/models/bussiness/user';
 import { UserService } from '@app/core/services/http/user.service';
 
-// Interface para agrupar estilistas con sus bookings
 interface StylistBookings {
   stylist: User;
   bookings: Booking[];
@@ -120,14 +119,25 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   openBookingModal(stylistId?: string, hour?: number): void {
-    // Pasar el stylistId como parámetro adicional si es necesario
-    this.offcanvasBookingService.openBookingModal(this.date, hour);
+    this.offcanvasBookingService.openBookingModal(this.date, hour, stylistId);
+  }
+
+  onCellClick(stylistId: string, hour: number, event: Event): void {
+    const target = event.target as HTMLElement;
+    const isBookingClick = target.closest('app-card-booking') !== null;
+    
+    if (!isBookingClick) {
+      this.openBookingModal(stylistId, hour);
+    }
+  }
+
+  onBookingClick(event: Event): void {
+    event.stopPropagation();
   }
 
   onBookingCreated(booking: Booking | null): void {
     if(booking !== null){
       this.bookings.push(booking);
-      // Convertir fechas para mantener consistencia
       const newBooking = this.bookings[this.bookings.length - 1];
       newBooking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
       newBooking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());
@@ -146,28 +156,22 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   editBooking(bookingId: string, event: Event): void {
-    // Prevenir que el evento se propague al elemento padre (td)
     event.stopPropagation();
     
-    // Abrir el modal de actualización con el ID del booking
     this.offcanvasBookingService.openUpdateBookingModal(bookingId);
   }
 
   onBookingUpdated(booking: Booking): void {
-    // Actualizar el booking en la lista local
     const index = this.bookings.findIndex(b => b.id === booking.id);
     if (index !== -1) {
       this.bookings[index] = booking;
-      // Convertir fechas para mantener consistencia
       this.bookings[index].startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
       this.bookings[index].endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
       this.bookings[index].bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
     }
     
-    // Reagrupar bookings por estilista
     this.groupBookingsByStylists();
     
-    // Mostrar mensaje de éxito
     this.snackBar.open('Cita actualizada exitosamente', 'Cerrar', {
       duration: 3000,
       panelClass: 'snackbar-success'
@@ -186,7 +190,6 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
           booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
         });
         
-        // Cargar usuarios/estilistas
         this.userService.getUsers().subscribe({
           next: (users: User[]) => {
             this.allStylists = users;
@@ -199,7 +202,6 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
               booking.user = usersMap.get(booking.supplierId) || new User();
             });
 
-            // Agrupar bookings por estilistas
             this.groupBookingsByStylists();
             this.filterBookings();
             this.isLoadingBookings = false;
@@ -223,7 +225,6 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private groupBookingsByStylists(): void {
-    // Agrupar bookings por supplierId
     const bookingsGrouped = new Map<string, Booking[]>();
     
     this.bookingsFiltered.forEach(booking => {
@@ -233,11 +234,9 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
       bookingsGrouped.get(booking.supplierId)!.push(booking);
     });
 
-    // Crear array de estilistas con sus bookings (máximo 7)
     this.stylistsBookings = [];
     let count = 0;
     
-    // Primero agregar estilistas que tienen bookings
     bookingsGrouped.forEach((bookings, supplierId) => {
       if (count < 7) {
         const stylist = this.allStylists.find(u => u.id === supplierId);
@@ -251,7 +250,6 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
       }
     });
 
-    // Luego agregar estilistas sin bookings hasta completar 7
     if (count < 7) {
       const stylistsWithBookings = new Set(Array.from(bookingsGrouped.keys()));
       const stylistsWithoutBookings = this.allStylists.filter(stylist => 
@@ -313,49 +311,30 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
     return ` Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
   }
 
-  /**
-   * Calcula la posición vertical (top) de un booking dentro de su celda horaria
-   * basada en los minutos del tiempo de inicio
-   */
   getBookingTopPosition(booking: Booking): string {
     const minutes = booking.startTime.minute;
-    // Cada celda representa 60 minutos, calculamos el porcentaje
     const percentage = (minutes / 60) * 100;
     return `${percentage}%`;
   }
 
-  /**
-   * Calcula la altura de un booking basada en su duración
-   * para que represente visualmente el tiempo real
-   */
   getBookingHeight(booking: Booking): string {
     const totalMinutes = booking.durationMinutes;
-    // Altura mínima para legibilidad
     const minHeightPx = 40;
-    // Altura base por hora (aproximadamente 60px por hora)
     const pixelsPerMinute = 1;
     
     let calculatedHeight = totalMinutes * pixelsPerMinute;
     
-    // Aplicar altura mínima
     calculatedHeight = Math.max(calculatedHeight, minHeightPx);
     
     return `${calculatedHeight}px`;
   }
 
-  /**
-   * Calcula el índice de superposición para bookings que se solapan
-   * en la misma celda horaria
-   */
   getBookingZIndex(booking: Booking, allBookingsInCell: Booking[]): number {
     const baseZIndex = 1000;
     const bookingIndex = allBookingsInCell.findIndex(b => b.id === booking.id);
     return baseZIndex + bookingIndex;
   }
 
-  /**
-   * Calcula el offset horizontal cuando hay múltiples bookings superpuestos
-   */
   getBookingLeftOffset(booking: Booking, allBookingsInCell: Booking[]): string {
     if (allBookingsInCell.length <= 1) return '0%';
     
@@ -365,29 +344,17 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
     return `${offsetPercentage}%`;
   }
 
-  /**
-   * Calcula el ancho de la tarjeta cuando hay superposición
-   */
   getBookingWidth(allBookingsInCell: Booking[]): string {
     if (allBookingsInCell.length <= 1) return '100%';
     
-    // Reducir el ancho cuando hay múltiples bookings
-    const widthReduction = Math.min(allBookingsInCell.length * 3, 15); // Máximo 15% de reducción
+    const widthReduction = Math.min(allBookingsInCell.length * 3, 15);
     return `${100 - widthReduction}%`;
   }
 
-  /**
-   * Función auxiliar para mejorar el rendimiento.
-   * Retorna los bookings de una celda específica para evitar múltiples cálculos
-   */
   getCellBookings(stylistId: string, hour: number): Booking[] {
     return this.getBookingsForStylistAndHour(stylistId, hour);
   }
 
-  /**
-   * Verifica si un booking se extiende más allá de la hora actual
-   * (para bookings que duran más de 60 minutos)
-   */
   bookingExtendsToNextHour(booking: Booking): boolean {
     const startMinutes = booking.startTime.hour * 60 + booking.startTime.minute;
     const endMinutes = startMinutes + booking.durationMinutes;
@@ -396,10 +363,6 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
     return endMinutes > nextHourMinutes;
   }
 
-  /**
-   * Calcula cuántas horas adicionales ocupa un booking
-   * (para bookings que se extienden más allá de su hora de inicio)
-   */
   getBookingAdditionalHours(booking: Booking): number {
     if (booking.durationMinutes <= 60) return 0;
     
@@ -407,30 +370,19 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
     return Math.ceil(remainingMinutes / 60);
   }
 
-  /**
-   * Función trackBy para mejorar el rendimiento de Angular con *ngFor
-   */
+  
   trackByBooking(index: number, booking: Booking): string {
     return booking.id;
   }
 
-  /**
-   * Función trackBy para estilistas
-   */
   trackByStylist(index: number, stylistBooking: StylistBookings): string {
     return stylistBooking.stylist.id;
   }
 
-  /**
-   * Obtiene el nombre completo del estilista
-   */
   getStylistFullName(stylist: User): string {
     return `${stylist.firstName} ${stylist.lastName}`.trim() || stylist.name || stylist.email;
   }
 
-  /**
-   * Obtiene la foto del estilista o una por defecto
-   */
   getStylistPhoto(stylist: User): string {
     return stylist.photo || this.imageUser;
   }

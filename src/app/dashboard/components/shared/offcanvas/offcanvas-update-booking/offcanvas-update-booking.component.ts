@@ -91,6 +91,12 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
     const offcanvasElement = document.getElementById('offcanvasUpdateBooking');
     if (offcanvasElement) {
       this.offcanvasInstance = new bootstrap.Offcanvas(offcanvasElement);
+      
+      // Escuchar eventos de cierre del offcanvas
+      offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
+        // Notificar al servicio que el modal se cerró
+        this.offcanvasBookingService.onUpdateCancelled();
+      });
     }
     this.subscribeToOffcanvasService();
   }
@@ -245,6 +251,7 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
   onCancel(): void {
     this.hide();
     this.cancelled.emit();
+    this.offcanvasBookingService.onUpdateCancelled();
     this.resetForm();
   }
 

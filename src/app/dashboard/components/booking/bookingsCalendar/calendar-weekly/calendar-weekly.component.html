@@ -58,7 +58,9 @@
                     <td class="day-cell" 
                         *ngFor="let date of dates" 
                         [attr.data-hour]="hour" 
-                        [attr.data-date]="date.date.toISOString()"                        
+                        [attr.data-date]="date.date.toISOString()"
+                        (click)="onCellClick(date.date, hour, $event)"
+                        style="cursor: pointer;"                        
                         >
                         <div class="cell-content">
                             <ng-container *ngIf="getCellBookings(date.date, hour) as cellBookings" >
@@ -72,6 +74,7 @@
                                         [width]="getBookingWidth(cellBookings)"
                                         [height]="getBookingHeight(booking)"
                                         [zIndex]="getBookingZIndex(booking, cellBookings)"
+                                        (click)="onBookingClick($event)"
                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button" >
                                     </app-card-booking>
                                     <div class="dropdown-menu dropdown-menu-end pt-0">
@@ -79,7 +82,7 @@
                                             <i class="bx bx-expand text-muted font-size-12 align-middle me-1"></i> 
                                             <span class="align-middle font-size-12 fw-normal">Expand</span>
                                         </div>
-                                        <div class="dropdown-item" href="#">
+                                        <div (click)="editBooking(booking.id, $event)" class="dropdown-item" href="#" style="cursor: pointer;">
                                             <i class="bx bx-pencil text-muted font-size-12 align-middle me-1"></i> 
                                             <span class="align-middle font-size-12 fw-normal">Update</span>
                                         </div>
@@ -104,8 +107,4 @@
     </div>
 </div>
 
-<!-- Componente de actualización de booking -->
-<app-offcanvas-update-booking
-  (bookingUpdated)="onBookingUpdated($event)"
-  (cancelled)="onBookingCancelled()">
-</app-offcanvas-update-booking>
+
