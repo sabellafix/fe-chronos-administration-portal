@@ -8,7 +8,6 @@
   </div>
   <div class="offcanvas-body shadow-sm p-0">
     <form [formGroup]="bookingForm" class="p-4">
-      <!-- Selección de Estilista - PRIMERO -->
       <div class="mb-3">
         <label class="form-label">Stylist *</label>
         <div class="row">
@@ -49,7 +48,45 @@
         </div>
       </div>
 
-      <!-- Selección de Servicios - SEGUNDO -->
+      <div class="mb-3">
+        <label class="form-label">Client *</label>
+        <div class="row">
+          <div class="col-md-10">
+            <!-- <select class="form-select" (change)="onCustomerChange($event)" formControlName="customerId">
+              <option [value]="null">Select client</option>
+              <option [value]="customer.id" *ngFor="let customer of customers">{{getCustomerFullName(customer)}}</option>
+            </select> -->
+
+            <app-autocomplete [options]="customerOptions" [placeholder]="'Select client'" [mode]="true" [disabled]="customers.length == 0" (result)="asignAutoComplete($event, 'customerId')"></app-autocomplete>
+
+
+            <div *ngIf="bookingForm.get('customerId')?.invalid && bookingForm.get('customerId')?.touched" class="text-danger small mt-1">
+              Client required
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button *ngIf="customer != null" type="button" class="btn btn-circle p-0 d-flex align-items-center"
+              id="page-header-user-dropdown-v" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img class="rounded-circle header-profile-user" [src]="getCustomerPhoto(customer)" alt="Header Avatar">
+            </button>
+
+            <div *ngIf="customer != null" class="dropdown-menu dropdown-menu-end pt-0">
+              <div class="p-3 border-bottom">
+                <h6 class="mb-0">{{getCustomerFullName(customer)}}</h6>
+                <p class="mb-0 font-size-11 text-muted">{{getUserForCustomer(customer)?.email || 'Sin email'}}</p>
+              </div>
+              <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Perfil</span></a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item cursor"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Cerrar sesión</span></a>
+            </div>
+            
+            <button *ngIf="customer == null" type="button" style="border: 1px solid #e0e0e0; background-color: white; color: #999" class="btn btn-ligth btn-rounded waves-effect waves-light">
+              <i class="bx bx-user"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="mb-3">
         <label class="form-label">Services *</label>
         <div *ngIf="!stylistLocked" class="alert alert-info">
@@ -99,9 +136,22 @@
                     </button>
                   </div>
                   <div>
-                    <h6 class="mb-0">{{getServiceName(service)}}</h6>
-                    <small class="text-muted">
+                    <h6 class="mb-0">
+                      {{getServiceName(service)}}
+                      <span *ngIf="hasServiceModifier(service)" class="badge bg-info ms-2">
+                        <i class="bx bx-pencil"></i> Change
+                      </span>
+                    </h6>
+                    
+                    <!-- Precio y duración original (tachado si hay modificador) -->
+                    <small class="text-muted d-block" [class.text-decoration-line-through]="hasServiceModifier(service)">
                       {{service.durationMinutes}}min - {{service.price || 0}} {{service.currency || 'USD'}}
+                    </small>
+                    
+                    <!-- Precio y duración personalizada (solo si hay modificador) -->
+                    <small *ngIf="hasServiceModifier(service)" class="text-success d-block fw-bold">
+                      <i class="bx bx-check-circle me-1"></i>
+                      {{getServiceDisplayDuration(service)}}min - {{getServiceDisplayPrice(service) || 0}} {{service.currency || 'USD'}}
                     </small>
                   </div>
                 </div>
@@ -132,47 +182,6 @@
           You must select at least one service
         </div>
       </div>
-
-      <div class="mb-3">
-        <label class="form-label">Client *</label>
-        <div class="row">
-          <div class="col-md-10">
-            <!-- <select class="form-select" (change)="onCustomerChange($event)" formControlName="customerId">
-              <option [value]="null">Select client</option>
-              <option [value]="customer.id" *ngFor="let customer of customers">{{getCustomerFullName(customer)}}</option>
-            </select> -->
-
-            <app-autocomplete [options]="customerOptions" [placeholder]="'Select client'" [mode]="true" [disabled]="customers.length == 0" (result)="asignAutoComplete($event, 'customerId')"></app-autocomplete>
-
-
-            <div *ngIf="bookingForm.get('customerId')?.invalid && bookingForm.get('customerId')?.touched" class="text-danger small mt-1">
-              Client required
-            </div>
-          </div>
-          <div class="col-md-2">
-            <button *ngIf="customer != null" type="button" class="btn btn-circle p-0 d-flex align-items-center"
-              id="page-header-user-dropdown-v" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img class="rounded-circle header-profile-user" [src]="getCustomerPhoto(customer)" alt="Header Avatar">
-            </button>
-
-            <div *ngIf="customer != null" class="dropdown-menu dropdown-menu-end pt-0">
-              <div class="p-3 border-bottom">
-                <h6 class="mb-0">{{getCustomerFullName(customer)}}</h6>
-                <p class="mb-0 font-size-11 text-muted">{{getUserForCustomer(customer)?.email || 'Sin email'}}</p>
-              </div>
-              <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Perfil</span></a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item cursor"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Cerrar sesión</span></a>
-            </div>
-            
-            <button *ngIf="customer == null" type="button" style="border: 1px solid #e0e0e0; background-color: white; color: #999" class="btn btn-ligth btn-rounded waves-effect waves-light">
-              <i class="bx bx-user"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-
-
 
       <div class="row">
         <div class="col-md-6">

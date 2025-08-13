@@ -386,12 +386,21 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
 
   asignAutoComplete(option: Option, controlName: string){
     this.bookingForm.get(controlName)?.setValue(option.code!);
+    
+    // Si es el customer, actualizar los modificadores
+    if (controlName === 'customerId') {
+      const customerId = option.code;
+      this.customer = this.customers.find(c => c.id === customerId) || null;
+      this.updateSelectedServicesWithModifiers();
+    }
   }
 
   onCustomerChange(event: any): void {
     console.log("event", event);
     const customerId = event.target.value;
     this.customer = this.customers.find(c => c.id === customerId) || null;
+    // Actualizar precios y duraciones si hay servicios seleccionados
+    this.updateSelectedServicesWithModifiers();
   }
 
   private updateTotalDuration(): void {
@@ -402,11 +411,17 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   calculateTotalDuration(): number {
-    return this.selectedServices.reduce((total, service) => total + service.durationMinutes, 0);
+    return this.selectedServices.reduce((total, service) => {
+      const modifiedDuration = this.getModifiedDuration(service);
+      return total + (modifiedDuration !== null ? modifiedDuration : service.durationMinutes);
+    }, 0);
   }
 
   calculateTotalPrice(): number {
-    return this.selectedServices.reduce((total, service) => total + service.price, 0);
+    return this.selectedServices.reduce((total, service) => {
+      const modifiedPrice = this.getModifiedPrice(service);
+      return total + (modifiedPrice !== null ? modifiedPrice : service.price);
+    }, 0);
   }
 
   // Helper methods para el template
@@ -451,6 +466,58 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
 
   private generateBookingId(): string {
     return 'BK-' + Date.now().toString() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
+  }
+
+  // Métodos para manejar modificadores de servicios
+  getModifiedPrice(service: Service): number | null {
+    if (!this.customer || !this.customer.serviceModifiers) {
+      return null;
+    }
+    
+    const modifier = this.customer.serviceModifiers.find(
+      sm => sm.serviceId === service.id
+    );
+    
+    return modifier ? modifier.modifiedPrice : null;
+  }
+
+  getModifiedDuration(service: Service): number | null {
+    if (!this.customer || !this.customer.serviceModifiers) {
+      return null;
+    }
+    
+    const modifier = this.customer.serviceModifiers.find(
+      sm => sm.serviceId === service.id
+    );
+    
+    return modifier ? modifier.modifiedDurationInMinutes : null;
+  }
+
+  hasServiceModifier(service: Service): boolean {
+    if (!this.customer || !this.customer.serviceModifiers) {
+      return false;
+    }
+    
+    return this.customer.serviceModifiers.some(
+      sm => sm.serviceId === service.id
+    );
+  }
+
+  getServiceDisplayPrice(service: Service): number {
+    const modifiedPrice = this.getModifiedPrice(service);
+    return modifiedPrice !== null ? modifiedPrice : service.price;
+  }
+
+  getServiceDisplayDuration(service: Service): number {
+    const modifiedDuration = this.getModifiedDuration(service);
+    return modifiedDuration !== null ? modifiedDuration : service.durationMinutes;
+  }
+
+  private updateSelectedServicesWithModifiers(): void {
+    if (this.selectedServices.length > 0) {
+      // Forzar actualización de la duración total
+      this.updateTotalDuration();
+    }
   }
 
 }
