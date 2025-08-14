@@ -21,6 +21,11 @@ export class AutocompleteComponent implements OnChanges{
 
   constructor() {
   }
+
+  ngOnInit(): void {
+    this.filteredOptions = [...this.options];
+    this.searchTerm = (this.value! != '') ? this.value! : '';
+  }
   
   ngOnChanges(): void {
     this.filteredOptions = [...this.options];

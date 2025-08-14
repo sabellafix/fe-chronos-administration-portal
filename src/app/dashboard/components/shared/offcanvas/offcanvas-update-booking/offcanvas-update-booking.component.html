@@ -8,166 +8,115 @@
   </div>
   <div class="offcanvas-body shadow-sm p-0">
     
-    <!-- Loading spinner while loading booking details -->
     <div *ngIf="loadingBooking" class="d-flex justify-content-center align-items-center p-4">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
     </div>
 
     <form [formGroup]="bookingForm" class="p-4" *ngIf="!loadingBooking">
-      
-      <!-- Información del booking actual -->
-      <div *ngIf="booking" class="mb-4 p-3 bg-light rounded">
-        <h6 class="mb-2">
-          <i class="bx bx-info-circle me-1"></i>
-          Booking information
-        </h6>
-        <div class="row">
-          <div class="col-6">
-            <small class="text-muted">ID:</small>
-            <p class="mb-0 fw-bold">{{booking.id}}</p>
+
+      <div class="mb-3">
+        <label class="form-label">Stylist</label>
+        <div class="form-control-static p-3 border rounded">
+          <div class="d-flex align-items-center">
+            <div class="me-3">
+              <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                <i class="bx bx-user text-white"></i>
+              </div>
+            </div>
+            <div>
+              <h6 class="mb-0 fw-bold">{{selectedStylist ? getUserFullName(selectedStylist) : 'No asignado'}}</h6>
+              <small class="text-muted">Stylist assigned</small>
+            </div>
           </div>
-          <div class="col-6">
-            <small class="text-muted">Current status:</small>
-            <p class="mb-0 fw-bold">{{getStatusLabel(booking.status)}}</p>
+        </div>
+      </div>
+
+      <!-- Client Section -->
+      <div class="mb-3">
+        <label class="form-label">Customer</label>
+        <div class="form-control-static p-3 border rounded">
+          <div class="d-flex align-items-center">
+            <div class="me-3">
+              <img *ngIf="customer" class="rounded-circle" [src]="getCustomerPhoto(customer)" alt="Cliente" style="width: 40px; height: 40px;">
+              <div *ngIf="!customer" class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                <i class="bx bx-user text-white"></i>
+              </div>
+            </div>
+            <div class="flex-grow-1">
+              <h6 class="mb-0 fw-bold">{{customer ? getCustomerFullName(customer) : 'No asignado'}}</h6>
+              <small class="text-muted">{{customer && getUserForCustomer(customer)?.email ? getUserForCustomer(customer)?.email : 'Cliente del booking'}}</small>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Services Section -->
       <div class="mb-3">
-        <label class="form-label">Services *</label>
-        <div class="row">
-          <div class="col-md-10">
-            <select class="form-select" (change)="onServiceChange($event)">
-              <option [value]="null">Select service</option>
-              <option [value]="service.id" *ngFor="let service of getAvailableServices()">
-                {{getServiceName(service)}} - {{service.price || 0}} {{service.currency || 'USD'}}
-              </option>
-            </select>
-          </div>
-          <div class="col-md-2">
-            <button type="button" class="btn btn-outline-primary btn-rounded waves-effect waves-light">
-              <i class="bx bx-plus"></i>
-            </button>
-          </div>
-        </div>
+        <label class="form-label">Servicios</label>
         
-        <div *ngIf="selectedServices.length > 0" class="mt-3">
-          <h6 class="mb-2">Selected services:</h6>
+        <div *ngIf="selectedServices.length > 0">
           <div class="row">
             <div class="col-12" *ngFor="let service of selectedServices; let i = index">
-              <div class="d-flex align-items-center justify-content-between p-2 mb-2 border rounded">
-                <div class="d-flex align-items-center">
-                  <div class="me-3">
-                    <button type="button" 
-                            [matTooltip]="getServiceColor(service)" 
-                            [ngStyle]="{'background-color': getServiceColor(service)}" 
-                            style="color: white; width: 30px; height: 30px;"
-                            class="btn btn-sm btn-rounded waves-effect waves-light d-flex align-items-center justify-content-center">
-                      <i class="bx bx-cut"></i>
-                    </button>
-                  </div>
-                  <div>
-                    <h6 class="mb-0">{{getServiceName(service)}}</h6>
-                    <small class="text-muted">
-                      {{service.durationMinutes}}min - {{service.price || 0}} {{service.currency || 'USD'}}
-                    </small>
+              <div class="d-flex align-items-center p-2 mb-2 border rounded bg-white">
+                <div class="me-3">
+                  <div [ngStyle]="{'background-color': getServiceColor(service)}" 
+                        style="color: white; width: 35px; height: 35px;"
+                        class="rounded d-flex align-items-center justify-content-center">
+                    <i class="bx bx-cut"></i>
                   </div>
                 </div>
-                <button type="button" 
-                        (click)="removeService(service.id)" 
-                        class="btn btn-sm btn-outline-danger btn-rounded waves-effect waves-light">
-                  <i class="bx bx-trash"></i>
-                </button>
+                <div class="flex-grow-1">
+                  <h6 class="mb-0 fw-bold">
+                    {{getServiceName(service)}}
+                    <span *ngIf="hasServiceModifier(service)" class="badge bg-info ms-2">
+                      <i class="bx bx-pencil"></i> Personalizado
+                    </span>
+                  </h6>
+                  
+                  <!-- Precio y duración original (tachado si hay modificador) -->
+                  <small class="text-muted d-block" [class.text-decoration-line-through]="hasServiceModifier(service)">
+                    {{service.durationMinutes}}min - {{service.price || 0}} {{service.currency || 'USD'}}
+                  </small>
+                  
+                  <!-- Precio y duración personalizada (solo si hay modificador) -->
+                  <small *ngIf="hasServiceModifier(service)" class="text-success d-block fw-bold">
+                    <i class="bx bx-check-circle me-1"></i>
+                    {{getServiceDisplayDuration(service)}}min - {{getServiceDisplayPrice(service) || 0}} {{service.currency || 'USD'}}
+                  </small>
+                </div>
               </div>
             </div>
           </div>
           
-          <div class="p-3 bg-light rounded">
+          <div class="mt-3 p-3 bg-primary bg-opacity-10 rounded">
             <div class="row">
               <div class="col-6">
-                <small class="text-muted">Total duration:</small>
-                <p class="mb-0 fw-bold">{{calculateTotalDuration()}} minutos</p>
+                <small class="text-muted">Duración total:</small>
+                <p class="mb-0 fw-bold text-primary">{{calculateTotalDuration()}} minutos</p>
               </div>
               <div class="col-6">
                 <small class="text-muted">Precio total:</small>
-                <p class="mb-0 fw-bold">{{calculateTotalPrice()}} {{selectedServices[0]!.currency || 'USD'}}</p>
+                <p class="mb-0 fw-bold text-primary">{{calculateTotalPrice()}} {{selectedServices.length > 0 ? selectedServices[0].currency || 'COP' : 'COP'}}</p>
               </div>
             </div>
           </div>
         </div>
         
-        <div *ngIf="selectedServices.length === 0" class="text-danger small mt-1">
-          You must select at least one service
+        <div *ngIf="selectedServices.length === 0" class="form-control-static p-3 border rounded bg-light text-center">
+          <i class="bx bx-info-circle text-muted me-2"></i>
+          <span class="text-muted">No services assigned to this booking</span>
         </div>
       </div>
 
-      <!-- Client Section -->
-      <div class="mb-3">
-        <label class="form-label">Customer *</label>
-        <div class="row">
-          <div class="col-md-10">
-            <app-autocomplete 
-              [options]="customerOptions" 
-              [placeholder]="'Seleccionar cliente'" 
-              [mode]="true" 
-              [disabled]="customers.length == 0" 
-              (result)="asignAutoComplete($event, 'customerId')">
-            </app-autocomplete>
 
-            <div *ngIf="bookingForm.get('customerId')?.invalid && bookingForm.get('customerId')?.touched" class="text-danger small mt-1">
-              Cliente requerido
-            </div>
-          </div>
-          <div class="col-md-2">
-            <button *ngIf="customer != null" type="button" class="btn btn-circle p-0 d-flex align-items-center"
-              id="page-header-user-dropdown-v" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img class="rounded-circle header-profile-user" [src]="getCustomerPhoto(customer)" alt="Header Avatar">
-            </button>
-
-            <div *ngIf="customer != null" class="dropdown-menu dropdown-menu-end pt-0">
-              <div class="p-3 border-bottom">
-                <h6 class="mb-0">{{getCustomerFullName(customer)}}</h6>
-                <p class="mb-0 font-size-11 text-muted">{{getUserForCustomer(customer)?.email || 'Sin email'}}</p>
-              </div>
-              <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Perfil</span></a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item cursor"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Cerrar sesión</span></a>
-            </div>
-            
-            <button *ngIf="customer == null" type="button" style="border: 1px solid #e0e0e0; background-color: white; color: #999" class="btn btn-ligth btn-rounded waves-effect waves-light">
-              <i class="bx bx-user"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stylist Section -->
-      <div class="mb-3">
-        <label class="form-label">Stylist *</label>
-        <div class="row">
-          <div class="col-md-12">
-            <app-autocomplete 
-              [options]="usersOptions" 
-              [placeholder]="'Seleccionar stylist'" 
-              [mode]="true" 
-              [disabled]="users.length == 0" 
-              (result)="asignAutoComplete($event, 'supplierId')">
-            </app-autocomplete>
-            <div *ngIf="bookingForm.get('supplierId')?.invalid && bookingForm.get('supplierId')?.touched" class="text-danger small mt-1">
-              Stylist requerido
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Date and Time Section -->
       <div class="row">
         <div class="col-md-6">
           <div class="mb-3">
-            <label class="form-label">Booking date *</label>
+            <label class="form-label">Booking date</label>
             <input type="date" class="form-control" formControlName="bookingDate">
             <div *ngIf="bookingForm.get('bookingDate')?.invalid && bookingForm.get('bookingDate')?.touched" class="text-danger small mt-1">
               Booking date required
@@ -176,7 +125,7 @@
         </div>
         <div class="col-md-6">
           <div class="mb-3">
-            <label class="form-label">Start time *</label>
+            <label class="form-label">Start time</label>
             <input type="time" class="form-control" formControlName="startTime">
             <div *ngIf="bookingForm.get('startTime')?.invalid && bookingForm.get('startTime')?.touched" class="text-danger small mt-1">
               Start time required
@@ -187,7 +136,7 @@
 
       <!-- Duration Section -->
       <div class="mb-3">
-        <label class="form-label">Duration (minutes) *</label>
+          <label class="form-label">Duration (minutes)</label>
         <input type="number" 
                class="form-control" 
                formControlName="durationMinutes" 
@@ -222,7 +171,7 @@
         <textarea class="form-control" 
                   formControlName="clientNotes" 
                   rows="3" 
-                  placeholder="Notas adicionales del cliente..."></textarea>
+                  placeholder="Additional customer notes..."></textarea>
       </div>
 
       <div class="mb-3">
@@ -230,7 +179,7 @@
         <textarea class="form-control" 
                   formControlName="providerNotes" 
                   rows="3" 
-                  placeholder="Notas internas del proveedor..."></textarea>
+                  placeholder="Internal provider notes..."></textarea>
       </div>
 
       <!-- Action Buttons -->
@@ -241,7 +190,7 @@
                 class="btn btn-primary waves-effect waves-light">
           <i class="bx bx-calendar-edit me-2" *ngIf="!loading"></i>
           <div class="spinner-border spinner-border-sm me-2" role="status" *ngIf="loading">
-            <span class="visually-hidden">Cargando...</span>
+            <span class="visually-hidden">Loading...</span>
           </div>
           <span *ngIf="!loading">Update booking</span>
           <span *ngIf="loading">Updating...</span>

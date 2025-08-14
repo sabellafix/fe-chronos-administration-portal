@@ -55,6 +55,9 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
   customerOptions: Option[] = [];
   users: User[] = []; 
   usersOptions: Option[] = [];
+  stylistLocked: boolean = false;
+  selectedStylist: User | null = null;
+  loadingServices: boolean = false;
   
   // UI
   imageUser: string = "../assets/images/user-image.jpg";
@@ -87,18 +90,19 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getServices();
+    this.getUsers();
+    this.getCustomers();
+    
     const offcanvasElement = document.getElementById('offcanvasUpdateBooking');
     if (offcanvasElement) {
       this.offcanvasInstance = new bootstrap.Offcanvas(offcanvasElement);
       
-      // Escuchar eventos de cierre del offcanvas
       offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
-        // Notificar al servicio que el modal se cerró
         this.offcanvasBookingService.onUpdateCancelled();
       });
     }
     this.subscribeToOffcanvasService();
+    this.subscribeToStylistChanges();
   }
 
   ngOnDestroy(): void {
@@ -115,6 +119,59 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
     this.subscriptions.push(showSubscription);
   }
 
+  private subscribeToStylistChanges(): void {
+    const stylistSubscription = this.bookingForm.get('supplierId')?.valueChanges.subscribe(stylistId => {
+      if (stylistId && !this.stylistLocked) {
+        this.onStylistSelected(stylistId);
+      }
+    });
+
+    if (stylistSubscription) {
+      this.subscriptions.push(stylistSubscription);
+    }
+  }
+
+  private onStylistSelected(stylistId: string): void {
+    this.selectedStylist = this.users.find(u => u.id === stylistId) || null;
+    this.loadServicesByProvider(stylistId);
+    this.lockStylist();
+  }
+
+  private lockStylist(): void {
+    this.stylistLocked = true;
+    this.bookingForm.get('supplierId')?.disable();
+  }
+
+  public unlockStylist(): void {
+    this.stylistLocked = false;
+    this.selectedStylist = null;
+    this.services = [];
+    this.selectedServices = [];
+    this.bookingForm.get('supplierId')?.enable();
+    this.bookingForm.get('supplierId')?.setValue(null);
+    this.updateTotalDuration();
+  }
+
+  private loadServicesByProvider(providerId: string): void {
+    this.loadingServices = true;
+    
+    if (!this.booking || this.booking.supplierId !== providerId) {
+      this.services = [];
+      this.selectedServices = [];
+    }
+    
+    this.serviceService.getServicesByProvider(providerId).subscribe({
+      next: (response: Service[]) => {
+        this.services = response;
+        this.loadingServices = false;
+      },
+      error: (error) => {
+        this.snackBar.open('Error loading services for this stylist', 'Close', {duration: 4000});
+        this.loadingServices = false;
+      }
+    });
+  }
+
   loadBooking(): void {
     if (!this.bookingId) {
       this.snackBar.open('ID de booking no proporcionado', 'Cerrar', {duration: 4000});
@@ -125,8 +182,7 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
     this.bookingService.getBooking(this.bookingId).subscribe({
       next: (booking: Booking) => {
         this.booking = booking;
-        this.populateForm();
-        this.loadingBooking = false;
+        this.loadBookingData();
       },
       error: (error) => {
         this.snackBar.open('Error al cargar el booking', 'Cerrar', {duration: 4000});
@@ -136,17 +192,114 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
     });
   }
 
+  private loadBookingData(): void {
+    if (!this.booking) {
+      this.loadingBooking = false;
+      return;
+    }
+
+    if (this.users.length === 0 || this.customers.length === 0) {
+      let usersLoaded = this.users.length > 0;
+      let customersLoaded = this.customers.length > 0;
+      
+      if (!usersLoaded) {
+        this.userService.getUsersByRole(RolesConst._STYLIST).subscribe({
+          next: (response: User[]) => {
+            this.users = response;
+            this.usersOptions = this.users.map(user => ({
+              id: user.id,
+              name: user.firstName + ' ' + user.lastName,
+              code: user.id.toString()
+            }));
+            usersLoaded = true;
+            if (customersLoaded) this.populateFormWithBookingData();
+          }
+        });
+      }
+      
+      if (!customersLoaded) {
+        this.customerService.getAllCustomers().subscribe({
+          next: (response: Customer[]) => {
+            this.customers = response;
+            this.customerOptions = this.customers.map(customer => ({
+              id: customer.id,
+              name: customer.firstName + ' ' + customer.lastName,
+              code: customer.id.toString()
+            }));
+            customersLoaded = true;
+            if (usersLoaded) this.populateFormWithBookingData();
+          }
+        });
+      }
+      
+      if (usersLoaded && customersLoaded) {
+        this.populateFormWithBookingData();
+      }
+    } else {
+      this.populateFormWithBookingData();
+    }
+  }
+
+  private populateFormWithBookingData(): void {
+    if (!this.booking) return;
+
+    this.customer = this.customers.find(c => c.id === this.booking!.customerId) || this.booking!.customer || null;
+
+    if (this.booking.supplierId) {
+      this.selectedStylist = this.users.find(u => u.id === this.booking!.supplierId) || null;
+      
+      if (this.selectedStylist) {
+        this.loadingServices = true;
+        this.serviceService.getServicesByProvider(this.booking.supplierId).subscribe({
+          next: (response: Service[]) => {
+            this.services = response;
+            this.loadingServices = false;
+            this.lockStylist();
+            this.loadSelectedServices();
+            this.populateForm();
+            this.loadingBooking = false;
+          },
+          error: (error) => {
+            console.error('Error loading services:', error);
+            this.loadingServices = false;
+            this.populateForm();
+            this.loadingBooking = false;
+          }
+        });
+      } else {
+        this.populateForm();
+        this.loadingBooking = false;
+      }
+    } else {
+      this.populateForm();
+      this.loadingBooking = false;
+    }
+  }
+
+  private loadSelectedServices(): void {
+    if (!this.booking) return;
+
+    this.selectedServices = [];
+    
+    if (this.booking.services && this.booking.services.length > 0) {
+      this.selectedServices = [...this.booking.services];
+    } else if (this.booking.serviceId) {
+      const service = this.services.find(s => s.id === this.booking!.serviceId);
+      if (service) {
+        this.selectedServices = [service];
+      }
+    }
+  }
+
   private populateForm(): void {
     if (!this.booking) return;
 
-    // Formatear la fecha para el input date
     const bookingDate = typeof this.booking.bookingDate === 'string' 
       ? this.booking.bookingDate 
       : DateUtils.dateOnlyToHtmlDateInput(this.booking.bookingDate);
 
-    // Formatear la hora para el input time
     const startTime = typeof this.booking.startTime === 'string'
-      ? (this.booking.startTime as string).substring(0, 5) // Solo HH:MM
+      ? (this.booking.startTime as string).substring(0, 5)
       : TimeUtils.timeOnlyToHtmlTimeInput(this.booking.startTime as TimeOnly);
 
     this.bookingForm.patchValue({
@@ -160,38 +313,26 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
       status: this.booking.status
     });
 
-    // Cargar servicios seleccionados
-    if (this.booking.services && this.booking.services.length > 0) {
-      this.selectedServices = [...this.booking.services];
-    } else if (this.booking.serviceId) {
-      // Si solo hay un serviceId, buscar el servicio en la lista
-      const service = this.services.find(s => s.id === this.booking!.serviceId);
-      if (service) {
-        this.selectedServices = [service];
-      }
+    if (this.selectedServices.length > 0) {
+      this.updateTotalDuration();
     }
-
-    // Cargar información del cliente
-    this.customer = this.booking.customer;
   }
 
   getServices(): void {
     this.loading = true;
-    this.serviceService.getServices().subscribe({
+    this.serviceService.getAllServices().subscribe({
       next: (response: Service[]) => {
         this.services = response;
-        this.getCustomers();
-      },
-      error: (response) => {
-        this.snackBar.open('Error al cargar servicios', 'Cerrar', {duration: 4000});
-        this.getCustomers();
+        this.loading = false;
+      },error: (response) =>{
+        this.snackBar.open('Error loading services', 'Close', {duration: 4000});
+        this.loading = false;
       }
     });
   }
 
   getCustomers(): void {
-    this.loading = true;
-    this.customerService.getCustomers().subscribe({
+    this.customerService.getAllCustomers().subscribe({
       next: (response: Customer[]) => {
         this.customers = response;
         this.customerOptions = this.customers.map(customer => ({
@@ -199,17 +340,13 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
           name: customer.firstName + ' ' + customer.lastName,
           code: customer.id.toString()
         }));
-        this.getUsers();
-      },
-      error: (response) => {
-        this.snackBar.open('Error al cargar clientes', 'Cerrar', {duration: 4000});
-        this.getUsers();
+      },error: (response) =>{
+        this.snackBar.open('Error loading customers', 'Close', {duration: 4000});
       }
     });
   } 
 
   getUsers(): void {
-    this.loading = true;
     this.userService.getUsersByRole(RolesConst._STYLIST).subscribe({
       next: (response: User[]) => {
         this.users = response;
@@ -218,11 +355,8 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
           name: user.firstName + ' ' + user.lastName,
           code: user.id.toString()
         }));
-        this.loading = false;
-      },
-      error: (response) => {
-        this.snackBar.open('Error al cargar usuarios', 'Cerrar', {duration: 4000});
-        this.loading = false;
+      },error: (response) =>{
+        this.snackBar.open('Error loading users', 'Close', {duration: 4000});
       }
     });
   }
@@ -261,13 +395,12 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
       
       const updateBookingDto: UpdateBookingDto = new UpdateBookingDto();
       
-      // Configurar bookingDate como DateOnly
-      updateBookingDto.bookingDate = DateUtils.htmlDateInputToDateOnly(formValue.bookingDate);
+      const bookingDate = new Date(formValue.bookingDate);
+      updateBookingDto.bookingDate = bookingDate.toISOString().split('T')[0];
       
-      // Configurar startTime como TimeOnly
-      updateBookingDto.startTime = TimeUtils.htmlTimeInputToTimeOnly(formValue.startTime);
+      const [startHour, startMinute] = formValue.startTime.split(':').map(Number);
+      updateBookingDto.startTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}:00`;
       
-      // Calcular duración total y precio total
       const totalDuration = this.calculateTotalDuration();
       const totalPrice = this.calculateTotalPrice();
       
@@ -275,10 +408,11 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
       updateBookingDto.totalPrice = totalPrice;
       updateBookingDto.currency = 'COP';
       
-      // Configurar endTime como TimeOnly (calculado añadiendo duración al startTime)
-      updateBookingDto.endTime = TimeUtils.addMinutes(updateBookingDto.startTime!, totalDuration);
+      const totalMinutes = startMinute + totalDuration;
+      const endHour = startHour + Math.floor(totalMinutes / 60);
+      const finalMinutes = totalMinutes % 60;
+      updateBookingDto.endTime = `${endHour.toString().padStart(2, '0')}:${finalMinutes.toString().padStart(2, '0')}:00`;
       
-      // Configurar notas y estado
       updateBookingDto.clientNotes = formValue.clientNotes || undefined;
       updateBookingDto.providerNotes = formValue.providerNotes || undefined;
       updateBookingDto.status = formValue.status;
@@ -290,7 +424,7 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
           this.bookingUpdated.emit(booking);
           this.offcanvasBookingService.onBookingUpdated(booking);
           this.resetForm();
-          this.snackBar.open('Booking actualizado exitosamente', 'Cerrar', {
+          this.snackBar.open('Booking updated successfully', 'Close', {
             duration: 4000, 
             panelClass: 'snackbar-success'
           });
@@ -299,19 +433,20 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
           if(error.status === 400){
             this.snackBar.open(error.error, 'Cerrar', {duration: 4000});
           } else {
-            this.snackBar.open('Error al actualizar booking', 'Cerrar', {duration: 4000});
+            this.snackBar.open('Error updating booking', 'Close', {duration: 4000});
           }
         }
       });
     } else {
       if (this.selectedServices.length === 0) {
-        this.snackBar.open('Debe seleccionar al menos un servicio', 'Cerrar', {duration: 4000});
+        this.snackBar.open('You must select at least one service', 'Close', {duration: 4000});
       }
       this.markFormGroupTouched();
     }
   }
 
   private resetForm(): void {
+    this.unlockStylist();
     this.bookingForm.reset({
       customerId: null,
       supplierId: null,
@@ -336,7 +471,6 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
       this.updateTotalDuration();
     }
     
-    // Resetear el select
     event.target.value = null;
   }
 
@@ -347,11 +481,23 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
 
   asignAutoComplete(option: Option, controlName: string): void {
     this.bookingForm.get(controlName)?.setValue(option.code!);
+    
+    if (controlName === 'customerId') {
+      const customerId = option.code;
+      this.customer = this.customers.find(c => c.id === customerId) || null;
+      this.updateSelectedServicesWithModifiers();
+    }
+    
+    if (controlName === 'supplierId' && !this.stylistLocked) {
+      const stylistId = option.code;
+      this.onStylistSelected(stylistId!);
+    }
   }
 
   onCustomerChange(event: any): void {
     const customerId = event.target.value;
     this.customer = this.customers.find(c => c.id === customerId) || null;
+    this.updateSelectedServicesWithModifiers();
   }
 
   private updateTotalDuration(): void {
@@ -362,14 +508,19 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
   }
 
   calculateTotalDuration(): number {
-    return this.selectedServices.reduce((total, service) => total + service.durationMinutes, 0);
+    return this.selectedServices.reduce((total, service) => {
+      const modifiedDuration = this.getModifiedDuration(service);
+      return total + (modifiedDuration !== null ? modifiedDuration : service.durationMinutes);
+    }, 0);
   }
 
   calculateTotalPrice(): number {
-    return this.selectedServices.reduce((total, service) => total + service.price, 0);
+    return this.selectedServices.reduce((total, service) => {
+      const modifiedPrice = this.getModifiedPrice(service);
+      return total + (modifiedPrice !== null ? modifiedPrice : service.price);
+    }, 0);
   }
 
-  // Helper methods para el template
   getServiceName(service: Service): string {
     return service.serviceName || 'Sin nombre';
   }
@@ -408,7 +559,6 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Métodos para manejar estados de booking
   getStatusOptions(): {value: BookingStatus, label: string}[] {
     return [
       { value: BookingStatus.Pending, label: 'Pendiente' },
@@ -422,5 +572,75 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
   getStatusLabel(status: BookingStatus): string {
     const statusOption = this.getStatusOptions().find(option => option.value === status);
     return statusOption ? statusOption.label : 'Desconocido';
+  }
+
+  getModifiedPrice(service: Service): number | null {
+    if (!this.customer || !this.customer.serviceModifiers) {
+      return null;
+    }
+    
+    const modifier = this.customer.serviceModifiers.find(
+      sm => sm.serviceId === service.id
+    );
+    
+    return modifier ? modifier.modifiedPrice : null;
+  }
+
+  getModifiedDuration(service: Service): number | null {
+    if (!this.customer || !this.customer.serviceModifiers) {
+      return null;
+    }
+    
+    const modifier = this.customer.serviceModifiers.find(
+      sm => sm.serviceId === service.id
+    );
+    
+    return modifier ? modifier.modifiedDurationInMinutes : null;
+  }
+
+  hasServiceModifier(service: Service): boolean {
+    if (!this.customer || !this.customer.serviceModifiers) {
+      return false;
+    }
+    
+    return this.customer.serviceModifiers.some(
+      sm => sm.serviceId === service.id
+    );
+  }
+
+  getServiceDisplayPrice(service: Service): number {
+    const modifiedPrice = this.getModifiedPrice(service);
+    return modifiedPrice !== null ? modifiedPrice : service.price;
+  }
+
+  getServiceDisplayDuration(service: Service): number {
+    const modifiedDuration = this.getModifiedDuration(service);
+    return modifiedDuration !== null ? modifiedDuration : service.durationMinutes;
+  }
+
+  private updateSelectedServicesWithModifiers(): void {
+    if (this.selectedServices.length > 0) {
+      this.updateTotalDuration();
+    }
+  }
+
+  getStylistIdForAutocomplete(): number | undefined {
+    if (!this.booking?.supplierId || this.usersOptions.length === 0) return undefined;
+    const option = this.usersOptions.find(opt => opt.code === this.booking!.supplierId);
+    return option ? Number(option.id) : undefined;
+  }
+
+  getCustomerIdForAutocomplete(): number | undefined {
+    if (!this.booking?.customerId || this.customerOptions.length === 0) return undefined;
+    const option = this.customerOptions.find(opt => opt.code === this.booking!.customerId);
+    return option ? Number(option.id) : undefined;
+  }
+
+  refreshFormData(): void {
+    if (this.booking) {
+      setTimeout(() => {
+        this.populateForm();
+      }, 100);
+    }
   }
 }

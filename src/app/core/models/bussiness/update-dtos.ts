@@ -41,9 +41,9 @@ export class UpdateBlockedTimeDto {
 }
 
 export class UpdateBookingDto {
-    bookingDate?: DateOnly;
-    startTime?: TimeOnly;
-    endTime?: TimeOnly;
+    bookingDate?: string;
+    startTime: string;
+    endTime?: string;
     durationMinutes?: number;
     totalPrice?: number;
     currency?: string;
@@ -52,9 +52,9 @@ export class UpdateBookingDto {
     providerNotes?: string;
     cancellationReason?: string;
 
-    constructor() {
-        this.bookingDate = undefined;
-        this.startTime = undefined;
+    constructor() { 
+        this.bookingDate = "";
+        this.startTime = "";
         this.endTime = undefined;
         this.durationMinutes = undefined;
         this.totalPrice = undefined;

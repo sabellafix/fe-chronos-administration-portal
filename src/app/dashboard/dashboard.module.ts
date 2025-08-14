@@ -71,6 +71,7 @@ import { CalendarFloorComponent } from './components/booking/bookingsCalendar/ca
 import { FLOOR_MOCK_SERVICES } from '@app/core/services/mock/floor-services.index';
 import { CustomersUpdateComponent } from './components/customers/customers-update/customers-update.component';
 import { CustomersDetailComponent } from './components/customers/customers-detail/customers-detail.component';
+import { OffcanvasDetailBookingComponent } from './components/shared/offcanvas/offcanvas-detail-booking/offcanvas-detail-booking.component';
 
 
 const routes: Routes = [
@@ -212,6 +213,7 @@ const routes: Routes = [
     CalendarFloorComponent,
     CustomersUpdateComponent,
     CustomersDetailComponent,
+    OffcanvasDetailBookingComponent,
   ],
   imports: [
     CommonModule,

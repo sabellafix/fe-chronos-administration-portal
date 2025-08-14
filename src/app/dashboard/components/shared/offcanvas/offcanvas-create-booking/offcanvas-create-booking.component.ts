@@ -270,7 +270,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       const createBookingDto: CreateBookingDto = new CreateBookingDto();
       createBookingDto.customerId = formValue.customerId;
       
-      // Asegurar que el supplierId se capture, incluso si el campo está deshabilitado
       createBookingDto.supplierId = formValue.supplierId || this.bookingForm.get('supplierId')?.value || this.selectedStylist?.id;
       
       // Validar que el supplierId esté presente
@@ -279,39 +278,29 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
         return;
       }
       
-      console.log("createBookingDto", createBookingDto);
-      console.log("formValue.supplierId", formValue.supplierId);
-      console.log("selectedStylist", this.selectedStylist);
       
-      // Configurar serviceId con el primer servicio seleccionado
       createBookingDto.serviceId = this.selectedServices[0].id;
       
-      // Configurar bookingDate como string (YYYY-MM-DD)
       const bookingDate = new Date(formValue.bookingDate);
       createBookingDto.bookingDate = bookingDate.toISOString().split('T')[0];
       
-      // Configurar startTime como string (HH:MM:SS)
       const [startHour, startMinute] = formValue.startTime.split(':').map(Number);
       createBookingDto.startTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}:00`;
       
-      // Calcular duración total y precio total
       const totalDuration = this.calculateTotalDuration();
       const totalPrice = this.calculateTotalPrice();
       
       createBookingDto.durationMinutes = totalDuration;
       createBookingDto.totalPrice = totalPrice;
-      createBookingDto.currency = 'COP'; // Configurar moneda por defecto
+      createBookingDto.currency = 'COP';
       
-      // Configurar endTime como string (HH:MM:SS)
       const totalMinutes = startMinute + totalDuration;
       const endHour = startHour + Math.floor(totalMinutes / 60);
       const finalMinutes = totalMinutes % 60;
       createBookingDto.endTime = `${endHour.toString().padStart(2, '0')}:${finalMinutes.toString().padStart(2, '0')}:00`;
       
-      // Configurar notas
       createBookingDto.clientNotes = formValue.clientNotes || undefined;
       
-      // Configurar servicios para la reserva
       createBookingDto.services = this.selectedServices.map((service, index): BookingServiceRequest => ({
         serviceId: service.id,
         name: service.serviceName || 'Sin nombre',      
@@ -323,7 +312,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       this.bookingService.create(createBookingDto).subscribe({
         next: (response: Booking) => {
           const booking = response;
-          console.log("booking", booking);
           this.hide();
           this.bookingCreated.emit(booking);
           this.offcanvasBookingService.onBookingCreated(booking);
@@ -371,11 +359,9 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     
     if (service && !this.selectedServices.find(s => s.id === serviceId)) {
       this.selectedServices.push(service);
-      // Actualizar duración total
       this.updateTotalDuration();
     }
     
-    // Resetear el select
     event.target.value = null;
   }
 
@@ -387,7 +373,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   asignAutoComplete(option: Option, controlName: string){
     this.bookingForm.get(controlName)?.setValue(option.code!);
     
-    // Si es el customer, actualizar los modificadores
     if (controlName === 'customerId') {
       const customerId = option.code;
       this.customer = this.customers.find(c => c.id === customerId) || null;
@@ -396,10 +381,8 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   onCustomerChange(event: any): void {
-    console.log("event", event);
     const customerId = event.target.value;
     this.customer = this.customers.find(c => c.id === customerId) || null;
-    // Actualizar precios y duraciones si hay servicios seleccionados
     this.updateSelectedServicesWithModifiers();
   }
 
@@ -424,7 +407,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     }, 0);
   }
 
-  // Helper methods para el template
   getServiceName(service: Service): string {
     return service.serviceName || 'Sin nombre';
   }
@@ -453,7 +435,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     return this.users.find(u => u.id === customer.userId) || null;
   }
 
-  // Métodos para manejar los servicios seleccionados
   isFormValid(): boolean {
     return this.bookingForm.valid && this.selectedServices.length > 0;
   }
@@ -468,7 +449,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     return 'BK-' + Date.now().toString() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
   }
 
-  // Métodos para manejar modificadores de servicios
   getModifiedPrice(service: Service): number | null {
     if (!this.customer || !this.customer.serviceModifiers) {
       return null;
@@ -515,7 +495,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
 
   private updateSelectedServicesWithModifiers(): void {
     if (this.selectedServices.length > 0) {
-      // Forzar actualización de la duración total
       this.updateTotalDuration();
     }
   }
