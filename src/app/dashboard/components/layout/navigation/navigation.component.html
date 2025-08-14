@@ -22,7 +22,7 @@
         <div id="sidebar-menu">
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li *ngFor="let item of menuItems">
-                    <a (click)="toggleSubmenu(item)" [class.mm-active]="item.isOpen">
+                    <a (click)="toggleSubmenu(item)" [class.mm-active]="item.isOpen" [routerLink]="item.route">
                         <i [class]="item.icon" class="text-withe"></i>
                         <span class="menu-item text-withe">{{item.title}}</span>
                         <i *ngIf="item.children && !item.isOpen" class="bx bx-chevron-down ms-auto text-white animated fadeIn fast"></i>

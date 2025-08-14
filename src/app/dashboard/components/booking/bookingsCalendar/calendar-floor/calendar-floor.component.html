@@ -15,13 +15,13 @@
                         (click)="switchFloor('floor-001')"
                         [class.active]="selectedFloorId === 'floor-001'"
                         [disabled]="isLoading">
-                    <i class="bx bx-buildings"></i> Piso 1
+                    <i class="bx bx-buildings"></i> Floor 1
                 </button>
                 <button class="btn btn-outline-primary btn-sm" 
                         (click)="switchFloor('floor-002')"
                         [class.active]="selectedFloorId === 'floor-002'"
                         [disabled]="isLoading">
-                    <i class="bx bx-buildings"></i> Piso 2
+                        <i class="bx bx-buildings"></i> Floor 2
                 </button>
                 <button class="btn btn-outline-secondary btn-sm" 
                         (click)="resetCamera()"
@@ -52,9 +52,9 @@
                          style="background: rgba(248, 249, 250, 0.9); z-index: 100;">
                         <div class="text-center">
                             <div class="spinner-border text-primary mb-3" role="status">
-                                <span class="visually-hidden">Cargando vista 3D...</span>
+                                <span class="visually-hidden">Loading 3D view...</span>
                             </div>
-                            <p class="text-muted">Cargando datos del salón...</p>
+                            <p class="text-muted">Loading floor data...</p>
                         </div>
                     </div>
                     
@@ -81,8 +81,8 @@
                     <div *ngIf="!isLoading"
                          class="position-absolute bottom-0 start-0 m-3 bg-white p-2 rounded shadow-sm">
                         <small class="text-muted">
-                            <i class="bx bx-mouse me-1"></i> Click: Seleccionar | 
-                            <i class="bx bx-move me-1"></i> Arrastra: Rotar | 
+                            <i class="bx bx-mouse me-1"></i> Click: Select | 
+                            <i class="bx bx-move me-1"></i> Drag: Rotate | 
                             <i class="bx bx-zoom-in me-1"></i> Scroll: Zoom
                         </small>
                     </div>

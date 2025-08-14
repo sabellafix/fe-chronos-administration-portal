@@ -25,23 +25,7 @@ export class NavigationComponent implements OnInit{
   showBrand : boolean = false;
   private currentOpenMenu: MenuItem | null = null;
 
-  menuItems: MenuItem[] = [
-    {
-      title: 'Companies',
-      icon: 'bx bx-store',
-      children: [
-        { 
-          title: 'List',
-          icon: 'bx bx-store',
-          route: 'companies'
-        },
-        {
-          title: 'Create',
-          icon: 'bx bx-store',
-          route: 'companies/create'
-        }
-      ]
-    },
+  menuItems: MenuItem[] = [     
     {
       title: 'Bookings',
       icon: 'bx bx bx-calendar',
@@ -56,12 +40,8 @@ export class NavigationComponent implements OnInit{
     {
       title: 'Stylists',
       icon: 'bx bx-face',
+      route: 'users',
       children: [
-        {
-          title: 'List',
-          icon: 'bx bx-face',
-          route: 'users'
-        },
         {
           title: 'Create',
           icon: 'bx bx-face',
@@ -72,12 +52,9 @@ export class NavigationComponent implements OnInit{
     {
       title: 'Services',
       icon: 'bx bx-cut',
+      route: 'services',
       children: [
-        {
-          title: 'List',
-          icon: 'bx bx-cut',
-          route: 'services'
-        },
+       
         {
           title: 'Create',
           icon: 'bx bx-cut',
@@ -88,12 +65,9 @@ export class NavigationComponent implements OnInit{
     {
       title: 'Categories',
       icon: 'bx bx-collection',
+      route: 'categories',
       children: [
-        { 
-          title: 'List',
-          icon: 'bx bx-collection',
-          route: 'categories'
-        },
+       
         {
           title: 'Create',
           icon: 'bx bx-collection',
@@ -104,12 +78,8 @@ export class NavigationComponent implements OnInit{
     {
       title: 'Customers',
       icon: 'bx bx-user',
+      route: 'customers',
       children: [
-        {
-          title: 'List',
-          icon: 'bx bx-user',
-          route: 'customers'
-        },
         {
           title: 'Create',
           icon: 'bx bx-user',
