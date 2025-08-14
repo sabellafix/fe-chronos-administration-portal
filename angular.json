@@ -40,6 +40,7 @@
               "src/assets/styles/app.min.css",
               "src/assets/styles/icons.min.css",
               "src/assets/styles/animate.css",
+              "src/assets/styles/bootstrap.min.css",
               "src/styles.scss",
               "@angular/material/prebuilt-themes/indigo-pink.css"
             ],
