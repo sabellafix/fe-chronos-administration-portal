@@ -157,19 +157,28 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onBookingCreated(booking: Booking | null): void {
-    if(booking !== null){
-      this.bookings.push(booking);
-      // Convertir fechas para mantener consistencia
-      const newBooking = this.bookings[this.bookings.length - 1];
-      newBooking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
-      newBooking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());
-      newBooking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+    if (booking !== null && booking.id) {
+      const existingBookingIndex = this.bookings.findIndex(b => b.id === booking.id);
       
-      this.filterBookings();
-      this.snackBar.open('Cita creada exitosamente', 'Cerrar', {
-        duration: 3000,
-        panelClass: 'snackbar-success'
-      });
+      if (existingBookingIndex === -1) {
+        this.bookingService.getBooking(booking.id).subscribe({
+          next: (fullBooking: Booking) => {
+            fullBooking.startTime = TimeUtils.stringToTimeOnly(fullBooking.startTime.toString());
+            fullBooking.endTime = TimeUtils.stringToTimeOnly(fullBooking.endTime.toString());
+            fullBooking.bookingDate = DateUtils.stringToDateOnly(fullBooking.bookingDate.toString());
+            
+            this.bookings.push(fullBooking);
+            
+            this.filterBookings();
+            
+          },
+          error: (error) => {
+            console.error('Error loading full booking details:', error);
+          }
+        });
+      } else {
+        this.filterBookings();
+      }
     }
   }
 
@@ -186,21 +195,40 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onBookingUpdated(booking: Booking): void {
-    // Actualizar el booking en la lista local
-    const index = this.bookings.findIndex(b => b.id === booking.id);
-    if (index !== -1) {
-      this.bookings[index] = booking;
-      // Convertir fechas para mantener consistencia
-      this.bookings[index].startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
-      this.bookings[index].endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
-      this.bookings[index].bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+    if (booking && booking.id) {
+      const index = this.bookings.findIndex(b => b.id === booking.id);
+      
+      if (index !== -1) {
+        this.bookingService.getBooking(booking.id).subscribe({
+          next: (fullBooking: Booking) => {
+            fullBooking.startTime = TimeUtils.stringToTimeOnly(fullBooking.startTime.toString());
+            fullBooking.endTime = TimeUtils.stringToTimeOnly(fullBooking.endTime.toString());  
+            fullBooking.bookingDate = DateUtils.stringToDateOnly(fullBooking.bookingDate.toString());
+            
+            this.bookings[index] = fullBooking;
+            this.filterBookings();
+          },
+          error: (error) => {
+            console.error('Error loading updated booking details:', error);
+            
+            const fallbackBooking = { ...booking };
+            fallbackBooking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
+            fallbackBooking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
+            fallbackBooking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+            
+            if (this.bookings[index].user && !fallbackBooking.user) {
+              fallbackBooking.user = this.bookings[index].user;
+            }
+            
+            this.bookings[index] = fallbackBooking;
+            this.filterBookings();
+          }
+        });
+      } else {
+        console.warn('Booking to update not found in current list:', booking.id);
+        this.onBookingCreated(booking);
+      }
     }
-    
-    // Mostrar mensaje de éxito
-    this.snackBar.open('Cita actualizada exitosamente', 'Cerrar', {
-      duration: 3000,
-      panelClass: 'snackbar-success'
-    });
   }
 
   private loadBookings(): void {

@@ -63,9 +63,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private snackBar: MatSnackBar,
     private offcanvasBookingService: OffcanvasBookingService) {
-    // Crear una fecha base (selectedDate o fecha actual) y agregar un día
     const baseDate = this.selectedDate ? new Date(this.selectedDate) : new Date();
-    baseDate.setDate(baseDate.getDate() + 1);
     this.defaultDate = baseDate.toISOString().split('T')[0];
 
     this.bookingForm = this.formBuilder.group({
@@ -80,7 +78,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // No cargar servicios automáticamente, solo cargar usuarios inicialmente
     this.getUsers();
     this.getCustomers();
     
@@ -88,9 +85,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     if (offcanvasElement) {
       this.offcanvasInstance = new bootstrap.Offcanvas(offcanvasElement);
       
-      // Escuchar eventos de cierre del offcanvas
       offcanvasElement.addEventListener('hidden.bs.offcanvas', () => {
-        // Notificar al servicio que el modal se cerró
         this.offcanvasBookingService.onCancelled();
       });
     }
@@ -135,7 +130,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
 
   private lockStylist(): void {
     this.stylistLocked = true;
-    // Deshabilitar el control de estilista
     this.bookingForm.get('supplierId')?.disable();
   }
 
@@ -144,7 +138,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     this.selectedStylist = null;
     this.services = [];
     this.selectedServices = [];
-    // Habilitar el control de estilista
     this.bookingForm.get('supplierId')?.enable();
     this.bookingForm.get('supplierId')?.setValue(null);
   }
@@ -248,8 +241,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       bookingDate: newDate,
       startTime: this.getDefaultTime()
     };
-
-    // Si se seleccionó un stylist específico, pre-seleccionarlo
+    
     if (this.selectedStylistId) {
       formUpdate.supplierId = this.selectedStylistId;
     }
@@ -272,17 +264,12 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       
       createBookingDto.supplierId = formValue.supplierId || this.bookingForm.get('supplierId')?.value || this.selectedStylist?.id;
       
-      // Validar que el supplierId esté presente
       if (!createBookingDto.supplierId) {
         this.snackBar.open('Please select a stylist', 'Close', {duration: 4000});
         return;
       }
-      
-      
       createBookingDto.serviceId = this.selectedServices[0].id;
-      
-      const bookingDate = new Date(formValue.bookingDate);
-      createBookingDto.bookingDate = bookingDate.toISOString().split('T')[0];
+      createBookingDto.bookingDate = new Date(formValue.bookingDate).toISOString().split('T')[0];
       
       const [startHour, startMinute] = formValue.startTime.split(':').map(Number);
       createBookingDto.startTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}:00`;

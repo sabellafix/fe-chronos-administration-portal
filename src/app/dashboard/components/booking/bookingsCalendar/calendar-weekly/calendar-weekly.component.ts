@@ -101,7 +101,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
   getDates(){
     const dates: DateItem[] = [];
     
-    const today = new Date(this.date); // Usar this.date en lugar de this.dateNow
+    const today = new Date(this.date);
     const dayOfWeek = today.getDay();
     const daysToMonday = dayOfWeek === 0 ? -6 : -(dayOfWeek - 1);
     
@@ -115,7 +115,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
       weekDate.setDate(monday.getDate() + i);
       
       dateItem.date = weekDate;
-      dateItem.isToday = weekDate.toDateString() === this.dateNow.toDateString(); // Mantener dateNow para la comparación con "hoy"
+      dateItem.isToday = weekDate.toDateString() === this.dateNow.toDateString();
       
       dates.push(dateItem);
     }
@@ -155,7 +155,6 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onCellClick(date: Date, hour: number, event: Event): void {
-    // Solo abrir el modal si el clic no fue en un booking
     const target = event.target as HTMLElement;
     const isBookingClick = target.closest('app-card-booking') !== null;
     
@@ -165,55 +164,80 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onBookingClick(event: Event): void {
-    // Prevenir que el clic en booking se propague a la celda
     event.stopPropagation();
   }
 
   onBookingCreated(booking: Booking | null): void {
-    if(booking !== null){
-      this.bookings.push(booking);
-      // Convertir fechas para mantener consistencia
-      const newBooking = this.bookings[this.bookings.length - 1];
-      newBooking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
-      newBooking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());
-      newBooking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+    if (booking !== null && booking.id) {
+      const existingBookingIndex = this.bookings.findIndex(b => b.id === booking.id);
       
-      this.filterBookings();
-      this.snackBar.open('Cita creada exitosamente', 'Cerrar', {
-        duration: 3000,
-        panelClass: 'snackbar-success'
-      });
+      if (existingBookingIndex === -1) {
+        this.bookingService.getBooking(booking.id).subscribe({
+          next: (fullBooking: Booking) => {
+            fullBooking.startTime = TimeUtils.stringToTimeOnly(fullBooking.startTime.toString());
+            fullBooking.endTime = TimeUtils.stringToTimeOnly(fullBooking.endTime.toString());
+            fullBooking.bookingDate = DateUtils.stringToDateOnly(fullBooking.bookingDate.toString());
+            
+            this.bookings.push(fullBooking);
+            
+            this.filterBookings();
+            
+          },
+          error: (error) => {
+            console.error('Error loading full booking details:', error);
+          }
+        });
+      } else {
+        this.filterBookings();
+      }
     }
   }
 
   onBookingCancelled(): void {
-    console.log('Creación de cita cancelada');
+    console.log('Booking creation cancelled');
   }
 
   editBooking(bookingId: string, event: Event): void {
-    // Prevenir que el evento se propague al elemento padre (td)
     event.stopPropagation();
     
-    // Abrir el modal de actualización con el ID del booking
     this.offcanvasBookingService.openUpdateBookingModal(bookingId);
   }
 
   onBookingUpdated(booking: Booking): void {
-    // Actualizar el booking en la lista local
-    const index = this.bookings.findIndex(b => b.id === booking.id);
-    if (index !== -1) {
-      this.bookings[index] = booking;
-      // Convertir fechas para mantener consistencia
-      this.bookings[index].startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
-      this.bookings[index].endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
-      this.bookings[index].bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+    if (booking && booking.id) {
+      const index = this.bookings.findIndex(b => b.id === booking.id);
+      
+      if (index !== -1) {
+        this.bookingService.getBooking(booking.id).subscribe({
+          next: (fullBooking: Booking) => {
+            fullBooking.startTime = TimeUtils.stringToTimeOnly(fullBooking.startTime.toString());
+            fullBooking.endTime = TimeUtils.stringToTimeOnly(fullBooking.endTime.toString());  
+            fullBooking.bookingDate = DateUtils.stringToDateOnly(fullBooking.bookingDate.toString());
+            
+            this.bookings[index] = fullBooking;
+            this.filterBookings();
+          },
+          error: (error) => {
+            console.error('Error loading updated booking details:', error);
+            
+            const fallbackBooking = { ...booking };
+            fallbackBooking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
+            fallbackBooking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
+            fallbackBooking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
+            
+            if (this.bookings[index].user && !fallbackBooking.user) {
+              fallbackBooking.user = this.bookings[index].user;
+            }
+            
+            this.bookings[index] = fallbackBooking;
+            this.filterBookings();
+          }
+        });
+      } else {
+        console.warn('Booking to update not found in current list:', booking.id);
+        this.onBookingCreated(booking);
+      }
     }
-    
-    // Mostrar mensaje de éxito
-    this.snackBar.open('Cita actualizada exitosamente', 'Cerrar', {
-      duration: 3000,
-      panelClass: 'snackbar-success'
-    });
   }
 
   private loadBookings(): void {
@@ -225,9 +249,9 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
         this.isLoadingBookings = false;
       },
       error: (error) => {
-        console.error('Error al cargar bookings:', error);
+        console.error('Error loading bookings:', error);
         this.isLoadingBookings = false;
-        this.snackBar.open('Error al cargar las citas', 'Cerrar', {
+        this.snackBar.open('Error loading bookings', 'Close', {
           duration: 5000,
           panelClass: 'snackbar-error'
         });
@@ -272,9 +296,9 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
         this.isLoadingBookings = false;
       },
       error: (error) => {
-        console.error('Error al cargar bookings de la semana:', error);
+        console.error('Error loading bookings for the week:', error);
         this.isLoadingBookings = false;
-        this.snackBar.open('Error al cargar las citas de la semana', 'Cerrar', {
+        this.snackBar.open('Error loading bookings for the week', 'Close', {
           duration: 5000,
           panelClass: 'snackbar-error'
         });

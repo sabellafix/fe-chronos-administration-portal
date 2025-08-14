@@ -38,7 +38,6 @@
             ],
             "styles": [
               "src/assets/styles/app.min.css",
-              "src/assets/styles/bootstrap.min.css",
               "src/assets/styles/icons.min.css",
               "src/assets/styles/animate.css",
               "src/styles.scss",
@@ -108,7 +107,6 @@
             ],
             "styles": [
               "src/assets/styles/app.min.css",
-              "src/assets/styles/bootstrap.min.css",
               "src/assets/styles/icons.min.css",
               "src/assets/styles/animate.css",
               "src/styles.scss",
