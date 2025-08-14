@@ -11,6 +11,7 @@ import { environment } from '@env/environment';
 import { StorageService } from '@app/core/services/shared/storage.service';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { UserResponse } from '@app/core/models/dtos/userResponse';
+import { TokenRefreshService } from '@app/core/services/shared/token-refresh.service';
 
 @Component({
   selector: 'app-login',
@@ -40,7 +41,8 @@ export class LoginComponent implements OnInit, AfterViewInit{
   constructor(private authService : AuthService,
               private router : Router,
               private userService : UserService,
-              private storageService : StorageService
+              private storageService : StorageService,
+              private tokenRefreshService : TokenRefreshService
   ) {
     this.form = new FormGroup({
       userNumber : new FormControl("", [Validators.required, Validators.email]),
@@ -103,14 +105,17 @@ export class LoginComponent implements OnInit, AfterViewInit{
       this.loading = true;
       this.userService.login(this.infoUser).subscribe(
         (response: any) => {
-          console.log("data", response);
           this.userResponse = <UserResponse>response; 
           if(this.userResponse.token != ''){
             this.storageService.set(StorageKeyConst._TOKEN, this.userResponse.token);
             this.storageService.set(StorageKeyConst._USER, JSON.stringify(this.userResponse.user));
             this.storageService.set(StorageKeyConst._EXPIRES_AT, this.userResponse.expiresAt);
             this.storageService.set(StorageKeyConst._USER_ROLE, this.userResponse.user.userRole);
-            this.router.navigate(['/users']);
+            
+            // Notificar que el token ha sido actualizado
+            this.tokenRefreshService.notifyTokenUpdate();
+            
+            this.router.navigate(['/bookings']);
           }
         },
         (error: any) =>{

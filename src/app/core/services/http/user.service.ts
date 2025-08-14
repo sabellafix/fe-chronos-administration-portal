@@ -16,9 +16,13 @@ export class UserService {
     headers : any = {};
 
     constructor(private http: HttpClient, private storageService: StorageService) {
-        this.token = this.storageService.get(StorageKeyConst._TOKEN)!; 
-        this.headers = { headers: { Authorization: `Bearer ${this.token}` } };
+        this.refreshToken();
      }
+
+    refreshToken(): void {
+        this.token = this.storageService.get(StorageKeyConst._TOKEN) || '';
+        this.headers = { headers: { Authorization: `Bearer ${this.token}` } };
+    }
 
     getUsers(): Observable<any[]> {
         const url = `${this.apiUrl}/${this.controller}/get-users`;

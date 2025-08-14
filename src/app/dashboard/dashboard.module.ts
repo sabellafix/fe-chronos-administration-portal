@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -72,6 +72,8 @@ import { FLOOR_MOCK_SERVICES } from '@app/core/services/mock/floor-services.inde
 import { CustomersUpdateComponent } from './components/customers/customers-update/customers-update.component';
 import { CustomersDetailComponent } from './components/customers/customers-detail/customers-detail.component';
 import { OffcanvasDetailBookingComponent } from './components/shared/offcanvas/offcanvas-detail-booking/offcanvas-detail-booking.component';
+// Importar servicio de inicialización del dashboard
+import { DashboardInitializerService } from './services/dashboard-initializer.service';
 
 
 const routes: Routes = [
@@ -240,7 +242,14 @@ const routes: Routes = [
   ],
   providers: [
     // Servicios mock para el sistema de pisos y sitios
-    ...FLOOR_MOCK_SERVICES
+    ...FLOOR_MOCK_SERVICES,
+    // Inicializador del dashboard para refrescar tokens en servicios
+    {
+      provide: APP_INITIALIZER,
+      useFactory: DashboardInitializerService.initializeFactory,
+      deps: [DashboardInitializerService],
+      multi: true
+    }
   ]
 })
 export class DashboardModule { }

@@ -16,8 +16,12 @@ export class CustomerService {
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {
-        this.token = this.storageService.get(StorageKeyConst._TOKEN)!; 
+        this.refreshToken();
      }
+
+    refreshToken(): void {
+        this.token = this.storageService.get(StorageKeyConst._TOKEN) || '';
+    }
 
     private getHttpOptions() {
         return {
