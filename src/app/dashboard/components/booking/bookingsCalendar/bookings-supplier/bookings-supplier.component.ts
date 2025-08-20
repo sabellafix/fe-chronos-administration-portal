@@ -303,6 +303,20 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
     return this.getBookingsForStylistAndHour(stylistId, hour).length > 0;
   }
 
+  getBookingsForStylist(stylistId: string): Booking[] {
+    const stylistBookings = this.stylistsBookings.find(sb => sb.stylist.id === stylistId);
+    return stylistBookings ? stylistBookings.bookings : [];
+  }
+
+  hasBookingsForStylist(stylistId: string): boolean {
+    return this.getBookingsForStylist(stylistId).length > 0;
+  }
+
+  getStylistDailyTotal(stylistId: string): number {
+    return this.getBookingsForStylist(stylistId)
+      .reduce((total, booking) => total + (booking.totalPrice || 0), 0);
+  }
+
   getBookingTooltip(booking: Booking): string {
     const services = booking.services?.map(s => s.serviceName).join(', ') || 'Sin servicios';
     const duration = `${booking.durationMinutes} min`;

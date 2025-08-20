@@ -11,6 +11,11 @@
                     <th class="day-header pe-1 ps-1 pb-0 pt-0" *ngFor="let stylistBooking of stylistsBookings; trackBy: trackByStylist">
                         <div class="day-header-content" *ngIf="stylistBooking.bookings.length > 0">
                             <div class="card w-100 bg-dark p-1 pt-2 card-date no-border text-center" >
+                                <!-- Badge de total por stylist -->
+                                <div class="stylist-total-badge animated fadeIn fast" *ngIf="hasBookingsForStylist(stylistBooking.stylist.id)">
+                                    ${{getStylistDailyTotal(stylistBooking.stylist.id) | number:'1.0-0'}}
+                                </div>
+                                
                                 <div class="stylist-photo mb-2">
                                     <img [src]="getStylistPhoto(stylistBooking.stylist)" 
                                          [alt]="getStylistFullName(stylistBooking.stylist)"
