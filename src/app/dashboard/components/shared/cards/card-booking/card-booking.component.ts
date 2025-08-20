@@ -36,22 +36,9 @@ export class CardBookingComponent {
       return 'auto';
     }
 
-    const minHeight = 85;
-    const maxHeight = 200;
-    const baseDuration = 30;
-    const pixelsPerInterval = 20;
-    const intervalMinutes = 15;
-
-    let calculatedHeight = minHeight;
-
-    if (this.booking.durationMinutes > baseDuration) {
-      const extraMinutes = this.booking.durationMinutes - baseDuration;
-      const intervals = Math.ceil(extraMinutes / intervalMinutes);
-      calculatedHeight = minHeight + (intervals * pixelsPerInterval);
-    }
-
-    // Aplicar límite máximo
-    calculatedHeight = Math.min(calculatedHeight, maxHeight);
+    // 60 minutos = 80px de altura
+    const pixelsPerMinute = 80 / 60; // 1.333... px por minuto
+    const calculatedHeight = Math.round(this.booking.durationMinutes * pixelsPerMinute);
 
     return `${calculatedHeight}px`;
   }
@@ -71,7 +58,6 @@ export class CardBookingComponent {
     if (this.topPosition) styles['top'] = this.topPosition;
     if (this.leftOffset) styles['left'] = this.leftOffset;
     if (this.width) styles['width'] = this.width;
-    if (this.height) styles['height'] = this.height;
     if (this.zIndex) styles['z-index'] = this.zIndex.toString();
 
     return styles;

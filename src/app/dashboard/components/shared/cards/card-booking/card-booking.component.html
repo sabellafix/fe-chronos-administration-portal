@@ -10,11 +10,11 @@
     <div class="booking-compact-info">
         <div class="booking-header-row">
             <div class="customer-info">
-                <span class="customer-name">{{booking.customer.firstName}}</span>
+                <span class="customer-name">{{booking.customer.firstName || 'No name'}}</span>
             </div>
             
             <div class="stylist-info" *ngIf="booking.user && booking.user.firstName">
-                <span class="stylist-name">{{booking.user.firstName}}</span>
+                <span class="stylist-name">{{booking.user.firstName || 'No name'}}</span>
             </div>
             
             <div class="booking-time align-items-end">
@@ -31,7 +31,7 @@
      [class.multiple-services]="booking.services && booking.services.length > 1"
      [class.absolute-positioned]="absolutePosition"
      [style.background-color]="booking.services?.[0]?.color || '#23324d'"
-     [style.min-height]="!absolutePosition ? getProportionalHeight() : 'auto'"
+     [style.height]="getProportionalHeight()"
      [ngStyle]="getPositionStyles()"
      [title]="getBookingTooltip(booking)">
     
@@ -86,8 +86,6 @@
                 {{booking.durationMinutes}} min
             </small>
         </div>
-
-     
         
     </div>
 </div>

@@ -71,7 +71,7 @@
                   <h6 class="mb-0 fw-bold">
                     {{getServiceName(service)}}
                     <span *ngIf="hasServiceModifier(service)" class="badge bg-info ms-2">
-                      <i class="bx bx-pencil"></i> Personalizado
+                      <i class="bx bx-pencil"></i> Service Modifier
                     </span>
                   </h6>
                   
@@ -93,11 +93,11 @@
           <div class="mt-3 p-3 bg-primary bg-opacity-10 rounded">
             <div class="row">
               <div class="col-6">
-                <small class="text-muted">Duración total:</small>
+                <small class="text-muted">Total duration:</small>
                 <p class="mb-0 fw-bold text-primary">{{calculateTotalDuration()}} minutos</p>
               </div>
               <div class="col-6">
-                <small class="text-muted">Precio total:</small>
+                <small class="text-muted">Total price:</small>
                 <p class="mb-0 fw-bold text-primary">{{calculateTotalPrice()}} {{selectedServices.length > 0 ? selectedServices[0].currency || 'COP' : 'COP'}}</p>
               </div>
             </div>
