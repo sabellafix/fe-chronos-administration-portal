@@ -314,7 +314,6 @@
     }
 }
 
-// Contenido del día
 .day-content {
     width: 100%;
     height: 148px;
@@ -324,7 +323,26 @@
     position: relative;
 }
 
-// Número del día
+.daily-total-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: #ddf4fb;
+    color: #1a293c;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 12px;
+    z-index: 10;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
+    min-width: 24px;
+    text-align: center;
+    margin-top: 8px;
+    margin-right: 8px;
+
+}
+
 .day-number {
     display: inline-flex;
     align-items: center;
@@ -347,13 +365,38 @@
     }
 }
 
-// Contenedor de bookings del día
-.day-bookings {
+.day-bookings-container {
     flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: calc(148px - 36px);
+        
+    &::-webkit-scrollbar {
+        width: 3px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background-color: #d9e5f6;
+        border-radius: 10px;
+        border: none;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: #c1d4f0;
+    }
+            
+    scrollbar-width: thin;
+    scrollbar-color: #d9e5f6 transparent;
+}
+
+.day-bookings {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    overflow: hidden;
 }
 
 // Booking compacto
@@ -505,6 +548,17 @@
         padding: 6px;
     }
     
+    .day-bookings-container {
+        max-height: calc(100px - 30px); // Ajuste para pantallas medianas
+    }
+    
+    .daily-total-badge {
+        font-size: 9px;
+        padding: 2px 4px;
+        top: 3px;
+        left: 3px;
+    }
+    
     .booking-item-compact {
         font-size: 9px;
         padding: 3px 4px;
@@ -529,10 +583,22 @@
         padding: 4px;
     }
     
+    .day-bookings-container {
+        max-height: calc(80px - 28px); // Ajuste para móviles
+    }
+    
     .day-number {
         width: 24px;
         height: 24px;
         font-size: 12px;
+    }
+    
+    .daily-total-badge {
+        font-size: 8px;
+        padding: 1px 3px;
+        top: 2px;
+        left: 2px;
+        min-width: 18px;
     }
     
     .booking-item-compact {

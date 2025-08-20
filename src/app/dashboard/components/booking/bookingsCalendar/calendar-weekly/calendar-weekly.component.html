@@ -7,6 +7,11 @@
                     <th class="day-header pe-1 ps-1 pb-2" *ngFor="let date of dates">
                         <div class="day-header-content">
                             <div class="card w-100 bg-light p-1 pt-2 card-date text-center" [ngClass]="{'today': date.isToday}">
+                                <!-- Badge de total diario -->
+                                <div class="daily-total-badge animated fadeIn fast" *ngIf="hasBookingsForDate(date.date)">
+                                    ${{getDailyTotal(date.date) | number:'1.0-0'}}
+                                </div>
+                                
                                 <div class="card-date-day">
                                     <p class="font-size-14 fw-normal mb-1 capitalize">{{date.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
                                 </div>
@@ -95,9 +100,7 @@
                                             <span class="align-middle font-size-12 fw-normal">Delete</span>
                                         </div>
                                     </div>
-                                    
                                 </ng-container>
-                              
                             </ng-container>
                         </div>
                     </td>

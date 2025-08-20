@@ -43,18 +43,25 @@
                         (click)="!dayItem.isDisabled && openBookingModal(dayItem.date)">
                         
                         <div class="day-content">
+                            <!-- Badge de total diario -->
+                            <div class="daily-total-badge" *ngIf="hasBookings(dayItem.date)">
+                                ${{getDailyTotal(dayItem.date) | number:'1.0-0'}}
+                            </div>
+                            
                             <div class="day-number" 
                                  [class.current-month]="dayItem.isCurrentMonth"
                                  [class.other-month-number]="!dayItem.isCurrentMonth">
                                 {{dayItem.date.getDate()}}
                             </div>
                             
-                            <div class="day-bookings" *ngIf="hasBookings(dayItem.date)">
-                                <app-card-booking 
-                                    *ngFor="let booking of getBookingsForDate(dayItem.date); let i = index; trackBy: trackByBooking"
-                                    [booking]="booking"
-                                    size="sm">
-                                </app-card-booking>
+                            <div class="day-bookings-container" *ngIf="hasBookings(dayItem.date)">
+                                <div class="day-bookings">
+                                    <app-card-booking 
+                                        *ngFor="let booking of getBookingsForDate(dayItem.date); let i = index; trackBy: trackByBooking"
+                                        [booking]="booking"
+                                        size="sm">
+                                    </app-card-booking>
+                                </div>
                             </div>
                         </div>
                     </td>

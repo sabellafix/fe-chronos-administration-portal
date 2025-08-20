@@ -10,7 +10,6 @@ import { DateUtils } from '@app/core/utils/date.utils';
 import { Service } from '@app/core/models/bussiness/service';
 import { User } from '@app/core/models/bussiness/user';
 import { UserService } from '@app/core/services/http/user.service';
-import { DateOnly } from '@app/core/models/bussiness';
 
 @Component({
   selector: 'app-calendar-monthly',
@@ -200,7 +199,6 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
 
   onBookingCreated(booking: Booking): void {
     this.bookings.push(booking);
-    // Convertir fechas para mantener consistencia
     const newBooking = this.bookings[this.bookings.length - 1];
     newBooking.startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
     newBooking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());
@@ -214,11 +212,9 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onBookingUpdated(booking: Booking): void {
-    // Actualizar el booking en la lista local
     const index = this.bookings.findIndex(b => b.id === booking.id);
     if (index !== -1) {
       this.bookings[index] = booking;
-      // Convertir fechas para mantener consistencia
       this.bookings[index].startTime = TimeUtils.stringToTimeOnly(booking.startTime.toString());
       this.bookings[index].endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());
       this.bookings[index].bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
@@ -306,14 +302,26 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getBookingsForDate(date: Date): Booking[] {
-    return this.bookingsFiltered.filter(booking => {
-      const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
-      return this.isSameDate(bookingDate, date);
-    });
+    return this.bookingsFiltered
+      .filter(booking => {
+        const bookingDate = new Date(booking.bookingDate.year, booking.bookingDate.month - 1, booking.bookingDate.day);
+        return this.isSameDate(bookingDate, date);
+      })
+      .sort((a, b) => {        
+        const timeA = `${a.startTime.hour.toString().padStart(2, '0')}:${a.startTime.minute.toString().padStart(2, '0')}`;
+        const timeB = `${b.startTime.hour.toString().padStart(2, '0')}:${b.startTime.minute.toString().padStart(2, '0')}`;
+                
+        return timeA.localeCompare(timeB);
+      });
   }
 
   hasBookings(date: Date): boolean {
     return this.getBookingsForDate(date).length > 0;
+  }
+
+  getDailyTotal(date: Date): number {
+    return this.getBookingsForDate(date)
+      .reduce((total, booking) => total + (booking.totalPrice || 0), 0);
   }
 
   formatHour(hour: string): string {
@@ -341,8 +349,7 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   getBookingTooltip(booking: Booking): string {
-    const customerName = `${booking.customer.firstName} ${booking.customer.lastName}`;
-    // const timeRange = `${this.formatHour(booking.startTime)} - ${this.formatHour(booking.endTime)}`;
+    const customerName = `${booking.customer.firstName} ${booking.customer.lastName}`;    
     const services = booking.services?.map(s => s.serviceName).join(', ') || 'Sin servicios';
     const duration = `${booking.durationMinutes} min`;
     const price = `$${booking.totalPrice}`;
@@ -350,8 +357,7 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
     // return `Cliente: ${customerName} | ${timeRange} | Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
     return ` Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
   }
-
-  // Métodos trackBy para optimizar el rendimiento de Angular
+  
   trackByWeek(index: number, week: DateItem[]): any {
     return week[0]?.date.getTime() || index;
   }

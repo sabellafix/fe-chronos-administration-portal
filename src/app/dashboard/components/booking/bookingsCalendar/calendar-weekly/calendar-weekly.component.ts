@@ -345,6 +345,15 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
+  hasBookingsForDate(date: Date): boolean {
+    return this.getBookingsForDate(date).length > 0;
+  }
+
+  getDailyTotal(date: Date): number {
+    return this.getBookingsForDate(date)
+      .reduce((total, booking) => total + (booking.totalPrice || 0), 0);
+  }
+
   hasBookings(date: Date, hour: number): boolean {
     return this.getBookingsForDateTime(date, hour).length > 0;
   }
