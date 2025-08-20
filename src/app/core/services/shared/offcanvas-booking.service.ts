@@ -17,9 +17,13 @@ export class OffcanvasBookingService {
   private _showUpdateOffcanvas = new Subject<string>();
   private _bookingUpdated = new Subject<Booking>();
 
+  // Propiedades para el offcanvas de detalle
+  private _showDetailOffcanvas = new Subject<string>();
+
   // Estado para controlar si los modales están abiertos
   private _isCreateModalOpen = false;
   private _isUpdateModalOpen = false;
+  private _isDetailModalOpen = false;
 
   selectedDate$ = this._selectedDate.asObservable();
   selectedHour$ = this._selectedHour.asObservable();
@@ -31,6 +35,9 @@ export class OffcanvasBookingService {
   // Nuevos observables para el offcanvas de actualización
   showUpdateOffcanvas$ = this._showUpdateOffcanvas.asObservable();
   bookingUpdated$ = this._bookingUpdated.asObservable();
+
+  // Observable para el offcanvas de detalle
+  showDetailOffcanvas$ = this._showDetailOffcanvas.asObservable();
 
   constructor() { }
 
@@ -88,6 +95,24 @@ export class OffcanvasBookingService {
     }
   }
 
+  // Métodos para el offcanvas de detalle
+  openDetailBookingModal(bookingId: string): void {
+    // Prevenir apertura múltiple del modal de detalle
+    if (this._isDetailModalOpen) {
+      return;
+    }
+
+    this._isDetailModalOpen = true;
+    this._showDetailOffcanvas.next(bookingId);
+  }
+
+  onDetailClosed(): void {
+    // Solo cambiar el estado si estaba realmente abierto
+    if (this._isDetailModalOpen) {
+      this._isDetailModalOpen = false;
+    }
+  }
+
   get selectedDate(): Date | null {
     return this._selectedDate.value;
   }
@@ -109,6 +134,10 @@ export class OffcanvasBookingService {
     return this._isUpdateModalOpen;
   }
 
+  get isDetailModalOpen(): boolean {
+    return this._isDetailModalOpen;
+  }
+
   // Métodos de utilidad para resetear el estado (solo en casos extremos)
   forceCloseCreateModal(): void {
     this._isCreateModalOpen = false;
@@ -118,10 +147,15 @@ export class OffcanvasBookingService {
     this._isUpdateModalOpen = false;
   }
 
+  forceCloseDetailModal(): void {
+    this._isDetailModalOpen = false;
+  }
+
   // Método para resetear completamente el estado del servicio
   resetState(): void {
     this._isCreateModalOpen = false;
     this._isUpdateModalOpen = false;
+    this._isDetailModalOpen = false;
     this._selectedDate.next(null);
     this._selectedHour.next(null);
     this._selectedStylistId.next(null);

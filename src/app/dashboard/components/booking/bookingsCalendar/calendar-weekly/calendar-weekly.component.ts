@@ -199,8 +199,12 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
 
   editBooking(bookingId: string, event: Event): void {
     event.stopPropagation();
-    
     this.offcanvasBookingService.openUpdateBookingModal(bookingId);
+  }
+
+  detailBooking(bookingId: string, event: Event): void {
+    event.stopPropagation();
+    this.offcanvasBookingService.openDetailBookingModal(bookingId);
   }
 
   onBookingUpdated(booking: Booking): void {

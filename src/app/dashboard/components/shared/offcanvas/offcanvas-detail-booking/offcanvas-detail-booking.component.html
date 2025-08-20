@@ -1,1 +1,248 @@
-<p>offcanvas-detail-booking works!</p>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasDetailBooking"
+  aria-labelledby="offcanvasDetailBookingLabel">
+  <div class="offcanvas-header border-bottom">
+    <h6 class="offcanvas-title text-white fw-normal fs-18" id="offcanvasDetailBookingLabel">
+      <i class="bx bx-calendar-check me-2"></i>
+      Booking Details
+    </h6>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body shadow-sm p-0">
+
+    <div *ngIf="loadingBooking" class="d-flex justify-content-center align-items-center p-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <form [formGroup]="bookingForm" class="p-4" *ngIf="!loadingBooking && booking">
+
+      <!-- Stylist Section -->
+      <div class="mb-3">
+        <label class="form-label text-muted">Stylist</label>
+        <div class="form-control-static p-3 border rounded">
+          <div class="d-flex align-items-center">
+            <div class="me-3">
+              <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center"
+                style="width: 40px; height: 40px;">
+                <i class="bx bx-user text-white"></i>
+              </div>
+            </div>
+            <div>
+              <h6 class="mb-0 fw-medium">{{selectedStylist ? getUserFullName(selectedStylist) : 'No asignado'}}</h6>
+              <small class="text-muted">Stylist assigned</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Section -->
+      <div class="mb-3">
+        <label class="form-label text-muted">Customer</label>
+        <div class="form-control-static p-3 border rounded">
+          <div class="d-flex align-items-center">
+            <div class="me-3">
+              <img *ngIf="customer" class="rounded-circle" [src]="getCustomerPhoto(customer)" alt="Cliente"
+                style="width: 40px; height: 40px;">
+              <div *ngIf="!customer"
+                class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                style="width: 40px; height: 40px;">
+                <i class="bx bx-user text-white"></i>
+              </div>
+            </div>
+            <div class="flex-grow-1">
+              <h6 class="mb-0 fw-medium">{{customer ? getCustomerFullName(customer) : 'No asignado'}}</h6>
+              <small class="text-muted">{{customer && getUserForCustomer(customer)?.email ?
+                getUserForCustomer(customer)?.email : 'Cliente del booking'}}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services Section -->
+      <div class="mb-3">
+        <label class="form-label text-muted">Services</label>
+
+        <div *ngIf="selectedServices.length > 0">
+          <div class="row">
+            <div class="col-12" *ngFor="let service of selectedServices; let i = index">
+              <div class="d-flex align-items-center p-2 mb-2 border rounded bg-white">
+                <div class="me-3">
+                  <div [ngStyle]="{'background-color': getServiceColor(service)}"
+                    style="color: white; width: 35px; height: 35px;"
+                    class="rounded d-flex align-items-center justify-content-center">
+                    <i class="bx bx-cut"></i>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <h6 class="mb-0 fw-medium">
+                    {{getServiceName(service)}}
+                    <span *ngIf="hasServiceModifier(service)" class="badge bg-info ms-2">
+                      <i class="bx bx-pencil"></i> Service Modifier
+                    </span>
+                  </h6>
+
+                  <!-- Precio y duración original (tachado si hay modificador) -->
+                  <small class="text-muted d-block" [class.text-decoration-line-through]="hasServiceModifier(service)">
+                    {{service.durationMinutes}}min - {{service.price || 0}} {{service.currency || 'USD'}}
+                  </small>
+
+                  <!-- Precio y duración personalizada (solo si hay modificador) -->
+                  <small *ngIf="hasServiceModifier(service)" class="text-success d-block fw-medium">
+                    <i class="bx bx-check-circle me-1"></i>
+                    {{getServiceDisplayDuration(service)}}min - {{getServiceDisplayPrice(service) || 0}}
+                    {{service.currency || 'USD'}}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div *ngIf="selectedServices.length === 0"
+            class="form-control-static p-3 border rounded bg-light text-center">
+            <i class="bx bx-info-circle text-muted me-2"></i>
+            <span class="text-muted">No services assigned to this booking</span>
+          </div>
+        </div>
+
+        <!-- Date and Time Section -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label text-muted">Booking date</label>
+              <div class="form-control-static p-2 border rounded bg-white">
+                <div class="d-flex align-items-center">
+                  <i class="bx bx-calendar text-dark me-2"></i>
+                  <span class="fw-medium">{{formatDate(booking.bookingDate)}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label text-muted">Time Range</label>
+              <div class="form-control-static p-2 border rounded bg-white">
+                <div class="d-flex align-items-center">
+                  <i class="bx bx-time text-dark me-2"></i>
+                  <span class="fw-medium">{{formatTime(booking.startTime)}} - {{formatTime(booking.endTime)}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Duration Section -->
+        <div class="mb-3">
+          <label class="form-label text-muted">Duration</label>
+          <div class="form-control-static p-2 border rounded bg-white">
+            <div class="d-flex align-items-center">
+              <i class="bx bx-timer text-dark me-2"></i>
+              <span class="fw-medium">{{booking.durationMinutes}} minutes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Section -->
+        <div class="mb-3">
+          <label class="form-label text-muted">Booking Status</label>
+          <div class="form-control-static p-2 border rounded bg-white">
+            <div class="d-flex align-items-center">
+              <i class="bx bx-info-circle text-dark me-2"></i>
+              <span [class]="getStatusBadgeClass(booking.status)">{{getStatusLabel(booking.status)}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Price Section -->
+        <div class="mb-3">
+          <label class="form-label text-muted">Total Price</label>
+          <div class="form-control-static p-2 border rounded bg-white">
+            <div class="d-flex align-items-center">
+              <i class="bx bx-dollar text-dark me-2"></i>
+              <span class="fw-medium text-dark">{{booking.totalPrice}} {{booking.currency || 'COP'}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="mb-3">
+          <label class="form-label text-muted">Customer Notes</label>
+          <div class="form-control-static p-2 border rounded bg-light">
+            <div class="d-flex align-items-start">
+              <i class="bx bx-message-dots text-dark me-2 mt-1"></i>
+              <span>{{booking.clientNotes}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3" >
+          <label class="form-label text-muted">Provider Notes</label>
+          <div class="form-control-static p-2 border rounded bg-light">
+            <div class="d-flex align-items-start">
+              <i class="bx bx-note text-dark me-2 mt-1"></i>
+              <span>{{booking.providerNotes}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timestamps Section -->
+        <div class="row" *ngIf="booking.createdAt || booking.updatedAt">
+          <div class="col-md-6" *ngIf="booking.createdAt">
+            <div class="mb-3">
+              <label class="form-label text-muted">Created At</label>
+              <div class="form-control-static p-2 border rounded bg-white">
+                <small class="text-muted">{{booking.createdAt | date:'dd/MM/yyyy HH:mm'}}</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6" *ngIf="booking.updatedAt">
+            <div class="mb-3">
+              <label class="form-label text-muted">Last Updated</label>
+              <div class="form-control-static p-2 border rounded bg-white">
+                <small class="text-muted">{{booking.updatedAt | date:'dd/MM/yyyy HH:mm'}}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Cancellation Reason -->
+        <div class="mb-3" *ngIf="booking.cancellationReason">
+          <label class="form-label text-muted">Cancellation Reason</label>
+          <div class="form-control-static p-3 border rounded bg-danger bg-opacity-10">
+            <div class="d-flex align-items-start">
+              <i class="bx bx-x-circle text-danger me-2 mt-1"></i>
+              <span class="text-danger">{{booking.cancellationReason}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="d-grid gap-2 pt-3 border-top">
+          <!-- <button type="button" (click)="onClose()" class="btn btn-outline-secondary waves-effect waves-light">
+            <i class="bx bx-x me-2"></i>
+            Close
+          </button> -->
+
+          <button type="button" 
+          (click)="onClose()" 
+                class="btn btn-outline-secondary waves-effect waves-light"
+                [disabled]="loading">
+          <i class="bx bx-x me-2"></i>
+          Cancel
+        </button>
+        </div>
+      </div>
+
+    </form>
+
+
+    <div *ngIf="!loadingBooking && !booking" class="p-4 text-center">
+      <div class="text-muted">
+        <i class="bx bx-info-circle fs-1"></i>
+        <p class="mt-2">No booking data available</p>
+      </div>
+    </div>
+  </div>
+</div>
