@@ -2,7 +2,7 @@ import { DateOnly, TimeOnly } from './availability';
 
 export class BlockedTime{
     blockedTimeId: string;
-    providerId: string;
+    userId: string;
     blockedDate: DateOnly;
     startTime: TimeOnly;
     endTime: TimeOnly;
@@ -12,7 +12,7 @@ export class BlockedTime{
 
     constructor() {
         this.blockedTimeId = "";
-        this.providerId = "";
+        this.userId = "";
         this.blockedDate = new DateOnly();
         this.startTime = new TimeOnly();
         this.endTime = new TimeOnly();

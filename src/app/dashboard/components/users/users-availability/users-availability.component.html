@@ -110,6 +110,10 @@
                   *ngFor="let date of dates" 
                   [attr.data-hour]="hour" 
                   [attr.data-date]="date.date.toISOString()"
+                  [ngClass]="{
+                    'blocked-time-cell': isBlocked(date.date, hour),
+                    'available-time-cell': hasAvailability(date.date, hour),
+                  }"
                   (click)="onCellClick(date.date, hour, $event)"
                   style="cursor: pointer;">
                 
@@ -128,8 +132,9 @@
                   
                   <div class="neutral-indicator" 
                        *ngIf="!hasAvailability(date.date, hour) && !isBlocked(date.date, hour)"
-                       title="Click to define availability">
-                    <i class="bx bx-plus text-muted"></i>
+                       [title]="tabActive === 'Blocked' ? 'Click para bloquear tiempo' : 'Click para definir disponibilidad'">
+                    <i class="bx" 
+                       [ngClass]="tabActive === 'Blocked' ? 'bx-block text-danger' : 'bx-plus text-muted'"></i>
                   </div>
                 </div>
               </td>

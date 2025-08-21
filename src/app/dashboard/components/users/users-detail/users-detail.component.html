@@ -3,94 +3,92 @@
         <div class="row">
             <div class="col-xl-12">
                 <div class="card animated fadeIn fast">
-                    <div class="card-header card-header-form">
+                    <div class="card-header">
                         <div class="row">
                             <div class="col-md-9">
-                                <div class="d-flex flex-wrap gap-2 justify-content-start align-items-start h-100">
-                                    <button (click)="return()"  type="button" class="btn btn-light w-sm bg-gradient waves-effect waves-light"> Return</button>
-                                    <h4 class="card-title ms-2 mt-2">{{titleComponent}}</h4>
+                                <div class="d-flex flex-wrap gap-2 justify-content-start align-items-center h-100">
+                                    <button (click)="return()" type="button" class="btn btn-light w-sm bg-gradient waves-effect waves-light">Return</button>
+                                    <h4 class="card-title"> <i class="bx bx-face text-muted font-size-18 me-2"></i> {{titleComponent}}</h4>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
-                                    <button (click)="update()"  type="button" class="btn btn-primary w-sm bg-gradient waves-effect waves-light"> Actualizar</button>
+                                    <button (click)="update()" type="button" class="btn btn-primary w-sm bg-gradient waves-effect waves-light">
+                                        <i class="bx bx-edit me-2"></i>Edit
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div *ngIf="!loading" class="card-body animated fadeIn fast">
                         <form novalidate="novalidate" class="mb-2" [formGroup]="form" *ngIf="!loading">
                             <div class="row">
-                                <div class="col-md-12 col-sm-12">
+                                <div class="col-md-4 col-sm-12 ">
+                                    <label class="form-label">Photo profile</label>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <div class="text-center p-3 text-white rounded">
+                                            <div class="mb-3">
+                                                <img [src]="srcImage" style="width: 150px; height: 150px; object-fit: cover;" class="half-width img-thumbnail text-center" alt="Preview" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-sm-12">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Name *</label>
-                                            <input type="text" class="form-control" (input)="capitalize('name')" placeholder="Indique un primer nombre" formControlName="name">
-                                            <div class="invalid-feedback" *ngIf="form.controls['name'].hasError('required') && form.controls['name'].touched">
-                                                <strong>*</strong> El primer nombre es requerido
-                                            </div>
-                                            <div class="invalid-feedback" *ngIf="getValidation('name') != undefined && send">
-                                                <strong>*</strong> {{getValidation('name')?.message}}
+                                            <label class="form-label">First name</label>
+                                            <div class="form-control-plaintext border rounded p-2 bg-white">
+                                                {{user.firstName || 'N/A'}}
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Correo electrónico *</label>
-                                            <input type="text" class="form-control" placeholder="Indique un correo electrónico" formControlName="email">
-                                            <div class="invalid-feedback" *ngIf="form.controls['email'].hasError('required') && form.controls['email'].touched">
-                                                <strong>*</strong> El correo electrónico es requerido
-                                            </div>
-                                            <div class="invalid-feedback" *ngIf="form.controls['email'].hasError('email') && form.controls['email'].touched">
-                                                <strong>*</strong> El formato del correo no es válido
-                                            </div>
-                                            <div class="invalid-feedback" *ngIf="getValidation('email') != undefined && send">
-                                                <strong>*</strong> {{getValidation('email')?.message}}
+                                            <label class="form-label">Last name</label>
+                                            <div class="form-control-plaintext border rounded p-2 bg-white">
+                                                {{user.lastName || 'N/A'}}
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Número de teléfono *</label>
-                                            <input type="text" class="form-control" placeholder="Indique un número de teléfono" formControlName="phoneNumber">
-                                            <div class="invalid-feedback" *ngIf="form.controls['phoneNumber'].hasError('required') && form.controls['phoneNumber'].touched">
-                                                <strong>*</strong> El número de teléfono es requerido
-                                            </div>
-                                            <div class="invalid-feedback" *ngIf="getValidation('phoneNumber') != undefined && send">
-                                                <strong>*</strong> {{getValidation('phoneNumber')?.message}}
+                                            <label class="form-label">Email</label>
+                                            <div class="form-control-plaintext border rounded p-2 bg-white">
+                                                {{user.email || 'N/A'}}
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Dirección *</label>
-                                            <input type="text" class="form-control" placeholder="Indique una dirección" formControlName="address">
-                                            <div class="invalid-feedback" *ngIf="form.controls['address'].hasError('required') && form.controls['address'].touched">
-                                                <strong>*</strong> La dirección es requerida
-                                            </div>
-                                            <div class="invalid-feedback" *ngIf="getValidation('address') != undefined && send">
-                                                <strong>*</strong> {{getValidation('address')?.message}}
+                                            <label class="form-label">Phone</label>
+                                            <div class="form-control-plaintext border rounded p-2 bg-white">
+                                                {{user.phone || 'N/A'}}
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Tipo de usuario *</label>
-                                            <select type="text" class="form-select" placeholder="Indique un tipo de usuario" formControlName="userType" >
-                                                <option value="">Indique un tipo de usuario</option>
-                                                <option *ngFor="let rol of roles" [value]="rol.code">{{rol.name}}</option>
-                                            </select>
-                                            <div class="invalid-feedback" *ngIf="form.controls['userType'].hasError('required') && form.controls['userType'].touched">
-                                                <strong>*</strong> El tipo de usuario es requerido
+                                            <label class="form-label">Role</label>
+                                            <div class="form-control-plaintext border rounded p-2 bg-white">
+                                                {{getRoleName(user.userRole) || 'N/A'}}
                                             </div>
-                                            <div class="invalid-feedback" *ngIf="getValidation('userType') != undefined && send">
-                                                <strong>*</strong> {{getValidation('userType')?.message}}
-                                            </div>                                            
                                         </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Status</label>
+                                            <div class="form-control-plaintext border rounded p-2 bg-white">
+                                                <span [class]="getUserStatusClass(user)" class="badge">
+                                                    {{getUserStatus(user)}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                       
                                     </div>
                                 </div>
                             </div>
                         </form>
-                        <div class="mb-3 mt-4" *ngIf="loading">
-                            <app-skelleton-user-info></app-skelleton-user-info>
-                        </div>
                     </div>
+
+                    <div class="card-body animated fadeIn fast" *ngIf="loading"> 
+                        <app-skelleton-user-info></app-skelleton-user-info>
+                    </div>
+
                 </div>
             </div>
         </div>

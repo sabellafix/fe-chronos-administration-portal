@@ -22,8 +22,8 @@
                                     <table class="table mb-0">
                                         <thead class="table-light">
                                             <tr>
-                                                <th>State</th>
                                                 <th>Name</th>
+                                                <th>State</th>
                                                 <th>Email</th>
                                                 <th>Phone</th>
                                                 <th>Service Modifiers</th>
@@ -32,11 +32,12 @@
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let customer of customers">
+                                                <td>{{ getCustomerName(customer) | slice:0:50}}</td>
                                                 <td>
                                                     <span *ngIf="customer.isActive == true" class="badge badge-pill bg-success-subtle text-success font-size-14">Active</span>
                                                     <span *ngIf="customer.isActive == false" class="badge badge-pill bg-danger-subtle text-danger font-size-14">Inactive</span>
                                                 </td>
-                                                <td>{{ getCustomerName(customer) | slice:0:50}}</td>
+                                                
                                                 <td>{{customer.email}}</td>
                                                 <td>{{customer.phoneNumber}}</td>
                                                 <td>

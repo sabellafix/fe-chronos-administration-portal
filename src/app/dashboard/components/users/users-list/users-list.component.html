@@ -23,19 +23,22 @@
                                     <table  class="table mb-0">
                                         <thead class="table-light">
                                             <tr>
-                                                <th>State</th>
                                                 <th>Name</th>
+                                                <th>State</th>
                                                 <th>Email</th>
                                                 <th width="250" class="text-center">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let user of users">
+                                              
                                                 <td>
-                                                    <span *ngIf="user.isActive == true" class="badge badge-pill bg-success-subtle text-success font-size-14">Activado</span>
-                                                    <span *ngIf="user.isActive == false" class="badge badge-pill bg-danger-subtle text-danger font-size-14">Desactivado</span>
+                                                    <img [src]="user.photo" style="width: 30px; height: 30px; object-fit: cover;" class="rounded-circle" alt="Preview" />
+                                                    {{ getFullName(user) | slice:0:40}}</td>
+                                                <td>
+                                                    <span *ngIf="user.isActive == true" class="badge badge-pill bg-success-subtle text-success font-size-14">Active</span>
+                                                    <span *ngIf="user.isActive == false" class="badge badge-pill bg-danger-subtle text-danger font-size-14">Inactive</span>
                                                 </td>
-                                                <td>{{ getFullName(user) | slice:0:40}}</td>
                                                 <td>{{user.email | slice:0:35}}</td>
                                                 <td class="text-rigth">
                                                     <ul class="list-inline mb-0">

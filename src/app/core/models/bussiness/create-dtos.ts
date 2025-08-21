@@ -25,18 +25,26 @@ export class CreateAvailabilityDto {
 }
 
 export class CreateBlockedTimeDto {
-    providerId: string; // required, format: uuid
+    userId: string; // required, format: uuid
     blockedDate: DateOnly;
     startTime: TimeOnly;
     endTime: TimeOnly;
     reason?: string; // maxLength: 255, nullable
 
     constructor() {
-        this.providerId = "";
+        this.userId = "";
         this.blockedDate = new DateOnly();
         this.startTime = new TimeOnly();
         this.endTime = new TimeOnly();
         this.reason = undefined;
+    }
+}
+
+export class CreateBlockedTimesDto {
+    blockedTimes: CreateBlockedTimeDto[];
+
+    constructor() {
+        this.blockedTimes = [];
     }
 }
 

@@ -47,6 +47,8 @@ export class SelectImageComponent implements OnChanges {
         option.selected = false;
       }
     });
+
+    console.log('options', this.options);
     
     // Actualizar opciones seleccionadas
     this.selectedOptions = this.options.filter(option => option.selected);

@@ -8,8 +8,8 @@ import { Pagination } from '@app/core/models/interfaces/pagination.interface';
 import { Response } from '@app/core/models/dtos/response';
 import { Option } from '@app/core/models/interfaces/option.interface';
 import { ParametricService } from '@app/core/services/shared/parametric.service';
-import { MockUserService } from '@app/core/services/mock/mock-user.service';
-import { Rol } from '@app/core/models/bussiness/rol';
+import { UserService } from '@app/core/services/http/user.service';
+
 import { Validation } from '@app/core/models/dtos/validation';
 
 @Component({
@@ -19,7 +19,7 @@ import { Validation } from '@app/core/models/dtos/validation';
 })
 export class UsersDetailComponent {
 
-  titleComponent: string = "Detalle de usuario";
+  titleComponent: string = "Stylist Details";
   loading: boolean = true;
   charge: boolean = false;
   hasChanged : boolean = false;
@@ -29,32 +29,25 @@ export class UsersDetailComponent {
   form: FormGroup; 
   id: string = "";
   user: User = new User();
+  srcImage: string = "assets/images/user-image.jpg";
   now : Date = new Date();
-  roles: Rol[] = [];
+  roles: any[] = [];
   loadingRoles: boolean = false;
   codephones : Option[] = [];
   country? : Option;
 
-  constructor(private userService: MockUserService,
+  constructor(private userService: UserService,
               private parametricService: ParametricService,
               private router: Router,
               private snackBar: MatSnackBar,
               private route: ActivatedRoute,
   ){
     this.form = new FormGroup({
-      name : new FormControl("", Validators.required),
-      phoneNumber : new FormControl("", [Validators.required]),
+      firstName : new FormControl("", Validators.required),
+      lastName : new FormControl("", Validators.required),
       email : new FormControl("", [Validators.required, Validators.email]),
-      address : new FormControl("", Validators.required),
-      userType : new FormControl("", Validators.required),
-      department : new FormControl(""),
-      employeeId : new FormControl(""),
-      companyName : new FormControl(""),
-      entraId : new FormControl(""),
-      b2CId : new FormControl(""),
-      isActive : new FormControl(false),
-      isVerified : new FormControl(false),
-      isDeleted : new FormControl(false),
+      phone : new FormControl("", [Validators.required, Validators.pattern(/^\d{9}$/)]),
+      userRole : new FormControl("", Validators.required),
     });
 
     this.route.params.subscribe(params => { if (params['id']) this.id = params['id'] });
@@ -69,10 +62,10 @@ export class UsersDetailComponent {
     this.loading = true;
     this.country = { id : "52", name : "Colombia", code: "+57"}
     this.load();
-    this.loadValues();
+    
     this.roles = [
-      { id: 1, name: 'Comprador', code: 'Buyer', description: 'Comprador', active: true, reserved: false, defaultValue: false, createdAt: new Date(), updatedAt: new Date() },
-      { id: 2, name: 'Proovedor', code: 'Supplier', description: 'Proovedor', active: true, reserved: false, defaultValue: false, createdAt: new Date(), updatedAt: new Date() },
+      { id: 1, name: 'Stylist', code: 'stylist' },
+      { id: 2, name: 'Admin', code: 'admin' }
     ];
     
   }
@@ -83,10 +76,13 @@ export class UsersDetailComponent {
       this.userService.get(this.id).subscribe({
         next: (data: any) => {      
           this.user = <User>data;
+          if(this.user.photo) {
+            this.srcImage = this.user.photo;
+          }
           this.setForm();
         },error: (error: any) => {
           this.loading = false;
-          this.snackBar.open('Error al cargar el usuario', 'Cerrar', {duration: 4000});
+          this.snackBar.open('Error loading the user', 'Cerrar', {duration: 4000});
         }
       });
     }
@@ -95,19 +91,11 @@ export class UsersDetailComponent {
   async setForm(){
     if(this.user){
       let object : Object = {
-        name : this.user.name,
-        phoneNumber : this.user.phoneNumber,
+        firstName : this.user.firstName,
+        lastName : this.user.lastName,
         email : this.user.email,
-        address : this.user.address,
-        userType : this.user.userType,
-        department : this.user.department,
-        employeeId : this.user.employeeId,
-        companyName : this.user.companyName,
-        entraId : this.user.entraId,
-        b2CId : this.user.b2CId,
-        isActive : this.user.isActive,
-        isVerified : this.user.isVerified,
-        isDeleted : this.user.isDeleted,
+        phone : this.user.phone,
+        userRole : this.user.userRole,
       };
       this.form.setValue(object);
       this.form.disable();
@@ -125,18 +113,8 @@ export class UsersDetailComponent {
     return undefined;
   }
 
-  loadValues(): void {
-    forkJoin({options: this.parametricService.getOptions()})
-    .subscribe({
-      next: ({options}) => {
-        this.codephones = options.codephones;
-        
-      }
-    });
-  }
-
   update(){
-    this.router.navigate([`/users/update/${this.id}`]);
+    this.router.navigate([`/users/${this.id}/update`]);
   }
 
   return(){
@@ -161,25 +139,29 @@ export class UsersDetailComponent {
   }
 
   getUserStatus(user: User): string {
-    if (user.isDeleted) return 'Eliminado';
-    if (!user.isActive) return 'Inactivo';
-    if (!user.isVerified) return 'No verificado';
-    return 'Activo';
+    if (user.isDeleted) return 'Deleted';
+    if (!user.isActive) return 'Inactive';
+    if (!user.isVerified) return 'Not verified';
+    return 'Active';
   }
 
   getUserStatusClass(user: User): string {
-    if (user.isDeleted) return 'status-deleted';
-    if (!user.isActive) return 'status-inactive';
-    if (!user.isVerified) return 'status-unverified';
-    return 'status-active';
+    if (user.isDeleted) return 'badge-danger';
+    if (!user.isActive) return 'badge-warning';
+    if (!user.isVerified) return 'badge-info';
+    return 'badge-success';
   }
 
   getUserTypes(): Option[] {
     return [
-      { name: 'Comprador', code: 'Buyer' },
-      { name: 'Proveedor', code: 'Supplier' },
-      { name: 'Administrador', code: 'Admin' }
+      { name: 'Stylist', code: 'stylist' },
+      { name: 'Admin', code: 'admin' }
     ];
+  }
+
+  getRoleName(code: string): string {
+    const role = this.roles.find(r => r.code === code);
+    return role ? role.name : code;
   }
 
 }

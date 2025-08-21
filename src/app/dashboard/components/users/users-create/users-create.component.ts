@@ -50,16 +50,13 @@ export class UsersCreateComponent {
   ngOnInit(): void {
     this.loading = true;
     this.loadValues();
-    
-    
   }
 
   post(){
     this.form.markAllAsTouched();
     
-    // Validar que la imagen sea válida si se seleccionó una
     if (!this.validPhoto) {
-      this.snackBar.open('Por favor selecciona una imagen válida.', 'Cerrar', {duration: 4000});
+      this.snackBar.open('Select a valid image.', 'Cerrar', {duration: 4000});
       return;
     }
     
@@ -71,7 +68,7 @@ export class UsersCreateComponent {
         phone : this.form.get('phone')?.value,
         password : this.form.get('password')?.value,
         userRole : RolesConst._STYLIST,
-        photo : this.photoBase64 || this.srcImage, // Usa photoBase64 si está disponible, sino srcImage por defecto
+        photo : this.photoBase64 || "assets/images/user-image.jpg", // Usa photoBase64 si está disponible, sino imagen por defecto
       }
       this.charge = true;
       this.send = false;
@@ -134,26 +131,23 @@ export class UsersCreateComponent {
     if (input.files && input.files[0]) {
       const file = input.files[0];
       
-      // Validar que sea una imagen
       if (!file.type.startsWith('image/')) {
         this.validPhoto = false;
-        this.snackBar.open('Por favor selecciona un archivo de imagen válido.', 'Cerrar', {duration: 4000});
+        this.snackBar.open('Select a valid image file.', 'Cerrar', {duration: 4000});
         return;
       }
       
-      // Validar el tamaño del archivo (máximo 5MB)
       const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSizeInBytes) {
         this.validPhoto = false;
-        this.snackBar.open('La imagen debe ser menor a 5MB.', 'Cerrar', {duration: 4000});
+        this.snackBar.open('The image must be less than 5MB.', 'Cerrar', {duration: 4000});
         return;
       }
       
-      // Validar tipos de imagen permitidos
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
         this.validPhoto = false;
-        this.snackBar.open('Formato de imagen no permitido. Use: JPEG, PNG, GIF o WebP.', 'Cerrar', {duration: 4000});
+        this.snackBar.open('Invalid image format. Use: JPEG, PNG, GIF or WebP.', 'Cerrar', {duration: 4000});
         return;
       }
       
@@ -161,25 +155,19 @@ export class UsersCreateComponent {
       reader.onload = (e) => {
         const result = e.target?.result as string;
         if (result) {
-          // Guardar la imagen completa para mostrar en el UI
           this.srcImage = result;
           
-          // Extraer solo la parte base64 (sin el prefijo data:image/...;base64,)
-          const base64Index = result.indexOf('base64,');
-          if (base64Index !== -1) {
-            this.photoBase64 = result.substring(base64Index + 7); // +7 para saltar "base64,"
-          } else {
-            this.photoBase64 = result; // Por si acaso no tiene el prefijo
-          }
+          // Mantener los metadatos completos del archivo (data:image/tipo;base64,...)
+          this.photoBase64 = result;
           
           this.validPhoto = true;
-          this.snackBar.open('Imagen cargada correctamente.', 'Cerrar', {duration: 2000});
+          this.snackBar.open('Image loaded correctly.', 'Cerrar', {duration: 2000});
         }
       };
       
       reader.onerror = () => {
         this.validPhoto = false;
-        this.snackBar.open('Error al cargar la imagen.', 'Cerrar', {duration: 4000});
+        this.snackBar.open('Error loading the image.', 'Cerrar', {duration: 4000});
       };
       
       reader.readAsDataURL(file);

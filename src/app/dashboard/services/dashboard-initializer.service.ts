@@ -17,38 +17,27 @@ export class DashboardInitializerService {
     private userService: UserService,
     private tokenRefreshService: TokenRefreshService
   ) {
-    // Suscribirse a las actualizaciones de token
     this.tokenRefreshService.tokenUpdated$.subscribe(() => {
       this.refreshAllServices();
     });
   }
 
-  /**
-   * Inicializa todos los servicios refrescando sus tokens
-   * Este método debe ser llamado cuando se carga el dashboard module
-   */
+
   initializeServices(): Promise<void> {
     return new Promise((resolve) => {
       this.refreshAllServices();
-      console.log('🚀 Dashboard inicializado con servicios actualizados');
       resolve();
     });
   }
 
-  /**
-   * Refresca tokens en todos los servicios
-   */
+  
   private refreshAllServices(): void {
     this.bookingService.refreshToken();
     this.customerService.refreshToken();
     this.serviceService.refreshToken();
     this.userService.refreshToken();
-    console.log('🔄 Tokens actualizados en todos los servicios');
   }
 
-  /**
-   * Método estático para ser usado con APP_INITIALIZER
-   */
   static initializeFactory(dashboardInitializer: DashboardInitializerService) {
     return () => dashboardInitializer.initializeServices();
   }

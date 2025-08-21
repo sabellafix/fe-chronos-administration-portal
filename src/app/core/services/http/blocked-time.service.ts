@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { StorageService } from '../shared/storage.service';
-import { BlockedTime, CreateBlockedTimeDto, UpdateBlockedTimeDto } from '@app/core/models/bussiness';
+import { BlockedTime, CreateBlockedTimeDto, CreateBlockedTimesDto, UpdateBlockedTimeDto } from '@app/core/models/bussiness';
 
 @Injectable({
     providedIn: 'root'
@@ -45,8 +45,13 @@ export class BlockedTimeService {
         return this.http.post<BlockedTime>(url, entity, this.getHttpOptions());
     } 
 
+    createBlockedTimes(entity: CreateBlockedTimesDto): Observable<BlockedTime> {
+        const url = `${this.apiUrl}/${this.controller}/create-blocked-times`;
+        return this.http.post<BlockedTime>(url, entity, this.getHttpOptions());
+    } 
+
     updateBlockedTime(id: string, entity: UpdateBlockedTimeDto): Observable<BlockedTime> {
-        const url = `${this.apiUrl}/${this.controller}/update-blocked-time/${id}`;
+        const url = `${this.apiUrl}/${this.controller}/update-blocked-times/${id}`;
         return this.http.put<BlockedTime>(url, entity, this.getHttpOptions());
     } 
 

@@ -24,6 +24,7 @@ export class UsersListComponent {
   users: User[] = [];
   roles: Rol[] = [];
   rol : string = RolesConst._STYLIST;
+  srcImage : string = "assets/images/user-image.jpg";
    
   attributes : Option[] = [ 
     {name: "Name", code : "firstName"}, 
@@ -66,6 +67,9 @@ export class UsersListComponent {
     this.userService.getUsersByRole(this.rol).subscribe({
       next: (response: User[]) => {
         this.users = response;  
+        this.users.forEach(user => {
+          if(!user.photo) user.photo = this.srcImage;
+        });
         this.totalItems = response.length;
         this.loading = false;
       },error: (response) =>{

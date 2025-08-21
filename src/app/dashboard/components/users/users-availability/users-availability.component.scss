@@ -200,22 +200,48 @@ body[data-sidebar-size=sm] .calend-header {
 }
 
 // Estados de disponibilidad
-.day-cell.availability-cell.available {
+.day-cell.availability-cell.available-time-cell {
     background-color: rgba(40, 167, 69, 0.1);
     border-left: 3px solid #28a745;
 }
 
-.day-cell.availability-cell.available:hover {
+.day-cell.availability-cell.available-time-cell:hover {
     background-color: rgba(40, 167, 69, 0.2);
 }
 
-.day-cell.availability-cell.blocked {
-    background-color: rgba(220, 53, 69, 0.1);
+// Estados de tiempo bloqueado - fondo degradado rojo claro
+.day-cell.availability-cell.blocked-time-cell {
+    background: linear-gradient(135deg, 
+        rgba(220, 53, 69, 0.15) 0%, 
+        rgba(248, 215, 218, 0.3) 50%, 
+        rgba(220, 53, 69, 0.1) 100%);
     border-left: 3px solid #dc3545;
+    position: relative;
 }
 
-.day-cell.availability-cell.blocked:hover {
-    background-color: rgba(220, 53, 69, 0.2);
+.day-cell.availability-cell.blocked-time-cell:hover {
+    background: linear-gradient(135deg, 
+        rgba(220, 53, 69, 0.25) 0%, 
+        rgba(248, 215, 218, 0.4) 50%, 
+        rgba(220, 53, 69, 0.2) 100%);
+}
+
+// Efecto adicional para tiempo bloqueado
+.day-cell.availability-cell.blocked-time-cell::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 4px,
+        rgba(220, 53, 69, 0.05) 4px,
+        rgba(220, 53, 69, 0.05) 8px
+    );
+    pointer-events: none;
 }
 
 .day-cell.availability-cell.today-cell {
@@ -398,12 +424,25 @@ body[data-sidebar-size=sm] .calendar-weekly {
 }
 
 // Mejoras visuales para estados activos
-.day-cell.availability-cell.available .availability-indicator {
+.day-cell.availability-cell.available-time-cell .availability-indicator {
     animation: pulse-success 2s infinite;
 }
 
-.day-cell.availability-cell.blocked .blocked-indicator {
+.day-cell.availability-cell.blocked-time-cell .blocked-indicator {
     animation: pulse-danger 2s infinite;
+}
+
+// Indicadores específicos para tiempo bloqueado
+.day-cell.availability-cell.blocked-time-cell .blocked-indicator i {
+    color: #dc3545 !important;
+    font-weight: bold;
+    text-shadow: 0 0 2px rgba(220, 53, 69, 0.3);
+}
+
+// Efecto de hover mejorado para tiempo bloqueado
+.day-cell.availability-cell.blocked-time-cell:hover .blocked-indicator i {
+    transform: scale(1.1);
+    color: #c82333 !important;
 }
 
 @keyframes pulse-success {

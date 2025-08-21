@@ -30,7 +30,8 @@ export class UsersUpdateComponent {
   user: User = new User();
   validPhoto : boolean = true;
   photoUrl : string = "";
-  srcImage :  string | ArrayBuffer | null = "assets/images/user-image.jpg";
+  srcImage : string = "assets/images/user-image.jpg";
+  photoBase64 : string = "";
   now : Date = new Date();
   codephones : Option[] = [];
   country? : Option;
@@ -64,9 +65,7 @@ export class UsersUpdateComponent {
     this.loading = true;
     this.country = { id : "52", name : "Colombia", code: "+57"}
     this.load();
-    this.loadValues();  
     
-    // Inicializar roles
     this.roles = [
       { id: 1, name: 'Stylist', code: 'stylist' },
       { id: 2, name: 'Admin', code: 'admin' }
@@ -79,10 +78,12 @@ export class UsersUpdateComponent {
       this.userService.get(this.id).subscribe({
         next: (data: any) => {      
           this.user = <User>data;
+          console.log(this.user);
+          console.log("srcImage" , this.srcImage);
           this.setForm();
         },error: (error: any) => {
           this.loading = false;
-          this.snackBar.open('Error al cargar el usuario', 'Cerrar', {duration: 4000});
+          this.snackBar.open('Error loading the user', 'Cerrar', {duration: 4000});
         }
       });
     }
@@ -100,6 +101,10 @@ export class UsersUpdateComponent {
         confirmPassword : "",
       };
       this.form.setValue(object);
+      
+      if (this.user.photo && this.user.photo !== "assets/images/user-image.jpg") {
+        this.srcImage =  this.user.photo;
+      }
     }
     this.loading = false;
   }
@@ -107,18 +112,22 @@ export class UsersUpdateComponent {
   put(){
     this.form.markAllAsTouched();
     
-    // Validar contraseñas si están siendo cambiadas
+    if (!this.validPhoto) {
+      this.snackBar.open('Select a valid image.', 'Cerrar', {duration: 4000});
+      return;
+    }
+    
     if (this.showPasswordFields) {
       const newPassword = this.form.get('newPassword')?.value;
       const confirmPassword = this.form.get('confirmPassword')?.value;
       
       if (newPassword && newPassword.length < 8) {
-        this.snackBar.open('La nueva contraseña debe tener al menos 8 caracteres', 'Cerrar', {duration: 4000});
+        this.snackBar.open('The new password must have at least 8 characters', 'Cerrar', {duration: 4000});
         return;
       }
       
       if (newPassword !== confirmPassword) {
-        this.snackBar.open('Las contraseñas no coinciden', 'Cerrar', {duration: 4000});
+        this.snackBar.open('The passwords do not match', 'Cerrar', {duration: 4000});
         return;
       }
     }
@@ -130,9 +139,9 @@ export class UsersUpdateComponent {
         email : this.form.get('email')?.value,
         phone : this.form.get('phone')?.value,
         userRole : this.form.get('userRole')?.value,
+        photo : this.photoBase64 || this.user.photo,
       }
       
-      // Solo incluir password si se está cambiando
       if (this.showPasswordFields && this.form.get('newPassword')?.value) {
         (put as any).password = this.form.get('newPassword')?.value;
       }
@@ -144,7 +153,7 @@ export class UsersUpdateComponent {
         next: (data: any) => {
           this.charge = false;
           let user = <User>data;
-          this.snackBar.open('Usuario actualizado correctamente.', 'Cerrar', {duration: 4000});
+          this.snackBar.open('User updated correctly.', 'Cerrar', {duration: 4000});
           this.hasChanged = false;
           this.return();
         },
@@ -158,7 +167,7 @@ export class UsersUpdateComponent {
             message = error.error.message;
           }
           this.charge = false;
-          this.snackBar.open('Error ejecutando la actualización ' + message, 'Cerrar', {duration: 4000});
+          this.snackBar.open('Error executing the update ' + message, 'Cerrar', {duration: 4000});
         }
       });
     }
@@ -174,34 +183,54 @@ export class UsersUpdateComponent {
     return undefined;
   }
 
-  loadValues(): void {
-    forkJoin({options: this.parametricService.getOptions()})
-    .subscribe({
-      next: ({options}) => {
-        this.codephones = options.codephones;
-        this.loading = false;
-      },
-      error: (error) => {
-        this.loading = false;
-        this.snackBar.open('Error al cargar los datos', 'Cerrar', {duration: 4000});
-      }
-    });
-  }
+
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
+      
       if (!file.type.startsWith('image/')) {
-        this.snackBar.open('Por favor selecciona un archivo de imagen.', 'Cerrar', {duration: 4000});
+        this.validPhoto = false;
+        this.snackBar.open('Select a valid image file.', 'Cerrar', {duration: 4000});
         return;
       }
+      
+      const maxSizeInBytes = 5 * 1024 * 1024;
+      if (file.size > maxSizeInBytes) {
+        this.validPhoto = false;
+        this.snackBar.open('The image must be less than 5MB.', 'Cerrar', {duration: 4000});
+        return;
+      }
+      
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        this.validPhoto = false;
+        this.snackBar.open('Invalid image format. Use: JPEG, PNG, GIF or WebP.', 'Cerrar', {duration: 4000});
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.srcImage = e.target?.result!;
+        const result = e.target?.result as string;
+        if (result) {
+          this.srcImage = result;
+          
+          // Mantener los metadatos completos del archivo (data:image/tipo;base64,...)
+          this.photoBase64 = result;
+          
+          this.validPhoto = true;
+          this.form.markAsDirty();
+          this.snackBar.open('Image loaded correctly.', 'Cerrar', {duration: 2000});
+        }
       };
+      
+      reader.onerror = () => {
+        this.validPhoto = false;
+        this.snackBar.open('Error loading the image.', 'Cerrar', {duration: 4000});
+      };
+      
       reader.readAsDataURL(file);
-      // Note: photo field is not part of User entity, this is just for UI preview
     }
   }
 
@@ -264,6 +293,8 @@ export class UsersUpdateComponent {
     this.showPasswordFields = false;
     this.togglePasswordFields();
     this.srcImage = "assets/images/user-image.jpg";
+    this.photoBase64 = "";
+    this.validPhoto = true;
   }
 
 }

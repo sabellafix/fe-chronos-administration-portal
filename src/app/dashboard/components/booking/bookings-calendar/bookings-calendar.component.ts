@@ -13,8 +13,8 @@ import { forkJoin } from 'rxjs';
 })
 export class BookingsCalendarComponent implements OnInit, OnDestroy {
 
-  tabs: string[] = ['Available', 'Blocked'];
-  tabActive: string = 'Available';
+  tabs: string[] = ['Month', 'Week', 'Day', 'Stylists', 'Floor'];
+  tabActive: string = 'Month';
   tabIndex: number = 1;
   dateNow: Date = new Date();
   loading: boolean = false;
@@ -90,7 +90,9 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
       this.customers = customers;
 
       this.stylists.map(stylist => {
-        stylist.photo = this.imageUser;
+        if(!stylist.photo){
+          stylist.photo = this.imageUser;
+        }
       });
       
       // Convertir los datos a VisualOption para el nuevo componente
