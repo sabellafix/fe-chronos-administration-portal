@@ -95,6 +95,10 @@ export class UsersListComponent {
     this.router.navigate([`/users/${id}/detail`]);
   }
 
+  availability(id: string): void {
+    this.router.navigate([`/users/${id}/availability`]);
+  }
+
   delete(id: string): void {
       const dialogRef = this.dialog.open(DialogConfirmComponent, {
         width: '400px',

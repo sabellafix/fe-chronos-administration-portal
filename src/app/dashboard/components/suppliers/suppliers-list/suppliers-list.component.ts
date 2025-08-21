@@ -88,6 +88,10 @@ export class SuppliersListComponent {
     this.router.navigate([`/suppliers/${id}/detail`]);
   }
 
+  availability(id: string): void {
+    this.router.navigate([`/suppliers/${id}/availability`]);
+  }
+
   delete(id: string): void {
       const dialogRef = this.dialog.open(DialogConfirmComponent, {
         width: '400px',

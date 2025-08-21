@@ -1,0 +1,460 @@
+
+.calend-header{
+    position: fixed;
+    top: 60px;
+    right: 0;
+    left: 255px;
+    z-index: 949;
+    width: auto;
+    height: 95px;
+    background-color: #fff;
+    padding: 16px;
+    -webkit-transition: all .2s;
+    transition: all .2s;
+    -webkit-box-shadow: 0 2px 3px rgba(26, 41, 60, .06);
+    box-shadow: 0 2px 3px rgba(26, 41, 60, .06);
+}
+
+@media (max-width:991.98px) {
+    .calend-header {
+        left: 0;
+    }
+}
+
+body[data-sidebar-size=sm] .calend-header {
+    left: 70px;
+}
+
+@media (max-width:991.98px) {
+    body[data-sidebar-size=sm] .calend-header {
+        left: 0;
+    }
+}
+
+.calend-header.sticky {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.calendar-content {
+    margin-top: 140px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 20px;
+}
+
+
+.card-date {
+    width: 12.7%;
+    color: #000;
+    border-radius: 12px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    align-items: center;
+    box-shadow: none;
+    cursor: pointer;
+    backdrop-filter: blur(24px);
+    background-color: rgba(237, 237, 237, 0.72);
+    border-color: #f1f3f7 !important;
+    position: relative;
+}
+
+.card-date:hover {
+    background-color: #f5f6f8 !important;
+    border-color: #f5f6f8 !important;
+}
+
+.card-date.today {
+    background-color: rgb(26, 41, 60) !important;
+    border-color: rgb(26, 41, 60) !important;
+    color: #fff !important;
+}
+
+// Contenedor principal del calendario
+.calendar-canvas {
+    margin-top: 20px;
+    overflow-x: hidden;
+    background-color: transparent;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.calendar-canvas.no-border {
+    border: none;
+}
+
+.calendar-canvas.no-box-shadow {
+    box-shadow: none;
+}
+
+.calendar-container {
+    min-width: 100%;
+    padding: 0;
+}
+
+.calendar-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-family: inherit;
+}
+
+// Animaciones
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Headers de tiempo y días
+.time-header {
+    width: 80px;
+    text-align: center;
+    font-weight: 600;
+    color: #495057;
+    padding: 12px 8px;
+    font-size: 14px;
+}
+
+.day-header {
+    text-align: center;
+    font-weight: 600;
+    color: #495057;
+    padding: 6px 4px;
+    min-width: 120px;
+}
+
+.day-header:last-child {
+    border-right: none;
+}
+
+.day-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.day-name {
+    font-size: 12px;
+    text-transform: capitalize;
+    color: #6c757d;
+}
+
+.day-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: #495057;
+}
+
+// Filas de tiempo
+.time-row {
+    height: 80px;
+    border-bottom: 1px solid rgb(208, 213, 225);
+}
+
+.time-row:hover {
+    background-color: hwb(211 0% 0% / 0.05);
+}
+
+.time-cell {
+    background-color: transparent;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+    position: relative;
+}
+
+.time-label {
+    left: 15px;
+    font-size: 14px;
+    color: #1a293c;
+    display: block;
+    padding: 4px;
+    font-weight: 600;
+}
+
+// Celdas de disponibilidad - estilos específicos para este componente
+.day-cell.availability-cell {
+    vertical-align: middle;
+    padding: 2px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid rgb(208, 213, 225);
+    height: 80px;
+    text-align: center;
+}
+
+.day-cell.availability-cell:last-child {
+    border-right: none;
+}
+
+// Estados de disponibilidad
+.day-cell.availability-cell.available {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-left: 3px solid #28a745;
+}
+
+.day-cell.availability-cell.available:hover {
+    background-color: rgba(40, 167, 69, 0.2);
+}
+
+.day-cell.availability-cell.blocked {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-left: 3px solid #dc3545;
+}
+
+.day-cell.availability-cell.blocked:hover {
+    background-color: rgba(220, 53, 69, 0.2);
+}
+
+.day-cell.availability-cell.today-cell {
+    background-color: rgba(0, 123, 255, 0.05);
+    border-left: 2px solid #007bff;
+}
+
+// Hover para celdas sin estado definido
+.day-cell.availability-cell:not(.available):not(.blocked):hover {
+    background-color: rgba(108, 117, 125, 0.1);
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        right: 4px;
+        bottom: 4px;
+        border: 1.5px dashed #6c757d;
+        border-radius: 8px;
+        pointer-events: none;
+        transition: all 0.2s ease;
+    }
+}
+
+// Contenido de las celdas
+.cell-content.availability-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+
+// Indicadores visuales
+.availability-indicator,
+.blocked-indicator,
+.neutral-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.2s ease;
+}
+
+.availability-indicator i {
+    color: #28a745 !important;
+}
+
+.blocked-indicator i {
+    color: #dc3545 !important;
+}
+
+.neutral-indicator i {
+    color: #6c757d !important;
+    opacity: 0.6;
+}
+
+.neutral-indicator:hover i {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+// Estilos para el calendario semanal fijo
+.calendar-weekly {
+    position: fixed;
+    top: 155px;
+    right: 0;
+    left: 255px;
+    z-index: 948;
+    width: auto;
+    background-color: #fff;
+    -webkit-transition: all .2s;
+    transition: all .2s;
+    -webkit-box-shadow: 0 2px 3px rgba(26, 41, 60, .06);
+    box-shadow: 0 2px 3px rgba(26, 41, 60, .06);
+    border-bottom: 1px solid #e9ebef;
+    backdrop-filter: blur(24px);
+}
+
+.calendar-body {
+    margin-top: 200px;
+}
+
+// Responsive design
+@media (max-width: 991.98px) {
+    .calendar-weekly {
+        left: 40px;
+    }
+}
+
+body[data-sidebar-size=sm] .calendar-weekly {
+    left: 110px;
+}
+
+@media (max-width: 991.98px) {
+    body[data-sidebar-size=sm] .calendar-weekly {
+        left: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-canvas {
+        margin-top: 15px;
+    }
+    
+    .time-header {
+        width: 60px;
+        font-size: 12px;
+        padding: 8px 4px;
+    }
+    
+    .day-header {
+        min-width: 80px;
+        padding: 6px 2px;
+    }
+    
+    .day-name {
+        font-size: 10px;
+    }
+    
+    .day-number {
+        font-size: 14px;
+    }
+    
+    .time-row {
+        height: 50px;
+    }
+    
+    .day-cell.availability-cell {
+        height: 50px;
+    }
+    
+    .cell-content.availability-content {
+        padding: 4px;
+    }
+    
+    .time-label {
+        font-size: 10px;
+    }
+    
+    .availability-indicator,
+    .blocked-indicator,
+    .neutral-indicator {
+        font-size: 16px;
+    }
+}
+
+// Estilos adicionales para el header de información
+.card-title {
+    color: #495057;
+    font-weight: 600;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+}
+
+// Estilos para la leyenda
+.card-body h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+// Efectos de hover mejorados
+.availability-indicator:hover,
+.blocked-indicator:hover {
+    transform: scale(1.1);
+}
+
+// Estados de carga
+.spinner-border {
+    width: 2rem;
+    height: 2rem;
+}
+
+// Mejoras visuales para estados activos
+.day-cell.availability-cell.available .availability-indicator {
+    animation: pulse-success 2s infinite;
+}
+
+.day-cell.availability-cell.blocked .blocked-indicator {
+    animation: pulse-danger 2s infinite;
+}
+
+@keyframes pulse-success {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}
+
+@keyframes pulse-danger {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
+// Estilos para la información del estilista
+.stylist-avatar {
+  .stylist-photo {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border: 2px solid #e9ecef;
+    transition: border-color 0.3s ease;
+    
+    &:hover {
+      border-color: #007bff;
+    }
+  }
+}
+
+.stylist-info {
+  .stylist-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #495057;
+    line-height: 1.2;
+  }
+  
+  small {
+    font-size: 0.75rem;
+    color: #6c757d;
+  }
+}

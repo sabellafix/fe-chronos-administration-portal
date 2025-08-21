@@ -18,7 +18,7 @@ import { Option } from '@app/core/models/interfaces/option.interface';
 })
 export class UsersUpdateComponent {
 
-  titleComponent: string = "Actualizar usuario";
+  titleComponent: string = "Update Stylist";
   loading: boolean = true;
   charge: boolean = false;
   hasChanged : boolean = false;
@@ -68,9 +68,8 @@ export class UsersUpdateComponent {
     
     // Inicializar roles
     this.roles = [
-      { id: 1, name: 'Comprador', code: 'client' },
-      { id: 2, name: 'Proveedor', code: 'supplier' },
-      { id: 3, name: 'Administrador', code: 'admin' }
+      { id: 1, name: 'Stylist', code: 'stylist' },
+      { id: 2, name: 'Admin', code: 'admin' }
     ];
   }
 

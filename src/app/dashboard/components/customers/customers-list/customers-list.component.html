@@ -27,7 +27,6 @@
                                                 <th>Email</th>
                                                 <th>Phone</th>
                                                 <th>Service Modifiers</th>
-                                                <th>Language</th>
                                                 <th width="250" class="text-center">Actions</th>
                                             </tr>
                                         </thead>
@@ -38,7 +37,6 @@
                                                     <span *ngIf="customer.isActive == false" class="badge badge-pill bg-danger-subtle text-danger font-size-14">Inactive</span>
                                                 </td>
                                                 <td>{{ getCustomerName(customer) | slice:0:50}}</td>
-                                                <td>{{getLanguageFormatted(customer.preferredLanguage || 'English')}}</td>
                                                 <td>{{customer.email}}</td>
                                                 <td>{{customer.phoneNumber}}</td>
                                                 <td>

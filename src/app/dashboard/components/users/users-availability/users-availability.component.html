@@ -1,0 +1,168 @@
+
+<div class="calend-header" id="calendar-header">
+  <div class="page-content" style="padding-top: 16px;">
+      <div class="container-fluid">
+          <div class="row">
+            <div class="col-xl-4">
+              <div class="d-flex flex-wrap gap-2 justify-content-start align-items-center mt-2">
+                <button (click)="return()" type="button" class="btn btn-light w-sm bg-gradient waves-effect waves-light">Return</button>
+                <h4 class="card-title"> <i class="bx bx-calendar text-muted font-size-18 me-2"></i> {{titleComponent}}</h4>
+            </div>
+          </div>
+              <div class="col-xl-4">
+                  <div class="card bg-light mt-1">
+                      <ul class="nav nav-pills nav-justified p-1" role="tablist">
+                          <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Available'}">
+                              <a class="nav-link" data-bs-toggle="tab" href="#available" role="tab" 
+                              aria-selected="false" (click)="tabActive = 'Available'">
+                                  <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                  <span class="d-none d-sm-block">Available</span>
+                              </a>
+                          </li>
+                          <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Blocked'}">
+                              <a class="nav-link" data-bs-toggle="tab" href="#blocked" role="tab"
+                                  aria-selected="false" (click)="tabActive = 'Blocked'">
+                                  <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                  <span class="d-none d-sm-block">Blocked</span>
+                              </a>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+              <div class="col-xl-4">
+                <div *ngIf="loading" class="mt-1">
+                    <ngx-skeleton-loader [count]="1" [theme]="{ 'border-radius': '16px', height: '48px', margin: '0px 0px 10px 0px', 'background-color': '#FFFFFFF' }"></ngx-skeleton-loader>
+                </div>
+                <div *ngIf="!loading && stylist" class="d-flex align-items-center justify-content-end mt-2">
+                    <div class="stylist-info me-3 text-end">
+                        <h5 class="mb-0 stylist-name">{{ getStylistFullName() }}</h5>
+                        <small class="text-muted">Stylist</small>
+                    </div>
+                    <div class="stylist-avatar">
+                      <img [src]="getStylistPhoto()" [alt]="getStylistFullName()" class="rounded-circle stylist-photo">
+                    </div>
+                </div>
+            </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="calendar-canvas calendar-weekly mt-0 no-border no-box-shadow animated fadeIn fast" id="availability-calendar-header">
+      <div class="calendar-container">
+        <table class="calendar-table">
+          <thead>
+            <tr>
+              <th class="time-header">
+              </th>
+              <th class="day-header" *ngFor="let date of dates">
+                <div class="day-header-content">
+                  <div class="card w-100 bg-light p-1 pt-2 card-date text-center" [ngClass]="{'today': date.isToday}">
+                    <div class="card-date-day">
+                      <p class="font-size-14 fw-normal mb-1 capitalize">
+                        {{ date.date.toLocaleString('en-US', { weekday: 'long' }) }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+
+    <div class="calendar-canvas calendar-body no-border no-box-shadow animated fadeIn fast">
+      <div class="calendar-container">
+        
+        <!-- <div *ngIf="loading" class="d-flex justify-content-center align-items-center p-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading availability...</span>
+          </div>
+          <span class="ms-2 text-muted">Loading availability...</span>
+        </div> -->
+        
+        <table class="calendar-table mt-1 animated fadeIn fast" *ngIf="!loading">
+          <thead>
+            <tr style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
+              <th class="time-header" style="height: 0px !important; padding: 0px !important; margin: 0px !important;"></th>
+              <th class="day-header" *ngFor="let date of dates" style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
+                <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="day-header-content">
+                  <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card w-100 bg-light p-1 pt-2 card-date text-center">
+                    <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card-date-day">
+                     
+                    </div>
+                  </div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          
+          <tbody>
+            <tr class="time-row" *ngFor="let hour of getHoursRange()">
+              <td class="time-cell">
+                <span class="time-label fw-semibold">{{ formatHour(hour.toString()) }}</span>
+              </td>
+              
+              <td class="day-cell availability-cell" 
+                  *ngFor="let date of dates" 
+                  [attr.data-hour]="hour" 
+                  [attr.data-date]="date.date.toISOString()"
+                  (click)="onCellClick(date.date, hour, $event)"
+                  style="cursor: pointer;">
+                
+                <div class="cell-content availability-content">
+                  <div class="availability-indicator" 
+                       *ngIf="hasAvailability(date.date, hour)"
+                       title="Available">
+                    <i class="bx bx-check-circle text-success"></i>
+                  </div>
+                  
+                  <div class="blocked-indicator" 
+                       *ngIf="isBlocked(date.date, hour)"
+                       title="Blocked">
+                    <i class="bx bx-x-circle text-danger"></i>
+                  </div>
+                  
+                  <div class="neutral-indicator" 
+                       *ngIf="!hasAvailability(date.date, hour) && !isBlocked(date.date, hour)"
+                       title="Click to define availability">
+                    <i class="bx bx-plus text-muted"></i>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Leyenda -->
+<!-- <div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-title">Leyenda</h6>
+        <div class="d-flex flex-wrap gap-4">
+          <div class="d-flex align-items-center">
+            <i class="bx bx-check-circle text-success me-2"></i>
+            <span>Disponible</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <i class="bx bx-x-circle text-danger me-2"></i>
+            <span>Bloqueado</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <i class="bx bx-plus text-muted me-2"></i>
+            <span>Sin definir</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->

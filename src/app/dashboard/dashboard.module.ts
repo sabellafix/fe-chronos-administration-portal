@@ -74,6 +74,7 @@ import { CustomersDetailComponent } from './components/customers/customers-detai
 import { OffcanvasDetailBookingComponent } from './components/shared/offcanvas/offcanvas-detail-booking/offcanvas-detail-booking.component';
 // Importar servicio de inicialización del dashboard
 import { DashboardInitializerService } from './services/dashboard-initializer.service';
+import { UsersAvailabilityComponent } from './components/users/users-availability/users-availability.component';
 
 
 const routes: Routes = [
@@ -88,6 +89,7 @@ const routes: Routes = [
           { path: 'create', component: UsersCreateComponent },
           { path: ':id/update', component: UsersUpdateComponent },
           { path: ':id/detail', component: UsersDetailComponent },
+          { path: ':id/availability', component: UsersAvailabilityComponent },
           { path: '**', redirectTo: '' }
         ]
       },
@@ -216,6 +218,7 @@ const routes: Routes = [
     CustomersUpdateComponent,
     CustomersDetailComponent,
     OffcanvasDetailBookingComponent,
+    UsersAvailabilityComponent,
   ],
   imports: [
     CommonModule,
