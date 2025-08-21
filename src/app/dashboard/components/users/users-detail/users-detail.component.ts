@@ -2,13 +2,14 @@ import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { forkJoin } from 'rxjs';
 import { User } from '@app/core/models/bussiness/user';
 import { Pagination } from '@app/core/models/interfaces/pagination.interface';
 import { Response } from '@app/core/models/dtos/response';
 import { Option } from '@app/core/models/interfaces/option.interface';
 import { ParametricService } from '@app/core/services/shared/parametric.service';
 import { UserService } from '@app/core/services/http/user.service';
+import { Service } from '@app/core/models/bussiness/service';
+import { ServiceService } from '@app/core/services/http/platform-service.service';
 
 import { Validation } from '@app/core/models/dtos/validation';
 
@@ -35,12 +36,15 @@ export class UsersDetailComponent {
   loadingRoles: boolean = false;
   codephones : Option[] = [];
   country? : Option;
+  services: Service[] = [];
+  loadingServices: boolean = false;
 
   constructor(private userService: UserService,
               private parametricService: ParametricService,
               private router: Router,
               private snackBar: MatSnackBar,
               private route: ActivatedRoute,
+              private serviceService: ServiceService,
   ){
     this.form = new FormGroup({
       firstName : new FormControl("", Validators.required),
@@ -80,6 +84,7 @@ export class UsersDetailComponent {
             this.srcImage = this.user.photo;
           }
           this.setForm();
+          this.loadUserServices();
         },error: (error: any) => {
           this.loading = false;
           this.snackBar.open('Error loading the user', 'Cerrar', {duration: 4000});
@@ -162,6 +167,50 @@ export class UsersDetailComponent {
   getRoleName(code: string): string {
     const role = this.roles.find(r => r.code === code);
     return role ? role.name : code;
+  }
+
+  loadUserServices(): void {
+    if (this.user.id) {
+      this.loadingServices = true;
+      this.serviceService.getServicesByProvider(this.user.id).subscribe({
+        next: (data: Service[]) => {
+          this.services = data;
+          this.loadingServices = false;
+        },
+        error: (error: any) => {
+          this.loadingServices = false;
+          this.snackBar.open('Error loading services', 'Cerrar', {duration: 4000});
+        }
+      });
+    }
+  }
+
+  getServiceColor(serviceId: string): string {
+    const service = this.services.find(s => s.id === serviceId);
+    return service?.color || '#007bff';
+  }
+
+  getServiceName(serviceId: string): string {
+    const service = this.services.find(s => s.id === serviceId);
+    return service?.serviceName || 'Unknown Service';
+  }
+
+  getServiceDuration(serviceId: string): number {
+    const service = this.services.find(s => s.id === serviceId);
+    return service?.durationMinutes || 0;
+  }
+
+  getServicePrice(serviceId: string): number {
+    const service = this.services.find(s => s.id === serviceId);
+    return service?.price || 0;
+  }
+
+  getServiceStatus(service: Service): string {
+    return service.isActive ? 'Active' : 'Inactive';
+  }
+
+  getServiceStatusClass(service: Service): string {
+    return service.isActive ? 'badge-success' : 'badge-secondary';
   }
 
 }
