@@ -78,8 +78,6 @@ export class UsersUpdateComponent {
       this.userService.get(this.id).subscribe({
         next: (data: any) => {      
           this.user = <User>data;
-          console.log(this.user);
-          console.log("srcImage" , this.srcImage);
           this.setForm();
         },error: (error: any) => {
           this.loading = false;

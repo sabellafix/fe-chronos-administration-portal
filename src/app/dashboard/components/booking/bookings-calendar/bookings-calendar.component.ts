@@ -27,6 +27,7 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
 
   services: Service[] = [];
   stylists: User[] = [];
+  users: User[] = [];
   customers: Customer[] = [];
 
   // Opciones para el nuevo componente SelectImageComponent
@@ -87,6 +88,7 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
     ]).subscribe(([services, stylists, customers]) => {
       this.services = services;
       this.stylists = stylists;
+      this.users = stylists;
       this.customers = customers;
 
       this.stylists.map(stylist => {

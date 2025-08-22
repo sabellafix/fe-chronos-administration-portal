@@ -32,6 +32,10 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
   availabilities: Availability[] = [];
   blockedTimes: BlockedTime[] = [];
   
+  // Arrays para manejar cambios temporales
+  blockedTimesToCreate: BlockedTime[] = [];
+  blockedTimesToDelete: BlockedTime[] = [];
+  
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -114,21 +118,43 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     event.preventDefault();
     event.stopPropagation();
     
-    console.log('Celda clickeada:', {
-      date: date.toDateString(),
-      hour: hour,
-      stylistId: this.stylistId
-    });
-    
-    this.toggleAvailability(date, hour);
+    this.toggleIndividualAvailability(date, hour);
   }
 
-  private toggleAvailability(date: Date, hour: number): void {
+  onHourCellClick(hour: number, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (this.tabActive === 'Blocked') {
+      this.toggleWeeklyBlockedTime(hour);
+    }
+  }
+
+  onDayHeaderClick(date: Date, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (this.tabActive === 'Blocked') {
+      this.toggleDailyBlockedTime(date);
+    }
+  }
+
+  private toggleIndividualAvailability(date: Date, hour: number): void {
     if (this.tabActive === 'Blocked') {
       this.toggleBlockedTime(date, hour);
     } else {
-      // TODO: Implementar lógica para alternar disponibilidad normal
-      console.log('Toggling availability for:', date, hour);
+    }
+  }
+
+  private toggleWeeklyBlockedTime(hour: number): void {
+    const hasAnyBlockedTimeForHour = this.dates.some(dateItem => 
+      this.findBlockedTime(dateItem.date, hour) !== undefined
+    );
+
+    if (hasAnyBlockedTimeForHour) {
+      this.removeWeeklyBlockedTime(hour);
+    } else {
+      this.addWeeklyBlockedTime(hour);
     }
   }
 
@@ -136,10 +162,8 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     const existingBlockedTime = this.findBlockedTime(date, hour);
     
     if (existingBlockedTime) {
-      // Remover tiempo bloqueado existente
       this.removeBlockedTime(existingBlockedTime);
     } else {
-      // Agregar nuevo tiempo bloqueado
       this.addBlockedTime(date, hour);
     }
   }
@@ -158,14 +182,12 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     newBlockedTime.blockedTimeId = this.generateTempId();
     newBlockedTime.userId = this.stylistId;
     
-    // Configurar fecha
     newBlockedTime.blockedDate = new DateOnly();
     newBlockedTime.blockedDate.year = date.getFullYear();
     newBlockedTime.blockedDate.month = date.getMonth() + 1;
     newBlockedTime.blockedDate.day = date.getDate();
     newBlockedTime.blockedDate.dayOfWeek = date.getDay();
     
-    // Configurar hora (bloquear toda la hora)
     newBlockedTime.startTime = new TimeOnly();
     newBlockedTime.startTime.hour = hour;
     newBlockedTime.startTime.minute = 0;
@@ -178,73 +200,180 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     newBlockedTime.isActive = true;
     newBlockedTime.createdAt = new Date().toISOString();
     
-    // Agregar a la lista local
+    // Solo actualizar lista local
     this.blockedTimes.push(newBlockedTime);
-    
-    // Crear DTO para enviar al servidor
-    const createDto = new CreateBlockedTimeDto();
-    createDto.userId = this.stylistId;
-    createDto.blockedDate = newBlockedTime.blockedDate;
-    createDto.startTime = newBlockedTime.startTime;
-    createDto.endTime = newBlockedTime.endTime;
-    createDto.reason = newBlockedTime.reason;
-    
-    // Enviar al servidor
-    const subscription = this.blockedTimeService.createBlockedTime(createDto).subscribe({
-      next: (response) => {
-        // Actualizar el ID temporal con el ID real del servidor
-        const index = this.blockedTimes.findIndex(bt => bt.blockedTimeId === newBlockedTime.blockedTimeId);
-        if (index !== -1) {
-          this.blockedTimes[index] = response;
-        }
-        
-       
-      },
-      error: (error) => {
-        // Remover de la lista local si falla el servidor
-        const index = this.blockedTimes.findIndex(bt => bt.blockedTimeId === newBlockedTime.blockedTimeId);
-        if (index !== -1) {
-          this.blockedTimes.splice(index, 1);
-        }
-        
-        console.error('Error creando tiempo bloqueado:', error);
-        this.snackBar.open('Error al bloquear el tiempo', 'Cerrar', {
-          duration: 3000,
-          panelClass: 'snackbar-error'
-        });
-      }
-    });
-    
-    this.subscriptions.push(subscription);
+    this.blockedTimesToCreate.push(newBlockedTime);
   }
 
   private removeBlockedTime(blockedTime: BlockedTime): void {
-    // Remover de la lista local inmediatamente
+    // Remover de la lista local
     const index = this.blockedTimes.findIndex(bt => bt.blockedTimeId === blockedTime.blockedTimeId);
     if (index !== -1) {
       this.blockedTimes.splice(index, 1);
     }
     
-    // Si tiene un ID real (no temporal), eliminar del servidor
-    if (!blockedTime.blockedTimeId.startsWith('temp-')) {
-      const subscription = this.blockedTimeService.deleteBlockedTime(blockedTime.blockedTimeId).subscribe({
-        next: () => {
-         
+    // Si es un tiempo bloqueado temporal (recién creado), solo removerlo de la lista de creación
+    if (blockedTime.blockedTimeId.startsWith('temp-')) {
+      const createIndex = this.blockedTimesToCreate.findIndex(bt => bt.blockedTimeId === blockedTime.blockedTimeId);
+      if (createIndex !== -1) {
+        this.blockedTimesToCreate.splice(createIndex, 1);
+      }
+    } else {
+      // Si es un tiempo bloqueado existente, agregarlo a la lista de eliminación
+      this.blockedTimesToDelete.push(blockedTime);
+    }
+  }
+
+  private addWeeklyBlockedTime(hour: number): void {
+    this.dates.forEach(dateItem => {
+      const existingBlockedTime = this.findBlockedTime(dateItem.date, hour);
+      if (!existingBlockedTime) {
+        this.addBlockedTime(dateItem.date, hour);
+      }
+    });
+  }
+
+  private removeWeeklyBlockedTime(hour: number): void {
+    const blockedTimesToRemove: BlockedTime[] = [];
+    
+    this.dates.forEach(dateItem => {
+      const existingBlockedTime = this.findBlockedTime(dateItem.date, hour);
+      if (existingBlockedTime) {
+        blockedTimesToRemove.push(existingBlockedTime);
+      }
+    });
+
+    blockedTimesToRemove.forEach(blockedTime => {
+      this.removeBlockedTime(blockedTime);
+    });
+  }
+
+  private toggleDailyBlockedTime(date: Date): void {
+    const hasAnyBlockedTimeForDay = this.getHoursRange().some(hour => 
+      this.findBlockedTime(date, hour) !== undefined
+    );
+
+    if (hasAnyBlockedTimeForDay) {
+      this.removeDailyBlockedTime(date);
+    } else {
+      this.addDailyBlockedTime(date);
+    }
+  }
+
+  private addDailyBlockedTime(date: Date): void {
+    this.getHoursRange().forEach(hour => {
+      const existingBlockedTime = this.findBlockedTime(date, hour);
+      if (!existingBlockedTime) {
+        this.addBlockedTime(date, hour);
+      }
+    });
+  }
+
+  private removeDailyBlockedTime(date: Date): void {
+    const blockedTimesToRemove: BlockedTime[] = [];
+    
+    this.getHoursRange().forEach(hour => {
+      const existingBlockedTime = this.findBlockedTime(date, hour);
+      if (existingBlockedTime) {
+        blockedTimesToRemove.push(existingBlockedTime);
+      }
+    });
+
+    blockedTimesToRemove.forEach(blockedTime => {
+      this.removeBlockedTime(blockedTime);
+    });
+  }
+
+  saveBlockedTimes(): void {
+    const totalChanges = this.blockedTimesToCreate.length + this.blockedTimesToDelete.length;
+    
+    if (totalChanges === 0) {
+      this.snackBar.open('No hay cambios para guardar', 'Cerrar', {
+        duration: 2000,
+        panelClass: 'snackbar-info'
+      });
+      return;
+    }
+
+    let completedOperations = 0;
+    let hasErrors = false;
+
+    const checkCompletion = () => {
+      completedOperations++;
+      if (completedOperations === totalChanges) {
+        if (!hasErrors) {
+          this.snackBar.open('Cambios guardados exitosamente', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'snackbar-success'
+          });
+          // Limpiar arrays temporales
+          this.blockedTimesToCreate = [];
+          this.blockedTimesToDelete = [];
+        }
+      }
+    };
+
+    // Crear nuevos tiempos bloqueados
+    this.blockedTimesToCreate.forEach(blockedTime => {
+      const createDto = new CreateBlockedTimeDto();
+      createDto.userId = this.stylistId;
+      createDto.blockedDate = blockedTime.blockedDate;
+      createDto.startTime = blockedTime.startTime;
+      createDto.endTime = blockedTime.endTime;
+      createDto.reason = blockedTime.reason || 'Bloqueado desde calendario';
+
+      const subscription = this.blockedTimeService.createBlockedTime(createDto).subscribe({
+        next: (response) => {
+          // Actualizar el ID temporal con el ID real
+          const index = this.blockedTimes.findIndex(bt => bt.blockedTimeId === blockedTime.blockedTimeId);
+          if (index !== -1) {
+            this.blockedTimes[index] = response;
+          }
+          checkCompletion();
         },
         error: (error) => {
-          // Volver a agregar a la lista si falla la eliminación
-          this.blockedTimes.push(blockedTime);
-          
-          console.error('Error eliminando tiempo bloqueado:', error);
-          this.snackBar.open('Error al remover el tiempo bloqueado', 'Cerrar', {
+          hasErrors = true;
+          console.error('Error creando tiempo bloqueado:', error);
+          this.snackBar.open('Error al guardar algunos cambios', 'Cerrar', {
             duration: 3000,
             panelClass: 'snackbar-error'
           });
+          checkCompletion();
         }
       });
-      
+
       this.subscriptions.push(subscription);
-    }
+    });
+
+    // Eliminar tiempos bloqueados
+    this.blockedTimesToDelete.forEach(blockedTime => {
+      const subscription = this.blockedTimeService.deleteBlockedTime(blockedTime.blockedTimeId).subscribe({
+        next: () => {
+          checkCompletion();
+        },
+        error: (error) => {
+          hasErrors = true;
+          // Restaurar el tiempo bloqueado en caso de error
+          this.blockedTimes.push(blockedTime);
+          console.error('Error eliminando tiempo bloqueado:', error);
+          this.snackBar.open('Error al eliminar algunos tiempos bloqueados', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'snackbar-error'
+          });
+          checkCompletion();
+        }
+      });
+
+      this.subscriptions.push(subscription);
+    });
+  }
+
+  hasPendingChanges(): boolean {
+    return this.blockedTimesToCreate.length > 0 || this.blockedTimesToDelete.length > 0;
+  }
+
+  getPendingChangesCount(): number {
+    return this.blockedTimesToCreate.length + this.blockedTimesToDelete.length;
   }
 
   private generateTempId(): string {
@@ -267,7 +396,6 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.stylist = response;
         this.loading = false;
-        console.log('Información del estilista cargada:', this.stylist);
       },
       error: (error) => {
         this.loading = false;
@@ -286,12 +414,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     if (!this.stylistId) {
       return;
     }
-    
-    // Cargar tiempos bloqueados del servidor
     this.loadBlockedTimes();
-    
-    // TODO: Implementar carga de disponibilidad normal
-    console.log('Cargando disponibilidad para estilista:', this.stylistId);
   }
 
   private loadBlockedTimes(): void {
@@ -318,13 +441,12 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
 
   getStylistPhoto(): string {
     if (!this.stylist || !this.stylist.photo) {
-      return 'assets/images/users/user1.jpg'; // Imagen por defecto
+      return 'assets/images/users/user1.jpg'; 
     }
     return this.stylist.photo;
   }
 
   hasAvailability(date: Date, hour: number): boolean {
-    // TODO: Implementar lógica para verificar disponibilidad
     return false;
   }
 
@@ -337,7 +459,6 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
       
       if (!isSameDate) return false;
       
-      // Verificar si la hora está dentro del rango bloqueado
       const startHour = bt.startTime.hour;
       const endHour = bt.endTime.hour;
       

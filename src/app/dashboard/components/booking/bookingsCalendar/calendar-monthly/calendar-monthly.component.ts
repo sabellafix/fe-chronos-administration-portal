@@ -22,6 +22,8 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
   @Input('loading') loading: boolean = false;
   @Input('services') services: Service[] = [];
   @Input('stylists') stylists: User[] = [];
+  @Input('users') users: User[] = [];
+
   dateNow: Date = new Date(); 
   currentMonth: Date = new Date();
   monthDays: DateItem[][] = [];
@@ -252,22 +254,17 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
           booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());          
         });
 
-        this.userService.getUsers().subscribe({
-          next: (users: User[]) => {
-            let usersMap = new Map<string, User>();
-            users.forEach(user => {
-              usersMap.set(user.id, user);
-            });
-
-            this.bookings.forEach(booking => {
-              booking.user = usersMap.get(booking.supplierId) || new User();
-            });
-
-            this.filterBookings();
-            this.isLoadingBookings = false;
-
-          }
+        let usersMap = new Map<string, User>();
+        this.users.forEach(user => {
+          usersMap.set(user.id, user);
         });
+
+        this.bookings.forEach(booking => {
+          booking.user = usersMap.get(booking.supplierId) || new User();
+        });
+
+        this.filterBookings();
+        this.isLoadingBookings = false;
 
         
       },

@@ -27,6 +27,7 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
   @Input('loading') loading: boolean = false;
   @Input('services') services: Service[] = [];
   @Input('stylists') stylists: User[] = [];
+  @Input('users') users: User[] = [];
   dateNow: Date = new Date();
   bookings: Booking[] = [];
   bookingsFiltered: Booking[] = [];
@@ -189,28 +190,22 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
           booking.endTime = TimeUtils.stringToTimeOnly(booking.endTime.toString());  
           booking.bookingDate = DateUtils.stringToDateOnly(booking.bookingDate.toString());
         });
-        
-        this.userService.getUsers().subscribe({
-          next: (users: User[]) => {
-            this.allStylists = users;
-            let usersMap = new Map<string, User>();
-            users.forEach(user => {
-              usersMap.set(user.id, user);
-            });
 
-            this.bookings.forEach(booking => {
-              booking.user = usersMap.get(booking.supplierId) || new User();
-            });
-
-            this.groupBookingsByStylists();
-            this.filterBookings();
-            this.isLoadingBookings = false;
-          },
-          error: (error) => {
-            console.error('Error al cargar usuarios:', error);
-            this.isLoadingBookings = false;
-          }
+        this.allStylists = this.users;
+        let usersMap = new Map<string, User>();
+        this.users.forEach(user => {
+          usersMap.set(user.id, user);
         });
+
+        this.bookings.forEach(booking => {
+          booking.user = usersMap.get(booking.supplierId) || new User();
+        });
+
+        this.groupBookingsByStylists();
+        this.filterBookings();
+        this.isLoadingBookings = false;
+
+
       },
       error: (error) => {
         console.error('Error al cargar bookings del día:', error);

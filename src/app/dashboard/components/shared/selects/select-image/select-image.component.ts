@@ -41,26 +41,21 @@ export class SelectImageComponent implements OnChanges {
   }
 
   private initializeOptions(): void {
-    // Inicializar el estado selected de las opciones si no está definido
     this.options.forEach(option => {
       if (option.selected === undefined) {
         option.selected = false;
       }
     });
 
-    console.log('options', this.options);
     
-    // Actualizar opciones seleccionadas
     this.selectedOptions = this.options.filter(option => option.selected);
   }
 
   private setDefaultValues(): void {
-    // Solo establecer valores por defecto una vez y cuando hay opciones disponibles
     if (this.hasSetDefaults || this.options.length === 0) {
       return;
     }
 
-    // Si noInitialSelection está activado, cargar opciones sin selección inicial
     if (this.noInitialSelection) {
       this.clearAllSelections();
       this.updateSelectedOptions();
@@ -70,19 +65,16 @@ export class SelectImageComponent implements OnChanges {
 
     let hasDefaults = false;
 
-    // 1. Verificar si ya hay opciones seleccionadas manualmente
     const alreadySelected = this.options.some(option => option.selected === true);
     if (alreadySelected) {
       this.hasSetDefaults = true;
       return;
     }
 
-    // 2. Aplicar defaultValue si está definido
     if (this.defaultValue !== null) {
       hasDefaults = this.applyDefaultValue();
     }
     
-    // 3. Si no hay defaultValue, aplicar otras reglas por defecto
     if (!hasDefaults) {
       if (this.selectAllByDefault && this.multiSelect) {
         hasDefaults = this.applySelectAllDefault();
@@ -291,7 +283,6 @@ export class SelectImageComponent implements OnChanges {
   }
 
   private emitSelectionChange(): void {
-    console.log('selectedOptions', this.selectedOptions);
     this.selectionChange.emit([...this.selectedOptions]);
     
     if (!this.multiSelect && this.selectedOptions.length > 0) {

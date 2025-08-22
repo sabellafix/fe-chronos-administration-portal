@@ -19,8 +19,7 @@ export class TokenRefreshService {
    * Notifica que el token ha sido actualizado
    * Debe ser llamado después de un login exitoso
    */
-  notifyTokenUpdate(): void {
-    console.log('🔄 Notificando actualización de token...');
+  notifyTokenUpdate(): void {    
     this._tokenUpdated.next();
   }
 }

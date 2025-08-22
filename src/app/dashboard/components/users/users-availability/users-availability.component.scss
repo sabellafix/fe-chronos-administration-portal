@@ -8,7 +8,8 @@
     width: auto;
     height: 95px;
     background-color: #fff;
-    padding: 16px;
+    padding-top: 16px;
+    padding-bottom: 16px;
     -webkit-transition: all .2s;
     transition: all .2s;
     -webkit-box-shadow: 0 2px 3px rgba(26, 41, 60, .06);
@@ -156,7 +157,7 @@ body[data-sidebar-size=sm] .calend-header {
 
 // Filas de tiempo
 .time-row {
-    height: 80px;
+    height: 40px;
     border-bottom: 1px solid rgb(208, 213, 225);
 }
 
@@ -191,7 +192,7 @@ body[data-sidebar-size=sm] .calend-header {
     border-left: none;
     border-right: none;
     border-bottom: 1px solid rgb(208, 213, 225);
-    height: 80px;
+    height: 40px;
     text-align: center;
 }
 
@@ -215,7 +216,7 @@ body[data-sidebar-size=sm] .calend-header {
         rgba(220, 53, 69, 0.15) 0%, 
         rgba(248, 215, 218, 0.3) 50%, 
         rgba(220, 53, 69, 0.1) 100%);
-    border-left: 3px solid #dc3545;
+    // border-left: 3px solid #dc3545;
     position: relative;
 }
 
@@ -357,7 +358,7 @@ body[data-sidebar-size=sm] .calendar-weekly {
     }
     
     .day-header {
-        min-width: 80px;
+        min-width: 40px;
         padding: 6px 2px;
     }
     
@@ -428,14 +429,14 @@ body[data-sidebar-size=sm] .calendar-weekly {
     animation: pulse-success 2s infinite;
 }
 
-.day-cell.availability-cell.blocked-time-cell .blocked-indicator {
-    animation: pulse-danger 2s infinite;
-}
+// .day-cell.availability-cell.blocked-time-cell .blocked-indicator {
+//     animation: pulse-danger 2s infinite;
+// }
 
 // Indicadores específicos para tiempo bloqueado
 .day-cell.availability-cell.blocked-time-cell .blocked-indicator i {
     color: #dc3545 !important;
-    font-weight: bold;
+    font-weight: 300;
     text-shadow: 0 0 2px rgba(220, 53, 69, 0.3);
 }
 

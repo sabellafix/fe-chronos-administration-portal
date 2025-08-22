@@ -84,8 +84,7 @@ export class CardBookingComponent {
   onExpand(event: Event): void {
     event.stopPropagation();
     this.hideDropdownMenu();
-    // TODO: Implementar lógica de desplegar
-    console.log('Desplegar booking:', this.booking);
+    // TODO: Implementar lógica de desplegar    
   }
 
   /**
@@ -95,7 +94,6 @@ export class CardBookingComponent {
     event.stopPropagation();
     this.hideDropdownMenu();
     // TODO: Implementar lógica de editar
-    console.log('Editar booking:', this.booking);
   }
 
   /**
@@ -105,7 +103,6 @@ export class CardBookingComponent {
     event.stopPropagation();
     this.hideDropdownMenu();
     // TODO: Implementar lógica de detalle
-    console.log('Ver detalle booking:', this.booking);
   }
 
   /**
@@ -115,6 +112,5 @@ export class CardBookingComponent {
     event.stopPropagation();
     this.hideDropdownMenu();
     // TODO: Implementar lógica de eliminar
-    console.log('Eliminar booking:', this.booking);
   }
 }

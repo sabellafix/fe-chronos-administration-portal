@@ -1,6 +1,6 @@
 
 <div class="calend-header" id="calendar-header">
-  <div class="page-content" style="padding-top: 16px;">
+  <div style="padding-top: 16px;">
       <div class="container-fluid">
           <div class="row">
             <div class="col-xl-4">
@@ -33,7 +33,7 @@
                 <div *ngIf="loading" class="mt-1">
                     <ngx-skeleton-loader [count]="1" [theme]="{ 'border-radius': '16px', height: '48px', margin: '0px 0px 10px 0px', 'background-color': '#FFFFFFF' }"></ngx-skeleton-loader>
                 </div>
-                <div *ngIf="!loading && stylist" class="d-flex align-items-center justify-content-end mt-2">
+                <div *ngIf="!loading && stylist" class="d-flex align-items-center justify-content-end mt-2 animated fadeIn fast">
                     <div class="stylist-info me-3 text-end">
                         <h5 class="mb-0 stylist-name">{{ getStylistFullName() }}</h5>
                         <small class="text-muted">Stylist</small>
@@ -41,6 +41,19 @@
                     <div class="stylist-avatar">
                       <img [src]="getStylistPhoto()" [alt]="getStylistFullName()" class="rounded-circle stylist-photo">
                     </div>
+                    <button type="button" 
+                            (click)="saveBlockedTimes()"
+                            [disabled]="!hasPendingChanges()"
+                            [ngClass]="{
+                              'btn-success': hasPendingChanges(),
+                              'btn-secondary': !hasPendingChanges()
+                            }"
+                            class="btn w-sm bg-gradient waves-effect waves-light ms-4"> 
+                      Save
+                      <span *ngIf="hasPendingChanges()" >
+                        *
+                      </span>
+                    </button>
                 </div>
             </div>
           </div>
@@ -58,8 +71,10 @@
               <th class="time-header">
               </th>
               <th class="day-header" *ngFor="let date of dates">
-                <div class="day-header-content">
-                  <div class="card w-100 bg-light p-1 pt-2 card-date text-center" [ngClass]="{'today': date.isToday}">
+                <div class="day-header-content"
+                     [ngClass]="{'clickable-day': tabActive === 'Blocked'}"
+                     style="cursor: pointer;">
+                  <div  (click)="onDayHeaderClick(date.date, $event)"  class="card w-100 bg-light p-1 pt-2 card-date text-center" [ngClass]="{'today': date.isToday}">
                     <div class="card-date-day">
                       <p class="font-size-14 fw-normal mb-1 capitalize">
                         {{ date.date.toLocaleString('en-US', { weekday: 'long' }) }}
@@ -102,7 +117,10 @@
           
           <tbody>
             <tr class="time-row" *ngFor="let hour of getHoursRange()">
-              <td class="time-cell">
+              <td class="time-cell" 
+                  (click)="onHourCellClick(hour, $event)"
+                  [ngClass]="{'clickable-hour': tabActive === 'Blocked'}"
+                  style="cursor: pointer;">
                 <span class="time-label fw-semibold">{{ formatHour(hour.toString()) }}</span>
               </td>
               
@@ -121,13 +139,13 @@
                   <div class="availability-indicator" 
                        *ngIf="hasAvailability(date.date, hour)"
                        title="Available">
-                    <i class="bx bx-check-circle text-success"></i>
+                    <i class="bx bx-check text-success"></i>
                   </div>
                   
                   <div class="blocked-indicator" 
                        *ngIf="isBlocked(date.date, hour)"
                        title="Blocked">
-                    <i class="bx bx-x-circle text-danger"></i>
+                    <i class="bx bx-x text-danger"></i>
                   </div>
                   
                   <div class="neutral-indicator" 
