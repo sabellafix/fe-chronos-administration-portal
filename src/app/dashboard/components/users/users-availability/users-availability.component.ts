@@ -4,10 +4,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DateItem } from '../../../../core/models/bussiness/calendar/dateItem';
 import { Availability, DateOnly, TimeOnly } from '../../../../core/models/bussiness/availability';
 import { BlockedTime } from '../../../../core/models/bussiness/blocked-time';
-import { CreateBlockedTimeDto } from '../../../../core/models/bussiness/create-dtos';
+import { CreateBlockedTimeDto, CreateAvailabilityDto } from '../../../../core/models/bussiness/create-dtos';
 import { User } from '../../../../core/models/bussiness/user';
 import { UserService } from '../../../../core/services/http/user.service';
 import { MockBlockedTimeService } from '../../../../core/services/mock/mock-blocked-time.service';
+import { MockAvailabilityService } from '../../../../core/services/mock/mock-availability.service';
 import { Subscription } from 'rxjs';
 
 
@@ -36,6 +37,10 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
   blockedTimesToCreate: BlockedTime[] = [];
   blockedTimesToDelete: BlockedTime[] = [];
   
+  // Arrays para manejar cambios temporales de availabilities
+  availabilitiesToCreate: Availability[] = [];
+  availabilitiesToDelete: Availability[] = [];
+  
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -43,6 +48,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private userService: UserService,
     private blockedTimeService: MockBlockedTimeService,
+    private availabilityService: MockAvailabilityService,
     private router: Router
   ) {
     this.route.params.subscribe(params => {
@@ -127,6 +133,8 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     
     if (this.tabActive === 'Blocked') {
       this.toggleWeeklyBlockedTime(hour);
+    } else if (this.tabActive === 'Available') {
+      this.toggleWeeklyAvailability(hour);
     }
   }
 
@@ -136,13 +144,16 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     
     if (this.tabActive === 'Blocked') {
       this.toggleDailyBlockedTime(date);
+    } else if (this.tabActive === 'Available') {
+      this.toggleDailyAvailability(date);
     }
   }
 
   private toggleIndividualAvailability(date: Date, hour: number): void {
     if (this.tabActive === 'Blocked') {
       this.toggleBlockedTime(date, hour);
-    } else {
+    } else if (this.tabActive === 'Available') {
+      this.toggleAvailability(date, hour);
     }
   }
 
@@ -224,6 +235,82 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Métodos para gestionar Availability
+  private toggleAvailability(date: Date, hour: number): void {
+    const existingAvailability = this.findAvailability(date, hour);
+    
+    if (existingAvailability) {
+      this.removeAvailability(existingAvailability);
+    } else {
+      this.addAvailability(date, hour);
+    }
+  }
+
+  private findAvailability(date: Date, hour: number): Availability | undefined {
+    const dayOfWeek = this.getDayOfWeekNumber(date);
+    return this.availabilities.find(av => {
+      return av.dayOfWeek === dayOfWeek && 
+             av.startTime.hour === hour && 
+             av.isActive;
+    });
+  }
+
+  private addAvailability(date: Date, hour: number): void {
+    const newAvailability = new Availability();
+    newAvailability.availabilityId = this.generateTempId();
+    newAvailability.providerId = this.stylistId;
+    newAvailability.dayOfWeek = this.getDayOfWeekNumber(date);
+    
+    newAvailability.startTime = new TimeOnly();
+    newAvailability.startTime.hour = hour;
+    newAvailability.startTime.minute = 0;
+    
+    newAvailability.endTime = new TimeOnly();
+    newAvailability.endTime.hour = hour;
+    newAvailability.endTime.minute = 59;
+    
+    newAvailability.isRecurring = true;
+    newAvailability.effectiveFromDate = new DateOnly();
+    newAvailability.effectiveFromDate.year = date.getFullYear();
+    newAvailability.effectiveFromDate.month = date.getMonth() + 1;
+    newAvailability.effectiveFromDate.day = date.getDate();
+    
+    // Fecha efectiva hasta (un año adelante por defecto)
+    const futureDate = new Date(date);
+    futureDate.setFullYear(futureDate.getFullYear() + 1);
+    newAvailability.effectiveToDate = new DateOnly();
+    newAvailability.effectiveToDate.year = futureDate.getFullYear();
+    newAvailability.effectiveToDate.month = futureDate.getMonth() + 1;
+    newAvailability.effectiveToDate.day = futureDate.getDate();
+    
+    newAvailability.isActive = true;
+    newAvailability.createdAt = new Date().toISOString();
+    newAvailability.updatedAt = new Date().toISOString();
+    
+    // Solo actualizar lista local
+    this.availabilities.push(newAvailability);
+    this.availabilitiesToCreate.push(newAvailability);
+  }
+
+  private removeAvailability(availability: Availability): void {
+    // Remover de la lista local
+    const index = this.availabilities.findIndex(av => av.availabilityId === availability.availabilityId);
+    if (index !== -1) {
+      this.availabilities.splice(index, 1);
+    }
+    
+    // Si es una availability temporal (recién creada), solo removerla de la lista de creación
+    if (availability.availabilityId.startsWith('temp-')) {
+      const createIndex = this.availabilitiesToCreate.findIndex(av => av.availabilityId === availability.availabilityId);
+      if (createIndex !== -1) {
+        this.availabilitiesToCreate.splice(createIndex, 1);
+      }
+    } else {
+      // Si es una availability existente, agregarla a la lista de eliminación
+      this.availabilitiesToDelete.push(availability);
+    }
+  }
+
   private addWeeklyBlockedTime(hour: number): void {
     this.dates.forEach(dateItem => {
       const existingBlockedTime = this.findBlockedTime(dateItem.date, hour);
@@ -284,8 +371,82 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Métodos para gestión semanal y diaria de Availability
+  private toggleWeeklyAvailability(hour: number): void {
+    const hasAnyAvailabilityForHour = this.dates.some(dateItem => 
+      this.findAvailability(dateItem.date, hour) !== undefined
+    );
+
+    if (hasAnyAvailabilityForHour) {
+      this.removeWeeklyAvailability(hour);
+    } else {
+      this.addWeeklyAvailability(hour);
+    }
+  }
+
+  private addWeeklyAvailability(hour: number): void {
+    this.dates.forEach(dateItem => {
+      const existingAvailability = this.findAvailability(dateItem.date, hour);
+      if (!existingAvailability) {
+        this.addAvailability(dateItem.date, hour);
+      }
+    });
+  }
+
+  private removeWeeklyAvailability(hour: number): void {
+    const availabilitiesToRemove: Availability[] = [];
+    
+    this.dates.forEach(dateItem => {
+      const existingAvailability = this.findAvailability(dateItem.date, hour);
+      if (existingAvailability) {
+        availabilitiesToRemove.push(existingAvailability);
+      }
+    });
+
+    availabilitiesToRemove.forEach(availability => {
+      this.removeAvailability(availability);
+    });
+  }
+
+  private toggleDailyAvailability(date: Date): void {
+    const hasAnyAvailabilityForDay = this.getHoursRange().some(hour => 
+      this.findAvailability(date, hour) !== undefined
+    );
+
+    if (hasAnyAvailabilityForDay) {
+      this.removeDailyAvailability(date);
+    } else {
+      this.addDailyAvailability(date);
+    }
+  }
+
+  private addDailyAvailability(date: Date): void {
+    this.getHoursRange().forEach(hour => {
+      const existingAvailability = this.findAvailability(date, hour);
+      if (!existingAvailability) {
+        this.addAvailability(date, hour);
+      }
+    });
+  }
+
+  private removeDailyAvailability(date: Date): void {
+    const availabilitiesToRemove: Availability[] = [];
+    
+    this.getHoursRange().forEach(hour => {
+      const existingAvailability = this.findAvailability(date, hour);
+      if (existingAvailability) {
+        availabilitiesToRemove.push(existingAvailability);
+      }
+    });
+
+    availabilitiesToRemove.forEach(availability => {
+      this.removeAvailability(availability);
+    });
+  }
+
   saveBlockedTimes(): void {
-    const totalChanges = this.blockedTimesToCreate.length + this.blockedTimesToDelete.length;
+    const totalChanges = this.blockedTimesToCreate.length + this.blockedTimesToDelete.length + 
+                         this.availabilitiesToCreate.length + this.availabilitiesToDelete.length;
     
     if (totalChanges === 0) {
       this.snackBar.open('No hay cambios para guardar', 'Cerrar', {
@@ -309,6 +470,8 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
           // Limpiar arrays temporales
           this.blockedTimesToCreate = [];
           this.blockedTimesToDelete = [];
+          this.availabilitiesToCreate = [];
+          this.availabilitiesToDelete = [];
         }
       }
     };
@@ -363,17 +526,77 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
           checkCompletion();
         }
       });
+      
+      this.subscriptions.push(subscription);
+    });
+
+    // Crear nuevas availabilities usando MockAvailabilityService
+    this.availabilitiesToCreate.forEach(availability => {
+      const createDto = new CreateAvailabilityDto();
+      createDto.dayOfWeek = availability.dayOfWeek;
+      createDto.startTime = availability.startTime;
+      createDto.endTime = availability.endTime;
+      createDto.isRecurring = availability.isRecurring;
+      createDto.effectiveFromDate = availability.effectiveFromDate;
+      createDto.effectiveToDate = availability.effectiveToDate;
+      createDto.isActive = availability.isActive;
+
+      const subscription = this.availabilityService.createAvailability(createDto, this.stylistId).subscribe({
+        next: (response: Availability) => {
+          // Actualizar el ID temporal con el ID real del mock service
+          const index = this.availabilities.findIndex(av => av.availabilityId === availability.availabilityId);
+          if (index !== -1) {
+            this.availabilities[index] = response;
+          }
+          console.log('Availability creada en mock storage:', response);
+          checkCompletion();
+        },
+        error: (error: any) => {
+          hasErrors = true;
+          console.error('Error creando availability en mock storage:', error);
+          this.snackBar.open('Error al guardar algunas disponibilidades', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'snackbar-error'
+          });
+          checkCompletion();
+        }
+      });
+
+      this.subscriptions.push(subscription);
+    });
+
+    // Eliminar availabilities usando MockAvailabilityService
+    this.availabilitiesToDelete.forEach(availability => {
+      const subscription = this.availabilityService.deleteAvailability(availability.availabilityId).subscribe({
+        next: () => {
+          console.log('Availability eliminada del mock storage:', availability.availabilityId);
+          checkCompletion();
+        },
+        error: (error: any) => {
+          hasErrors = true;
+          // Restaurar la availability en caso de error
+          this.availabilities.push(availability);
+          console.error('Error eliminando availability del mock storage:', error);
+          this.snackBar.open('Error al eliminar algunas disponibilidades', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'snackbar-error'
+          });
+          checkCompletion();
+        }
+      });
 
       this.subscriptions.push(subscription);
     });
   }
 
   hasPendingChanges(): boolean {
-    return this.blockedTimesToCreate.length > 0 || this.blockedTimesToDelete.length > 0;
+    return this.blockedTimesToCreate.length > 0 || this.blockedTimesToDelete.length > 0 ||
+           this.availabilitiesToCreate.length > 0 || this.availabilitiesToDelete.length > 0;
   }
 
   getPendingChangesCount(): number {
-    return this.blockedTimesToCreate.length + this.blockedTimesToDelete.length;
+    return this.blockedTimesToCreate.length + this.blockedTimesToDelete.length +
+           this.availabilitiesToCreate.length + this.availabilitiesToDelete.length;
   }
 
   private generateTempId(): string {
@@ -415,6 +638,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
       return;
     }
     this.loadBlockedTimes();
+    this.loadAvailabilities();
   }
 
   private loadBlockedTimes(): void {
@@ -425,6 +649,23 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error cargando tiempos bloqueados:', error);
         this.snackBar.open('Error al cargar tiempos bloqueados', 'Cerrar', {
+          duration: 3000,
+          panelClass: 'snackbar-error'
+        });
+      }
+    });
+    
+    this.subscriptions.push(subscription);
+  }
+
+  private loadAvailabilities(): void {
+    const subscription = this.availabilityService.getAvailabilitiesByProvider(this.stylistId).subscribe({
+      next: (availabilities: Availability[]) => {
+        this.availabilities = availabilities.filter((av: Availability) => av.isActive);
+      },
+      error: (error: any) => {
+        console.error('Error cargando availabilities:', error);
+        this.snackBar.open('Error al cargar disponibilidades', 'Cerrar', {
           duration: 3000,
           panelClass: 'snackbar-error'
         });
@@ -447,7 +688,13 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
   }
 
   hasAvailability(date: Date, hour: number): boolean {
-    return false;
+    const dayOfWeek = this.getDayOfWeekNumber(date);
+    return this.availabilities.some(av => {
+      if (!av.isActive) return false;
+      
+      return av.dayOfWeek === dayOfWeek && 
+             av.startTime.hour === hour;
+    });
   }
 
   isBlocked(date: Date, hour: number): boolean {
@@ -494,6 +741,17 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
 
   return(){
     this.router.navigate([`/users`]);
+  }
+
+  clearAvailabilities(){
+    this.availabilitiesToDelete = this.availabilities;
+    this.availabilitiesToCreate = [];
+    this.availabilities = [];
+    this.blockedTimesToDelete = this.blockedTimes;
+    this.blockedTimesToCreate = [];
+    this.blockedTimes = [];
+    this.tabActive = 'Available';
+    // this.loadStylistAvailability();
   }
 
 }

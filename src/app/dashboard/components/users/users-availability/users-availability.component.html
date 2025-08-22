@@ -7,6 +7,9 @@
               <div class="d-flex flex-wrap gap-2 justify-content-start align-items-center mt-2">
                 <button (click)="return()" type="button" class="btn btn-light w-sm bg-gradient waves-effect waves-light">Return</button>
                 <h4 class="card-title"> <i class="bx bx-calendar text-muted font-size-18 me-2"></i> {{titleComponent}}</h4>
+                <button type="button" (click)="clearAvailabilities()" class="btn w-sm bg-light text-dark waves-effect waves-light ms-4"> 
+                  Clear all
+                </button>
             </div>
           </div>
               <div class="col-xl-4">
@@ -41,6 +44,7 @@
                     <div class="stylist-avatar">
                       <img [src]="getStylistPhoto()" [alt]="getStylistFullName()" class="rounded-circle stylist-photo">
                     </div>
+                    
                     <button type="button" 
                             (click)="saveBlockedTimes()"
                             [disabled]="!hasPendingChanges()"
@@ -54,6 +58,7 @@
                         *
                       </span>
                     </button>
+                   
                 </div>
             </div>
           </div>
@@ -72,7 +77,7 @@
               </th>
               <th class="day-header" *ngFor="let date of dates">
                 <div class="day-header-content"
-                     [ngClass]="{'clickable-day': tabActive === 'Blocked'}"
+                     [ngClass]="{'clickable-day': tabActive === 'Blocked' || tabActive === 'Available'}"
                      style="cursor: pointer;">
                   <div  (click)="onDayHeaderClick(date.date, $event)"  class="card w-100 bg-light p-1 pt-2 card-date text-center" [ngClass]="{'today': date.isToday}">
                     <div class="card-date-day">
@@ -119,7 +124,7 @@
             <tr class="time-row" *ngFor="let hour of getHoursRange()">
               <td class="time-cell" 
                   (click)="onHourCellClick(hour, $event)"
-                  [ngClass]="{'clickable-hour': tabActive === 'Blocked'}"
+                  [ngClass]="{'clickable-hour': tabActive === 'Blocked' || tabActive === 'Available'}"
                   style="cursor: pointer;">
                 <span class="time-label fw-semibold">{{ formatHour(hour.toString()) }}</span>
               </td>
@@ -150,9 +155,9 @@
                   
                   <div class="neutral-indicator" 
                        *ngIf="!hasAvailability(date.date, hour) && !isBlocked(date.date, hour)"
-                       [title]="tabActive === 'Blocked' ? 'Click para bloquear tiempo' : 'Click para definir disponibilidad'">
+                       [title]="tabActive === 'Blocked' ? 'Click para bloquear tiempo' : tabActive === 'Available' ? 'Click para agregar disponibilidad' : 'Sin definir'">
                     <i class="bx" 
-                       [ngClass]="tabActive === 'Blocked' ? 'bx-block text-danger' : 'bx-plus text-muted'"></i>
+                       [ngClass]="tabActive === 'Blocked' ? 'bx-block text-danger' : tabActive === 'Available' ? 'bx-plus text-success' : 'bx-plus text-muted'"></i>
                   </div>
                 </div>
               </td>

@@ -203,7 +203,7 @@ body[data-sidebar-size=sm] .calend-header {
 // Estados de disponibilidad
 .day-cell.availability-cell.available-time-cell {
     background-color: rgba(40, 167, 69, 0.1);
-    border-left: 3px solid #28a745;
+    // border-left: 3px solid #28a745;
 }
 
 .day-cell.availability-cell.available-time-cell:hover {
@@ -425,9 +425,9 @@ body[data-sidebar-size=sm] .calendar-weekly {
 }
 
 // Mejoras visuales para estados activos
-.day-cell.availability-cell.available-time-cell .availability-indicator {
-    animation: pulse-success 2s infinite;
-}
+// .day-cell.availability-cell.available-time-cell .availability-indicator {
+//     animation: pulse-success 2s infinite;
+// }
 
 // .day-cell.availability-cell.blocked-time-cell .blocked-indicator {
 //     animation: pulse-danger 2s infinite;
