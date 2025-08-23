@@ -33,11 +33,9 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
   availabilities: Availability[] = [];
   blockedTimes: BlockedTime[] = [];
   
-  // Arrays para manejar cambios temporales
   blockedTimesToCreate: BlockedTime[] = [];
   blockedTimesToDelete: BlockedTime[] = [];
   
-  // Arrays para manejar cambios temporales de availabilities
   availabilitiesToCreate: Availability[] = [];
   availabilitiesToDelete: Availability[] = [];
   
@@ -151,8 +149,16 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
 
   private toggleIndividualAvailability(date: Date, hour: number): void {
     if (this.tabActive === 'Blocked') {
+      const existingAvailability = this.findAvailability(date, hour);
+      if (existingAvailability) {
+        this.removeAvailability(existingAvailability);
+      }
       this.toggleBlockedTime(date, hour);
     } else if (this.tabActive === 'Available') {
+      const existingBlockedTime = this.findBlockedTime(date, hour);
+      if (existingBlockedTime) {
+        this.removeBlockedTime(existingBlockedTime);
+      }
       this.toggleAvailability(date, hour);
     }
   }
@@ -211,31 +217,26 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     newBlockedTime.isActive = true;
     newBlockedTime.createdAt = new Date().toISOString();
     
-    // Solo actualizar lista local
     this.blockedTimes.push(newBlockedTime);
     this.blockedTimesToCreate.push(newBlockedTime);
   }
 
   private removeBlockedTime(blockedTime: BlockedTime): void {
-    // Remover de la lista local
     const index = this.blockedTimes.findIndex(bt => bt.blockedTimeId === blockedTime.blockedTimeId);
     if (index !== -1) {
       this.blockedTimes.splice(index, 1);
     }
     
-    // Si es un tiempo bloqueado temporal (recién creado), solo removerlo de la lista de creación
     if (blockedTime.blockedTimeId.startsWith('temp-')) {
       const createIndex = this.blockedTimesToCreate.findIndex(bt => bt.blockedTimeId === blockedTime.blockedTimeId);
       if (createIndex !== -1) {
         this.blockedTimesToCreate.splice(createIndex, 1);
       }
     } else {
-      // Si es un tiempo bloqueado existente, agregarlo a la lista de eliminación
       this.blockedTimesToDelete.push(blockedTime);
     }
   }
 
-  // Métodos para gestionar Availability
   private toggleAvailability(date: Date, hour: number): void {
     const existingAvailability = this.findAvailability(date, hour);
     
@@ -275,7 +276,6 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     newAvailability.effectiveFromDate.month = date.getMonth() + 1;
     newAvailability.effectiveFromDate.day = date.getDate();
     
-    // Fecha efectiva hasta (un año adelante por defecto)
     const futureDate = new Date(date);
     futureDate.setFullYear(futureDate.getFullYear() + 1);
     newAvailability.effectiveToDate = new DateOnly();
@@ -287,26 +287,22 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     newAvailability.createdAt = new Date().toISOString();
     newAvailability.updatedAt = new Date().toISOString();
     
-    // Solo actualizar lista local
     this.availabilities.push(newAvailability);
     this.availabilitiesToCreate.push(newAvailability);
   }
 
   private removeAvailability(availability: Availability): void {
-    // Remover de la lista local
     const index = this.availabilities.findIndex(av => av.availabilityId === availability.availabilityId);
     if (index !== -1) {
       this.availabilities.splice(index, 1);
     }
     
-    // Si es una availability temporal (recién creada), solo removerla de la lista de creación
     if (availability.availabilityId.startsWith('temp-')) {
       const createIndex = this.availabilitiesToCreate.findIndex(av => av.availabilityId === availability.availabilityId);
       if (createIndex !== -1) {
         this.availabilitiesToCreate.splice(createIndex, 1);
       }
     } else {
-      // Si es una availability existente, agregarla a la lista de eliminación
       this.availabilitiesToDelete.push(availability);
     }
   }
@@ -315,6 +311,10 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     this.dates.forEach(dateItem => {
       const existingBlockedTime = this.findBlockedTime(dateItem.date, hour);
       if (!existingBlockedTime) {
+        const existingAvailability = this.findAvailability(dateItem.date, hour);
+        if (existingAvailability) {
+          this.removeAvailability(existingAvailability);
+        }
         this.addBlockedTime(dateItem.date, hour);
       }
     });
@@ -351,6 +351,10 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     this.getHoursRange().forEach(hour => {
       const existingBlockedTime = this.findBlockedTime(date, hour);
       if (!existingBlockedTime) {
+        const existingAvailability = this.findAvailability(date, hour);
+        if (existingAvailability) {
+          this.removeAvailability(existingAvailability);
+        }
         this.addBlockedTime(date, hour);
       }
     });
@@ -371,7 +375,6 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Métodos para gestión semanal y diaria de Availability
   private toggleWeeklyAvailability(hour: number): void {
     const hasAnyAvailabilityForHour = this.dates.some(dateItem => 
       this.findAvailability(dateItem.date, hour) !== undefined
@@ -388,6 +391,10 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     this.dates.forEach(dateItem => {
       const existingAvailability = this.findAvailability(dateItem.date, hour);
       if (!existingAvailability) {
+        const existingBlockedTime = this.findBlockedTime(dateItem.date, hour);
+        if (existingBlockedTime) {
+          this.removeBlockedTime(existingBlockedTime);
+        }
         this.addAvailability(dateItem.date, hour);
       }
     });
@@ -424,6 +431,10 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     this.getHoursRange().forEach(hour => {
       const existingAvailability = this.findAvailability(date, hour);
       if (!existingAvailability) {
+        const existingBlockedTime = this.findBlockedTime(date, hour);
+        if (existingBlockedTime) {
+          this.removeBlockedTime(existingBlockedTime);
+        }
         this.addAvailability(date, hour);
       }
     });
@@ -449,7 +460,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
                          this.availabilitiesToCreate.length + this.availabilitiesToDelete.length;
     
     if (totalChanges === 0) {
-      this.snackBar.open('No hay cambios para guardar', 'Cerrar', {
+      this.snackBar.open('No changes to save', 'Cerrar', {
         duration: 2000,
         panelClass: 'snackbar-info'
       });
@@ -463,11 +474,10 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
       completedOperations++;
       if (completedOperations === totalChanges) {
         if (!hasErrors) {
-          this.snackBar.open('Cambios guardados exitosamente', 'Cerrar', {
+          this.snackBar.open('Changes saved successfully', 'Cerrar', {
             duration: 3000,
             panelClass: 'snackbar-success'
           });
-          // Limpiar arrays temporales
           this.blockedTimesToCreate = [];
           this.blockedTimesToDelete = [];
           this.availabilitiesToCreate = [];
@@ -476,7 +486,6 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
       }
     };
 
-    // Crear nuevos tiempos bloqueados
     this.blockedTimesToCreate.forEach(blockedTime => {
       const createDto = new CreateBlockedTimeDto();
       createDto.userId = this.stylistId;
@@ -487,7 +496,6 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
 
       const subscription = this.blockedTimeService.createBlockedTime(createDto).subscribe({
         next: (response) => {
-          // Actualizar el ID temporal con el ID real
           const index = this.blockedTimes.findIndex(bt => bt.blockedTimeId === blockedTime.blockedTimeId);
           if (index !== -1) {
             this.blockedTimes[index] = response;
@@ -496,8 +504,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           hasErrors = true;
-          console.error('Error creando tiempo bloqueado:', error);
-          this.snackBar.open('Error al guardar algunos cambios', 'Cerrar', {
+          this.snackBar.open('Error saving some changes', 'Cerrar', {
             duration: 3000,
             panelClass: 'snackbar-error'
           });
@@ -508,7 +515,6 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
       this.subscriptions.push(subscription);
     });
 
-    // Eliminar tiempos bloqueados
     this.blockedTimesToDelete.forEach(blockedTime => {
       const subscription = this.blockedTimeService.deleteBlockedTime(blockedTime.blockedTimeId).subscribe({
         next: () => {
@@ -516,10 +522,8 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           hasErrors = true;
-          // Restaurar el tiempo bloqueado en caso de error
           this.blockedTimes.push(blockedTime);
-          console.error('Error eliminando tiempo bloqueado:', error);
-          this.snackBar.open('Error al eliminar algunos tiempos bloqueados', 'Cerrar', {
+          this.snackBar.open('Error deleting some blocked times', 'Cerrar', {
             duration: 3000,
             panelClass: 'snackbar-error'
           });
@@ -530,7 +534,6 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
       this.subscriptions.push(subscription);
     });
 
-    // Crear nuevas availabilities usando MockAvailabilityService
     this.availabilitiesToCreate.forEach(availability => {
       const createDto = new CreateAvailabilityDto();
       createDto.dayOfWeek = availability.dayOfWeek;
@@ -543,18 +546,15 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
 
       const subscription = this.availabilityService.createAvailability(createDto, this.stylistId).subscribe({
         next: (response: Availability) => {
-          // Actualizar el ID temporal con el ID real del mock service
           const index = this.availabilities.findIndex(av => av.availabilityId === availability.availabilityId);
           if (index !== -1) {
             this.availabilities[index] = response;
           }
-          console.log('Availability creada en mock storage:', response);
           checkCompletion();
         },
         error: (error: any) => {
           hasErrors = true;
-          console.error('Error creando availability en mock storage:', error);
-          this.snackBar.open('Error al guardar algunas disponibilidades', 'Cerrar', {
+          this.snackBar.open('Error saving some availabilities', 'Cerrar', {
             duration: 3000,
             panelClass: 'snackbar-error'
           });
@@ -565,19 +565,15 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
       this.subscriptions.push(subscription);
     });
 
-    // Eliminar availabilities usando MockAvailabilityService
     this.availabilitiesToDelete.forEach(availability => {
       const subscription = this.availabilityService.deleteAvailability(availability.availabilityId).subscribe({
         next: () => {
-          console.log('Availability eliminada del mock storage:', availability.availabilityId);
           checkCompletion();
         },
         error: (error: any) => {
           hasErrors = true;
-          // Restaurar la availability en caso de error
           this.availabilities.push(availability);
-          console.error('Error eliminando availability del mock storage:', error);
-          this.snackBar.open('Error al eliminar algunas disponibilidades', 'Cerrar', {
+          this.snackBar.open('Error deleting some availabilities', 'Cerrar', {
             duration: 3000,
             panelClass: 'snackbar-error'
           });
@@ -606,7 +602,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
   private loadStylistInfo(): void {
     if (!this.stylistId) {
       this.loading = false;
-      this.snackBar.open('ID del estilista no encontrado', 'Cerrar', {
+      this.snackBar.open('Stylist ID not found', 'Cerrar', {
         duration: 3000,
         panelClass: 'snackbar-error'
       });
@@ -622,8 +618,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.loading = false;
-        console.error('Error cargando información del estilista:', error);
-        this.snackBar.open('Error al cargar la información del estilista', 'Cerrar', {
+        this.snackBar.open('Error loading stylist information', 'Cerrar', {
           duration: 3000,
           panelClass: 'snackbar-error'
         });
@@ -647,8 +642,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
         this.blockedTimes = blockedTimes.filter(bt => bt.isActive);
       },
       error: (error) => {
-        console.error('Error cargando tiempos bloqueados:', error);
-        this.snackBar.open('Error al cargar tiempos bloqueados', 'Cerrar', {
+        this.snackBar.open('Error loading blocked times', 'Cerrar', {
           duration: 3000,
           panelClass: 'snackbar-error'
         });
@@ -664,8 +658,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
         this.availabilities = availabilities.filter((av: Availability) => av.isActive);
       },
       error: (error: any) => {
-        console.error('Error cargando availabilities:', error);
-        this.snackBar.open('Error al cargar disponibilidades', 'Cerrar', {
+        this.snackBar.open('Error loading availabilities', 'Cerrar', {
           duration: 3000,
           panelClass: 'snackbar-error'
         });
@@ -719,6 +712,32 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
   }
 
 
+  private hasConflict(date: Date, hour: number): boolean {
+    const hasAvailability = this.hasAvailability(date, hour);
+    const hasBlockedTime = this.isBlocked(date, hour);
+    return hasAvailability && hasBlockedTime;
+  }
+
+
+  private resolveConflict(date: Date, hour: number): void {
+    if (!this.hasConflict(date, hour)) {
+      return;
+    }
+
+    if (this.tabActive === 'Blocked') {
+      const existingAvailability = this.findAvailability(date, hour);
+      if (existingAvailability) {
+        this.removeAvailability(existingAvailability);
+      }
+    } else if (this.tabActive === 'Available') {
+      const existingBlockedTime = this.findBlockedTime(date, hour);
+      if (existingBlockedTime) {
+        this.removeBlockedTime(existingBlockedTime);
+      }
+    }
+  }
+
+
   previousWeek(): void {
     this.currentDate.setDate(this.currentDate.getDate() - 7);
     this.updateDates();
@@ -743,15 +762,17 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     this.router.navigate([`/users`]);
   }
 
-  clearAvailabilities(){
-    this.availabilitiesToDelete = this.availabilities;
+  clearAvailabilities(): void {
+    this.availabilitiesToDelete = [...this.availabilities];
     this.availabilitiesToCreate = [];
     this.availabilities = [];
-    this.blockedTimesToDelete = this.blockedTimes;
+    
+    this.blockedTimesToDelete = [...this.blockedTimes];
     this.blockedTimesToCreate = [];
     this.blockedTimes = [];
+    
     this.tabActive = 'Available';
-    // this.loadStylistAvailability();
+
   }
 
 }
