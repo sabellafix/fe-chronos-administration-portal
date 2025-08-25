@@ -84,7 +84,7 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
     forkJoin([
       this.serviceService.getAllServices(),
       this.userService.getUsers(),
-      this.customerService.getCustomers()
+      this.customerService.getAllCustomers()
     ]).subscribe(([services, stylists, customers]) => {
       this.services = services;
       this.stylists = stylists;

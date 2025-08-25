@@ -173,7 +173,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   getCustomers(): void {
-    this.customerService.getCustomers().subscribe({
+    this.customerService.getAllCustomers().subscribe({
       next: (response: Customer[]) => {
         this.customers = response;
         this.customerOptions = this.customers.map(customer => ({
@@ -190,7 +190,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   getUsers(): void {
     this.userService.getUsersByRole(RolesConst._STYLIST).subscribe({
       next: (response: User[]) => {
-        this.users = response;
+        this.users = response;      
         this.usersOptions = this.users.map(user => ({
           id: user.id,
           name: user.firstName + ' ' + user.lastName,

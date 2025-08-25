@@ -119,7 +119,7 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
 
   getHoursRange(): number[] {
     const hours: number[] = [];
-    for (let i = 6; i <= 22; i++) {
+    for (let i = 7; i <= 22; i++) {
       hours.push(i);
     }
     return hours;
