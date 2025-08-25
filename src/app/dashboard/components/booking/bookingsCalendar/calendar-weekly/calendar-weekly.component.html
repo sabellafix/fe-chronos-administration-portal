@@ -7,10 +7,10 @@
                     <th class="day-header pe-1 ps-1 pb-2" *ngFor="let date of dates">
                         <div class="day-header-content">
                             <div class="card w-100 bg-light p-1 pt-2 card-date text-center" [ngClass]="{'today': date.isToday}">
-                                <!-- Badge de total diario -->
                                 <div class="daily-total-badge animated fadeIn fast" *ngIf="hasBookingsForDate(date.date)">
                                     ${{getDailyTotal(date.date) | number:'1.0-0'}}
                                 </div>
+                             
                                 
                                 <div class="card-date-day">
                                     <p class="font-size-14 fw-normal mb-1 capitalize">{{date.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
@@ -68,6 +68,7 @@
                         style="cursor: pointer;"                        
                         >
                         <div class="cell-content">
+                            <!-- Mostrar bookings -->
                             <ng-container *ngIf="getCellBookings(date.date, hour) as cellBookings" >
                                 <ng-container *ngFor="let booking of cellBookings; let i = index; trackBy: trackByBooking">
                                     <app-card-booking 
@@ -98,6 +99,20 @@
                                         <div class="dropdown-item" href="#">
                                             <i class="bx bx-trash text-muted font-size-12 align-middle me-1"></i> 
                                             <span class="align-middle font-size-12 fw-normal">Delete</span>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+
+                            <!-- Mostrar tiempos bloqueados solo cuando hay un estilista seleccionado -->
+                            <ng-container *ngIf="stylists.length === 1 && getBlockedTimesForDateTime(date.date, hour) as cellBlockedTimes">
+                                <ng-container *ngFor="let blockedTime of cellBlockedTimes; let i = index">
+                                    <div class="blocked-time-card"
+                                         [style.top]="getBlockedTimeTopPosition(blockedTime)"
+                                         [style.height]="getBlockedTimeHeight(blockedTime)"
+                                         (click)="$event.stopPropagation()">
+                                        <div class="blocked-time-content text-center">
+                                            <i class="bx bx-x text-danger"></i>
                                         </div>
                                     </div>
                                 </ng-container>

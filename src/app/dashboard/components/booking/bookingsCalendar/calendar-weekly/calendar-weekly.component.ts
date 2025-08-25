@@ -10,6 +10,8 @@ import { DateUtils } from '@app/core/utils/date.utils';
 import { Service } from '@app/core/models/bussiness/service';
 import { User } from '@app/core/models/bussiness/user';
 import { UserService } from '@app/core/services/http/user.service';
+import { BlockedTime } from '@app/core/models/bussiness/blocked-time';
+import { MockBlockedTimeService } from '@app/core/services/mock/mock-blocked-time.service';
 
 @Component({
   selector: 'app-calendar-weekly',
@@ -29,7 +31,9 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
   activeDate: DateItem = new DateItem();
   bookings: Booking[] = [];
   bookingsFiltered: Booking[] = [];
+  blockedTimes: BlockedTime[] = [];
   isLoadingBookings: boolean = false;
+  isLoadingBlockedTimes: boolean = false;
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
   imageUser: string = "../assets/images/user-image.jpg";
@@ -38,7 +42,8 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     private snackBar: MatSnackBar, 
     private offcanvasBookingService: OffcanvasBookingService,
     private bookingService: BookingService,
-    private userService: UserService
+    private userService: UserService,
+    private blockedTimeService: MockBlockedTimeService
   ){
     
   }
@@ -47,10 +52,12 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     if (changes['date'] && !changes['date'].firstChange) {
       this.updateDates();
       this.loadBookingsForCurrentWeek();
+      this.loadBlockedTimesForSingleStylist();
     }
     if((changes['services'] && !changes['services'].firstChange) || 
        (changes['stylists'] && !changes['stylists'].firstChange)){
       this.filterBookings();
+      this.loadBlockedTimesForSingleStylist();
     }
   }
 
@@ -59,6 +66,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     this.initStickyHeader();
     this.subscribeToBookingService();
     this.loadBookingsForCurrentWeek();
+    this.loadBlockedTimesForSingleStylist();
   }
 
   ngOnDestroy(): void {
@@ -470,5 +478,112 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
    */
   trackByBooking(index: number, booking: Booking): string {
     return booking.id;
+  }
+
+  /**
+   * Carga los tiempos bloqueados para un solo estilista en la semana actual
+   * Solo se ejecuta cuando hay exactamente un estilista seleccionado
+   */
+  private loadBlockedTimesForSingleStylist(): void {
+    // Solo cargar blocked times si hay exactamente un estilista seleccionado
+    if (this.stylists.length !== 1 || this.dates.length === 0) {
+      this.blockedTimes = [];
+      return;
+    }
+
+    const stylistId = this.stylists[0].id;
+    const weekStartDate = this.dates[0].date;
+
+    this.isLoadingBlockedTimes = true;
+
+    const blockedTimesSubscription = this.blockedTimeService.getBlockedTimesByUserAndWeek(stylistId, weekStartDate).subscribe({
+      next: (blockedTimes: BlockedTime[]) => {
+        this.blockedTimes = blockedTimes;
+        this.isLoadingBlockedTimes = false;
+        console.log(`Cargados ${blockedTimes.length} tiempos bloqueados para el estilista ${this.stylists[0].name || this.stylists[0].firstName}`);
+      },
+      error: (error) => {
+        console.error('Error loading blocked times:', error);
+        this.isLoadingBlockedTimes = false;
+        this.blockedTimes = [];
+        this.snackBar.open('Error al cargar los tiempos bloqueados', 'Cerrar', {
+          duration: 5000,
+          panelClass: 'snackbar-error'
+        });
+      }
+    });
+
+    this.subscriptions.push(blockedTimesSubscription);
+  }
+
+  /**
+   * Verifica si hay un tiempo bloqueado para una fecha y hora específica
+   */
+  hasBlockedTime(date: Date, hour: number): boolean {
+    return this.getBlockedTimesForDateTime(date, hour).length > 0;
+  }
+
+  /**
+   * Obtiene los tiempos bloqueados para una fecha y hora específica
+   */
+  getBlockedTimesForDateTime(date: Date, hour: number): BlockedTime[] {
+    return this.blockedTimes.filter(blockedTime => {
+      const blockedDate = new Date(blockedTime.blockedDate.year, blockedTime.blockedDate.month - 1, blockedTime.blockedDate.day);
+      const blockedHour = blockedTime.startTime.hour;
+      return blockedDate.toDateString() === date.toDateString() && blockedHour === hour;
+    });
+  }
+
+  /**
+   * Obtiene todos los tiempos bloqueados para una fecha específica
+   */
+  getBlockedTimesForDate(date: Date): BlockedTime[] {
+    return this.blockedTimes.filter(blockedTime => {
+      const blockedDate = new Date(blockedTime.blockedDate.year, blockedTime.blockedDate.month - 1, blockedTime.blockedDate.day);
+      return blockedDate.toDateString() === date.toDateString();
+    });
+  }
+
+  /**
+   * Verifica si hay algún tiempo bloqueado para una fecha específica
+   */
+  hasBlockedTimesForDate(date: Date): boolean {
+    return this.getBlockedTimesForDate(date).length > 0;
+  }
+
+  /**
+   * Obtiene el tooltip para un tiempo bloqueado
+   */
+  getBlockedTimeTooltip(blockedTime: BlockedTime): string {
+    const timeRange = `${blockedTime.startTime.hour.toString().padStart(2, '0')}:${blockedTime.startTime.minute.toString().padStart(2, '0')} - ${blockedTime.endTime.hour.toString().padStart(2, '0')}:${blockedTime.endTime.minute.toString().padStart(2, '0')}`;
+    const reason = blockedTime.reason ? ` | Motivo: ${blockedTime.reason}` : '';
+    return `Tiempo bloqueado: ${timeRange}${reason}`;
+  }
+
+  /**
+   * Calcula la posición vertical de un tiempo bloqueado dentro de su celda horaria
+   */
+  getBlockedTimeTopPosition(blockedTime: BlockedTime): string {
+    const minutes = blockedTime.startTime.minute;
+    const percentage = (minutes / 60) * 100;
+    return `${percentage}%`;
+  }
+
+  /**
+   * Calcula la altura de un tiempo bloqueado basada en su duración
+   */
+  getBlockedTimeHeight(blockedTime: BlockedTime): string {
+    const startMinutes = blockedTime.startTime.hour * 60 + blockedTime.startTime.minute;
+    const endMinutes = blockedTime.endTime.hour * 60 + blockedTime.endTime.minute;
+    const durationMinutes = endMinutes - startMinutes;
+    
+    // Altura mínima para legibilidad
+    const minHeightPx = 30;
+    const pixelsPerMinute = 1.2;
+    
+    let calculatedHeight = durationMinutes * pixelsPerMinute;
+    calculatedHeight = Math.max(calculatedHeight, minHeightPx);
+    
+    return `${calculatedHeight}px`;
   }
 }

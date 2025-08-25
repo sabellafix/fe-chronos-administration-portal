@@ -73,6 +73,33 @@ export class MockBlockedTimeService {
         return of(userBlockedTimes).pipe(delay(this.DELAY_MS));
     }
 
+    getBlockedTimesByUserAndWeek(userId: string, weekStartDate: Date): Observable<BlockedTime[]> {
+        const blockedTimes = this.getBlockedTimesFromStorage();
+        
+        // Calcular el rango de la semana
+        const startOfWeek = new Date(weekStartDate);
+        const dayOfWeek = startOfWeek.getDay();
+        const daysToMonday = dayOfWeek === 0 ? -6 : -(dayOfWeek - 1);
+        startOfWeek.setDate(startOfWeek.getDate() + daysToMonday);
+        startOfWeek.setHours(0, 0, 0, 0);
+        
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        endOfWeek.setHours(23, 59, 59, 999);
+        
+        // Filtrar por usuario y por semana
+        const userWeeklyBlockedTimes = blockedTimes.filter(bt => {
+            if (bt.userId !== userId || !bt.isActive) return false;
+            
+            // Convertir blockedDate a Date para comparar
+            const blockedDate = new Date(bt.blockedDate.year, bt.blockedDate.month - 1, bt.blockedDate.day);
+            
+            return blockedDate >= startOfWeek && blockedDate <= endOfWeek;
+        });
+        
+        return of(userWeeklyBlockedTimes).pipe(delay(this.DELAY_MS));
+    }
+
     getBlockedTime(id: string): Observable<BlockedTime> {
         const blockedTimes = this.getBlockedTimesFromStorage();
         const blockedTime = blockedTimes.find(bt => bt.blockedTimeId === id);
