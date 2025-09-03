@@ -10,8 +10,6 @@
                                 <div class="daily-total-badge animated fadeIn fast" *ngIf="hasBookingsForDate(date.date)">
                                     ${{getDailyTotal(date.date) | number:'1.0-0'}}
                                 </div>
-                             
-                                
                                 <div class="card-date-day">
                                     <p class="font-size-14 fw-normal mb-1 capitalize">{{date.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
                                 </div>
@@ -43,14 +41,14 @@
                     <th class="time-header" style="height: 0px !important; padding: 0px !important; margin: 0px !important;"></th>
                     <th class="day-header" *ngFor="let date of dates" style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
                         <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="day-header-content">
-                            <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card w-100 bg-light p-1 pt-2 card-date text-center" >
+                            <!-- <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card w-100 bg-light p-1 pt-2 card-date text-center" >
                                 <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card-date-day">
                                     <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="font-size-16 text-light fw-normal mb-1 capitalize">{{date.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
                                 </div>
                                 <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card-date-number">
                                     <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="font-size-26 text-light fw-semibold mb-0">{{date.date.getDate()}}</p>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </th>
                 </tr>

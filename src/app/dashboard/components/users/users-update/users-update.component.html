@@ -28,16 +28,17 @@
                                     <div class="d-flex justify-content-center align-items-center">
                                         <div class="text-center p-3 text-white rounded">
                                             <div class="mb-3">
-                                                <img [src]="srcImage" style="width: 150px; height: 150px; object-fit: cover;" class="half-width img-thumbnail text-center" alt="Preview" />
+                                                <img [src]="srcImage" 
+                                                    style="width: 150px; height: 150px; object-fit: cover;" 
+                                                    class="half-width img-thumbnail text-center" alt="Preview" />
                                             </div>
                                             <button (click)="fileInput.click()" class="btn btn-outline-primary w-xl waves-effect waves-light">Upload photo</button>
                                             <input #fileInput  (click)="onFileSelected($event)" type="file" accept=".png, .jpg, .jepg" (change)="onFileSelected($event)" class="hidden">
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-8 col-sm-12">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
+
+                                      <div class="row">
+                                        <div class="col-md-12 mb-3">
                                             <label class="form-label">First name *</label>
                                             <input type="text" class="form-control" (input)="capitalize('firstName')" placeholder="Enter the first name" formControlName="firstName">
                                             <div class="invalid-feedback" *ngIf="form.controls['firstName'].hasError('required') && form.controls['firstName'].touched">
@@ -48,7 +49,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-12 mb-3">
                                             <label class="form-label">Last name *</label>
                                             <input type="text" class="form-control" (input)="capitalize('lastName')" placeholder="Enter the last name" formControlName="lastName">
                                             <div class="invalid-feedback" *ngIf="form.controls['lastName'].hasError('required') && form.controls['lastName'].touched">
@@ -59,7 +60,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-12 mb-3">
                                             <label class="form-label">Email *</label>
                                             <input type="text" class="form-control" placeholder="Enter the email" formControlName="email">
                                             <div class="invalid-feedback" *ngIf="form.controls['email'].hasError('required') && form.controls['email'].touched">
@@ -73,7 +74,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-12 mb-3">
                                             <label class="form-label">Phone *</label>
                                             <input type="text" class="form-control" placeholder="Enter the phone" formControlName="phone">
                                             <div class="invalid-feedback" *ngIf="form.controls['phone'].hasError('required') && form.controls['phone'].touched">
@@ -87,7 +88,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-12 mb-3">
                                             <label class="form-label">Role *</label>
                                             <select class="form-select" formControlName="userRole">
                                                 <option value="">Select a role</option>
@@ -101,7 +102,7 @@
                                             </div>                                            
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-12 mb-3">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <label class="form-label">Change Password</label>
                                                 <button type="button" class="btn btn-sm btn-outline-primary" (click)="togglePasswordFields()">
@@ -110,7 +111,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3" *ngIf="showPasswordFields">
+                                        <div class="col-md-12 mb-3" *ngIf="showPasswordFields">
                                             <label class="form-label">New Password *</label>
                                             <input type="password" class="form-control" placeholder="Enter new password" formControlName="newPassword">
                                             <div class="invalid-feedback" *ngIf="form.controls['newPassword'].hasError('required') && form.controls['newPassword'].touched">
@@ -124,7 +125,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3" *ngIf="showPasswordFields">
+                                        <div class="col-md-12 mb-3" *ngIf="showPasswordFields">
                                             <label class="form-label">Confirm New Password *</label>
                                             <input type="password" class="form-control" placeholder="Confirm new password" formControlName="confirmPassword">
                                             <div class="invalid-feedback" *ngIf="form.controls['confirmPassword'].hasError('required') && form.controls['confirmPassword'].touched">
@@ -134,7 +135,161 @@
                                                 <strong>*</strong> {{getValidation('confirmPassword')?.message}}
                                             </div>
                                         </div>
+
                                     </div>
+                                </div>
+                            
+
+                                <div class="col-md-7 offset-md-1 col-sm-12">
+
+                                    <div class="card bg-light">
+                                        <div class="card-header">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h5 class="card-title mb-0">
+                                                    <i class="bx bx-cut text-muted me-2"></i>Services
+                                                </h5>
+                                            </div>
+                                            <small class="text-muted">Custom durations and prices configured for this stylist</small>
+                                        </div>
+                                        <div class="card-body">
+                                            <div *ngIf="!services || services.length === 0"
+                                                class="text-center text-muted py-3">
+                                                <i class="bx bx-info-circle me-2"></i>No services assigned
+                                            </div>
+                                            <div class="services-container">
+                                                <div *ngFor="let service of services; let i = index"
+                                                    class="border rounded p-3 mb-3 pb-1 position-relative animated fadeIn fast bg-white"
+                                                    [style.border-left]="'6px solid ' + getServiceColor(service.id)">
+                                                <div class="dropdown float-end">
+                                                    <a href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                                        <i class="bx bx-dots-vertical-rounded font-size-20"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-end cursor" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 25px);" data-popper-placement="bottom-end">
+                                                        <a class="dropdown-item" (click)="setUpdateServiceForm(service)">Update</a>
+                                                        <a class="dropdown-item" (click)="deleteService(service.id)">Delete</a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-12 mb-2">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <h6 class="card-title">{{service.serviceName}}</h6>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-3 mb-2">
+                                                        <label class="form-label text-muted small">Duration</label>
+                                                        <div class="text-primary fw-bold">{{service.durationMinutes}}
+                                                            min</div>
+                                                    </div>
+
+                                                    <div class="col-md-3 mb-2">
+                                                        <label class="form-label text-muted small">Price</label>
+                                                        <div class="text-success fw-bold">${{service.price}}
+                                                            {{service.currency || 'USD'}}</div>
+                                                    </div>
+
+                                                    <div class="col-md-3 mb-2">
+                                                        <label class="form-label text-muted small">Processing
+                                                            Time</label>
+                                                        <div class="text-info fw-bold">{{service.processingTime}} min
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 mb-2">
+                                                        <label class="form-label text-muted small">Category</label>
+                                                        <div class="text-muted fw-light">{{service.category.name}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                            <div class="row">
+                                                <div *ngIf="!showCreateServiceForm" class="col-md-12 mb-2">
+                                                    <button type="button" class="btn  btn-white bg-gradient w-100" (click)="setCreateServiceForm()">
+                                                        <i class="bx bx-plus me-2"></i>Add Service
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-12 mb-2">
+                                                    <div *ngIf="showCreateServiceForm" class="card bg-white mt-2 animated fadeIn fast" [style.border-left]="'6px solid ' + getSalonServiceColor(selectedSalonService.id)">
+                                                        <div class="card-body">
+                                                            <form [formGroup]="formCreateService">
+                                                               <div>
+                                                                    <div class="float-end">
+                                                                        <a (click)="cancelServiceForm()" role="button">
+                                                                            <i class="bx bx-x font-size-20 text-danger"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-12 mb-3">
+                                                                            <label class="form-label">Service *</label>
+                                                                            <select class="form-select form-select-sm" (change)="onServiceChange($event)" formControlName="serviceId">
+                                                                                <option value="">Select a service</option>
+                                                                                <option *ngFor="let salonService of salonServices" [value]="salonService.id">{{salonService.serviceName}}</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-md-4 mb-3">
+                                                                            <label class="form-label">Duration (minutes) *</label>
+                                                                            <input type="number" class="form-control form-control-sm" min="1" placeholder="60" formControlName="durationMinutes">
+                                                                        </div>
+                                                                    
+                                                                        <div class="col-md-4 mb-3">
+                                                                            <label class="form-label">Price *</label>
+                                                                            <input type="number" class="form-control form-control-sm" min="0" step="0.01" placeholder="0.00" formControlName="price">
+                                                                        </div>
+                                                                        <div class="col-md-4 mb-3">
+                                                                            <label class="form-label">Processing Time (minutes)</label>
+                                                                            <input type="number" class="form-control form-control-sm" min="0" placeholder="0" formControlName="processingTime">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="float-end">
+                                                                        <a (click)="createService()" role="button">
+                                                                            <i class="bx bx-check font-size-20 text-success"></i>
+                                                                        </a>
+                                                                    </div>
+                                                               </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="showUpdateServiceForm" class="card bg-white mt-2 animated fadeIn fast" [style.border-left]="'6px solid ' + getServiceColor(selectedService!.id)">
+                                                        <div class="card-body">
+                                                            <form [formGroup]="formUpdateService">
+                                                                <div>
+                                                                    <div class="dropdown float-end">
+                                                                        <a (click)="cancelServiceForm()" role="button">
+                                                                            <i class="bx bx-x font-size-20 text-danger"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-4 mb-3">
+                                                                            <label class="form-label">Duration (minutes) *</label>
+                                                                            <input type="number" class="form-control form-control-sm" min="1" placeholder="60" formControlName="durationMinutes">
+                                                                        </div>
+                                                                        <div class="col-md-4 mb-3">
+                                                                            <label class="form-label">Processing Time (minutes)</label>
+                                                                            <input type="number" class="form-control form-control-sm" min="0" placeholder="0" formControlName="processingTime">
+                                                                        </div>
+                                                                        <div class="col-md-4 mb-3">
+                                                                            <label class="form-label">Price *</label>
+                                                                            <input type="number" class="form-control form-control-sm" min="0" step="0.01" placeholder="0.00" formControlName="price">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="float-end">
+                                                                        <a (click)="updateService()" role="button">
+                                                                            <i class="bx bx-check font-size-20 text-success"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="loadingServices" class="text-center py-3">
+                                                <i class="bx bx-loader bx-spin me-2"></i>Loading services...
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </form>

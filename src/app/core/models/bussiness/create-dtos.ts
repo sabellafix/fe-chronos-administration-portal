@@ -115,18 +115,46 @@ export class CreateCustomerDto {
 }
 
 export class CreateServiceDto {
-    providerId?: string; // format: uuid
+    providerId?: string | null; // format: uuid
     categoryId: number; // required
+    salonId?: string | null; // format: uuid
     serviceName: string; // required, minLength: 1
     serviceDescription?: string;
     durationMinutes: number; // required, minimum: 1, maximum: 2147483647
     processingTime?: number; // minimum: 1, maximum: 2147483647
     price: number; // required, minimum: 0
     color?: string; // maxLength: 7, minLength: 0
+    type?: string; // maxLength: 15, minLength: 0
     currency?: string;
 
     constructor() {
-        this.providerId = undefined;
+        this.providerId = null;
+        this.categoryId = 0;
+        this.salonId = null;
+        this.serviceName = "";
+        this.serviceDescription = undefined;
+        this.durationMinutes = 0;
+        this.processingTime = undefined;
+        this.price = 0;
+        this.color = undefined;
+        this.type = undefined;
+        this.currency = undefined;
+    }
+}
+
+export class CreateHallsServicesDto {
+    hallId: string;
+    categoryId: number;
+    serviceName: string;
+    serviceDescription?: string;
+    durationMinutes: number;
+    processingTime?: number;
+    price: number;
+    color?: string;
+    currency?: string;
+
+    constructor() {
+        this.hallId = "";
         this.categoryId = 0;
         this.serviceName = "";
         this.serviceDescription = undefined;

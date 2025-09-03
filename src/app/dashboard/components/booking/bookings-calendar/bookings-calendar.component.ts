@@ -5,6 +5,7 @@ import { ServiceService } from '@app/core/services/http/platform-service.service
 import { UserService } from '@app/core/services/http/user.service';
 import { VisualOption } from '@app/core/models/interfaces/option.interface';
 import { forkJoin } from 'rxjs';
+import { RolesConst } from '@app/core/models/constants/roles.const';
 
 @Component({
   selector: 'app-bookings-calendar',
@@ -83,7 +84,7 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
     this.loading = true;
     forkJoin([
       this.serviceService.getAllServices(),
-      this.userService.getUsers(),
+      this.userService.getUsersByRole(RolesConst._STYLIST),
       this.customerService.getAllCustomers()
     ]).subscribe(([services, stylists, customers]) => {
       this.services = services;
@@ -97,7 +98,6 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
         }
       });
       
-      // Convertir los datos a VisualOption para el nuevo componente
       this.prepareSelectOptions();
       
       this.loading = false;

@@ -1,4 +1,3 @@
-<!-- Formato SM - Como en calendar-monthly (compacto) -->
 <div *ngIf="size === 'sm'" 
      class="booking-item-compact animated fadeIn fast" 
      [class.multiple-services]="booking.services && booking.services.length > 1"
@@ -63,8 +62,7 @@
         </div>
         
         <div class="booking-customer-info d-flex align-items-center mb-1" *ngIf="!absolutePosition || height && height !== '40px'">
-            <img class="rounded-circle header-profile-user me-2" width="16" height="16" [src]="imageUser" alt="Header Avatar">
-            <span class="text-white customer-name">{{booking.customer.firstName}} {{booking.customer.lastName}}</span>
+            <span class="text-white customer-name me-2">{{booking.customer.firstName}} {{booking.customer.lastName}}</span>
             <span class="text-white-75 stylist-name" *ngIf="booking.user && booking.user.firstName">
                 {{booking.user.firstName}} {{booking.user.lastName}}
             </span>

@@ -187,7 +187,7 @@ export class UsersDetailComponent {
 
   getServiceColor(serviceId: string): string {
     const service = this.services.find(s => s.id === serviceId);
-    return service?.color || '#007bff';
+    return service ? service.color + ' !important' : '#e9ecef';
   }
 
   getServiceName(serviceId: string): string {

@@ -124,6 +124,31 @@ export class UpdateServiceDto {
     }
 }
 
+export class UpdateHallsServicesDto {
+    hallId?: string;
+    categoryId?: number;
+    serviceName?: string;
+    serviceDescription?: string;
+    durationMinutes?: number; 
+    processingTime?: number; 
+    price?: number; 
+    color?: string; 
+    currency?: string;
+    isActive?: boolean;
+
+    constructor() {
+        this.hallId = undefined;
+        this.categoryId = undefined;
+        this.serviceName = undefined;
+        this.serviceDescription = undefined;
+        this.durationMinutes = undefined; 
+        this.price = undefined;
+        this.color = undefined;
+        this.currency = undefined;
+        this.isActive = undefined;
+    }
+}
+
 export class UpdateServiceModifierDto {
     modifiedDurationInMinutes?: number; // minimum: 1, maximum: 2147483647
 

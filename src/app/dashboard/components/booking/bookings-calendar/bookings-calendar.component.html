@@ -127,7 +127,7 @@
     </div>
 </div>
 
-<div class="calendar-content">
+<div *ngIf="!loading" class="calendar-content">
     <app-calendar-monthly [ngStyle]="{'display': tabActive === 'Month' ? 'block' : 'none' }"  [date]="dateCalendarMonthly" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" ></app-calendar-monthly>
     <app-calendar-weekly [ngStyle]="{'display': tabActive === 'Week' ? 'block' : 'none' }"  [date]="dateCalendarWeekly"  [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-weekly>
     <app-calendar-daily [ngStyle]="{'display': tabActive === 'Day' ? 'block' : 'none' }"  [date]="dateCalendarDaily" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-daily>

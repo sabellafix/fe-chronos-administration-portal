@@ -379,81 +379,50 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     return ` Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
   }
 
-  /**
-   * Calcula la posición vertical (top) de un booking dentro de su celda horaria
-   * basada en los minutos del tiempo de inicio
-   */
+
   getBookingTopPosition(booking: Booking): string {
     const minutes = booking.startTime.minute;
-    // Cada celda representa 60 minutos, calculamos el porcentaje
     const percentage = (minutes / 60) * 100;
     return `${percentage}%`;
   }
 
-  /**
-   * Calcula la altura de un booking basada en su duración
-   * para que represente visualmente el tiempo real
-   */
   getBookingHeight(booking: Booking): string {
     const totalMinutes = booking.durationMinutes;
-    // Altura mínima para legibilidad
     const minHeightPx = 40;
-    // Altura base por hora (aproximadamente 60px por hora)
     const pixelsPerMinute = 1;
     
     let calculatedHeight = totalMinutes * pixelsPerMinute;
-    
-    // Aplicar altura mínima
     calculatedHeight = Math.max(calculatedHeight, minHeightPx);
     
     return `${calculatedHeight}px`;
   }
 
-  /**
-   * Calcula el índice de superposición para bookings que se solapan
-   * en la misma celda horaria
-   */
   getBookingZIndex(booking: Booking, allBookingsInCell: Booking[]): number {
     const baseZIndex = 1000;
     const bookingIndex = allBookingsInCell.findIndex(b => b.id === booking.id);
     return baseZIndex + bookingIndex;
   }
 
-  /**
-   * Calcula el offset horizontal cuando hay múltiples bookings superpuestos
-   */
   getBookingLeftOffset(booking: Booking, allBookingsInCell: Booking[]): string {
     if (allBookingsInCell.length <= 1) return '0%';
     
     const bookingIndex = allBookingsInCell.findIndex(b => b.id === booking.id);
-    const offsetPercentage = (bookingIndex * 5); // 5% de offset por cada booking adicional
+    const offsetPercentage = (bookingIndex * 5);
     
     return `${offsetPercentage}%`;
   }
 
-  /**
-   * Calcula el ancho de la tarjeta cuando hay superposición
-   */
   getBookingWidth(allBookingsInCell: Booking[]): string {
     if (allBookingsInCell.length <= 1) return '100%';
     
-    // Reducir el ancho cuando hay múltiples bookings
-    const widthReduction = Math.min(allBookingsInCell.length * 3, 15); // Máximo 15% de reducción
+    const widthReduction = Math.min(allBookingsInCell.length * 3, 15);
     return `${100 - widthReduction}%`;
   }
 
-  /**
-   * Función auxiliar para mejorar el rendimiento.
-   * Retorna los bookings de una celda específica para evitar múltiples cálculos
-   */
   getCellBookings(date: Date, hour: number): Booking[] {
     return this.getBookingsForDateTime(date, hour);
   }
 
-  /**
-   * Verifica si un booking se extiende más allá de la hora actual
-   * (para bookings que duran más de 60 minutos)
-   */
   bookingExtendsToNextHour(booking: Booking): boolean {
     const startMinutes = booking.startTime.hour * 60 + booking.startTime.minute;
     const endMinutes = startMinutes + booking.durationMinutes;
@@ -462,10 +431,6 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     return endMinutes > nextHourMinutes;
   }
 
-  /**
-   * Calcula cuántas horas adicionales ocupa un booking
-   * (para bookings que se extienden más allá de su hora de inicio)
-   */
   getBookingAdditionalHours(booking: Booking): number {
     if (booking.durationMinutes <= 60) return 0;
     
@@ -473,19 +438,11 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     return Math.ceil(remainingMinutes / 60);
   }
 
-  /**
-   * Función trackBy para mejorar el rendimiento de Angular con *ngFor
-   */
   trackByBooking(index: number, booking: Booking): string {
     return booking.id;
   }
 
-  /**
-   * Carga los tiempos bloqueados para un solo estilista en la semana actual
-   * Solo se ejecuta cuando hay exactamente un estilista seleccionado
-   */
   private loadBlockedTimesForSingleStylist(): void {
-    // Solo cargar blocked times si hay exactamente un estilista seleccionado
     if (this.stylists.length !== 1 || this.dates.length === 0) {
       this.blockedTimes = [];
       return;
@@ -499,8 +456,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     const blockedTimesSubscription = this.blockedTimeService.getBlockedTimesByUserAndWeek(stylistId, weekStartDate).subscribe({
       next: (blockedTimes: BlockedTime[]) => {
         this.blockedTimes = blockedTimes;
-        this.isLoadingBlockedTimes = false;
-        console.log(`Cargados ${blockedTimes.length} tiempos bloqueados para el estilista ${this.stylists[0].name || this.stylists[0].firstName}`);
+        this.isLoadingBlockedTimes = false;      
       },
       error: (error) => {
         console.error('Error loading blocked times:', error);
@@ -516,16 +472,10 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     this.subscriptions.push(blockedTimesSubscription);
   }
 
-  /**
-   * Verifica si hay un tiempo bloqueado para una fecha y hora específica
-   */
   hasBlockedTime(date: Date, hour: number): boolean {
     return this.getBlockedTimesForDateTime(date, hour).length > 0;
   }
 
-  /**
-   * Obtiene los tiempos bloqueados para una fecha y hora específica
-   */
   getBlockedTimesForDateTime(date: Date, hour: number): BlockedTime[] {
     return this.blockedTimes.filter(blockedTime => {
       const blockedDate = new Date(blockedTime.blockedDate.year, blockedTime.blockedDate.month - 1, blockedTime.blockedDate.day);
@@ -534,9 +484,6 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  /**
-   * Obtiene todos los tiempos bloqueados para una fecha específica
-   */
   getBlockedTimesForDate(date: Date): BlockedTime[] {
     return this.blockedTimes.filter(blockedTime => {
       const blockedDate = new Date(blockedTime.blockedDate.year, blockedTime.blockedDate.month - 1, blockedTime.blockedDate.day);
@@ -544,40 +491,28 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  /**
-   * Verifica si hay algún tiempo bloqueado para una fecha específica
-   */
   hasBlockedTimesForDate(date: Date): boolean {
     return this.getBlockedTimesForDate(date).length > 0;
   }
 
-  /**
-   * Obtiene el tooltip para un tiempo bloqueado
-   */
   getBlockedTimeTooltip(blockedTime: BlockedTime): string {
     const timeRange = `${blockedTime.startTime.hour.toString().padStart(2, '0')}:${blockedTime.startTime.minute.toString().padStart(2, '0')} - ${blockedTime.endTime.hour.toString().padStart(2, '0')}:${blockedTime.endTime.minute.toString().padStart(2, '0')}`;
     const reason = blockedTime.reason ? ` | Motivo: ${blockedTime.reason}` : '';
     return `Tiempo bloqueado: ${timeRange}${reason}`;
   }
 
-  /**
-   * Calcula la posición vertical de un tiempo bloqueado dentro de su celda horaria
-   */
   getBlockedTimeTopPosition(blockedTime: BlockedTime): string {
     const minutes = blockedTime.startTime.minute;
     const percentage = (minutes / 60) * 100;
     return `${percentage}%`;
   }
 
-  /**
-   * Calcula la altura de un tiempo bloqueado basada en su duración
-   */
+
   getBlockedTimeHeight(blockedTime: BlockedTime): string {
     const startMinutes = blockedTime.startTime.hour * 60 + blockedTime.startTime.minute;
     const endMinutes = blockedTime.endTime.hour * 60 + blockedTime.endTime.minute;
     const durationMinutes = endMinutes - startMinutes;
     
-    // Altura mínima para legibilidad
     const minHeightPx = 30;
     const pixelsPerMinute = 1.2;
     

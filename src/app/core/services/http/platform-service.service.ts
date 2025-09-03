@@ -53,6 +53,11 @@ export class ServiceService {
         const url = `${this.apiUrl}/${this.controller}/get-services-by-provider/${providerId}`;
         return this.http.get<Service[]>(url, this.getHttpOptions());
     }
+
+    getServicesBySalon(salonId: string): Observable<Service[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-services-by-salon/${salonId}`;
+        return this.http.get<Service[]>(url, this.getHttpOptions());
+    }
   
     createService(entity: CreateServiceDto): Observable<Service> {
         const url = `${this.apiUrl}/${this.controller}/create-service`;

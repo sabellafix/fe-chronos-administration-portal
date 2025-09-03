@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Service } from '@app/core/models/bussiness/service';
-import { ServiceService } from '@app/core/services/http/platform-service.service';
+import { Service } from '@app/core/models/bussiness';
 import { Option } from '@app/core/models/interfaces/option.interface';
 import { DialogConfirmComponent } from '@app/dashboard/components/shared/dialogs/dialog-confirm/dialog-confirm.component';
+import { ServiceService } from '@app/core/services/http/platform-service.service';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-services-list',
@@ -17,6 +18,7 @@ export class ServicesListComponent {
   loading: boolean = false;
   service: Service = new Service();
   services: Service[] = [];
+  salonId: string = environment.salonId;
    
   attributes : Option[] = [ 
     {name: "State", code : "isActive"}, 
@@ -33,8 +35,8 @@ export class ServicesListComponent {
   totalItems = 0;
   pageSize = 10;
   pageIndex = 0;
-  showPaginate : boolean = true; // Deshabilitado hasta implementar paginación en backend
-  maxItems = [10,20,50];
+  showPaginate : boolean = true; 
+  maxItems = [10,20,50];  
 
   constructor(
     private serviceService: ServiceService,
@@ -50,7 +52,7 @@ export class ServicesListComponent {
 
   load(): void {
     this.loading = true;
-    this.serviceService.getAllServices().subscribe({
+    this.serviceService.getServicesBySalon(this.salonId).subscribe({
       next: (response: Service[]) => {
         this.services = response;
         this.totalItems = response.length;

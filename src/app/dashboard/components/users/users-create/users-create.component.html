@@ -19,7 +19,7 @@
                     <div class="card-body">
                         <form novalidate="novalidate" class="mb-2" [formGroup]="form" *ngIf="!loading">
                             <div class="row">
-                                <div class="col-md-4 col-sm-12 ">
+                                <div class="col-md-3 col-sm-12 ">
                                     <label class="form-label">Photo profile</label>
                                     <div class="d-flex justify-content-center align-items-center">
                                         <div class="text-center p-3 text-white rounded">
@@ -31,9 +31,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-8 col-sm-12">
+                                <div class="col-md-4 col-sm-12">
                                     <div class="row">
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-12 mb-3">
                                             <label class="form-label">First name *</label>
                                             <input type="text" class="form-control" (input)="capitalize('firstName')" placeholder="Enter the first name" formControlName="firstName">
                                             <div class="invalid-feedback" *ngIf="form.controls['firstName'].hasError('required') && form.controls['firstName'].touched">
@@ -44,7 +44,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-12 mb-3">
                                             <label class="form-label">Last name *</label>
                                             <input type="text" class="form-control" (input)="capitalize('lastName')" placeholder="Enter the last name" formControlName="lastName">
                                             <div class="invalid-feedback" *ngIf="form.controls['lastName'].hasError('required') && form.controls['lastName'].touched">
@@ -55,7 +55,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-12 mb-3">
                                             <label class="form-label">Email *</label>
                                             <input type="text" class="form-control" placeholder="Enter the email" formControlName="email">
                                             <div class="invalid-feedback" *ngIf="form.controls['email'].hasError('required') && form.controls['email'].touched">
@@ -69,7 +69,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-12 mb-3">
                                             <label class="form-label">Mobile phone *</label>
                                             <input type="text" class="form-control" placeholder="Enter the mobile phone" formControlName="phone">
                                             <div class="invalid-feedback" *ngIf="form.controls['phone'].hasError('required') && form.controls['phone'].touched">
@@ -83,7 +83,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-12 mb-3">
                                             <label class="form-label">Password *</label>
                                             <input type="password" class="form-control" placeholder="Enter the password" formControlName="password">
                                             <div class="invalid-feedback" *ngIf="form.controls['password'].hasError('required') && form.controls['password'].touched">
@@ -95,10 +95,13 @@
                                                 <div class="invalid-feedback" *ngIf="getValidation('password') != undefined && send">
                                                 <strong>*</strong> {{getValidation('password')?.message}}
                                             </div>
-                                        </div>
-                                      
+                                        </div>                                      
                                     </div>
                                 </div>
+                                <div class="col-md-3 col-sm-12">
+                                    
+                                </div>
+
                             </div>
                         </form>
                         <div class="mb-3 mt-4" *ngIf="loading">

@@ -28,23 +28,19 @@ export class MockAvailabilityService {
                 availability.availabilityId = `availability-${i.toString().padStart(3, '0')}`;
                 availability.providerId = providerIds[i % providerIds.length];
                 
-                // Día de la semana (1-7, Lunes a Domingo)
                 availability.dayOfWeek = (i % 7) + 1;
                 
-                // Generar horarios de disponibilidad
-                const startHour = 8 + (i % 10); // Entre 8 AM y 6 PM
+                const startHour = 8 + (i % 10); 
                 availability.startTime = new TimeOnly();
                 availability.startTime.hour = startHour;
-                availability.startTime.minute = (i % 4) * 15; // 0, 15, 30, 45 minutos
+                availability.startTime.minute = (i % 4) * 15; 
                 
                 availability.endTime = new TimeOnly();
-                availability.endTime.hour = startHour + 1 + (i % 2); // 1-2 horas después
+                availability.endTime.hour = startHour + 1 + (i % 2); 
                 availability.endTime.minute = availability.startTime.minute;
                 
-                // Configurar como recurrente
                 availability.isRecurring = true;
                 
-                // Fecha efectiva desde (fecha actual)
                 const currentDate = new Date();
                 availability.effectiveFromDate = new DateOnly();
                 availability.effectiveFromDate.year = currentDate.getFullYear();
@@ -52,7 +48,6 @@ export class MockAvailabilityService {
                 availability.effectiveFromDate.day = currentDate.getDate();
                 availability.effectiveFromDate.dayOfWeek = currentDate.getDay();
                 
-                // Fecha efectiva hasta (6 meses adelante)
                 const futureDate = new Date();
                 futureDate.setMonth(futureDate.getMonth() + 6);
                 availability.effectiveToDate = new DateOnly();
@@ -61,7 +56,7 @@ export class MockAvailabilityService {
                 availability.effectiveToDate.day = futureDate.getDate();
                 availability.effectiveToDate.dayOfWeek = futureDate.getDay();
                 
-                availability.isActive = i % 8 !== 0; // 87.5% activos
+                availability.isActive = i % 8 !== 0; 
                 availability.createdAt = new Date(Date.now() - i * 6 * 60 * 60 * 1000).toISOString();
                 availability.updatedAt = availability.createdAt;
 
@@ -85,7 +80,6 @@ export class MockAvailabilityService {
         const providerAvailabilities = availabilities.filter(av => 
             av.providerId === providerId && av.isActive
         );
-        console.log(`Mock: Cargando ${providerAvailabilities.length} availabilities para provider ${providerId}`);
         return of(providerAvailabilities).pipe(delay(this.DELAY_MS));
     }
 
@@ -118,13 +112,12 @@ export class MockAvailabilityService {
             av.isActive
         );
         
-        // Retornar fechas únicas del mes
         const uniqueDates: DateOnly[] = [];
         monthAvailabilities.forEach(av => {
             const date = new DateOnly();
             date.year = searchMonth.year;
             date.month = searchMonth.month;
-            date.day = av.dayOfWeek; // Simplificado para el mock
+            date.day = av.dayOfWeek;
             uniqueDates.push(date);
         });
         
@@ -137,7 +130,7 @@ export class MockAvailabilityService {
         
         const newAvailability = new Availability();
         newAvailability.availabilityId = newId;
-        newAvailability.providerId = providerId || '1121aae0-83fa-4282-bd33-3ec76732ca5b'; // Default provider para mock
+        newAvailability.providerId = providerId || '1121aae0-83fa-4282-bd33-3ec76732ca5b';
         newAvailability.dayOfWeek = entity.dayOfWeek;
         newAvailability.startTime = entity.startTime;
         newAvailability.endTime = entity.endTime;
@@ -185,15 +178,12 @@ export class MockAvailabilityService {
         if (index !== -1) {
             availabilities.splice(index, 1);
             this.storageService.set(this.STORAGE_KEY, availabilities);
-            console.log(`Mock: Availability ${id} eliminada del storage`);
         } else {
-            console.warn(`Mock: Availability ${id} no encontrada para eliminar`);
         }
         
         return of(undefined).pipe(delay(this.DELAY_MS));
     }
 
-    // Método utilitario para testing/desarrollo
     clearAvailabilitiesByProvider(providerId: string): Observable<number> {
         const availabilities = this.getAvailabilitiesFromStorage();
         const initialCount = availabilities.length;
@@ -201,7 +191,6 @@ export class MockAvailabilityService {
         const deletedCount = initialCount - filteredAvailabilities.length;
         
         this.storageService.set(this.STORAGE_KEY, filteredAvailabilities);
-        console.log(`Mock: ${deletedCount} availabilities eliminadas para provider ${providerId}`);
         
         return of(deletedCount).pipe(delay(this.DELAY_MS));
     }
