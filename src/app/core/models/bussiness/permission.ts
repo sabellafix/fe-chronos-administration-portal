@@ -7,6 +7,7 @@ export class Permission{
     isActive: boolean;
     createdAt: string;
     updatedAt: string;
+    active: boolean;
 
     constructor() {
         this.id = 0;
@@ -17,5 +18,6 @@ export class Permission{
         this.isActive = false;
         this.createdAt = "";
         this.updatedAt = "";
+        this.active = false;
     }
 } 

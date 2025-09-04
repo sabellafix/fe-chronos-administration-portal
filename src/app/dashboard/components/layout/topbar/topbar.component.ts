@@ -33,6 +33,7 @@ export class TopbarComponent {
     { name: 'companies',            icon: 'panel',    route: '/companies',            module: "companies",            active: false },
     { name: 'bookings',             icon: 'panel',    route: '/bookings',             module: "bookings",             active: false },
     { name: 'customers',            icon: 'panel',    route: '/customers',            module: "customers",            active: false },
+    { name: 'roles',                icon: 'panel',    route: '/roles',                module: "roles",                active: false },
   ];
   
   moduleName? : Navigation | undefined = this.routes[0];

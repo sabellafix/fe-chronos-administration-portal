@@ -86,6 +86,18 @@ export class NavigationComponent implements OnInit{
           route: 'customers/create'
         }
       ]
+    },
+    {
+      title: 'Roles',
+      icon: 'bx bx-shield',
+      route: 'roles',
+      children: [
+        {
+          title: 'Create',
+          icon: 'bx bx-shield',
+          route: 'roles/create'
+        }
+      ]
     }
   ];
 

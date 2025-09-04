@@ -23,17 +23,7 @@ export class PermissionService {
     getPermissions(): Observable<any[]> {
         const url = `${this.apiUrl}/${this.controller}/get-permissions`;
         return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
-    }
-
-    getPermissionsByResource(resource: string): Observable<any[]> {
-        const url = `${this.apiUrl}/${this.controller}/get-permissions-by-resource/${resource}`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
-    }
-
-    getPermissionsByAction(action: string): Observable<any[]> {
-        const url = `${this.apiUrl}/${this.controller}/get-permissions-by-action/${action}`;
-        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
-    }
+    }   
 
     get(id: number): Observable<any> {
         const url = `${this.apiUrl}/${this.controller}/get-permission/${id}`;

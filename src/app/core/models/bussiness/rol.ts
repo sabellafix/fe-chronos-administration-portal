@@ -3,21 +3,19 @@ export class Rol{
     code : string;
     name : string;
     description : string;
-    active : boolean;
-    reserved : boolean;
-    defaultValue : boolean;
-    createdAt : Date;
-    updatedAt : Date;
+    isSystemRole : boolean;
+    isActive : boolean;
+    createdAt : string;
+    updatedAt : string;
 
     constructor() {
         this.id = 0;
         this.code = "";
         this.name = "";
         this.description = "";
-        this.active = false;
-        this.reserved = false;
-        this.defaultValue = false;
-        this.createdAt = new Date();
-        this.updatedAt = new Date();        
+        this.isSystemRole = false;
+        this.isActive = false;
+        this.createdAt = "";
+        this.updatedAt = "";        
     }
 }

@@ -78,6 +78,20 @@ export class UpdateCategoryDto {
     }
 }
 
+export class UpdateRolDto {
+    name?: string;
+    code?: string;
+    description?: string;
+    isActive?: boolean;
+
+    constructor() {
+        this.name = undefined;
+        this.code = undefined;
+        this.description = undefined;
+        this.isActive = undefined;
+    }
+}
+
 export class UpdateCustomerDto {
     firstName?: string;
     lastName?: string;

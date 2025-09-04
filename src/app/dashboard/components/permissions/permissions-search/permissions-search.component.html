@@ -1,0 +1,57 @@
+<mat-dialog-content style="height: 700px !important" class="border-round-bottom border-round-top">
+    <h5 class="mb-4">{{titleComponent}}</h5>
+    <div class="input-group">
+        <div class="input-group-text border-square-bottom"><i class="bx bx-search"></i></div>
+        <input type="text" class="form-control form-control-sm border-square-bottom" (keyup)="onKeyUp($event)" [(ngModel)]="keySearch" placeholder="Filtrar">
+    </div>
+    <div class="table-container">
+        <table class="table table-sm m-0">
+            <thead>
+                <tr class="table-light">
+                    <th class="text-center" width="45px"><input (click)="setAll()" [(ngModel)]="selectAll" [ngModelOptions]="{standalone: true}" class="form-check-input text-success" type="checkbox"></th>
+                    <th>Module</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="!loading" class="animated fadeIn fast">
+                <tr *ngFor="let permission of permissions" class="cursor" [ngClass]="{'table-light' : permission.active }" (click)="select(permission)">
+                    <td class="text-center"><input [checked]="permission.active" disabled [(ngModel)]="permission.active" [ngModelOptions]="{standalone: true}" class="opacity-100 form-check-input" type="checkbox"></td>
+                    <!-- <td>{{permission.module | transEntities}}</td> -->
+                    <td>{{permission.resource}}</td>
+                    <td>{{permission.description}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <mat-paginator class="paginator" 
+        #paginator
+        *ngIf="showPaginate && permissions.length > 0 && !loading" 
+        [length]="totalItems" 
+        [pageSize]="pageSize"
+        [showFirstLastButtons]="true" 
+        [pageSizeOptions]="maxItems"
+        [pageIndex]="pageIndex"
+        (page)="changePage($event)">
+    </mat-paginator>
+    <div *ngIf="permissions.length == 0 && !loading" class="card border-square-top border-ligth">
+        <div class="card-body">
+            <h1 class="display-3 text-center">
+                <small class="text-muted"><i class="bx bx-search-alt-2"></i></small>
+            </h1>
+            <h6 class="card-title text-center">
+                No results found.
+            </h6>
+            <h6 class="card-title text-center">
+                <small class="text-muted">Please add a value.</small>
+            </h6>
+            <br>
+        </div>
+    </div>
+    <div *ngIf="loading" class="mb-3">
+        <ngx-skeleton-loader [count]="10" [theme]="{ 'border-radius': '10', height: '20px', 'background-color': '#FFFFFFF' }"></ngx-skeleton-loader>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button (click)="close(false)" style="margin-right: 10px" mat-dialog-close class="btn btn-danger w-sm bg-gradient waves-effect waves-light"> Close</button>
+    <button (click)="close(true)" class="btn btn-primary w-sm bg-gradient waves-effect waves-light"> Add</button>
+  </mat-dialog-actions>

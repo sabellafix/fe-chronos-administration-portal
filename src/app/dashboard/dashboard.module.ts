@@ -75,6 +75,10 @@ import { OffcanvasDetailBookingComponent } from './components/shared/offcanvas/o
 // Importar servicio de inicialización del dashboard
 import { DashboardInitializerService } from './services/dashboard-initializer.service';
 import { UsersAvailabilityComponent } from './components/users/users-availability/users-availability.component';
+import { RolesListComponent } from './components/roles/roles-list/roles-list.component';
+import { RolesCreateComponent } from './components/roles/roles-create/roles-create.component';
+import { PermissionsSearchComponent } from './components/permissions/permissions-search/permissions-search.component';
+import { RolesUpdateComponent } from './components/roles/roles-update/roles-update.component';
 
 
 const routes: Routes = [
@@ -154,6 +158,15 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'roles',
+        children: [
+          { path: '', component: RolesListComponent, pathMatch: 'full' },
+          { path: 'create', component: RolesCreateComponent },
+          { path: ':id/update', component: RolesUpdateComponent },
+          { path: '**', redirectTo: '' }
+        ]
+      },
+      {
         path: 'chat',
         children: [
           { path: '', component: ChatComponent, pathMatch: 'full' },
@@ -219,6 +232,10 @@ const routes: Routes = [
     CustomersDetailComponent,
     OffcanvasDetailBookingComponent,
     UsersAvailabilityComponent,
+    RolesListComponent,
+    RolesCreateComponent,
+    PermissionsSearchComponent,
+    RolesUpdateComponent,
   ],
   imports: [
     CommonModule,

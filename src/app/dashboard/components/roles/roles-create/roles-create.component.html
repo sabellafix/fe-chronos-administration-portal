@@ -1,0 +1,117 @@
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card animated fadeIn fast">                    
+                    <div class="card-header card-header-form">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="d-flex flex-wrap gap-2 justify-content-start align-items-center h-100">
+                                    <button (click)="return()" type="button" class="btn btn-light w-sm bg-gradient waves-effect waves-light">Return</button>
+                                    <h4 class="card-title"> <i class="bx bx-face text-muted font-size-18 me-2"></i> {{titleComponent}}</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+                                    <button (click)="post()" type="submit" class="btn btn-success w-sm bg-gradient waves-effect waves-light">
+                                        <i *ngIf="charge" class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form novalidate="novalidate" class="mb-2" [formGroup]="form">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Name *</label>
+                                        <input type="text" class="form-control" (input)="capitalize('name')" placeholder="Enter the name of the rol" formControlName="name">
+                                        <div class="invalid-feedback" *ngIf="form.controls['name'].hasError('required') && form.controls['name'].touched">
+                                            <strong>*</strong> The name is required
+                                        </div>
+                                        
+                                    </div>     
+                                </div>
+                                <div class="col-md-6 col-sm-12">                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Description * </label>
+                                        <input type="text" class="form-control" placeholder="Enter the description of the rol" formControlName="description">
+                                        <div class="invalid-feedback" *ngIf="form.controls['description'].hasError('required') && form.controls['description'].touched">
+                                            <strong>*</strong> The description is required
+                                        </div>
+                                      
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="mb-3">
+                                        <div class="row">
+                                            <div class="col-md-9 col-sm-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Permissions *</label>
+                                                </div>     
+                                            </div>
+                                            <div class="col-md-3 col-sm-6">                                    
+                                                <div class="mb-3">
+                                                    <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
+                                                        <button (click)="search()" class="btn btn-primary w-sm bg-gradient waves-effect waves-light"><i class="bx bx-plus"></i> Add permissions</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="table-responsive">
+                                            <table class="table table-sm m-0">
+                                                <thead >
+                                                    <tr class="table-light">
+                                                        <th>Module</th>
+                                                        <th>Description</th>
+                                                        <th class="text-center"><span matTooltip="Eliminar todos" *ngIf="permissions.length > 0" class="cursor"><i (click)="removeAll()" class="bx bx-x-circle"></i></span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody *ngIf="!loading">
+                                                    <tr *ngFor="let permission of permissions.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)">
+                                                        <td>{{permission.resource}}</td>
+                                                        <td>{{permission.description}}</td>
+                                                        <td class="text-center"><span class="text-danger cursor"><i (click)="remove(permission)" class="bx bx-x"></i></span></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <mat-paginator class="paginator" 
+                                                #paginator
+                                                *ngIf="showPaginate && !loading && permissions.length > 0" 
+                                                [length]="totalItems" 
+                                                [pageSize]="pageSize"
+                                                [showFirstLastButtons]="true" 
+                                                [pageSizeOptions]="maxItems"
+                                                [pageIndex]="pageIndex"
+                                                (page)="changePage($event)">
+                                            </mat-paginator>
+                                            <div *ngIf="permissions.length == 0 && !loading" class="card border-square-top mb-1 border-ligth">
+                                                <div class="card-body">
+                                                    <h1 class="display-3 text-center">
+                                                        <small class="text-muted"><i class="bx bx-search-alt-2"></i></small>
+                                                    </h1>
+                                                    <h6 class="card-title text-center">
+                                                        No results found
+                                                    </h6>
+                                                    <h6 class="card-title text-center">
+                                                        <small class="text-muted">Please add a value</small>
+                                                    </h6>
+                                                    <br>
+                                                </div>
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="!validPermissions">
+                                                <strong>*</strong> Select at least one permission
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

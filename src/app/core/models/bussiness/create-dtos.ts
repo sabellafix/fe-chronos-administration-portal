@@ -85,11 +85,23 @@ export class CreateBookingDto {
 }
 
 export class CreateCategoryDto {
-    name: string; // required, minLength: 1
+    name: string;
     description?: string;
 
     constructor() {
         this.name = "";
+        this.description = undefined;
+    }
+}
+
+export class CreateRolDto {
+    name: string;
+    code: string;
+    description?: string;
+
+    constructor() {
+        this.name = "";
+        this.code = "";
         this.description = undefined;
     }
 }
