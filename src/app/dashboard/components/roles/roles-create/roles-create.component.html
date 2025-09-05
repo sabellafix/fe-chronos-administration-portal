@@ -64,13 +64,15 @@
                                             <table class="table table-sm m-0">
                                                 <thead >
                                                     <tr class="table-light">
-                                                        <th>Module</th>
+                                                        <th>Name</th>
+                                                        <th>Resource</th>
                                                         <th>Description</th>
-                                                        <th class="text-center"><span matTooltip="Eliminar todos" *ngIf="permissions.length > 0" class="cursor"><i (click)="removeAll()" class="bx bx-x-circle"></i></span></th>
+                                                        <th class="text-center"><span matTooltip="Remove all" *ngIf="permissions.length > 0" class="cursor"><i (click)="removeAll()" class="bx bx-x-circle"></i></span></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody *ngIf="!loading">
                                                     <tr *ngFor="let permission of permissions.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)">
+                                                        <td>{{permission.name}}</td>
                                                         <td>{{permission.resource}}</td>
                                                         <td>{{permission.description}}</td>
                                                         <td class="text-center"><span class="text-danger cursor"><i (click)="remove(permission)" class="bx bx-x"></i></span></td>

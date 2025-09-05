@@ -98,11 +98,26 @@ export class CreateRolDto {
     name: string;
     code: string;
     description?: string;
+    rolePermissions?: CreateRolePermissionDto[];
 
     constructor() {
         this.name = "";
         this.code = "";
         this.description = undefined;
+        this.rolePermissions = [];
+    }
+}
+
+export class CreateRolePermissionDto {
+    
+    roleId?: number;
+    permissionId: number;
+    grantedBy?: string;
+
+    constructor() {
+        this.roleId = undefined;
+        this.permissionId = 0;
+        this.grantedBy = undefined;
     }
 }
 

@@ -36,17 +36,17 @@ export class RolService {
     } 
   
     createRol(entity: CreateRolDto): Observable<Rol> {
-        const url = `${this.apiUrl}/${this.controller}/create-rol`;
+        const url = `${this.apiUrl}/${this.controller}/create-role`;
         return this.http.post<Rol>(url, entity, this.getHttpOptions());
     } 
 
     updateRol(id: number, entity: UpdateRolDto): Observable<Rol> {
-        const url = `${this.apiUrl}/${this.controller}/update-rol/${id}`;
+        const url = `${this.apiUrl}/${this.controller}/update-role/${id}`;
         return this.http.put<Rol>(url, entity, this.getHttpOptions());
     } 
 
     deleteRol(id: number): Observable<void> {
-        const url = `${this.apiUrl}/${this.controller}/delete-rol/${id}`;
+        const url = `${this.apiUrl}/${this.controller}/delete-role/${id}`;
         return this.http.delete<void>(url, this.getHttpOptions());
     } 
     

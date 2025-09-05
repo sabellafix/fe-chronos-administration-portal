@@ -87,6 +87,7 @@ export class UsersUpdateComponent {
     });
 
     this.formUpdateService = new FormGroup({
+      serviceName : new FormControl("", Validators.required),
       durationMinutes : new FormControl(60, [Validators.required, Validators.min(1)]),
       processingTime : new FormControl(0, [Validators.min(0)]),
       price : new FormControl(0, [Validators.required, Validators.min(0)]),
@@ -376,7 +377,7 @@ export class UsersUpdateComponent {
   }
 
   getSalonServiceColor(serviceId: string): string {
-    const service = this.services.find(s => s.id === serviceId);
+    const service = this.salonServices.find(s => s.id === serviceId);
     return service ? service.color + ' !important' : '#e9ecef';
   }
 
@@ -442,8 +443,6 @@ export class UsersUpdateComponent {
       this.selectedService = service;
       this.formUpdateService.patchValue({
         serviceName: service.serviceName,
-        serviceDescription: service.serviceDescription,
-        categoryId: service.categoryId,
         durationMinutes: service.durationMinutes,
         processingTime: service.processingTime,
         price: service.price,
@@ -462,7 +461,7 @@ export class UsersUpdateComponent {
       const createDto = new CreateServiceDto();
       
       createDto.providerId = this.user.id;
-      createDto.salonId = null;
+      createDto.salonId = null
       createDto.categoryId = this.selectedSalonService.categoryId;
       createDto.serviceName = this.selectedSalonService.serviceName || "";
       createDto.serviceDescription = this.selectedSalonService.serviceDescription || undefined;
@@ -473,7 +472,7 @@ export class UsersUpdateComponent {
       createDto.type = ServiceTypeConst._SERVICE;
       createDto.currency = this.selectedSalonService.currency || undefined;
 
-      this.serviceService.createService(createDto).subscribe({
+      this.serviceService.create(createDto).subscribe({
         next: (data: Service) => {
           this.services.push(data);
           this.snackBar.open('Service created successfully', 'Cerrar', {duration: 4000});

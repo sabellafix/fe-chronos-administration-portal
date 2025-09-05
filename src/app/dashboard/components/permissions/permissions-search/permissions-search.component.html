@@ -1,23 +1,62 @@
 <mat-dialog-content style="height: 700px !important" class="border-round-bottom border-round-top">
-    <h5 class="mb-4">{{titleComponent}}</h5>
-    <div class="input-group">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="mb-0">
+            <i class="bx bx-key me-2"></i>
+            {{titleComponent}}
+        </h5>
+        <div class="text-muted">
+            <small>
+                {{selected.length}} selected of {{totalItems}} permissions
+                <span *ngIf="keySearch.trim()">({{allPermissions.length}} total)</span>
+            </small>
+        </div>
+    </div>
+    <div class="input-group mb-3">
         <div class="input-group-text border-square-bottom"><i class="bx bx-search"></i></div>
-        <input type="text" class="form-control form-control-sm border-square-bottom" (keyup)="onKeyUp($event)" [(ngModel)]="keySearch" placeholder="Filtrar">
+        <input type="text" class="form-control form-control-sm border-square-bottom" 
+               (keyup)="onKeyUp($event)" 
+               [(ngModel)]="keySearch" 
+               placeholder="Search by name, resource or description...">
+        <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()" *ngIf="keySearch.trim()">
+            <i class="bx bx-x"></i>
+        </button>
     </div>
     <div class="table-container">
         <table class="table table-sm m-0">
             <thead>
                 <tr class="table-light">
-                    <th class="text-center" width="45px"><input (click)="setAll()" [(ngModel)]="selectAll" [ngModelOptions]="{standalone: true}" class="form-check-input text-success" type="checkbox"></th>
-                    <th>Module</th>
-                    <th>Descripción</th>
+                    <th class="text-center" width="45px">
+                        <input (click)="setAll()" 
+                               [(ngModel)]="selectAll" 
+                               [ngModelOptions]="{standalone: true}" 
+                               class="form-check-input text-success" 
+                               type="checkbox"
+                                matTooltip="Select all permissions on this page">
+                    </th>
+                    <th>Name</th>
+                    <th>Resource</th>
+                    <th>Description</th>
                 </tr>
             </thead>
             <tbody *ngIf="!loading" class="animated fadeIn fast">
-                <tr *ngFor="let permission of permissions" class="cursor" [ngClass]="{'table-light' : permission.active }" (click)="select(permission)">
-                    <td class="text-center"><input [checked]="permission.active" disabled [(ngModel)]="permission.active" [ngModelOptions]="{standalone: true}" class="opacity-100 form-check-input" type="checkbox"></td>
-                    <!-- <td>{{permission.module | transEntities}}</td> -->
-                    <td>{{permission.resource}}</td>
+                <tr *ngFor="let permission of permissions" 
+                    class="cursor" 
+                    [ngClass]="{'table-info' : permission.active, 'table-hover': !permission.active }" 
+                    (click)="select(permission)">
+                    <td class="text-center">
+                        <input [checked]="permission.active" 
+                               disabled 
+                               [(ngModel)]="permission.active" 
+                               [ngModelOptions]="{standalone: true}" 
+                               class="opacity-100 form-check-input" 
+                               type="checkbox">
+                    </td>
+                    <td>
+                        {{permission.action}}
+                    </td>
+                    <td>
+                        {{permission.resource}}
+                    </td>
                     <td>{{permission.description}}</td>
                 </tr>
             </tbody>
@@ -33,18 +72,39 @@
         [pageIndex]="pageIndex"
         (page)="changePage($event)">
     </mat-paginator>
-    <div *ngIf="permissions.length == 0 && !loading" class="card border-square-top border-ligth">
-        <div class="card-body">
-            <h1 class="display-3 text-center">
+    <div *ngIf="filteredPermissions.length == 0 && !loading && keySearch.trim()" class="card border-square-top border-light">
+        <div class="card-body text-center">
+            <h1 class="display-3">
                 <small class="text-muted"><i class="bx bx-search-alt-2"></i></small>
             </h1>
-            <h6 class="card-title text-center">
-                No results found.
+            <h6 class="card-title">
+                No permissions found
             </h6>
-            <h6 class="card-title text-center">
-                <small class="text-muted">Please add a value.</small>
+            <h6 class="card-title">
+                <small class="text-muted">
+                    No permissions found that match "{{keySearch}}"
+                </small>
             </h6>
-            <br>
+            <button class="btn btn-sm btn-outline-primary mt-2" (click)="clearSearch()">
+                <i class="bx bx-x me-1"></i>
+                Clear search
+            </button>
+        </div>
+    </div>
+    
+    <div *ngIf="allPermissions.length == 0 && !loading && !keySearch.trim()" class="card border-square-top border-light">
+        <div class="card-body text-center">
+            <h1 class="display-3">
+                <small class="text-muted"><i class="bx bx-key"></i></small>
+            </h1>
+            <h6 class="card-title">
+                No permissions available
+            </h6>
+            <h6 class="card-title">
+                <small class="text-muted">
+                    No permissions found in the system
+                </small>
+            </h6>
         </div>
     </div>
     <div *ngIf="loading" class="mb-3">
@@ -52,6 +112,27 @@
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button (click)="close(false)" style="margin-right: 10px" mat-dialog-close class="btn btn-danger w-sm bg-gradient waves-effect waves-light"> Close</button>
-    <button (click)="close(true)" class="btn btn-primary w-sm bg-gradient waves-effect waves-light"> Add</button>
+    <div class="d-flex justify-content-between align-items-center w-100">
+        <div class="text-muted">
+            <small>
+                <i class="bx bx-info-circle me-1"></i>
+                {{selected.length}} permissions selected
+            </small>
+        </div>
+        <div>
+            <button (click)="close(false)" 
+                    style="margin-right: 10px" 
+                    mat-dialog-close 
+                    class="btn btn-danger w-sm bg-gradient waves-effect waves-light">
+                <i class="bx bx-x me-1"></i>
+                Cancel
+            </button>
+            <button (click)="close(true)" 
+                    class="btn btn-primary w-sm bg-gradient waves-effect waves-light"
+                    [disabled]="selected.length === 0">
+                <i class="bx bx-check me-1"></i>
+                Add ({{selected.length}})
+            </button>
+        </div>
+    </div>
   </mat-dialog-actions>

@@ -83,12 +83,26 @@ export class UpdateRolDto {
     code?: string;
     description?: string;
     isActive?: boolean;
+    rolePermissions?: UpdateRolePermissionDto[];
 
     constructor() {
         this.name = undefined;
         this.code = undefined;
         this.description = undefined;
         this.isActive = undefined;
+        this.rolePermissions = undefined;
+    }
+}
+
+export class UpdateRolePermissionDto {
+    roleId?: number;
+    permissionId: number;
+    grantedBy?: string;
+
+    constructor() {
+        this.roleId = undefined;
+        this.permissionId = 0;
+        this.grantedBy = undefined;
     }
 }
 

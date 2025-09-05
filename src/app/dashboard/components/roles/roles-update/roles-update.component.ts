@@ -6,10 +6,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RolService } from '@app/core/services/http/rol.service';
 import { PermissionService } from '@app/core/services/http/permission.service';
 import { Pagination } from '@app/core/models/interfaces/pagination.interface';
-import { Permission, Rol, UpdateRolDto } from '@app/core/models/bussiness';
+import { Permission, Rol, UpdateRolDto, UpdateRolePermissionDto, User } from '@app/core/models/bussiness';
+import { RolePermission } from '@app/core/models/bussiness/rolePermission';
 import { Response } from '@app/core/models/dtos/response';
 import { Validation } from '@app/core/models/dtos/validation';
 import { PermissionsSearchComponent } from '../../permissions/permissions-search/permissions-search.component';
+import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
+import { StorageService } from '@app/core/services/shared/storage.service';
 
 @Component({
   selector: 'app-roles-update',
@@ -20,7 +23,7 @@ export class RolesUpdateComponent {
 
   loading: boolean = true;
   charge: boolean = false;
-  titleComponent: string = "Actualizar Rol";
+  titleComponent: string = "Update Role";
   pagination: Pagination = { offset: 0, limit: 1000, items: 0, filters: ``, sort: 'id,desc' };
   form: FormGroup; 
   permissions: Permission[] = [];
@@ -29,6 +32,7 @@ export class RolesUpdateComponent {
   validPermissions: boolean = true;
   send: boolean = false;
   response?: Response;
+  userLogged: User = new User();
   
   rolId: number = 0;
   currentRol: Rol = new Rol();
@@ -45,13 +49,14 @@ export class RolesUpdateComponent {
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private storageService: StorageService
   ) {
     this.form = new FormGroup({
       name: new FormControl("", Validators.required),
-      code: new FormControl("", Validators.required),
       description: new FormControl("", Validators.required)
     });
+    this.userLogged = this.getUsetLogged();
   }
 
   ngOnInit(): void {
@@ -59,7 +64,6 @@ export class RolesUpdateComponent {
       this.rolId = +params['id'];
       if (this.rolId) {
         this.loadRol();
-        this.loadPermissions();
       } else {
         this.router.navigate(['/roles']);
       }
@@ -70,53 +74,51 @@ export class RolesUpdateComponent {
     this.loading = true;
     this.rolService.getRol(this.rolId).subscribe({
       next: (response: Rol) => {
-        this.currentRol = response;
+        this.currentRol = response;       
         this.populateForm();
         this.loading = false;
       },
       error: (error) => {
-        this.snackBar.open('Error al cargar el rol', 'Cerrar', { duration: 4000 });
+        this.snackBar.open('Error loading the rol', 'Close', { duration: 4000 });
         this.loading = false;
         this.router.navigate(['/roles']);
       }
     });
   }
 
-  loadPermissions(): void {
-    this.permissionService.getPermissions().subscribe({
-      next: (response: Permission[]) => {
-        this.availablePermissions = response;
-      },
-      error: (error) => {
-        this.snackBar.open('Error al cargar permisos', 'Cerrar', { duration: 4000 });
-      }
-    });
+  getUsetLogged(): User {
+    const user = this.storageService.get(StorageKeyConst._USER);
+    return user as User;
   }
+
 
   populateForm(): void {
     this.form.patchValue({
       name: this.currentRol.name,
-      code: this.currentRol.code,
       description: this.currentRol.description
     });
     
-    // TODO: Cargar permisos del rol desde el backend
-    // Por ahora inicializamos con array vacío
-    this.permissions = [];
+    // Mapear los permisos del rol desde rolePermissions
+    this.mapRolePermissionsToPermissions();
     this.totalItems = this.permissions.length;
-    this.validPermissions = true; // Permitir actualizar sin cambiar permisos
+    this.validPermissions = this.permissions.length > 0;
   }
 
-  post() {
+  put(): void {
     this.form.markAllAsTouched();
     this.validPermissions = this.permissions.length > 0;
     
     if (this.form.valid && this.validPermissions) {
+      // Sincronizar rolePermissions antes de enviar
+      this.updateRolePermissions();
+      
       const updateRolDto: UpdateRolDto = new UpdateRolDto();
       updateRolDto.name = this.form.get('name')?.value;
-      updateRolDto.code = this.form.get('code')?.value;
       updateRolDto.description = this.form.get('description')?.value;
       updateRolDto.isActive = this.currentRol.isActive;
+      
+      // Agregar rolePermissions al DTO si el backend lo soporta
+      updateRolDto.rolePermissions = this.getActiveRolePermissions();
 
       this.charge = true;
       this.send = false;
@@ -124,7 +126,7 @@ export class RolesUpdateComponent {
       this.rolService.updateRol(this.rolId, updateRolDto).subscribe({
         next: (data: Rol) => {
           this.charge = false;
-          this.snackBar.open('Rol actualizado correctamente.', 'Cerrar', { duration: 4000 });
+          this.snackBar.open('Rol updated successfully.', 'Close', { duration: 4000 });
           this.return();
         },
         error: (error: any) => {
@@ -137,7 +139,7 @@ export class RolesUpdateComponent {
             message = error.error.message;
           }
           this.charge = false;
-          this.snackBar.open('Error ejecutando la actualización ' + message, 'Cerrar', { duration: 4000 });
+          this.snackBar.open('Error executing the update ' + message, 'Close', { duration: 4000 });
         }
       });
     }
@@ -159,6 +161,7 @@ export class RolesUpdateComponent {
     const index = this.permissions.indexOf(permission);
     if (index >= 0) {
       this.permissions.splice(index, 1);
+      this.updateRolePermissions(); // Sincronizar con rolePermissions
       this.totalItems = this.permissions.length;
       this.validPermissions = this.permissions.length > 0;
     }
@@ -166,11 +169,12 @@ export class RolesUpdateComponent {
 
   removeAll(): void {
     this.permissions = [];
+    this.updateRolePermissions(); // Sincronizar con rolePermissions
     this.totalItems = 0;
     this.validPermissions = false;
   }
 
-  search() {
+  search(): void {
     const dialogRef = this.dialog.open(PermissionsSearchComponent, {
       width: '60%',
       data: {
@@ -181,13 +185,14 @@ export class RolesUpdateComponent {
     dialogRef.afterClosed().subscribe((selected: Permission[]) => {
       if (selected && selected.length > 0) {
         this.permissions = selected;
+        this.updateRolePermissions(); // Sincronizar con rolePermissions
         this.totalItems = this.permissions.length;
         this.validPermissions = true;
         this.pageIndex = 0;
         this.pageSize = 10;
         this.pagination.offset = this.pageIndex;
         this.pagination.limit = this.pageSize;
-        this.snackBar.open('Permisos actualizados.', 'Cerrar', { duration: 4000 });
+        this.snackBar.open('Permissions updated.', 'Close', { duration: 4000 });
       }
     });
   }
@@ -219,12 +224,68 @@ export class RolesUpdateComponent {
     const nameValue = this.form.get('name')?.value;
     if (nameValue) {
       const code = nameValue.toUpperCase().replace(/\s+/g, '_');
-      this.form.get('code')?.setValue(code);
     }
   }
 
   toggleActiveStatus(): void {
     this.currentRol.isActive = !this.currentRol.isActive;
+  }
+
+  private mapRolePermissionsToPermissions(): void {
+    if (this.currentRol.rolePermissions && this.currentRol.rolePermissions.length > 0) {
+      this.permissions = this.currentRol.rolePermissions
+        .map(rp => {
+          const permission = rp.permission;
+          permission.active = true; 
+          return permission;
+        });
+    } else {
+      this.permissions = [];
+    }
+  }
+
+  private updateRolePermissions(): void {
+    if (this.currentRol.rolePermissions) {
+      this.currentRol.rolePermissions.forEach(rp => {
+        rp.isActive = false;
+      });
+
+      this.permissions.forEach(permission => {
+        const existingRolePermission = this.currentRol.rolePermissions.find(
+          rp => rp.permissionId === permission.id
+        );
+        
+        if (existingRolePermission) {
+          existingRolePermission.isActive = true;
+          existingRolePermission.permission = permission;
+        } else {
+          const newRolePermission = new RolePermission();
+          newRolePermission.roleId = this.currentRol.id;
+          newRolePermission.permissionId = permission.id;
+          newRolePermission.permission = permission;
+          newRolePermission.isActive = true;
+          newRolePermission.grantedAt = new Date().toISOString();
+          newRolePermission.grantedBy = this.userLogged.id;
+          this.currentRol.rolePermissions.push(newRolePermission);
+        }
+      });
+    }
+  }
+
+  private getActiveRolePermissions(): UpdateRolePermissionDto[] {
+    return this.currentRol.rolePermissions?.filter(rp => rp.isActive).map(rp => {
+      const updateRolePermissionDto = new UpdateRolePermissionDto();
+      updateRolePermissionDto.permissionId = rp.permissionId;
+      updateRolePermissionDto.grantedBy = rp.grantedBy;
+      updateRolePermissionDto.roleId = rp.roleId;
+      return updateRolePermissionDto;
+    }) || [];
+  }
+
+  private hasPermission(permissionId: number): boolean {
+    return this.currentRol.rolePermissions?.some(
+      rp => rp.permissionId === permissionId && rp.isActive
+    ) || false;
   }
 
   return() {

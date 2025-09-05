@@ -1,3 +1,5 @@
+import { RolePermission } from "./rolePermission";
+
 export class Rol{
     id : number;
     code : string;
@@ -5,8 +7,10 @@ export class Rol{
     description : string;
     isSystemRole : boolean;
     isActive : boolean;
+    rolePermissions : RolePermission[];
     createdAt : string;
     updatedAt : string;
+
 
     constructor() {
         this.id = 0;
@@ -15,6 +19,7 @@ export class Rol{
         this.description = "";
         this.isSystemRole = false;
         this.isActive = false;
+        this.rolePermissions = [];
         this.createdAt = "";
         this.updatedAt = "";        
     }

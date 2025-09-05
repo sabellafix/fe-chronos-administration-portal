@@ -86,23 +86,23 @@ export class RolesListComponent {
       const dialogRef = this.dialog.open(DialogConfirmComponent, {
         width: '400px',
         data: {
-          title: '¿Quiere eliminar el rol?',
-          description: ['Esta acción eliminará el rol seleccionado.'],
-          labelButtons: ['Sí, eliminar', 'Cancelar']
+          title: 'Do you want to delete the role?',
+          description: ['This action will delete the selected role.'],
+          labelButtons: ['Yes, delete', 'Cancel']
         }
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.rolService.deleteRol(id).subscribe({
             next: (response: any) => {              
-              this.snackBar.open('Rol eliminado correctamente', 'Cerrar', {duration: 4000});
+              this.snackBar.open('Role deleted successfully', 'Close', {duration: 4000});
               this.load();
             }, error: (error: any) =>{
               let message = '';
               if(error.error.message && error.status != 422){
                 message = error.error.message;
               }
-              this.snackBar.open('Error ejecutando la eliminación ' + message, 'Cerrar', {duration: 4000});
+              this.snackBar.open('Error executing the deletion ' + message, 'Close', {duration: 4000});
             }
           });
         }
@@ -110,12 +110,11 @@ export class RolesListComponent {
   }
 
   filter(filters: string){
-    // TODO: Implementar filtros cuando esté disponible en el backend
     this.load();
   }
 
   getRolStatus(rol: Rol): string {
-    return rol.isActive ? 'Activo' : 'Inactivo';
+    return rol.isActive ? 'Active' : 'Inactive';
   }
 
   getRolStatusClass(rol: Rol): string {
@@ -131,11 +130,11 @@ export class RolesListComponent {
   clear(){}
 
   getRolDisplayName(rol: Rol): string {
-    return rol.name || 'Sin nombre';
+    return rol.name || 'No name';
   }
 
   getRolType(rol: Rol): string {
-    return rol.isSystemRole ? 'Sistema' : 'Personalizado';
+    return rol.isSystemRole ? 'System' : 'Custom';
   }
 
   getRolTypeClass(rol: Rol): string {
