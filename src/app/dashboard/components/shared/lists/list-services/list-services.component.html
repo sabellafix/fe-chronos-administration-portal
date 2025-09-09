@@ -1,0 +1,151 @@
+<div *ngIf="!loading" class="card-body pb-1">
+    <div *ngIf="!services || services.length === 0" class="text-center text-muted py-3">
+        <i class="bx bx-info-circle me-2"></i>No services assigned yet
+    </div>
+    <div class="services-container">
+        <div *ngFor="let service of services; let i = index"
+            class="border rounded p-3 mb-3 pb-1 position-relative animated fadeIn fast bg-white"
+            [style.border-left]="'6px solid ' + getServiceColor(service.id)">
+            <div *ngIf="mode === 'update'" class="dropdown float-end">
+                <a href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                    <i class="bx bx-dots-vertical-rounded font-size-20"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end cursor"
+                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 25px);"
+                    data-popper-placement="bottom-end">
+                    <a class="dropdown-item" (click)="setUpdateServiceForm(service)">Update</a>
+                    <a class="dropdown-item" (click)="deleteService(service.id)">Delete</a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="card-title">{{service.serviceName}}</h6>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <label class="form-label text-muted small">Duration</label>
+                    <div class="text-primary fw-bold">{{service.durationMinutes}}
+                        min</div>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <label class="form-label text-muted small">Price</label>
+                    <div class="text-success fw-bold">${{service.price}}
+                        {{service.currency || 'USD'}}</div>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <label class="form-label text-muted small">Processing
+                        Time</label>
+                    <div class="text-info fw-bold">{{service.processingTime}} min
+                    </div>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label class="form-label text-muted small">Category</label>
+                    <div class="text-muted fw-light">{{service.category.name}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="mode === 'update'">
+        <div *ngIf="!showCreateForm" class="col-md-12 mb-2">
+            <button type="button" class="btn  btn-white bg-gradient w-100" (click)="setCreateServiceForm()">
+                <i class="bx bx-plus me-2"></i>Add Service
+            </button>
+        </div>
+        <div class="col-md-12 mb-2">
+            <div *ngIf="showCreateForm" class="card bg-white mt-2 animated fadeIn fast"
+                [style.border-left]="'6px solid ' + getSalonServiceColor(salonService.id)">
+                <div class="card-body">
+                    <form [formGroup]="formCreate">
+                        <div>
+                            <div class="float-end">
+                                <a (click)="cancelServiceForm()" role="button">
+                                    <i class="bx bx-x font-size-20 text-danger"></i>
+                                </a>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Service *</label>
+                                    <select class="form-select form-select-sm" (change)="onServiceChange($event)"
+                                        formControlName="serviceId">
+                                        <option value="">Select a service</option>
+                                        <option *ngFor="let salonService of salonServices" [value]="salonService.id">
+                                            {{salonService.serviceName}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Duration (minutes) *</label>
+                                    <input type="number" class="form-control form-control-sm" min="1" placeholder="60"
+                                        formControlName="durationMinutes">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Price *</label>
+                                    <input type="number" class="form-control form-control-sm" min="0" step="0.01"
+                                        placeholder="0.00" formControlName="price">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Processing Time (minutes)</label>
+                                    <input type="number" class="form-control form-control-sm" min="0" placeholder="0"
+                                        formControlName="processingTime">
+                                </div>
+                            </div>
+                            <div class="float-end">
+                                <a (click)="createService()" role="button">
+                                    <i class="bx bx-check font-size-20 text-success"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div *ngIf="showUpdateForm" class="card bg-white mt-2 animated fadeIn fast"
+                [style.border-left]="'6px solid ' + getServiceColor(service!.id)">
+                <div class="card-body">
+                    <form [formGroup]="formUpdate">
+                        <div>
+                            <div class="dropdown float-end">
+                                <a (click)="cancelServiceForm()" role="button">
+                                    <i class="bx bx-x font-size-20 text-danger"></i>
+                                </a>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <h6 class="card-title">{{formUpdate.get('serviceName')?.value}}</h6>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Duration (minutes) *</label>
+                                    <input type="number" class="form-control form-control-sm" min="1" placeholder="60"
+                                        formControlName="durationMinutes">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Processing Time (minutes)</label>
+                                    <input type="number" class="form-control form-control-sm" min="0" placeholder="0"
+                                        formControlName="processingTime">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Price *</label>
+                                    <input type="number" class="form-control form-control-sm" min="0" step="0.01"
+                                        placeholder="0.00" formControlName="price">
+                                </div>
+                            </div>
+                            <div class="float-end">
+                                <a (click)="updateService()" role="button">
+                                    <i class="bx bx-check font-size-20 text-success"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="loading" class="text-center py-3">
+    <ngx-skeleton-loader [count]="5" [theme]="{ 'border-radius': '10', height: '80px', 'background-color': '#FFFFFFF' }"></ngx-skeleton-loader>
+</div>

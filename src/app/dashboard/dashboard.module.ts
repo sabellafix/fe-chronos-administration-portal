@@ -79,6 +79,9 @@ import { RolesListComponent } from './components/roles/roles-list/roles-list.com
 import { RolesCreateComponent } from './components/roles/roles-create/roles-create.component';
 import { PermissionsSearchComponent } from './components/permissions/permissions-search/permissions-search.component';
 import { RolesUpdateComponent } from './components/roles/roles-update/roles-update.component';
+import { SkelletonRolComponent } from './components/shared/skelletons/skelleton-rol/skelleton-rol.component';
+import { RolesDetailComponent } from './components/roles/roles-detail/roles-detail.component';
+import { ListServicesComponent } from './components/shared/lists/list-services/list-services.component';
 
 
 const routes: Routes = [
@@ -163,6 +166,7 @@ const routes: Routes = [
           { path: '', component: RolesListComponent, pathMatch: 'full' },
           { path: 'create', component: RolesCreateComponent },
           { path: ':id/update', component: RolesUpdateComponent },
+          { path: ':id/detail', component: RolesDetailComponent },
           { path: '**', redirectTo: '' }
         ]
       },
@@ -236,6 +240,9 @@ const routes: Routes = [
     RolesCreateComponent,
     PermissionsSearchComponent,
     RolesUpdateComponent,
+    SkelletonRolComponent,
+    RolesDetailComponent,
+    ListServicesComponent,
   ],
   imports: [
     CommonModule,

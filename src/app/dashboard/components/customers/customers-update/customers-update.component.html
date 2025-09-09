@@ -95,15 +95,12 @@
                                 <div class="col-md-6">
                                     <div class="row">
                                         <div class="col-md-12 mb-3">
-                                            <div class="card">
+                                            <div class="card bg-light">
                                                 <div class="card-header">
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <h5 class="card-title mb-0">
                                                             <i class="bx bx-cog text-muted me-2"></i>Service Modifiers
                                                         </h5>
-                                                        <button type="button" class="btn btn-primary btn-sm" (click)="addServiceModifier()" [disabled]="loadingServices">
-                                                            <i class="bx bx-plus me-1"></i>
-                                                        </button>
                                                     </div>
                                                     <small class="text-muted">Configure custom durations for specific services for this customer</small>
                                                 </div>
@@ -111,61 +108,73 @@
                                                     <div *ngIf="serviceModifiersArray.length === 0" class="text-center text-muted py-3">
                                                         <i class="bx bx-info-circle me-2"></i>No service modifiers configured
                                                     </div>
-                                                    <div *ngFor="let modifier of serviceModifiersArray.controls; let i = index" 
-                                                        [formGroupName]="i" 
-                                                        class="border rounded p-3 mb-3 position-relative animated fadeIn fast"
-                                                        [style.border-left]="'6px solid ' + getServiceColor(modifier.get('serviceId')?.value)">
-                                                       
-                                                        <div class="row">
-                                                            <div class="col-md-5 mb-2">
-                                                                <label class="form-label">Service *</label>
-                                                                <select class="form-select" formControlName="serviceId" 
-                                                                        (change)="onServiceChange(i, $any($event.target).value)">
-                                                                    <option value="">Select a service</option>
-                                                                    <option *ngFor="let service of getAvailableServices(i)" [value]="service.id">
-                                                                        {{service.serviceName}} 
-                                                                        <span class="text-muted">({{service.durationMinutes}} min - ${{service.price}})</span>
-                                                                    </option>
-                                                                </select>
-                                                                <div class="invalid-feedback" 
-                                                                    *ngIf="modifier.get('serviceId')?.hasError('required') && modifier.get('serviceId')?.touched">
-                                                                    <strong>*</strong> Please select a service
+                                                    <div class="services-container">
+                                                        <div *ngFor="let modifier of serviceModifiersArray.controls; let i = index" 
+                                                            [formGroupName]="i" 
+                                                            class="border rounded p-3 mb-3 position-relative animated fadeIn fast bg-white"
+                                                            [style.border-left]="'6px solid ' + getServiceColor(modifier.get('serviceId')?.value)">
+                                                        
+
+                                                            <div class="dropdown float-end">
+                                                                <a href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                                                    <i class="bx bx-dots-vertical-rounded font-size-20"></i>
+                                                                </a>
+                                                                <div class="dropdown-menu dropdown-menu-end cursor" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 25px);" data-popper-placement="bottom-end">
+                                                                    <a class="dropdown-item" (click)="removeServiceModifier(i)">Delete</a>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-3 mb-2">
-                                                                <label class="form-label">Modified Duration *</label>
-                                                                <input type="number" class="form-control" 
-                                                                    formControlName="modifiedDurationInMinutes" 
-                                                                    placeholder="Enter duration in minutes" min="1">
-                                                                <div class="invalid-feedback" 
-                                                                    *ngIf="modifier.get('modifiedDurationInMinutes')?.hasError('required') && modifier.get('modifiedDurationInMinutes')?.touched">
-                                                                    <strong>*</strong> Duration is required
+
+                                                            <div class="row">
+                                                                <div class="col-md-5 mb-2">
+                                                                    <label class="form-label">Service *</label>
+                                                                    <select class="form-select" formControlName="serviceId" 
+                                                                            (change)="onServiceChange(i, $any($event.target).value)">
+                                                                        <option value="">Select a service</option>
+                                                                        <option *ngFor="let service of getAvailableServices(i)" [value]="service.id">
+                                                                            {{service.serviceName}} 
+                                                                            <span class="text-muted">({{service.durationMinutes}} min - ${{service.price}})</span>
+                                                                        </option>
+                                                                    </select>
+                                                                    <div class="invalid-feedback" 
+                                                                        *ngIf="modifier.get('serviceId')?.hasError('required') && modifier.get('serviceId')?.touched">
+                                                                        <strong>*</strong> Please select a service
+                                                                    </div>
                                                                 </div>
-                                                                <div class="invalid-feedback" 
-                                                                    *ngIf="modifier.get('modifiedDurationInMinutes')?.hasError('min') && modifier.get('modifiedDurationInMinutes')?.touched">
-                                                                    <strong>*</strong> Duration must be at least 1 minute
+                                                                <div class="col-md-4 mb-2">
+                                                                    <label class="form-label">Modified Duration *</label>
+                                                                    <input type="number" class="form-control" 
+                                                                        formControlName="modifiedDurationInMinutes" 
+                                                                        placeholder="Enter duration in minutes" min="1">
+                                                                    <div class="invalid-feedback" 
+                                                                        *ngIf="modifier.get('modifiedDurationInMinutes')?.hasError('required') && modifier.get('modifiedDurationInMinutes')?.touched">
+                                                                        <strong>*</strong> Duration is required
+                                                                    </div>
+                                                                    <div class="invalid-feedback" 
+                                                                        *ngIf="modifier.get('modifiedDurationInMinutes')?.hasError('min') && modifier.get('modifiedDurationInMinutes')?.touched">
+                                                                        <strong>*</strong> Duration must be at least 1 minute
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="col-md-3 mb-2">
-                                                                <label class="form-label">Modified Price *</label>
-                                                                <input type="number" class="form-control" 
-                                                                    formControlName="modifiedPrice" 
-                                                                    placeholder="Enter modified price" min="1">
-                                                                <div class="invalid-feedback" 
-                                                                    *ngIf="modifier.get('modifiedPrice')?.hasError('required') && modifier.get('modifiedPrice')?.touched">
-                                                                    <strong>*</strong> Modified price is required
+                                                                <div class="col-md-3 mb-2">
+                                                                    <label class="form-label">Modified Price *</label>
+                                                                    <input type="number" class="form-control" 
+                                                                        formControlName="modifiedPrice" 
+                                                                        placeholder="Enter modified price" min="1">
+                                                                    <div class="invalid-feedback" 
+                                                                        *ngIf="modifier.get('modifiedPrice')?.hasError('required') && modifier.get('modifiedPrice')?.touched">
+                                                                        <strong>*</strong> Modified price is required
+                                                                    </div>
+                                                                    <div class="invalid-feedback" 
+                                                                        *ngIf="modifier.get('modifiedPrice')?.hasError('min') && modifier.get('modifiedPrice')?.touched">
+                                                                        <strong>*</strong> Modified price must be at least 1
+                                                                    </div>
                                                                 </div>
-                                                                <div class="invalid-feedback" 
-                                                                    *ngIf="modifier.get('modifiedPrice')?.hasError('min') && modifier.get('modifiedPrice')?.touched">
-                                                                    <strong>*</strong> Modified price must be at least 1
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-1 mb-2 mt-4">
-                                                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2" (click)="removeServiceModifier(i)">
-                                                                    <i class="bx bx-x"></i>
-                                                                </button>
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                    <div  class="col-md-12 mb-2">
+                                                        <button type="button" class="btn  btn-white bg-gradient w-100" (click)="addServiceModifier()">
+                                                            <i class="bx bx-plus me-2"></i>Add Service Modifier
+                                                        </button>
                                                     </div>
                                                     <div *ngIf="loadingServices" class="text-center py-3">
                                                         <i class="bx bx-loader bx-spin me-2"></i>Loading services...

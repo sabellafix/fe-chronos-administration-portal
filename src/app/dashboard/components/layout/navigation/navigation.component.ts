@@ -89,7 +89,7 @@ export class NavigationComponent implements OnInit{
     },
     {
       title: 'Roles',
-      icon: 'bx bx-shield',
+      icon: 'bx bx-id-card',
       route: 'roles',
       children: [
         {

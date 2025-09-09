@@ -122,6 +122,10 @@ export class UsersDetailComponent {
     this.router.navigate([`/users/${this.id}/update`]);
   }
 
+  availability(){
+    this.router.navigate([`/users/${this.id}/availability`]);
+  }
+
   return(){
     this.router.navigate([`/users`]);
   }

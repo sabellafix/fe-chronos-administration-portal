@@ -27,6 +27,7 @@ export class CustomersUpdateComponent implements OnInit {
   customer?: Customer;
   services: Service[] = [];
   loadingServices: boolean = false;
+  showCreateServiceForm: boolean = false;
 
   languageOptions = [
     { value: 'en', label: 'English' },
@@ -75,7 +76,6 @@ export class CustomersUpdateComponent implements OnInit {
           isActive: customer.isActive
         });
         
-        // Load existing service modifiers
         if (customer.serviceModifiers && customer.serviceModifiers.length > 0) {
           const serviceModifiersArray = this.form.get('serviceModifiers') as FormArray;
           customer.serviceModifiers.forEach(modifier => {
@@ -191,7 +191,6 @@ export class CustomersUpdateComponent implements OnInit {
       preferredLanguage: "EN",
       isActive: true
     });
-    // Clear service modifiers
     const serviceModifiersArray = this.form.get('serviceModifiers') as FormArray;
     serviceModifiersArray.clear();
   }
@@ -201,7 +200,6 @@ export class CustomersUpdateComponent implements OnInit {
     return option ? option.label : value;
   }
 
-  // Service Modifiers Methods
   get serviceModifiersArray(): FormArray {
     return this.form.get('serviceModifiers') as FormArray;
   }
@@ -217,22 +215,18 @@ export class CustomersUpdateComponent implements OnInit {
   addServiceModifier(): void {
     const serviceModifiersArray = this.form.get('serviceModifiers') as FormArray;
     serviceModifiersArray.push(this.createServiceModifierFormGroup());
-    
-    // Forzar la actualización de todos los dropdowns
+    this.showCreateServiceForm =  true;
     this.refreshServiceDropdowns();
   }
 
   removeServiceModifier(index: number): void {
     const serviceModifiersArray = this.form.get('serviceModifiers') as FormArray;
     serviceModifiersArray.removeAt(index);
-    
-    // Forzar la actualización de todos los dropdowns
+    this.showCreateServiceForm = false;
     this.refreshServiceDropdowns();
   }
 
   private refreshServiceDropdowns(): void {
-    // Forzar la detección de cambios para actualizar todos los dropdowns
-    // Esto asegura que las listas de servicios disponibles se actualicen inmediatamente
     setTimeout(() => {
       this.cdr.detectChanges();
     }, 0);
@@ -262,7 +256,6 @@ export class CustomersUpdateComponent implements OnInit {
     const serviceModifiersArray = this.form.get('serviceModifiers') as FormArray;
     const selectedServiceIds: string[] = [];
     
-    // Obtener todos los servicios seleccionados excepto el del índice actual
     serviceModifiersArray.controls.forEach((control, index) => {
       if (index !== currentIndex) {
         const serviceId = control.get('serviceId')?.value;
@@ -272,15 +265,13 @@ export class CustomersUpdateComponent implements OnInit {
       }
     });
     
-    // Filtrar servicios que no estén seleccionados
     const availableServices = this.services.filter(service => !selectedServiceIds.includes(service.id));
     
-    // Si el servicio actual está seleccionado, incluirlo en la lista para permitir cambios
     const currentServiceId = serviceModifiersArray.at(currentIndex)?.get('serviceId')?.value;
     if (currentServiceId && currentServiceId.trim() !== '') {
       const currentService = this.services.find(s => s.id === currentServiceId);
       if (currentService && !availableServices.find(s => s.id === currentServiceId)) {
-        availableServices.unshift(currentService); // Agregar al inicio para mantenerlo seleccionado
+        availableServices.unshift(currentService);
       }
     }
     
@@ -294,7 +285,6 @@ export class CustomersUpdateComponent implements OnInit {
     if (selectedServiceId && selectedServiceId.trim() !== '') {
       const selectedService = this.services.find(s => s.id === selectedServiceId);
       if (selectedService) {
-        // Auto-completar duración y precio con los valores del servicio
         currentControl.patchValue({
           modifiedDurationInMinutes: selectedService.durationMinutes,
           modifiedPrice: selectedService.price
@@ -302,7 +292,6 @@ export class CustomersUpdateComponent implements OnInit {
       }
     }
     
-    // Forzar la actualización de todos los dropdowns para reflejar cambios
     this.refreshServiceDropdowns();
   }
 
@@ -312,6 +301,14 @@ export class CustomersUpdateComponent implements OnInit {
       control.setValue(!control.value);
       this.form.markAsDirty();
     }
+  }
+
+  setCreateServiceForm(): void {
+    this.showCreateServiceForm = true;
+  }
+
+  cancelServiceForm(): void {
+    this.showCreateServiceForm = false;
   }
 
 }

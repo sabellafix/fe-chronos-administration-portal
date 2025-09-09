@@ -19,10 +19,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
-                                    <button (click)="put()" type="submit" class="btn btn-success w-sm bg-gradient waves-effect waves-light" [disabled]="loading || charge">
-                                        <i *ngIf="charge" class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i> 
-                                        Save
-                                    </button>
+                                    <button *ngIf="!currentRol.isSystemRole" (click)="update()" type="button" class="btn btn-primary w-sm bg-gradient waves-effect waves-light">Edit</button>
                                 </div>
                             </div>
                         </div>
@@ -37,52 +34,28 @@
                                 <div class="row">
                                     <div class="col-md-6 col-sm-12">
                                         <div class="mb-3">
-                                            <label class="form-label">Name *</label>
-                                            <input type="text" class="form-control" 
-                                                   (input)="capitalize('name'); generateCode()" 
-                                                   placeholder="Enter the name of the rol" 
-                                                   formControlName="name"
-                                                   [disabled]="currentRol.isSystemRole">
-                                            <div class="invalid-feedback" *ngIf="form.controls['name'].hasError('required') && form.controls['name'].touched">
-                                                <strong>*</strong> The name is required
+                                            <label class="form-label">Name</label>
+                                            <div class="form-control-plaintext border rounded p-2 bg-white">
+                                                {{currentRol.name || 'N/A'}}
                                             </div>
-                                            <div class="invalid-feedback" *ngIf="getValidation('name') != undefined && send">
-                                                <strong>*</strong> {{getValidation('name')?.message}}
-                                            </div>
-                                            <small class="form-text text-muted" *ngIf="currentRol.isSystemRole">
-                                                The system roles cannot change their name
-                                            </small>
-                                        </div>     
+                                        </div>
                                     </div>
                                    
                                     <div class="col-md-6 col-sm-12">                                    
                                         <div class="mb-3">
-                                            <label class="form-label">Description *</label>
-                                            <input type="text" class="form-control" 
-                                                      placeholder="Enter the description of the rol" 
-                                                      formControlName="description">
-                                            <div class="invalid-feedback" *ngIf="form.controls['description'].hasError('required') && form.controls['description'].touched">
-                                                <strong>*</strong> The description is required
-                                            </div>
-                                            <div class="invalid-feedback" *ngIf="getValidation('description') != undefined && send">
-                                                <strong>*</strong> {{getValidation('description')?.message}}
+                                            <label class="form-label">Description</label>
+                                            <div class="form-control-plaintext border rounded p-2 bg-white">
+                                                {{currentRol.description || 'N/A'}}
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-sm-12">
                                         <div class="mb-3">
                                             <div class="row">
-                                                <div class="col-md-9 col-sm-6">
+                                                <div class="col-md-12 col-sm-6">
                                                     <div class="mb-3">
-                                                        <label class="form-label">Permissions *</label>
+                                                        <label class="form-label">Permissions</label>
                                                     </div>     
-                                                </div>
-                                                <div class="col-md-3 col-sm-6">                                    
-                                                    <div class="mb-3">
-                                                        <div class="d-flex flex-wrap gap-2 justify-content-end align-items-end h-100">
-                                                            <button (click)="search()" class="btn btn-primary w-sm bg-gradient waves-effect waves-light"><i class="bx bx-plus"></i> Add permissions</button>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="table-responsive">
@@ -92,11 +65,7 @@
                                                             <th>Name</th>
                                                             <th>Resource</th>
                                                             <th>Description</th>
-                                                            <th class="text-center" *ngIf="!currentRol.isSystemRole">
-                                                                <span matTooltip="Remove all" *ngIf="permissions.length > 0" class="cursor">
-                                                                    <i (click)="removeAll()" class="bx bx-x-circle text-danger"></i>
-                                                                </span>
-                                                            </th>
+                                                         
                                                         </tr>
                                                     </thead>
                                                     <tbody *ngIf="!loading">
@@ -104,7 +73,6 @@
                                                             <td>{{permission.name}}</td>
                                                             <td>{{permission.resource}}</td>
                                                             <td>{{permission.description}}</td>
-                                                            <td class="text-center"><span class="text-danger cursor"><i (click)="remove(permission)" class="bx bx-x"></i></span></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -127,10 +95,10 @@
                                                             No permissions assigned
                                                         </h6>
                                                         <h6 class="card-title">
-                                                            <small class="text-muted" *ngIf="!currentRol.isSystemRole">
+                                                            <small class="text-muted" >
                                                                 Click on "Manage Permissions" to add permissions to the rol
                                                             </small>
-                                                            <small class="text-muted" *ngIf="currentRol.isSystemRole">
+                                                            <small class="text-muted" >
                                                                 The permissions of this rol are managed by the system
                                                             </small>
                                                         </h6>

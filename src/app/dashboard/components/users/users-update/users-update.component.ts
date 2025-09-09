@@ -509,7 +509,6 @@ export class UsersUpdateComponent {
 
       this.serviceService.updateService(this.selectedService.id, updateDto).subscribe({
         next: (data: Service) => {
-          // Actualizar el servicio en la lista local
           const index = this.services.findIndex(s => s.id === this.selectedService!.id);
           if (index !== -1) {
             this.services[index] = data;

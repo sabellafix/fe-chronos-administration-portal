@@ -73,7 +73,7 @@ export class CustomersDetailComponent implements OnInit {
   }
 
   edit(): void {
-    this.router.navigate([`/customers/update/${this.customerId}`]);
+    this.router.navigate([`/customers/${this.customerId}/update`]);
   }
 
   getLanguageLabel(value: string): string {
