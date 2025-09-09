@@ -1,0 +1,56 @@
+<div *ngIf="!loading" class="card-body p-0 pb-1 pt-3">
+    <div *ngIf="!bookings || bookings.length === 0" class="text-center text-muted py-3">
+        <i class="bx bx-info-circle me-2"></i>No hay reservas asignadas aún
+    </div>
+    <div class="bookings-container">
+        <div *ngFor="let booking of bookings; let i = index"
+            class="no-border rounded p-3 mb-3 pb-1 position-relative animated fadeIn fast bg-white"
+            [style.border-left]="'6px solid ' + getBookingStatusColor(booking.status)">
+
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="card-title">Reserva #{{booking.bookingReference || booking.id.substring(0,8)}}</h6>
+                        <span class="badge" [ngClass]="getBookingStatusClass(booking.status)">{{getBookingStatusText(booking.status)}}</span>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <label class="form-label text-muted small">Cliente</label>
+                    <div class="text-primary fw-bold">{{booking.customer ? (booking.customer.firstName + ' ' + booking.customer.lastName) : 'N/A'}}</div>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <label class="form-label text-muted small">Fecha</label>
+                    <div class="text-info fw-bold">
+                        <span class="badge bg-primary me-2">{{booking.bookingDate | dayNumber}}</span>
+                        {{booking.bookingDate | monthName}} {{formatDate(booking.bookingDate)}}
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <label class="form-label text-muted small">Hora</label>
+                    <div class="text-info fw-bold">{{formatTime(booking.startTime)}} - {{formatTime(booking.endTime)}}</div>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <label class="form-label text-muted small">Duración</label>
+                    <div class="text-primary fw-bold">{{booking.durationMinutes}} min</div>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label class="form-label text-muted small">Precio Total</label>
+                    <div class="text-success fw-bold">${{booking.totalPrice}} {{booking.currency || 'USD'}}</div>
+                </div>
+
+                <div class="col-md-6 mb-2" *ngIf="booking.clientNotes">
+                    <label class="form-label text-muted small">Notas del Cliente</label>
+                    <div class="text-muted fw-light">{{booking.clientNotes}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="loading" class="text-center py-3">
+    <ngx-skeleton-loader [count]="5" [theme]="{ 'border-radius': '10', height: '80px', 'background-color': '#FFFFFFF' }"></ngx-skeleton-loader>
+</div>

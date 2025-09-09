@@ -1,10 +1,10 @@
-<div *ngIf="!loading" class="card-body pb-1">
+<div *ngIf="!loading" class="card-body p-0 pb-1 pt-3">
     <div *ngIf="!services || services.length === 0" class="text-center text-muted py-3">
         <i class="bx bx-info-circle me-2"></i>No services assigned yet
     </div>
     <div class="services-container">
         <div *ngFor="let service of services; let i = index"
-            class="border rounded p-3 mb-3 pb-1 position-relative animated fadeIn fast bg-white"
+            class="no-border rounded p-3 mb-2 pb-1 position-relative animated fadeIn fast bg-white"
             [style.border-left]="'6px solid ' + getServiceColor(service.id)">
             <div *ngIf="mode === 'update'" class="dropdown float-end">
                 <a href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
@@ -19,40 +19,46 @@
             </div>
 
             <div class="row">
-                <div class="col-md-12 mb-2">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="card-title">{{service.serviceName}}</h6>
+                <div class="col-md-4 mb-2">
+                    <div class="flex-grow-1 overflow-hidden">
+                        <div class="fw-semibold font-size-15">{{service.serviceName}}</div>
+                        <p class="text-muted mb-1 text-truncate">{{service.category.name}}</p>
                     </div>
                 </div>
 
-                <div class="col-md-3 mb-2">
-                    <label class="form-label text-muted small">Duration</label>
-                    <div class="text-primary fw-bold">{{service.durationMinutes}}
-                        min</div>
-                </div>
-
-                <div class="col-md-3 mb-2">
-                    <label class="form-label text-muted small">Price</label>
-                    <div class="text-success fw-bold">${{service.price}}
-                        {{service.currency || 'USD'}}</div>
-                </div>
-
-                <div class="col-md-3 mb-2">
-                    <label class="form-label text-muted small">Processing
-                        Time</label>
-                    <div class="text-info fw-bold">{{service.processingTime}} min
+                <div class="col-md-2 mb-2">
+                    <!-- <label class="form-label text-muted small">Duration</label> -->
+                    <div class="text-primary fw-normal d-flex align-items-center">
+                        <i class="bx bx-timer"></i>
+                        {{service.durationMinutes}}
+                        min
                     </div>
                 </div>
-                <div class="col-md-3 mb-2">
-                    <label class="form-label text-muted small">Category</label>
-                    <div class="text-muted fw-light">{{service.category.name}}
+
+                <div class="col-md-2 mb-2">
+                    <!-- <label class="form-label text-muted small">Price</label> -->
+                    <div class="text-success fw-normal d-flex align-items-center">
+                        <i class="bx bx-dollar"></i>
+                        {{service.price}}
+                        {{service.currency || 'USD'}}
                     </div>
                 </div>
+
+                <div class="col-md-2 mb-2">
+                    <!-- <label class="form-label text-muted small">Processing
+                        Time</label> -->
+                    <div class="text-info fw-normal d-flex align-items-center">
+                        <i class="bx bx-timer"></i>
+                        {{service.processingTime}}
+                        min
+                    </div>
+                </div>
+              
             </div>
         </div>
     </div>
     <div class="row" *ngIf="mode === 'update'">
-        <div *ngIf="!showCreateForm" class="col-md-12 mb-2">
+        <div *ngIf="!showCreateForm" class="col-md-12 mb-2 mt-2">
             <button type="button" class="btn  btn-white bg-gradient w-100" (click)="setCreateServiceForm()">
                 <i class="bx bx-plus me-2"></i>Add Service
             </button>

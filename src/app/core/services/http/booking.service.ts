@@ -75,6 +75,14 @@ export class BookingService {
         return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params });
     }
 
+    getByUserDateRange(userId: string, start: Date | undefined, end: Date | undefined): Observable<Booking[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-by-user-date-range`;
+        const startDate = start ? `${start.getFullYear()}/${start.getMonth() + 1}/${start.getDate()}` : '';
+        const endDate = end ? `${end.getFullYear()}/${end.getMonth() + 1}/${end.getDate()}` : '';
+        const params = new HttpParams().set('id', userId).set('start', startDate).set('end', endDate);
+        return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params });
+    }
+
     create(entity: CreateBookingDto | any): Observable<Booking> {
         const url = `${this.apiUrl}/${this.controller}/create`;
         return this.http.post<Booking>(url, entity, this.getHttpOptions());
@@ -103,6 +111,12 @@ export class BookingService {
 
     getBookingsByService(serviceId: string): Observable<Booking[]> {
         const url = `${this.apiUrl}/${this.controller}/get-bookings-by-service/${serviceId}`;
+        return this.http.get<Booking[]>(url, this.getHttpOptions());
+    }
+
+    getBookingsByUser(userId: string, start: string, end: string): Observable<Booking[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-bookings-by-user/${userId}`;
+        const params = new HttpParams().set('start', start).set('end', end);
         return this.http.get<Booking[]>(url, this.getHttpOptions());
     }
   

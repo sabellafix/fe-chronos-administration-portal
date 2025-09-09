@@ -63,6 +63,8 @@ import { CustomersCreateComponent } from './components/customers/customers-creat
 import { BookingsFloorComponent } from './components/booking/bookingsCalendar/bookings-floor/bookings-floor.component';
 import { BookingsSupplierComponent } from './components/booking/bookingsCalendar/bookings-supplier/bookings-supplier.component';
 import { TimeOnlyPipe } from '../core/pipes/time-only.pipe';
+import { MonthNamePipe } from '../core/pipes/month-name.pipe';
+import { DayNumberPipe } from '../core/pipes/day-number.pipe';
 import { AutocompleteComponent } from './components/shared/autocomplete/autocomplete.component';
 import { SelectImageComponent } from './components/shared/selects/select-image/select-image.component';
 import { CardBookingComponent } from './components/shared/cards/card-booking/card-booking.component';
@@ -82,6 +84,8 @@ import { RolesUpdateComponent } from './components/roles/roles-update/roles-upda
 import { SkelletonRolComponent } from './components/shared/skelletons/skelleton-rol/skelleton-rol.component';
 import { RolesDetailComponent } from './components/roles/roles-detail/roles-detail.component';
 import { ListServicesComponent } from './components/shared/lists/list-services/list-services.component';
+import { ListBookingsComponent } from './components/shared/lists/list-bookings/list-bookings.component';
+import { ListTimeLnBookingsComponent } from './components/shared/lists/list-time-ln-bookings/list-time-ln-bookings.component';
 
 
 const routes: Routes = [
@@ -228,6 +232,8 @@ const routes: Routes = [
     BookingsFloorComponent,
     BookingsSupplierComponent,
     TimeOnlyPipe,
+    MonthNamePipe,
+    DayNumberPipe,
     AutocompleteComponent,
     SelectImageComponent,
     CardBookingComponent,
@@ -243,6 +249,8 @@ const routes: Routes = [
     SkelletonRolComponent,
     RolesDetailComponent,
     ListServicesComponent,
+    ListBookingsComponent,
+    ListTimeLnBookingsComponent,
   ],
   imports: [
     CommonModule,
