@@ -141,7 +141,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <p class="text-muted mb-1">Bookings</p>
-                                        <h4 class="mb-0">543</h4>
+                                        <h4 class="mb-0">13</h4>
                                     </div>
                                     <div class="flex-shrink-0 align-self-end ms-2">
                                         <div class="badge rounded-pill font-size-13  bg-danger-subtle  text-danger ">- 0.82%
@@ -165,7 +165,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <p class="text-muted mb-1">Customers</p>
-                                        <h4 class="mb-0">54</h4>
+                                        <h4 class="mb-0">5</h4>
                                     </div>
                                     <div class="flex-shrink-0 align-self-end ms-2">
                                         <div class="badge rounded-pill font-size-13  bg-danger-subtle  text-danger ">- 1.04%
@@ -178,31 +178,78 @@
                 </div>
 
                 <div class="card bg-transparent no-border no-box-shadow">
-
-                    <ul class="nav nav-pills nav-justified" role="tablist">
-                        <li class="nav-item waves-effect waves-light me-2 ms-2" role="presentation">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#bookings" role="tab" aria-selected="true" >
-                                <span class="d-block"><i class="far fa-calendar-alt"></i></span>
-                                <span class="d-none d-sm-block">Bookings</span> 
-                            </a>
-                        </li>
-                        <li class="nav-item waves-effect waves-light me-3" role="presentation">
-                            <a class="nav-link" data-bs-toggle="tab" href="#servies" role="tab" aria-selected="false" tabindex="-1" >
-                                <span class="d-block"><i class="fas fa-cut"></i></span>
-                                <span class="d-none d-sm-block">Services</span> 
-                            </a>
-                        </li>
-                        <li class="nav-item waves-effect waves-light ms-3" role="presentation">
-                            <a class="nav-link" data-bs-toggle="tab" href="#reviews" role="tab" aria-selected="false" tabindex="-1">
-                                <span class="d-block"><i class="far fa-star"></i></span>
-                                <span class="d-none d-sm-block">Reviews</span> 
-                            </a>
-                        </li>
-                    </ul>
+                    <div class="row">
+                        <div class="col-8">
+                            <ul class="nav nav-pills nav-justified" role="tablist">
+                                <li class="nav-item waves-effect waves-light me-2 ms-2" role="presentation">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#bookings" role="tab" aria-selected="true" >
+                                        <span class="d-block"><i class="far fa-calendar-alt"></i></span>
+                                        <span class="d-none d-sm-block">Bookings</span> 
+                                    </a>
+                                </li>
+                                <li class="nav-item waves-effect waves-light me-3" role="presentation">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#servies" role="tab" aria-selected="false" tabindex="-1" >
+                                        <span class="d-block"><i class="fas fa-cut"></i></span>
+                                        <span class="d-none d-sm-block">Services</span> 
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-4">
+                            
+                            <div class="card ">
+                                <div class="card-body rounded bg-white m-0 p-2">
+                                    <!-- <h5 class="card-title">Filtrar Bookings</h5> -->
+                                    <form [formGroup]="dateRangeForm">
+                                        <div class="mb-3">
+                                            <div class="row g-2">
+                                                <div class="col-5">
+                                                    <input 
+                                                        type="date" 
+                                                        class="form-control form-control-sm" 
+                                                        placeholder="Fecha inicio"
+                                                        formControlName="startDate"
+                                                        [max]="dateRangeForm.get('endDate')?.value || maxDate"
+                                                        (change)="onDateChange()">
+                                                </div>
+                                                <div class="col-5">
+                                                    <input 
+                                                        type="date" 
+                                                        class="form-control form-control-sm" 
+                                                        placeholder="Fecha fin"
+                                                        formControlName="endDate"
+                                                        [min]="dateRangeForm.get('startDate')?.value"
+                                                        [max]="maxDate"
+                                                        (change)="onDateChange()">
+                                                </div>
+                                                <div class="col-2 d-flex align-items-center justify-content-center"> 
+                                                    <div *ngIf="loadingBookings" class="text-primary">
+                                                        <i class="bx bx-loader-alt bx-spin"></i>
+                                                    </div>
+                                                    <button 
+                                                        *ngIf="!loadingBookings && hasActiveFilter()"
+                                                        type="button" 
+                                                        class="btn btn-outline-secondary btn-sm"
+                                                        (click)="clearDateFilter()"
+                                                        title="Limpiar filtro">
+                                                        <i class="bx bx-x"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="tab-content p-0 text-muted">
                         <div class="tab-pane active" id="bookings" role="tabpanel">
-                            <app-list-time-ln-bookings [id]="id"></app-list-time-ln-bookings>
+                            <app-list-time-ln-bookings 
+                                [id]="id" 
+                                [bookings]="filteredBookings">
+                            </app-list-time-ln-bookings>
                         </div>
                         <div class="tab-pane " id="servies" role="tabpanel">
                             <app-list-services [id]="id" [mode]="'detail'"></app-list-services>

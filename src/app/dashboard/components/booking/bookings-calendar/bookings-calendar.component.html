@@ -132,5 +132,5 @@
     <app-calendar-weekly [ngStyle]="{'display': tabActive === 'Week' ? 'block' : 'none' }"  [date]="dateCalendarWeekly"  [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-weekly>
     <app-calendar-daily [ngStyle]="{'display': tabActive === 'Day' ? 'block' : 'none' }"  [date]="dateCalendarDaily" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-daily>
     <app-bookings-supplier [ngStyle]="{'display': tabActive === 'Stylists' ? 'block' : 'none' }"  [date]="dateBookingsSupplier" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-bookings-supplier>    
-    <!-- <app-calendar-floor [ngStyle]="{'display': tabAbctive === 'Floor' ? 'block' : 'none' }"></app-calendar-floor> -->
+    <app-calendar-floor [ngStyle]="{'display': tabActive === 'Floor' ? 'block' : 'none' }"></app-calendar-floor>
 </div>
