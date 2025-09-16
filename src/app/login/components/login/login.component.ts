@@ -106,7 +106,7 @@ export class LoginComponent implements OnInit, AfterViewInit{
       this.userService.login(this.infoUser).subscribe(
         (response: any) => {
           this.userResponse = <UserResponse>response; 
-          if(this.userResponse.token != ''){
+          if(this.userResponse.token != ''){  
             this.storageService.set(StorageKeyConst._TOKEN, this.userResponse.token);
             this.storageService.set(StorageKeyConst._USER, JSON.stringify(this.userResponse.user));
             this.storageService.set(StorageKeyConst._EXPIRES_AT, this.userResponse.expiresAt);

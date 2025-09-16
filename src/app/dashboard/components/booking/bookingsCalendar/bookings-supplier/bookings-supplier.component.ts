@@ -10,6 +10,7 @@ import { DateUtils } from '@app/core/utils/date.utils';
 import { Service } from '@app/core/models/bussiness/service';
 import { User } from '@app/core/models/bussiness/user';
 import { UserService } from '@app/core/services/http/user.service';
+import { Router } from '@angular/router';
 
 interface StylistBookings {
   stylist: User;
@@ -42,7 +43,8 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
     private snackBar: MatSnackBar, 
     private offcanvasBookingService: OffcanvasBookingService,
     private bookingService: BookingService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ){
     
   }
@@ -394,5 +396,9 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
 
   getStylistPhoto(stylist: User): string {
     return stylist.photo || this.imageUser;
+  }
+
+  detailStylist(stylistId: string): void {
+    this.router.navigate([`/users/${stylistId}/detail`]);
   }
 }

@@ -50,6 +50,11 @@ export class UsersDetailComponent implements OnDestroy {
   activeEndDate: string = '';
   private filterTimeout: any;
 
+  // Propiedades para las métricas calculadas
+  totalRevenue: number = 0;
+  totalBookingsCount: number = 0;
+  uniqueCustomersCount: number = 0;
+
   constructor(private userService: UserService,
               private parametricService: ParametricService,
               private router: Router,
@@ -293,9 +298,9 @@ export class UsersDetailComponent implements OnDestroy {
 
     this.loadingBookings = true;
 
-    // Preparar fechas para el servicio
-    const startDateObj = startDate ? new Date(startDate) : undefined;
-    const endDateObj = endDate ? new Date(endDate) : undefined;
+    // Preparar fechas para el servicio (sumando un día a cada fecha)
+    const startDateObj = startDate ? this.addOneDay(new Date(startDate)) : undefined;
+    const endDateObj = endDate ? this.addOneDay(new Date(endDate)) : undefined;
 
     this.bookingService.getByUserDateRange(this.id, startDateObj, endDateObj).subscribe({
       next: (data: Booking[]) => {
@@ -304,7 +309,9 @@ export class UsersDetailComponent implements OnDestroy {
         this.activeEndDate = endDate || '';
         this.loadingBookings = false;
         
-        // Solo mostrar mensaje si hay al menos una fecha seleccionada
+        // Calcular métricas para los bookings filtrados
+        this.calculateMetrics(data);
+        
         if (startDate || endDate) {
           // this.snackBar.open(`${data.length} booking(s) encontrados`, 'Cerrar', {duration: 2000});
         }
@@ -313,6 +320,8 @@ export class UsersDetailComponent implements OnDestroy {
         this.loadingBookings = false;
         // this.snackBar.open('Error al filtrar bookings', 'Cerrar', {duration: 4000});
         console.error('Error filtering bookings:', error);
+        // Resetear métricas en caso de error
+        this.calculateMetrics([]);
       }
     });
   }
@@ -322,6 +331,8 @@ export class UsersDetailComponent implements OnDestroy {
     this.filteredBookings = [];
     this.activeStartDate = '';
     this.activeEndDate = '';
+    // Resetear métricas cuando se limpia el filtro
+    this.calculateMetrics([]);
     this.snackBar.open('Filtro removido', 'Cerrar', {duration: 2000});
   }
 
@@ -356,6 +367,39 @@ export class UsersDetailComponent implements OnDestroy {
       return `${day}/${month}/${year}`;
     }
     return serviceDate;
+  }
+
+  private addOneDay(date: Date): Date {
+    // Crear una nueva instancia de Date para no modificar la original
+    const newDate = new Date(date);
+    // Sumar un día
+    newDate.setDate(newDate.getDate() + 1);
+    return newDate;
+  }
+
+  // Método para manejar la actualización de bookings desde el componente hijo
+  onBookingsUpdated(bookings: Booking[]): void {
+    this.calculateMetrics(bookings);
+  }
+
+  // Método para calcular las métricas basadas en los bookings
+  private calculateMetrics(bookings: Booking[]): void {
+    // Calcular total de ingresos
+    this.totalRevenue = bookings.reduce((total, booking) => {
+      return total + (booking.totalPrice || 0);
+    }, 0);
+
+    // Calcular total de bookings
+    this.totalBookingsCount = bookings.length;
+
+    // Calcular número único de clientes
+    const uniqueCustomerIds = new Set<string>();
+    bookings.forEach(booking => {
+      if (booking.customerId) {
+        uniqueCustomerIds.add(booking.customerId);
+      }
+    });
+    this.uniqueCustomersCount = uniqueCustomerIds.size;
   }
 
 }

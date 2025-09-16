@@ -86,6 +86,7 @@ import { RolesDetailComponent } from './components/roles/roles-detail/roles-deta
 import { ListServicesComponent } from './components/shared/lists/list-services/list-services.component';
 import { ListBookingsComponent } from './components/shared/lists/list-bookings/list-bookings.component';
 import { ListTimeLnBookingsComponent } from './components/shared/lists/list-time-ln-bookings/list-time-ln-bookings.component';
+import { ListCardServicesComponent } from './components/shared/lists/list-card-services/list-card-services.component';
 
 
 const routes: Routes = [
@@ -251,6 +252,7 @@ const routes: Routes = [
     ListServicesComponent,
     ListBookingsComponent,
     ListTimeLnBookingsComponent,
+    ListCardServicesComponent,
   ],
   imports: [
     CommonModule,

@@ -1,9 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { BookingService } from '@app/core/services/http/booking.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from '@app/core/models/bussiness/user';
 import { BookingStatus } from '@app/core/models/bussiness/enums';
+import { DateUtils } from '@app/core/utils/date.utils';
+import { DateOnly } from '@app/core/models/bussiness/availability';
 
 
 @Component({
@@ -11,11 +13,13 @@ import { BookingStatus } from '@app/core/models/bussiness/enums';
   templateUrl: './list-time-ln-bookings.component.html',
   styleUrl: './list-time-ln-bookings.component.scss'
 })
-export class ListTimeLnBookingsComponent {
+export class ListTimeLnBookingsComponent implements OnChanges {
 
   @Input() id?: string | null = null;
   @Input() bookings?: Booking[] | null = null;
   @Input() user?: User | null = null;
+
+  @Output() bookingsUpdated = new EventEmitter<Booking[]>();
 
   loading: boolean = false;
   BookingStatus = BookingStatus;
@@ -28,22 +32,35 @@ export class ListTimeLnBookingsComponent {
   ngOnInit(): void {
     if(this.id){
       this.loadByIdUSer();
+    } else if (this.bookings) {
+      // Si se pasan bookings directamente como Input, emitir el evento
+      this.bookingsUpdated.emit(this.bookings);
+    }
+  }
+
+  ngOnChanges(): void {
+    // Emitir evento cuando los bookings cambian desde el Input
+    if (this.bookings) {
+      this.bookingsUpdated.emit(this.bookings);
     }
   }
 
   loadByIdUSer(): void {
     this.loading = true;
-    // Colapsar cualquier booking expandido al cargar nuevos datos
     this.expandedBookingId = null;
     
     this.bookingService.getByUserDateRange(this.id!, undefined, undefined).subscribe({
       next: (data: Booking[]) => {
         this.bookings = data;
         this.loading = false;
+        // Emitir evento con los bookings actualizados
+        this.bookingsUpdated.emit(data);
       },
       error: (error: any) => {
         this.loading = false;
         this.snackBar.open('Error retrieving bookings', 'Close', {duration: 4000});
+        // Emitir array vacío en caso de error
+        this.bookingsUpdated.emit([]);
       }
     });
   }
@@ -108,12 +125,9 @@ export class ListTimeLnBookingsComponent {
   }
 
   toggleExpand(bookingId: string): void {
-    // Si el booking clickeado ya está expandido, lo colapsamos
     if (this.expandedBookingId === bookingId) {
       this.expandedBookingId = null;
     } else {
-      // Si hay otro booking expandido, se colapsa automáticamente
-      // y expandimos el nuevo booking clickeado
       this.expandedBookingId = bookingId;
     }
   }
@@ -128,6 +142,50 @@ export class ListTimeLnBookingsComponent {
 
   collapseAll(): void {
     this.expandedBookingId = null;
+  }
+
+  getBookingDateClass(booking: Booking): string {
+    if (!booking.bookingDate) {
+      return 'bg-white';
+    }
+
+    try {
+      let bookingDateOnly: DateOnly;
+
+      if (typeof booking.bookingDate === 'string') {
+        const dateString = booking.bookingDate as string;
+        if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          bookingDateOnly = DateUtils.stringToDateOnly(dateString);
+        } else {
+          const tempDate = new Date(dateString);
+          bookingDateOnly = DateUtils.dateToDateOnly(tempDate);
+        }
+      }
+      else if (booking.bookingDate && typeof booking.bookingDate === 'object' && 
+               (booking.bookingDate as any).year && (booking.bookingDate as any).month && (booking.bookingDate as any).day) {
+        bookingDateOnly = booking.bookingDate as DateOnly;
+      }
+      else if (booking.bookingDate instanceof Date) {
+        bookingDateOnly = DateUtils.dateToDateOnly(booking.bookingDate);
+      }
+      else {
+        return 'bg-white';
+      }
+
+      const today = DateUtils.today();
+
+      const comparison = DateUtils.compareDates(bookingDateOnly, today);
+
+      if (comparison < 0) {
+        return 'bg-light';
+      } else {
+        return 'bg-white';
+      }
+
+    } catch (error) {
+      console.warn('Error al procesar fecha del booking:', error);
+      return 'bg-white';
+    }
   }
 
 }

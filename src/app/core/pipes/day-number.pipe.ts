@@ -10,15 +10,17 @@ export class DayNumberPipe implements PipeTransform {
 
     let date: Date;
 
-    // Si es un string, convertir a Date
     if (typeof dateValue === 'string') {
-      date = new Date(dateValue);
+      if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        const parts = dateValue.split('-');
+        date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      } else {
+        date = new Date(dateValue);
+      }
     }
-    // Si es un objeto con propiedades year, month, day
-    else if (dateValue.year && dateValue.month && dateValue.day) {
+    else if (dateValue && typeof dateValue === 'object' && dateValue.year && dateValue.month && dateValue.day) {
       date = new Date(dateValue.year, dateValue.month - 1, dateValue.day);
     }
-    // Si ya es una fecha
     else if (dateValue instanceof Date) {
       date = dateValue;
     }
@@ -26,12 +28,10 @@ export class DayNumberPipe implements PipeTransform {
       return '';
     }
 
-    // Verificar que la fecha sea válida
     if (isNaN(date.getTime())) {
       return '';
     }
 
-    // Retornar el día con formato de dos dígitos
     return date.getDate().toString().padStart(2, '0');
   }
 }

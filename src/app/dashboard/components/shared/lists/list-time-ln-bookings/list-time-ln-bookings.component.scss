@@ -1,5 +1,5 @@
 .bookings-container {
-    max-height: 600px; 
+    max-height: 650px; 
     overflow-y: auto;
     padding-right: 5px; 
     
@@ -324,6 +324,110 @@
     .service-time {
       font-size: 9px;
       top: 30px;
+    }
+  }
+
+  // Estilos para mantener proporciones consistentes en los bloques horizontales
+  .feed-item-list {
+    .d-flex {
+      min-height: 60px; // Altura mínima consistente
+      
+      // Contenedor de información principal (servicio y cliente)
+      .flex-fill:nth-child(1) {
+        flex: 2 !important; // Ocupa el doble de espacio
+        min-width: 0; // Permite que el texto se trunque correctamente
+        
+        h5, p {
+          line-height: 1.3; // Altura de línea consistente
+          margin-bottom: 0.25rem;
+        }
+      }
+      
+      // Contenedor de precio
+      .flex-fill:nth-child(2) {
+        flex: 1 !important; // Espacio estándar
+        min-width: 80px; // Ancho mínimo para números
+        max-width: 120px; // Ancho máximo para mantener proporción
+        
+        h5 {
+          font-weight: 600; // Resaltar el precio
+          white-space: nowrap; // Evitar salto de línea en precios
+        }
+      }
+      
+      // Contenedor de duración y tiempo
+      .flex-fill:nth-child(3) {
+        flex: 1 !important; // Espacio estándar
+        min-width: 100px; // Ancho mínimo para mostrar horarios
+        max-width: 140px; // Ancho máximo para mantener proporción
+        
+        h5, p {
+          white-space: nowrap; // Evitar salto de línea en horarios
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+      
+      // Contenedor del chevron
+      .flex-shrink-0:last-child {
+        width: 40px; // Ancho fijo
+        height: 40px; // Altura fija
+        
+        i {
+          transition: transform 0.3s ease;
+        }
+      }
+    }
+    
+    // Hover effect mejorado
+    .cursor-pointer:hover {
+      background-color: rgba(0, 0, 0, 0.02);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      
+      .flex-fill h5 {
+        color: #495057 !important; // Oscurecer títulos en hover
+      }
+    }
+  }
+
+  // Responsive adjustments para mantener proporciones en móviles
+  @media (max-width: 768px) {
+    .feed-item-list .d-flex {
+      flex-direction: column;
+      align-items: stretch !important;
+      min-height: auto;
+      
+      .flex-fill {
+        flex: none !important;
+        max-width: none !important;
+        margin-bottom: 0.5rem;
+        text-align: left !important;
+        
+        &:last-of-type {
+          margin-bottom: 0;
+        }
+      }
+      
+      .flex-shrink-0:last-child {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .feed-item-list .d-flex {
+      .flex-fill h5 {
+        font-size: 13px;
+      }
+      
+      .flex-fill p {
+        font-size: 12px;
+      }
     }
   }
   

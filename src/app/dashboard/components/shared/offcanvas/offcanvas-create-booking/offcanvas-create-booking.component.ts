@@ -64,7 +64,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private offcanvasBookingService: OffcanvasBookingService) {
     const baseDate = this.selectedDate ? new Date(this.selectedDate) : new Date();
-    this.defaultDate = baseDate.toISOString().split('T')[0];
+    this.defaultDate = this.formatDateToString(baseDate);
 
     this.bookingForm = this.formBuilder.group({
       supplierId: [null, [Validators.required]],
@@ -210,6 +210,13 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     return '09:00';
   }
 
+  private formatDateToString(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   private markFormGroupTouched(): void {
     Object.keys(this.bookingForm.controls).forEach(key => {
       const control = this.bookingForm.get(key);
@@ -235,7 +242,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   private updateDateAndTime(): void {
     let dateToUse = this.selectedDate ? new Date(this.selectedDate) : new Date();
     dateToUse.setDate(dateToUse.getDate());
-    const newDate = dateToUse.toISOString().split('T')[0];
+    const newDate = this.formatDateToString(dateToUse);
     
     const formUpdate: any = {
       bookingDate: newDate,
@@ -269,7 +276,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
         return;
       }
       createBookingDto.serviceId = this.selectedServices[0].id;
-      createBookingDto.bookingDate = new Date(formValue.bookingDate).toISOString().split('T')[0];
+      createBookingDto.bookingDate = formValue.bookingDate;
       
       const [startHour, startMinute] = formValue.startTime.split(':').map(Number);
       createBookingDto.startTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}:00`;

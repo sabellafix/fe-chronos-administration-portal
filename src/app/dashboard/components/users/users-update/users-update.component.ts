@@ -9,6 +9,8 @@ import { Pagination } from '@app/core/models/interfaces/pagination.interface';
 import { Response } from '@app/core/models/dtos/response';
 import { Validation } from '@app/core/models/dtos/validation';
 import { Option } from '@app/core/models/interfaces/option.interface';
+import { RolService } from '@app/core/services/http/rol.service';
+import { Rol } from '@app/core/models/bussiness/rol';
 
 @Component({
   selector: 'app-users-update',
@@ -34,14 +36,15 @@ export class UsersUpdateComponent {
   now : Date = new Date();
   codephones : Option[] = [];
   country? : Option;
-  roles: any[] = [];
+  roles: Rol[] = [];
   showPasswordFields: boolean = false;
 
   constructor(private userService: UserService,
               private parametricService: ParametricService,
               private router: Router,
               private snackBar: MatSnackBar,
-              private route: ActivatedRoute
+              private route: ActivatedRoute,
+              private rolService: RolService
   ){
     this.form = new FormGroup({
       firstName : new FormControl("", Validators.required),
@@ -65,11 +68,7 @@ export class UsersUpdateComponent {
     this.loading = true;
     this.country = { id : "52", name : "Colombia", code: "+57"}
     this.load();
-    
-    this.roles = [
-      { id: 1, name: 'Stylist', code: 'stylist' },
-      { id: 2, name: 'Admin', code: 'admin' }
-    ];
+   
   }
 
   load(): void{
@@ -78,13 +77,25 @@ export class UsersUpdateComponent {
       this.userService.get(this.id).subscribe({
         next: (data: any) => {      
           this.user = <User>data;
-          this.setForm();
+          this.loadRoles();
         },error: (error: any) => {
           this.loading = false;
           this.snackBar.open('Error loading the user', 'Cerrar', {duration: 4000});
         }
       });
     }
+  }
+
+  loadRoles(): void {
+    this.rolService.getRoles().subscribe({
+      next: (data: Rol[]) => {
+        this.roles = data;
+        this.setForm();
+      },error: (error: any) => {
+        this.loading = false;
+        this.snackBar.open('Error loading the roles', 'Cerrar', {duration: 4000});
+      }
+    });
   }
 
   async setForm(){
