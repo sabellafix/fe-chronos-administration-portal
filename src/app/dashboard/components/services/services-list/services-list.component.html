@@ -24,6 +24,7 @@
                                             <tr>
                                                 <th>State</th>
                                                 <th>Name</th>
+                                                <th>Type</th>
                                                 <th>Price</th>
                                                 <th>Duration</th>
                                                 <th>Color </th>
@@ -37,6 +38,10 @@
                                                     <span *ngIf="service.isActive == false" class="badge badge-pill bg-danger-subtle text-danger font-size-14">Inactive</span>
                                                 </td>
                                                 <td>{{ getServiceDisplayName(service) | slice:0:40}}</td>
+                                                <td>
+                                                    <span *ngIf="service.type == 'config'" class="badge badge-pill bg-success-subtle text-success font-size-14">{{service.type | serviceType}}</span>
+                                                    <span *ngIf="service.type == 'default'" class="badge badge-pill bg-primary-subtle text-primary font-size-14">{{service.type | serviceType}}</span>
+                                                </td>
                                                 <td>{{service.price}} {{getServiceCurrency(service)}}</td>
                                                 <td>{{getDurationFormatted(service.durationMinutes)}}</td>
                                                 <td>

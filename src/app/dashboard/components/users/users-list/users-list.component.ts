@@ -9,7 +9,8 @@ import { Option } from '@app/core/models/interfaces/option.interface';
 import { EntiesConst } from '@app/core/models/constants/entity.const';
 import { Rol } from '@app/core/models/bussiness/rol';
 import { UserRole } from '@app/core/models/bussiness/enums';
-import { RolesConst } from '@app/core/models/constants/roles.const';
+import { Permission } from '@app/core/models/bussiness/permission';
+import { AuthService } from '@app/core/services/http/auth.service';
 
 @Component({
   selector: 'app-users-list',
@@ -23,7 +24,7 @@ export class UsersListComponent {
   user: User = new User();
   users: User[] = [];
   roles: Rol[] = [];
-  rol : string = RolesConst._STYLIST;
+  rol : string = UserRole.ServiceProvider;
   srcImage : string = "assets/images/user-image.jpg";
    
   attributes : Option[] = [ 
@@ -50,12 +51,16 @@ export class UsersListComponent {
   showPaginate : boolean = true; // Deshabilitado hasta implementar paginación en backend
   maxItems = [10,20,50];
 
+  permissions: Permission[] = [];
+
   constructor(
     private userService: UserService,
     private router: Router,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthService, 
   ){
+    this.permissions = this.authService.getPermissionsLogged();
   }
 
   ngOnInit(): void {
@@ -172,4 +177,10 @@ export class UsersListComponent {
   }
 
   clear(){}
+
+
+
+  hasPermission(permission: string): boolean {
+    return this.permissions.some(p => p.name.includes(permission));
+  }
 }

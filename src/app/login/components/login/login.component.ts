@@ -6,12 +6,14 @@ import { CompanyInfo } from '@app/core/models/views/companyInfo';
 import { InfoUser } from '@app/core/models/views/infoUser';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { UserService } from '@app/core/services/http/user.service';
+import { RolService } from '@app/core/services/http/rol.service';
 
 import { environment } from '@env/environment';
 import { StorageService } from '@app/core/services/shared/storage.service';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { UserResponse } from '@app/core/models/dtos/userResponse';
 import { TokenRefreshService } from '@app/core/services/shared/token-refresh.service';
+import { Rol } from '@app/core/models/bussiness/rol';
 
 @Component({
   selector: 'app-login',
@@ -41,6 +43,7 @@ export class LoginComponent implements OnInit, AfterViewInit{
   constructor(private authService : AuthService,
               private router : Router,
               private userService : UserService,
+              private rolService : RolService,
               private storageService : StorageService,
               private tokenRefreshService : TokenRefreshService
   ) {
@@ -107,15 +110,22 @@ export class LoginComponent implements OnInit, AfterViewInit{
         (response: any) => {
           this.userResponse = <UserResponse>response; 
           if(this.userResponse.token != ''){  
-            this.storageService.set(StorageKeyConst._TOKEN, this.userResponse.token);
-            this.storageService.set(StorageKeyConst._USER, JSON.stringify(this.userResponse.user));
-            this.storageService.set(StorageKeyConst._EXPIRES_AT, this.userResponse.expiresAt);
-            this.storageService.set(StorageKeyConst._USER_ROLE, this.userResponse.user.userRole);
-            
-            // Notificar que el token ha sido actualizado
-            this.tokenRefreshService.notifyTokenUpdate();
-            
-            this.router.navigate(['/bookings']);
+
+            if(this.userResponse.user.roleId != null){
+
+              this.storageService.set(StorageKeyConst._TOKEN, this.userResponse.token);
+              this.storageService.set(StorageKeyConst._USER, JSON.stringify(this.userResponse.user));
+              this.storageService.set(StorageKeyConst._EXPIRES_AT, this.userResponse.expiresAt);
+              
+              this.tokenRefreshService.notifyTokenUpdate();
+              
+              this.rolService.getRolByIdBearer(this.userResponse.user.roleId, this.userResponse.token).subscribe((response: Rol) => {
+                this.userResponse.user.role = response;
+                this.storageService.set(StorageKeyConst._ROLE, JSON.stringify(this.userResponse.user.role));
+                this.router.navigate(['/bookings']);
+              });
+              
+            }
           }
         },
         (error: any) =>{

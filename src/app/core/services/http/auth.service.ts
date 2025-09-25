@@ -6,6 +6,8 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 import { StorageService } from '../shared/storage.service';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
+import { Rol } from '@app/core/models/bussiness/rol';
+import { Permission } from '@app/core/models/bussiness/permission';
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +64,23 @@ export class AuthService {
         this.storageService.clearAll();
         this.isAuthenticated.next(false);
         this.router.navigate(['login']);
+    }
+
+    getUserLogged(): User{
+        const user = JSON.parse(this.storageService.get(StorageKeyConst._USER) as string) as User;
+        return user as User;
+    }
+
+    getRoleLogged(): Rol{   
+        const rol = JSON.parse(this.storageService.get(StorageKeyConst._ROLE) as string) as Rol;
+        return rol as Rol;
+    }
+
+    getPermissionsLogged(): Permission[]{
+        const rol = this.getRoleLogged();
+        const rolePermissions = rol.rolePermissions;
+        const permissions = rolePermissions.map(rp => rp.permission);
+        return permissions as Permission[];
     }
 
 }

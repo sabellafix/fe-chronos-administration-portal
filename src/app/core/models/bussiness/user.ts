@@ -1,5 +1,8 @@
+import { Rol } from "./rol";
+
 export class User{
     id: string;
+    roleId: number;
     email: string;
     userRole: string; // 'client' | 'serviceProvider'
     firstName: string;
@@ -22,11 +25,13 @@ export class User{
     employeeId: string;
     companyName: string;
     address: string;
+    role : Rol;
     isVerified: boolean;
     isDeleted: boolean;
     
     constructor() {
         this.id = "";
+        this.roleId = 0;
         this.email = "";
         this.userRole = "client";
         this.firstName = "";
@@ -37,7 +42,7 @@ export class User{
         this.createdAt = "";
         this.updatedAt = "";
         this.lastLoginAt = "";
-        
+        this.role = new Rol();
         // Campos adicionales del sistema interno
         this.name = "";
         this.phoneNumber = "";

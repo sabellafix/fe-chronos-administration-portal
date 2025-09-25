@@ -5,7 +5,7 @@
                 <div class="col-xl-2">
                     <h3 class="mb-0 mt-3">{{dateNow | date:'MMMM, yyyy'}}</h3>
                 </div>
-                <div class="col-xl-2">
+                <div class="col-xl-2 pt-1">
                     <app-select-image
                         *ngIf="!loading"
                         [options]="serviceOptions"
@@ -18,42 +18,42 @@
                         [autoSelectFirst]="false"
                         (selectionChange)="onServiceSelectionChange($event)">
                     </app-select-image>
-                    <div *ngIf="loading" class="mt-1">
+                    <div *ngIf="loading" >
                         <ngx-skeleton-loader [count]="1" [theme]="{ 'border-radius': '16px', height: '48px', margin: '0px 0px 10px 0px', 'background-color': '#FFFFFFF' }"></ngx-skeleton-loader>
                     </div>
                 </div>
                 <div class="col-xl-4">
                     <div class="card bg-light mt-1">
                         <ul class="nav nav-pills nav-justified p-1" role="tablist">
-                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Month'}">
+                            <li *ngIf="hasPermission('bookings.monthly')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Month'}">
                                 <a class="nav-link" data-bs-toggle="tab" href="#month" role="tab" 
                                 aria-selected="false" (click)="tabActive = 'Month'">
                                     <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
                                     <span class="d-none d-sm-block">Month</span>
                                 </a>
                             </li>
-                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Week'}">
+                            <li *ngIf="hasPermission('bookings.weekly')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Week'}">
                                 <a class="nav-link" data-bs-toggle="tab" href="#week" role="tab"
                                     aria-selected="false" (click)="tabActive = 'Week'">
                                     <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
                                     <span class="d-none d-sm-block">Week</span>
                                 </a>
                             </li>
-                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Day'}">
+                            <li *ngIf="hasPermission('bookings.daily')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Day'}">
                                 <a class="nav-link" data-bs-toggle="tab" href="#day" role="tab" aria-selected="false"
                                     tabindex="-1" (click)="tabActive = 'Day'">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">Day</span>
                                 </a>
                             </li>
-                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Stylists'}">
+                            <li *ngIf="hasPermission('bookings.calendar')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Stylists'}">
                                 <a class="nav-link" data-bs-toggle="tab" href="#stylists" role="tab" aria-selected="false"
                                     tabindex="-1" (click)="tabActive = 'Stylists'">
                                     <span class="d-block d-sm-none"><i class="far fa-face-smile"></i></span>
                                     <span class="d-none d-sm-block">Stylists</span>
                                 </a>
                             </li>
-                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
+                            <li *ngIf="hasPermission('bookings.floor')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
                                 <a class="nav-link" data-bs-toggle="tab" href="#floors" role="tab" aria-selected="false"
                                     tabindex="-1" (click)="tabActive = 'Floor'">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
 
-                <div class="col-xl-2">
+                <div class="col-xl-2 pt-1">
                     <app-select-image
                         *ngIf="!loading"
                         [options]="stylistOptions"
@@ -77,7 +77,7 @@
                         [autoSelectFirst]="false"
                         (selectionChange)="onStylistSelectionChange($event)">
                     </app-select-image>
-                    <div *ngIf="loading" class="mt-1"> 
+                    <div *ngIf="loading"> 
                         <ngx-skeleton-loader [count]="1" [theme]="{ 'border-radius': '16px', height: '48px', margin: '0px 0px 10px 0px', 'background-color': '#FFFFFFF' }"></ngx-skeleton-loader>
                     </div>
                 </div>
@@ -128,9 +128,9 @@
 </div>
 
 <div *ngIf="!loading" class="calendar-content">
-    <app-calendar-monthly [ngStyle]="{'display': tabActive === 'Month' ? 'block' : 'none' }"  [date]="dateCalendarMonthly" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" ></app-calendar-monthly>
-    <app-calendar-weekly [ngStyle]="{'display': tabActive === 'Week' ? 'block' : 'none' }"  [date]="dateCalendarWeekly"  [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-weekly>
-    <app-calendar-daily [ngStyle]="{'display': tabActive === 'Day' ? 'block' : 'none' }"  [date]="dateCalendarDaily" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-daily>
-    <app-bookings-supplier [ngStyle]="{'display': tabActive === 'Stylists' ? 'block' : 'none' }"  [date]="dateBookingsSupplier" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-bookings-supplier>    
-    <app-calendar-floor [ngStyle]="{'display': tabActive === 'Floor' ? 'block' : 'none' }"></app-calendar-floor>
+    <app-calendar-monthly *ngIf="hasPermission('bookings.monthly')" [ngStyle]="{'display': tabActive === 'Month' ? 'block' : 'none' }"  [date]="dateCalendarMonthly" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" ></app-calendar-monthly>
+    <app-calendar-weekly *ngIf="hasPermission('bookings.weekly')" [ngStyle]="{'display': tabActive === 'Week' ? 'block' : 'none' }"  [date]="dateCalendarWeekly"  [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-weekly>
+    <app-calendar-daily *ngIf="hasPermission('bookings.daily')" [ngStyle]="{'display': tabActive === 'Day' ? 'block' : 'none' }"  [date]="dateCalendarDaily" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-daily>
+    <app-bookings-supplier *ngIf="hasPermission('bookings.calendar')" [ngStyle]="{'display': tabActive === 'Stylists' ? 'block' : 'none' }"  [date]="dateBookingsSupplier" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-bookings-supplier>    
+    <!-- <app-calendar-floor [ngStyle]="{'display': tabActive === 'Floor' ? 'block' : 'none' }"></app-calendar-floor> -->
 </div>

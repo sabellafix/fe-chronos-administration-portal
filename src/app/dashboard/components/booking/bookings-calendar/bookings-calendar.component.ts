@@ -1,3 +1,4 @@
+
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Customer, Service, User } from '@app/core/models/bussiness';
 import { CustomerService } from '@app/core/services/http/customer.service';
@@ -6,6 +7,8 @@ import { UserService } from '@app/core/services/http/user.service';
 import { VisualOption } from '@app/core/models/interfaces/option.interface';
 import { forkJoin } from 'rxjs';
 import { RolesConst } from '@app/core/models/constants/roles.const';
+import { AuthService } from '@app/core/services/http/auth.service';
+import { Permission } from '@app/core/models/bussiness/permission';
 
 @Component({
   selector: 'app-bookings-calendar',
@@ -31,7 +34,7 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   users: User[] = [];
   customers: Customer[] = [];
 
-  // Opciones para el nuevo componente SelectImageComponent
+  
   serviceOptions: VisualOption[] = [];
   stylistOptions: VisualOption[] = [];
   customerOptions: VisualOption[] = [];
@@ -44,11 +47,17 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   stylistsSelected: User[] = [];
   customersSelected: Customer[] = [];
 
+  user: User | null = null;
+  permissions: Permission[] = [];
+
   constructor(
     private userService: UserService,
     private customerService: CustomerService,
     private serviceService: ServiceService, 
+    private authService: AuthService, 
   ) {
+    this.user = this.authService.getUserLogged();
+    this.permissions = this.authService.getPermissionsLogged();
     this.loadData();
   }
   
@@ -219,5 +228,11 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
    
    setTodayDateBookingsSupplier(): void {
     this.dateBookingsSupplier = new Date();
+   }
+
+
+
+   hasPermission(permission: string): boolean {
+    return this.permissions.some(p => p.name.includes(permission));
    }
 }

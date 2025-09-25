@@ -42,22 +42,22 @@
                                                 <td>{{user.email | slice:0:35}}</td>
                                                 <td class="text-rigth">
                                                     <ul class="list-inline mb-0">
-                                                        <li class="list-inline-item">
+                                                        <li *ngIf="hasPermission('users.availability')" class="list-inline-item">
                                                             <div (click)="availability(user.id)" matTooltip="Availability" class="px-3 text-dark cursor"
                                                                 aria-label="Detail" data-bs-original-title="Availability"><i
                                                                     class="bx bx-calendar-check font-size-18"></i></div>
                                                         </li>
-                                                        <li class="list-inline-item">
+                                                        <li *ngIf="hasPermission('users.read')" class="list-inline-item">
                                                             <div (click)="detail(user.id)" matTooltip="Detail" class="px-3 text-success cursor"
                                                                 aria-label="Detail" data-bs-original-title="Detail"><i
                                                                     class="bx bx-show-alt font-size-18"></i></div>
                                                         </li>
-                                                        <li class="list-inline-item">
+                                                        <li *ngIf="hasPermission('users.update')" class="list-inline-item">
                                                             <div matTooltip="Update" (click)="update(user.id)" class="px-3 text-primary cursor"
                                                                 aria-label="Edit" data-bs-original-title="Edit"><i
                                                                     class="bx bx-pencil font-size-18"></i></div>
                                                         </li>
-                                                        <li class="list-inline-item">
+                                                        <li  class="list-inline-item">
                                                             <div (click)="delete(user.id)" matTooltip="Delete" class="px-3 text-danger cursor"
                                                                 aria-label="Detail" data-bs-original-title="Detail"><i
                                                                     class="bx bx bx-x font-size-18"></i></div>

@@ -11,8 +11,8 @@ import { Pagination } from '@app/core/models/interfaces/pagination.interface';
 import { Response } from '@app/core/models/dtos/response';
 import { Validation } from '@app/core/models/dtos/validation';
 import { Category } from '@app/core/models/bussiness/category';
-import { User } from '@app/core/models/bussiness/user';
-import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
+import { ServiceTypeConst } from '@app/core/models/constants/serviceType.const';
+import { Option } from '@app/core/models/interfaces/option.interface';
 
 @Component({
   selector: 'app-services-update',
@@ -31,8 +31,12 @@ export class ServicesUpdateComponent {
   id: string = "";
   service: Service = new Service();
   now : Date = new Date();
-  providerId: string = "";
   categories: Category[] = [];
+  types: Option[] = [
+    { name: ServiceTypeConst._CONFIG, code: "Config" },
+    { name: ServiceTypeConst._DEFAULT, code: "Default" },
+  ];
+
 
   constructor(private serviceService: PlatformServiceService,
               private router: Router,
@@ -50,6 +54,7 @@ export class ServicesUpdateComponent {
       price : new FormControl(0, [Validators.required, Validators.min(0)]),
       color : new FormControl("#23324d", Validators.required),
       isActive : new FormControl(true),
+      type : new FormControl(ServiceTypeConst._CONFIG, Validators.required),  
     });
 
     this.route.params.subscribe(params => { if (params['id']) this.id = params['id'] });
@@ -65,22 +70,12 @@ export class ServicesUpdateComponent {
     this.load();
   }
 
-  setIdProvider(): void {
-    const user = <User>this.storageService.get(StorageKeyConst._USER);
-    if(user){
-      this.providerId = user.b2CId;
-    }else{
-      this.snackBar.open('Error getting user', 'Close', {duration: 4000});
-    }
-  }
-
   load(): void{
     if(this.id) {
       this.loading = true;
       this.serviceService.getService(this.id).subscribe({
         next: (data: any) => {      
           this.service = <Service>data;
-          this.setIdProvider();
           this.getCategories();
           
         },error: (error: any) => {
@@ -102,6 +97,7 @@ export class ServicesUpdateComponent {
         price : this.service.price,
         color : this.service.color,
         isActive : this.service.isActive,
+        type : this.service.type,
       };
       this.form.setValue(object);
     }
@@ -121,11 +117,10 @@ export class ServicesUpdateComponent {
       updateDto.color = this.form.get('color')?.value;
       updateDto.currency = "USD";
       updateDto.isActive = this.form.get('isActive')?.value;
-      
+      updateDto.type = this.form.get('type')?.value;
       this.charge = true;
       this.send = false;
       this.response = new Response();
-      console.log("updateDto", updateDto);
       this.serviceService.updateService(this.id, updateDto).subscribe({
         next: (data: any) => {
           this.charge = false;

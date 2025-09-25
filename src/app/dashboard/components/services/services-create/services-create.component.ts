@@ -7,12 +7,13 @@ import { Pagination } from '@app/core/models/interfaces/pagination.interface';
 import { Response } from '@app/core/models/dtos/response';
 import { Validation } from '@app/core/models/dtos/validation';
 import { StorageService } from '@app/core/services/shared/storage.service';
-import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { Category } from '@app/core/models/bussiness/category';
-import { User } from '@app/core/models/bussiness/user';
 import { CategoryService } from '@app/core/services/http/category.service';
 import { ServiceService as PlatformServiceService } from '@app/core/services/http/platform-service.service';
 import { CreateServiceDto } from '@app/core/models/bussiness';
+import { ServiceTypeConst } from '@app/core/models/constants/serviceType.const';
+import { Option } from '@app/core/models/interfaces/option.interface';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-services-create',
@@ -28,8 +29,12 @@ export class ServicesCreateComponent {
   response? : Response;
   form: FormGroup; 
   now : Date = new Date();
-  providerId: string = "";
+  salonId = environment.salonId;
   categories: Category[] = [];
+  types: Option[] = [
+    { name: ServiceTypeConst._CONFIG, code: "Config" },
+    { name: ServiceTypeConst._DEFAULT, code: "Default" },
+  ];
 
   constructor(private serviceService: PlatformServiceService,
               private router: Router,
@@ -45,28 +50,20 @@ export class ServicesCreateComponent {
       processingTime : new FormControl(0, [Validators.min(0)]),
       price : new FormControl(0, [Validators.required, Validators.min(0)]),
       color : new FormControl("#23324d", Validators.required),
+      type : new FormControl(ServiceTypeConst._CONFIG, Validators.required),
     });
   }
 
   ngOnInit(): void {
-    this.setIdProvider();
     this.getCategories();
     this.form.patchValue({
       categoryId: 1,
       durationMinutes: 60,
       processingTime: 0,
       price: 0,
-      isActive: true
+      isActive: true,
+      type: ServiceTypeConst._CONFIG
     });
-  }
-
-  setIdProvider(): void {
-    const user = <User>this.storageService.get(StorageKeyConst._USER);
-    if(user){
-      this.providerId = user.b2CId;
-    }else{
-      this.snackBar.open('Error getting user', 'Close', {duration: 4000});
-    }
   }
 
   post(){
@@ -75,18 +72,19 @@ export class ServicesCreateComponent {
       let createDto: CreateServiceDto = new CreateServiceDto();
       createDto.serviceName = this.form.get('serviceName')?.value;
       createDto.serviceDescription = this.form.get('serviceDescription')?.value;
-      createDto.providerId = this.providerId;
+      createDto.providerId = null;
       createDto.categoryId = this.form.get('categoryId')?.value;
       createDto.durationMinutes = this.form.get('durationMinutes')?.value;
       createDto.processingTime = this.form.get('processingTime')?.value;
       createDto.price = this.form.get('price')?.value;
       createDto.color = this.form.get('color')?.value;
+      createDto.type = this.form.get('type')?.value;
       createDto.currency = "USD";
-      
+      createDto.salonId = this.salonId;
       this.charge = true;
       this.send = false;
       this.response = new Response();
-      this.serviceService.createService(createDto).subscribe({
+      this.serviceService.create(createDto).subscribe({
         next: (data: any) => {
           let service = <Service>data;          
           this.charge = false;
@@ -164,7 +162,8 @@ export class ServicesCreateComponent {
       categoryId: 1,
       durationMinutes: 60,
       processingTime: 0,
-      isActive: true
+      isActive: true,
+      type: ServiceTypeConst._CONFIG
     });
   }
 

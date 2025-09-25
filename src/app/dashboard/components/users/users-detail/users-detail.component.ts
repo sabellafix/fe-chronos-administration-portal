@@ -6,7 +6,7 @@ import { User } from '@app/core/models/bussiness/user';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { Pagination } from '@app/core/models/interfaces/pagination.interface';
 import { Response } from '@app/core/models/dtos/response';
-import { Option } from '@app/core/models/interfaces/option.interface';
+import { Option, VisualOption } from '@app/core/models/interfaces/option.interface';
 import { ParametricService } from '@app/core/services/shared/parametric.service';
 import { UserService } from '@app/core/services/http/user.service';
 import { BookingService } from '@app/core/services/http/booking.service';
@@ -14,6 +14,8 @@ import { Service } from '@app/core/models/bussiness/service';
 import { ServiceService } from '@app/core/services/http/platform-service.service';
 
 import { Validation } from '@app/core/models/dtos/validation';
+import { RolService } from '@app/core/services/http/rol.service';
+import { Rol } from '@app/core/models/bussiness/rol';
 
 @Component({
   selector: 'app-users-detail',
@@ -39,9 +41,10 @@ export class UsersDetailComponent implements OnDestroy {
   codephones : Option[] = [];
   country? : Option;
   services: Service[] = [];
+  servicesOptions: VisualOption[] = [];
+  filteredServices: Service[] = [];
   loadingServices: boolean = false;
   
-  // Propiedades para el filtro de fechas y bookings
   dateRangeForm: FormGroup;
   filteredBookings: Booking[] = [];
   loadingBookings: boolean = false;
@@ -50,7 +53,6 @@ export class UsersDetailComponent implements OnDestroy {
   activeEndDate: string = '';
   private filterTimeout: any;
 
-  // Propiedades para las métricas calculadas
   totalRevenue: number = 0;
   totalBookingsCount: number = 0;
   uniqueCustomersCount: number = 0;
@@ -62,6 +64,7 @@ export class UsersDetailComponent implements OnDestroy {
               private route: ActivatedRoute,
               private serviceService: ServiceService,
               private bookingService: BookingService,
+              private rolService: RolService,
   ){
     this.form = new FormGroup({
       firstName : new FormControl("", Validators.required),
@@ -113,17 +116,30 @@ export class UsersDetailComponent implements OnDestroy {
       this.userService.get(this.id).subscribe({
         next: (data: any) => {      
           this.user = <User>data;
-          if(this.user.photo) {
-            this.srcImage = this.user.photo;
-          }
-          this.setForm();
-          this.loadUserServices();
+          this.loadRole();
         },error: (error: any) => {
           this.loading = false;
           this.snackBar.open('Error loading the user', 'Cerrar', {duration: 4000});
         }
       });
     }
+  }
+
+  loadRole(){
+    this.rolService.getRol(this.user.roleId).subscribe({
+      next: (response: Rol) => {
+        this.user.role = response;
+        if(this.user.photo) {
+          this.srcImage = this.user.photo;
+        }
+        this.setForm();
+        this.loadUserServices();
+      },
+      error: (error: any) => {
+        this.loading = false;
+        this.snackBar.open('Error loading the role', 'Cerrar', {duration: 4000});
+      }
+    });
   }
 
   async setForm(){
@@ -201,18 +217,15 @@ export class UsersDetailComponent implements OnDestroy {
     ];
   }
 
-  getRoleName(code: string): string {
-    const role = this.roles.find(r => r.code === code);
-    return role ? role.name : code;
-  }
-
   loadUserServices(): void {
     if (this.user.id) {
       this.loadingServices = true;
       this.serviceService.getServicesByProvider(this.user.id).subscribe({
         next: (data: Service[]) => {
           this.services = data;
+          this.filteredServices = [...data]; // Inicializar servicios filtrados con todos los servicios
           this.loadingServices = false;
+          this.servicesOptions = this.services.map(service => ({ id: service.id, name: service.serviceName || '', color: service.color || undefined }));
         },
         error: (error: any) => {
           this.loadingServices = false;
@@ -250,29 +263,26 @@ export class UsersDetailComponent implements OnDestroy {
     return service.isActive ? 'badge-success' : 'badge-secondary';
   }
 
-  // Métodos para el filtro de fechas y bookings
   isValidDateRange(): boolean {
     const startDate = this.dateRangeForm.get('startDate')?.value;
     const endDate = this.dateRangeForm.get('endDate')?.value;
     
     if (!startDate && !endDate) {
-      return true; // Sin filtro es válido
+      return true;
     }
     
     if (startDate && endDate) {
       return new Date(startDate) <= new Date(endDate);
     }
     
-    return true; // Una sola fecha es válida
+    return true;
   }
 
   onDateChange(): void {
-    // Limpiar timeout anterior para implementar debounce
     if (this.filterTimeout) {
       clearTimeout(this.filterTimeout);
     }
     
-    // Aplicar filtro después de un pequeño delay
     this.filterTimeout = setTimeout(() => {
       this.applyDateFilter();
     }, 500);
@@ -282,7 +292,6 @@ export class UsersDetailComponent implements OnDestroy {
     const startDate = this.dateRangeForm.get('startDate')?.value;
     const endDate = this.dateRangeForm.get('endDate')?.value;
 
-    // Si no hay fechas, limpiar el filtro
     if (!startDate && !endDate) {
       this.filteredBookings = [];
       this.activeStartDate = '';
@@ -290,9 +299,7 @@ export class UsersDetailComponent implements OnDestroy {
       return;
     }
 
-    // Validar rango solo si ambas fechas están presentes
     if (startDate && endDate && !this.isValidDateRange()) {
-      // No mostrar snackbar para evitar spam, solo no aplicar filtro
       return;
     }
 
@@ -305,22 +312,19 @@ export class UsersDetailComponent implements OnDestroy {
     this.bookingService.getByUserDateRange(this.id, startDateObj, endDateObj).subscribe({
       next: (data: Booking[]) => {
         this.filteredBookings = data;
+        console.log("filteredBookings", this.filteredBookings);
         this.activeStartDate = startDate || '';
         this.activeEndDate = endDate || '';
         this.loadingBookings = false;
         
-        // Calcular métricas para los bookings filtrados
         this.calculateMetrics(data);
         
         if (startDate || endDate) {
-          // this.snackBar.open(`${data.length} booking(s) encontrados`, 'Cerrar', {duration: 2000});
         }
       },
       error: (error: any) => {
         this.loadingBookings = false;
-        // this.snackBar.open('Error al filtrar bookings', 'Cerrar', {duration: 4000});
         console.error('Error filtering bookings:', error);
-        // Resetear métricas en caso de error
         this.calculateMetrics([]);
       }
     });
@@ -330,8 +334,7 @@ export class UsersDetailComponent implements OnDestroy {
     this.dateRangeForm.reset();
     this.filteredBookings = [];
     this.activeStartDate = '';
-    this.activeEndDate = '';
-    // Resetear métricas cuando se limpia el filtro
+    this.activeEndDate = '';  
     this.calculateMetrics([]);
     this.snackBar.open('Filtro removido', 'Cerrar', {duration: 2000});
   }
@@ -352,13 +355,11 @@ export class UsersDetailComponent implements OnDestroy {
   }
 
   private formatDateForService(dateString: string): string {
-    // Convierte fecha del input (YYYY-MM-DD) al formato requerido por el servicio
     const date = new Date(dateString);
     return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
   }
 
   private formatDateForDisplay(serviceDate: string): string {
-    // Convierte fecha del servicio (YYYY/M/D) a formato de visualización
     const parts = serviceDate.split('/');
     if (parts.length === 3) {
       const year = parts[0];
@@ -370,29 +371,22 @@ export class UsersDetailComponent implements OnDestroy {
   }
 
   private addOneDay(date: Date): Date {
-    // Crear una nueva instancia de Date para no modificar la original
     const newDate = new Date(date);
-    // Sumar un día
     newDate.setDate(newDate.getDate() + 1);
     return newDate;
   }
 
-  // Método para manejar la actualización de bookings desde el componente hijo
   onBookingsUpdated(bookings: Booking[]): void {
     this.calculateMetrics(bookings);
   }
 
-  // Método para calcular las métricas basadas en los bookings
   private calculateMetrics(bookings: Booking[]): void {
-    // Calcular total de ingresos
     this.totalRevenue = bookings.reduce((total, booking) => {
       return total + (booking.totalPrice || 0);
     }, 0);
-
-    // Calcular total de bookings
+    
     this.totalBookingsCount = bookings.length;
 
-    // Calcular número único de clientes
     const uniqueCustomerIds = new Set<string>();
     bookings.forEach(booking => {
       if (booking.customerId) {
@@ -401,5 +395,12 @@ export class UsersDetailComponent implements OnDestroy {
     });
     this.uniqueCustomersCount = uniqueCustomerIds.size;
   }
+
+
+  onServiceSelectionChange(selectedServices: VisualOption[]): void {
+    this.filteredBookings = this.filteredBookings.filter(booking => selectedServices.some(service => service.id == booking.services?.[0]?.id));
+    this.calculateMetrics(this.filteredBookings);
+  }
+
 
 }

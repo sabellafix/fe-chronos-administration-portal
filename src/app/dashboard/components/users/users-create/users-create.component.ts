@@ -11,6 +11,10 @@ import { ParametricService } from '@app/core/services/shared/parametric.service'
 import { Validation } from '@app/core/models/dtos/validation';
 import { UserService } from '@app/core/services/http/user.service';
 import { RolesConst } from '@app/core/models/constants/roles.const';
+import { Rol } from '@app/core/models/bussiness/rol';
+import { RolService } from '@app/core/services/http/rol.service';
+import { Service } from '@app/core/models/bussiness/service';
+import { ServiceService } from '@app/core/services/http/platform-service.service';
 
 @Component({
   selector: 'app-users-create',
@@ -31,11 +35,15 @@ export class UsersCreateComponent {
   photoBase64 : string = "";
   now : Date = new Date();
   codephones : Option[] = [];
+  nameRol : string = RolesConst._STYLIST;
+  rol: Rol = new Rol();
 
   constructor(private userService: UserService,
               private parametricService: ParametricService,
               private router: Router,
-              private snackBar: MatSnackBar
+              private snackBar: MatSnackBar,
+              private rolService: RolService,
+              private serviceService: ServiceService
   ){
     this.form = new FormGroup({
       firstName : new FormControl("", Validators.required),
@@ -67,18 +75,28 @@ export class UsersCreateComponent {
         email : this.form.get('email')?.value,
         phone : this.form.get('phone')?.value,
         password : this.form.get('password')?.value,
-        userRole : RolesConst._STYLIST,
-        photo : this.photoBase64 || "assets/images/user-image.jpg", // Usa photoBase64 si está disponible, sino imagen por defecto
+        userRole : RolesConst._SERVICEPROVIDER,
+        roleId : this.rol.id,
+        photo : this.photoBase64 || "assets/images/user-image.jpg",
       }
       this.charge = true;
       this.send = false;
       this.response = new Response();
       this.userService.post(post).subscribe({
         next: (data: any) => {
-          let user = <User>data;          
-          this.charge = false;
-          this.snackBar.open('Stylist created successfully.', 'Close', {duration: 4000});
-          this.return();
+          let user = <User>data;
+          this.serviceService.createUserServices(user.id).subscribe({
+            next: (data: any) => {
+              let userServices = <Service[]>data;
+              this.charge = false;
+              this.snackBar.open('Stylist created successfully.', 'Close', {duration: 4000});
+              this.return();
+            },
+            error: (error: any) => {
+              this.charge = false;
+              this.snackBar.open('Error executing the creation ' + error.error.message, 'Close', {duration: 4000});
+            }
+          });
         },
         error: (error: any) =>{
           let message = '';
@@ -117,6 +135,11 @@ export class UsersCreateComponent {
     .subscribe({
       next: ({options}) => {
         this.codephones = options.codephones;
+        this.rolService.getRolByName(this.nameRol).subscribe({
+          next: (response: Rol) => {
+            this.rol = response;
+          }
+        });
         this.loading = false;
       },
       error: (error) => {

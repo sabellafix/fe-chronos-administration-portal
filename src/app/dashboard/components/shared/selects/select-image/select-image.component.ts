@@ -278,7 +278,7 @@ export class SelectImageComponent implements OnChanges {
     } else if (this.selectedOptions.length === this.options.length) {
       this.displayText = this.allOptionText;
     } else {
-      this.displayText = `${this.selectedOptions.length} elementos seleccionados`;
+      this.displayText = `${this.selectedOptions.length} selected elements`;
     }
   }
 

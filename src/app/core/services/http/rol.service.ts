@@ -30,9 +30,19 @@ export class RolService {
         return this.http.get<Rol[]>(url, this.getHttpOptions());
     }
 
-        getRol(id: number): Observable<Rol> {
+    getRol(id: number): Observable<Rol> {
         const url = `${this.apiUrl}/${this.controller}/get-role/${id}`;
         return this.http.get<Rol>(url, this.getHttpOptions());
+    } 
+
+    getRolByName(name: string): Observable<Rol> {
+        const url = `${this.apiUrl}/${this.controller}/get-role-by-name/${name}`;
+        return this.http.get<Rol>(url, this.getHttpOptions());
+    } 
+
+    getRolByIdBearer(id: number, token: string): Observable<Rol> {
+        const url = `${this.apiUrl}/${this.controller}/get-role/${id}`;
+        return this.http.get<Rol>(url, { headers: { Authorization: `Bearer ${token}` } });
     } 
   
     createRol(entity: CreateRolDto): Observable<Rol> {

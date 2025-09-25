@@ -138,7 +138,7 @@ export class UpdateServiceDto {
     color?: string; // maxLength: 7, minLength: 0
     currency?: string;
     isActive?: boolean;
-
+    type?: string;
     constructor() {
         this.categoryId = undefined;
         this.serviceName = undefined;
@@ -149,6 +149,7 @@ export class UpdateServiceDto {
         this.color = undefined;
         this.currency = undefined;
         this.isActive = undefined;
+        this.type = undefined;
     }
 }
 

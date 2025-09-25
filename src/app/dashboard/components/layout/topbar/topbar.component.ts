@@ -5,6 +5,7 @@ import { AuthService } from '@app/core/services/http/auth.service';
 import { StorageService } from '@app/core/services/shared/storage.service';
 import { Navigation } from '@app/core/models/interfaces/nav.interface';
 import { Pagination } from '@app/core/models/interfaces/pagination.interface';
+import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 
 @Component({
   selector: 'app-topbar',
@@ -18,6 +19,7 @@ export class TopbarComponent {
   loading: boolean = false;
   pagination: Pagination = { offset: 0, limit: 1, items: 0, filters: ``, sort: 'id,asc' };
   imageUser: string = "../assets/images/user-image.jpg";
+  roleUser: string = "";
   agencies : any[] = [];
   
 
@@ -51,6 +53,19 @@ export class TopbarComponent {
         this.onRouteChange();
       }
     });
+
+    this.user = JSON.parse(this.storageService.get(StorageKeyConst._USER)!);
+    if(this.user != null){
+      this.user.role = JSON.parse(this.storageService.get(StorageKeyConst._ROLE)!);
+      if(this.user.role != null){
+        this.roleUser = this.user.role.name;
+      }
+      if(this.user.photo != null){
+        this.imageUser = this.user.photo;
+      }
+    }
+
+    
   }
 
   onRouteChange() {
@@ -73,6 +88,11 @@ export class TopbarComponent {
 
   logOut(){
     this.authService.logOut();
+  }
+
+
+  profile(){
+    this.router.navigate([`/users/${this.user.id}/detail`]);
   }
 
 }

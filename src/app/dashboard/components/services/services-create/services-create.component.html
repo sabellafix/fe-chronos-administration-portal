@@ -74,7 +74,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4 mb-3">
+                                        <div class="col-md-3 mb-3">
                                             <label class="form-label">Price *</label>
                                             <input type="number" step="0.01" class="form-control" placeholder="Price of the service" formControlName="price">
                                             <div class="invalid-feedback" *ngIf="form.controls['price'].hasError('required') && form.controls['price'].touched">
@@ -88,7 +88,15 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-8 mb-3">
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Type *</label>
+                                            <select class="form-select" formControlName="type">
+                                                <option value="">Select a type</option>
+                                                <option *ngFor="let type of types" [value]="type.name">{{type.code}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
                                             <label class="form-label">Color</label>
                                             <input type="color" style="height: 38px; border-radius: 12px;" class="form-control" formControlName="color" [value]="form.get('color')?.value">
                                             <div class="invalid-feedback" *ngIf="form.controls['color'].hasError('required') && form.controls['color'].touched">

@@ -12,6 +12,7 @@ export class Service{
     price : number;
     color : string | null;
     currency : string | null;
+    type : string;
     isActive : boolean;
     createdAt : string; // format: date-time
     updatedAt : string; // format: date-time
@@ -29,6 +30,7 @@ export class Service{
         this.price = 0;
         this.color = null;
         this.currency = null;
+        this.type = "";
         this.isActive = false;
         this.createdAt = "";
         this.updatedAt = "";

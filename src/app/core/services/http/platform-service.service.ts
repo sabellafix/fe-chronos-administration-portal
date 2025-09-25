@@ -69,6 +69,11 @@ export class ServiceService {
         return this.http.post<Service>(url, entity, this.getHttpOptions());
     } 
 
+    createUserServices(userId: string): Observable<Service[]> {
+        const url = `${this.apiUrl}/${this.controller}/create-user-services/${userId}`;
+        return this.http.post<Service[]>(url, {}, this.getHttpOptions());
+    }
+
     updateService(id: string, entity: UpdateServiceDto): Observable<Service> {
         const url = `${this.apiUrl}/${this.controller}/update-service/${id}`;
         return this.http.put<Service>(url, entity, this.getHttpOptions());

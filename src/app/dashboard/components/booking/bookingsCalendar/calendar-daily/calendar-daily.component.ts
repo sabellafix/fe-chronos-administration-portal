@@ -143,7 +143,6 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onCellClick(date: Date, hour: number, event: Event): void {
-    // Solo abrir el modal si el clic no fue en un booking
     const target = event.target as HTMLElement;
     const isBookingClick = target.closest('app-card-booking') !== null;
     
@@ -153,7 +152,6 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onBookingClick(event: Event): void {
-    // Prevenir que el clic en booking se propague a la celda
     event.stopPropagation();
   }
 
@@ -188,10 +186,8 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   editBooking(bookingId: string, event: Event): void {
-    // Prevenir que el evento se propague al elemento padre (td)
     event.stopPropagation();
     
-    // Abrir el modal de actualización con el ID del booking
     this.offcanvasBookingService.openUpdateBookingModal(bookingId);
   }
 
@@ -298,7 +294,7 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
     
     if(this.services.length > 0){
       filteredBookings = filteredBookings.filter(booking => 
-        this.services.some(service => service.id === booking.services?.[0]?.id)
+        this.services.some(service => service.serviceName === booking.services?.[0]?.serviceName)
       );
     }
     
@@ -357,81 +353,52 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
     return ` Servicios: ${services} | Duración: ${duration} | Precio: ${price}`;
   }
 
-  /**
-   * Calcula la posición vertical (top) de un booking dentro de su celda horaria
-   * basada en los minutos del tiempo de inicio
-   */
+
   getBookingTopPosition(booking: Booking): string {
     const minutes = booking.startTime.minute;
-    // Cada celda representa 60 minutos, calculamos el porcentaje
     const percentage = (minutes / 60) * 100;
     return `${percentage}%`;
   }
 
-  /**
-   * Calcula la altura de un booking basada en su duración
-   * para que represente visualmente el tiempo real
-   */
+
   getBookingHeight(booking: Booking): string {
     const totalMinutes = booking.durationMinutes;
-    // Altura mínima para legibilidad
     const minHeightPx = 40;
-    // Altura base por hora (aproximadamente 60px por hora)
     const pixelsPerMinute = 1;
     
     let calculatedHeight = totalMinutes * pixelsPerMinute;
     
-    // Aplicar altura mínima
     calculatedHeight = Math.max(calculatedHeight, minHeightPx);
     
     return `${calculatedHeight}px`;
   }
 
-  /**
-   * Calcula el índice de superposición para bookings que se solapan
-   * en la misma celda horaria
-   */
   getBookingZIndex(booking: Booking, allBookingsInCell: Booking[]): number {
     const baseZIndex = 1000;
     const bookingIndex = allBookingsInCell.findIndex(b => b.id === booking.id);
     return baseZIndex + bookingIndex;
   }
 
-  /**
-   * Calcula el offset horizontal cuando hay múltiples bookings superpuestos
-   */
   getBookingLeftOffset(booking: Booking, allBookingsInCell: Booking[]): string {
     if (allBookingsInCell.length <= 1) return '0%';
     
     const bookingIndex = allBookingsInCell.findIndex(b => b.id === booking.id);
-    const offsetPercentage = (bookingIndex * 5); // 5% de offset por cada booking adicional
+    const offsetPercentage = (bookingIndex * 5);
     
     return `${offsetPercentage}%`;
   }
 
-  /**
-   * Calcula el ancho de la tarjeta cuando hay superposición
-   */
   getBookingWidth(allBookingsInCell: Booking[]): string {
     if (allBookingsInCell.length <= 1) return '100%';
     
-    // Reducir el ancho cuando hay múltiples bookings
-    const widthReduction = Math.min(allBookingsInCell.length * 3, 20); // Máximo 20% de reducción
+    const widthReduction = Math.min(allBookingsInCell.length * 3, 20);
     return `${100 - widthReduction}%`;
   }
 
-  /**
-   * Función auxiliar para mejorar el rendimiento.
-   * Retorna los bookings de una celda específica para evitar múltiples cálculos
-   */
   getCellBookings(date: Date, hour: number): Booking[] {
     return this.getBookingsForDateTime(date, hour);
   }
 
-  /**
-   * Verifica si un booking se extiende más allá de la hora actual
-   * (para bookings que duran más de 60 minutos)
-   */
   bookingExtendsToNextHour(booking: Booking): boolean {
     const startMinutes = booking.startTime.hour * 60 + booking.startTime.minute;
     const endMinutes = startMinutes + booking.durationMinutes;
@@ -440,10 +407,6 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
     return endMinutes > nextHourMinutes;
   }
 
-  /**
-   * Calcula cuántas horas adicionales ocupa un booking
-   * (para bookings que se extienden más allá de su hora de inicio)
-   */
   getBookingAdditionalHours(booking: Booking): number {
     if (booking.durationMinutes <= 60) return 0;
     
@@ -451,9 +414,6 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
     return Math.ceil(remainingMinutes / 60);
   }
 
-  /**
-   * Función trackBy para mejorar el rendimiento de Angular con *ngFor
-   */
   trackByBooking(index: number, booking: Booking): string {
     return booking.id;
   }

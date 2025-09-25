@@ -320,7 +320,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     
     if(this.services.length > 0){
       filteredBookings = filteredBookings.filter(booking => 
-        this.services.some(service => service.id === booking.services?.[0]?.id)
+        this.services.some(service => service.serviceName === booking.services?.[0]?.serviceName)
       );
     }
     

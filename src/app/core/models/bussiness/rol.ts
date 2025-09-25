@@ -11,7 +11,6 @@ export class Rol{
     createdAt : string;
     updatedAt : string;
 
-
     constructor() {
         this.id = 0;
         this.code = "";
@@ -21,6 +20,6 @@ export class Rol{
         this.isActive = false;
         this.rolePermissions = [];
         this.createdAt = "";
-        this.updatedAt = "";        
+        this.updatedAt = "";
     }
 }

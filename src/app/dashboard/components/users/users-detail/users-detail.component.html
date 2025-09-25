@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-xl-3 col-m-3 col-sm-12">
-                <div *ngIf="!loading" class="card">
+                <div *ngIf="!loading" class="card mb-2">
                     <div class="card-body p-0">
                         <div class="user-profile-img">
                             <img src="assets/images/info-bg.jpg" class="profile-img profile-foreground-img rounded-top" style="height: 120px;" alt="">
@@ -52,53 +52,56 @@
                                         <a *ngIf="services.length > 3" class="badge bg-info-subtle text-info m-1">+{{services.length - 3}} more</a>
                                         <a *ngIf="services.length === 0" class="badge bg-success-subtle text-success m-1">No services</a>
                                     </div>
-                                    <div class="mt-4">
+                                    <!-- <div class="mt-4">
                                         <a href="" class="btn btn-primary waves-effect waves-light btn-sm"><i class="bx bx-calendar-check me-1 align-middle"></i> Create Booking</a>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
 
                         <div class="p-3 mt-3">
                             <div class="row text-center">
+                                <div class="col-6 border-end mb-3">
+                                    <div class="p-1">
+                                        <h6 class="mb-1"> {{(user.email || 'N/A') | slice:0:15}}...</h6>
+                                        <p class="text-muted mb-0">Email</p>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <div class="p-1">
+                                        <h6 class="mb-1"> {{user.phone || 'N/A'}}</h6>
+                                        <p class="text-muted mb-0">Phone</p>
+                                    </div>
+                                </div>
+
                                 <div class="col-6 border-end">
                                     <div class="p-1">
-                                        <h5 class="mb-1"> {{(user.email || 'N/A') | slice:0:15}}...</h5>
-                                        <p class="text-muted mb-0">Email</p>
+                                        <h6 class="text-truncate mb-0">{{user.isActive ? 'Active' : 'Inactive'}}</h6>
+                                        <p class="text-muted mb-0">Status</p>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="p-1">
-                                        <h5 class="mb-1"> {{user.phone || 'N/A'}}</h5>
-                                        <p class="text-muted mb-0">Phone</p>
+                                        <h6 class="text-truncate mb-0">{{user.role.name || 'N/A'}}</h6>
+                                        <p class="text-muted mb-0">Role</p>
                                     </div>
                                 </div>
-                            </div>
+                            </div>                         
                         </div>
                     </div>
                 </div>
        
-                <div *ngIf="!loading" class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Access Information</h4>
+                <app-list-services [id]="id" [mode]="'detail'"></app-list-services>
+
+                <!-- <div class="card"> 
+                    <div class="card-body">
+                        <h5 class="card-title">Services</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row g-0">
-                            <div class="col-sm-6">
-                                <div class=" border-end p-3 h-100">
-                                    <p class="text-muted text-truncate mb-1">Status</p>
-                                    <h5 class="text-truncate mb-0">{{user.isActive ? 'Active' : 'Inactive'}}</h5>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class=" p-3 h-100">
-                                    <p class="text-muted text-truncate mb-1">Role</p>
-                                    <h5 class="text-truncate mb-0">{{getRoleName(user.userRole) || 'N/A'}}</h5>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
-                </div>
+                </div> -->
+              
             </div>
 
             <div class="col-xl-9 col-m-9 col-sm-12">
@@ -179,7 +182,7 @@
 
                 <div class="card bg-transparent no-border no-box-shadow">
                     <div class="row">
-                        <div class="col-8 m-0">
+                        <div class="col-4 m-0">
                             <ul class="nav nav-pills nav-justified" role="tablist">
                                 <li class="nav-item waves-effect waves-light me-2" role="presentation">
                                     <a class="nav-link active" data-bs-toggle="tab" href="#bookings" role="tab" aria-selected="true" >
@@ -187,14 +190,33 @@
                                         <span class="d-none d-sm-block">Bookings</span> 
                                     </a>
                                 </li>
-                                <li class="nav-item waves-effect waves-light ms-3" role="presentation">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#servies" role="tab" aria-selected="false" tabindex="-1" >
-                                        <span class="d-block"><i class="fas fa-cut"></i></span>
-                                        <span class="d-none d-sm-block">Services</span> 
-                                    </a>
-                                </li>
+                                
                             </ul>
                         </div>
+                        <div class="col-4 m-0">
+                            <!-- <div class="card m-0">
+                                <div class="card-body rounded bg-white m-0 p-3">
+                                    <form [formGroup]="dateRangeForm">
+                                        <div class="mb-0">
+                                            <div class="row g-2">
+                                                <div class="col-1 d-flex align-items-center justify-content-center"> 
+                                                    <i class="bx bx-search"></i>
+                                                </div>
+                                                <div class="col-10">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div> -->
+                            <div class="card m-0">
+                                <div class="card-body rounded bg-white p-1">
+                                    <app-select-image [options]="servicesOptions" [placeholder]="'Filter by service'" [multiSelect]="true" [showAllOption]="true" [showColors]="true" [showImages]="false" [cardBackgroundClass]="'bg-light'" [autoSelectFirst]="false" (selectionChange)="onServiceSelectionChange($event)"></app-select-image>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-4 m-0">
                             <div class="card m-0">
                                 <div class="card-body rounded bg-white m-0 p-3">
@@ -264,7 +286,7 @@
                                 (bookingsUpdated)="onBookingsUpdated($event)">
                             </app-list-time-ln-bookings>
                         </div>
-                        <div class="tab-pane " id="servies" role="tabpanel">
+                        <div class="tab-pane" id="servies" role="tabpanel">
                             <app-list-card-services [id]="id" [mode]="'detail'"></app-list-card-services>
                         </div>
                         <div class="tab-pane" id="reviews" role="tabpanel">

@@ -8,8 +8,8 @@ export enum BookingStatus {
 }
 
 export enum UserRole {
-    Client = "client",
-    ServiceProvider = "serviceProvider"
+    Client = "Client",
+    ServiceProvider = "ServiceProvider"
 }
 
 export enum DayOfWeek {
