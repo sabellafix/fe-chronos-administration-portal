@@ -247,3 +247,27 @@ export class UpdatePermissionDto {
         this.isActive = undefined;
     }
 } 
+
+export class UpdateSalonDto {
+    name?: string;
+    description?: string;
+    capacity?: number;
+    address?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    zipCode?: string;
+    isActive?: boolean;
+
+    constructor() {
+        this.name = undefined;
+        this.description = undefined;
+        this.capacity = undefined;
+        this.address = undefined;
+        this.city = undefined;
+        this.state = undefined;
+        this.country = undefined;
+        this.zipCode = undefined;
+        this.isActive = undefined;
+    }
+}   

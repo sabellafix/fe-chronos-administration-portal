@@ -88,6 +88,7 @@ import { ListServicesComponent } from './components/shared/lists/list-services/l
 import { ListBookingsComponent } from './components/shared/lists/list-bookings/list-bookings.component';
 import { ListTimeLnBookingsComponent } from './components/shared/lists/list-time-ln-bookings/list-time-ln-bookings.component';
 import { ListCardServicesComponent } from './components/shared/lists/list-card-services/list-card-services.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 
 const routes: Routes = [
@@ -95,6 +96,12 @@ const routes: Routes = [
     path: '',
     component: MainComponent,
     children: [
+      { 
+        path: 'dashboard',
+        children: [
+          { path: '', component: DashboardComponent, pathMatch: 'full' },
+        ]
+      },
       { 
         path: 'users',
         children: [
@@ -255,6 +262,7 @@ const routes: Routes = [
     ListBookingsComponent,
     ListTimeLnBookingsComponent,
     ListCardServicesComponent,
+    DashboardComponent,
   ],
   imports: [
     CommonModule,

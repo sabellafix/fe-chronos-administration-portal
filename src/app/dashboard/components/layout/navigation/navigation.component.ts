@@ -27,6 +27,11 @@ export class NavigationComponent implements OnInit{
 
   menuItems: MenuItem[] = [     
     {
+      title: 'Dashboard',
+      icon: 'bx bx-line-chart',
+      route: 'dashboard'
+    },
+    {
       title: 'Bookings',
       icon: 'bx bx bx-calendar',
       children: [

@@ -278,3 +278,26 @@ export class ChangePasswordDto {
         this.newPassword = "";
     }
 } 
+
+
+export class CreateSalonDto {
+    name: string;
+    description: string;
+    capacity: number;
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    zipCode: string;
+
+    constructor() {
+        this.name = "";
+        this.description = "";
+        this.capacity = 0;
+        this.address = "";
+        this.city = "";
+        this.state = "";
+        this.country = "";
+        this.zipCode = "";
+    }
+}       
