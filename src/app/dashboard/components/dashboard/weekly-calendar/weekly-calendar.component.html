@@ -1,0 +1,58 @@
+<div class="weekly-calendar">
+  <!-- Encabezado del calendario -->
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-outline-secondary btn-sm" (click)="navigateWeek('prev')">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <h6 class="mb-0 fw-semibold">{{ getWeekRange() }}</h6>
+      <button class="btn btn-outline-secondary btn-sm" (click)="navigateWeek('next')">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+    <button class="btn btn-outline-secondary btn-sm" (click)="goToToday()">
+      Hoy
+    </button>
+  </div>
+
+  <!-- Grid del calendario -->
+  <div class="calendar-grid border rounded overflow-hidden">
+    <!-- Encabezado de días -->
+    <div class="calendar-header bg-light">
+      <div class="time-column border-end p-2 text-center small fw-medium">Hora</div>
+      <div class="day-column border-end p-2 text-center" *ngFor="let day of weekDays; let i = index">
+        <div class="small fw-medium">{{ dayNames[i] }}</div>
+        <div class="fs-5 fw-semibold mt-1" 
+             [class.text-primary]="isToday(day)"
+             [class.bg-primary]="isToday(day)"
+             [class.text-white]="isToday(day)"
+             [class.rounded-circle]="isToday(day)"
+             [class.day-today]="isToday(day)">
+          {{ day.getDate() }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Slots de tiempo -->
+    <div class="calendar-body">
+      <div class="time-row border-top" *ngFor="let time of timeSlots">
+        <div class="time-column border-end p-2 text-center small text-muted bg-light">
+          {{ time }}
+        </div>
+        <div class="day-column border-end p-1 position-relative" 
+             *ngFor="let day of weekDays; let dayIndex = index">
+          <ng-container *ngIf="getBookingForTimeSlot(dayIndex, time) as booking">
+            <div class="booking-card {{ booking.color }} p-2 rounded border-start border-3 cursor-pointer">
+              <div class="fw-medium text-truncate small">{{ booking.customerName }}</div>
+              <div class="text-truncate small opacity-75">{{ booking.service }}</div>
+              <div class="text-truncate small opacity-75">{{ booking.stylist }}</div>
+              <span class="badge {{ getStatusBadgeClass(booking.status) }} badge-sm mt-1">
+                {{ getStatusLabel(booking.status) }}
+              </span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

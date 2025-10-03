@@ -1,0 +1,77 @@
+.weekly-calendar {
+  .calendar-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .calendar-header,
+  .time-row {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+  }
+
+  .time-column {
+    font-size: 0.875rem;
+  }
+
+  .day-column {
+    min-height: 60px;
+  }
+
+  .day-today {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  .calendar-body {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .booking-card {
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+      transform: scale(1.02);
+    }
+
+    &.booking-confirmed {
+      background-color: #cfe2ff;
+      border-color: #0d6efd !important;
+      color: #084298;
+    }
+
+    &.booking-in-progress {
+      background-color: #d1e7dd;
+      border-color: #198754 !important;
+      color: #0a3622;
+    }
+
+    &.booking-completed {
+      background-color: #e2e3e5;
+      border-color: #6c757d !important;
+      color: #41464b;
+    }
+
+    &.booking-cancelled {
+      background-color: #f8d7da;
+      border-color: #dc3545 !important;
+      color: #842029;
+    }
+  }
+
+  .badge-sm {
+    font-size: 0.625rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+}

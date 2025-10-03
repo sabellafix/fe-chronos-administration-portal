@@ -1,0 +1,61 @@
+.stylist-card {
+  transition: all 0.2s ease-in-out;
+  
+  &.hover-shadow:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.badge-sm {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.stylist-info {
+  font-size: 0.875rem;
+}
+
+// Bootstrap 5 subtle variants (para compatibilidad)
+.bg-primary-subtle {
+  background-color: rgba(13, 110, 253, 0.1) !important;
+}
+
+.text-primary-emphasis {
+  color: #084298 !important;
+}
+
+.bg-success-subtle {
+  background-color: rgba(25, 135, 84, 0.1) !important;
+}
+
+.text-success-emphasis {
+  color: #0a3622 !important;
+}
+
+.bg-warning-subtle {
+  background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+.text-warning-emphasis {
+  color: #664d03 !important;
+}
+
+.bg-secondary-subtle {
+  background-color: rgba(108, 117, 125, 0.1) !important;
+}
+
+.text-secondary-emphasis {
+  color: #41464b !important;
+}

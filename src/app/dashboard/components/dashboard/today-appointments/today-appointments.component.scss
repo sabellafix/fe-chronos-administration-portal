@@ -1,0 +1,75 @@
+.appointments-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.appointment-item {
+  transition: background-color 0.2s ease;
+  
+  &.hover-bg:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.time-column {
+  font-size: 0.875rem;
+}
+
+.appointment-details {
+  font-size: 0.875rem;
+}
+
+.btn-ghost {
+  border: none;
+  background: transparent;
+  padding: 0.25rem 0.5rem;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+// Bootstrap 5 subtle variants (para compatibilidad)
+.bg-primary-subtle {
+  background-color: rgba(13, 110, 253, 0.1) !important;
+}
+
+.text-primary-emphasis {
+  color: #084298 !important;
+}
+
+.bg-success-subtle {
+  background-color: rgba(25, 135, 84, 0.1) !important;
+}
+
+.text-success-emphasis {
+  color: #0a3622 !important;
+}
+
+.bg-warning-subtle {
+  background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+.text-warning-emphasis {
+  color: #664d03 !important;
+}
+
+.bg-danger-subtle {
+  background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
+.text-danger-emphasis {
+  color: #842029 !important;
+}
+
+.bg-secondary-subtle {
+  background-color: rgba(108, 117, 125, 0.1) !important;
+}
+
+.text-secondary-emphasis {
+  color: #41464b !important;
+}

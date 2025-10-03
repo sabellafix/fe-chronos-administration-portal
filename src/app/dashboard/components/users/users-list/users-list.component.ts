@@ -11,6 +11,7 @@ import { Rol } from '@app/core/models/bussiness/rol';
 import { UserRole } from '@app/core/models/bussiness/enums';
 import { Permission } from '@app/core/models/bussiness/permission';
 import { AuthService } from '@app/core/services/http/auth.service';
+import { RolesConst } from '@app/core/models/constants/roles.const';
 
 @Component({
   selector: 'app-users-list',
@@ -24,7 +25,7 @@ export class UsersListComponent {
   user: User = new User();
   users: User[] = [];
   roles: Rol[] = [];
-  rol : string = UserRole.ServiceProvider;
+  rol : string = RolesConst._STYLIST;
   srcImage : string = "assets/images/user-image.jpg";
    
   attributes : Option[] = [ 

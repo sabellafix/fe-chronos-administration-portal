@@ -50,6 +50,19 @@
         </div>
 
         <div class="d-flex">
+
+            <div class="dropdown d-inline-block language-switch">
+                <button type="button" class="btn header-item" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <i class="bx bx-building me-2"></i>
+                    <b>{{selectedSalon.label}}</b>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end " style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 72px);" data-popper-placement="bottom-end">
+                    <a *ngFor="let salon of salons" class="dropdown-item notify-item language" data-lang="eng">
+                        {{salon.label}}                    
+                    </a>
+                </div>
+            </div>
+
             <div *ngIf="!load" class="dropdown d-inline-block  animated fadeIn fast">
                 <button type="button" class="btn header-item user text-start d-flex align-items-center"
                     id="page-header-user-dropdown-v" data-bs-toggle="dropdown" aria-haspopup="true"
@@ -71,6 +84,7 @@
                             class="align-middle">Logout</span></a>
                 </div>
             </div>
+           
         </div>
     </div>
 </header>

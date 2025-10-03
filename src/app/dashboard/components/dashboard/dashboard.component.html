@@ -1,44 +1,142 @@
-<div class="space-50"></div>
-<div class="card mt-5 me-3 ms-3">
-    <div class="card-header">  
-        <h5 class="card-title">Dashboard</h5>
-    </div>
-    <div class="card-body">
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+<div class="space-85">
+  
+</div>
+<div class="dashboard-container bg-transparent">
+  <!-- Encabezado del Dashboard con KPIs -->
+  <app-dashboard-header
+    [selectedSalon]="selectedSalon"
+    [dateFilter]="dateFilter"
+    (salonChange)="onSalonChange($event)"
+    (dateChange)="onDateChange($event)">
+  </app-dashboard-header>
 
-
-        <div class="sc-4b5bd72e-1 dQYSjC">
-            <div class="sc-4b5bd72e-2 bDucSm">
-                <div class="sc-4b5bd72e-3 iIGxeC">
-                    <article class="sc-4b5bd72e-5 eUSHHM">
-                        <h1 lang="es" class="sc-4b5bd72e-8 cSRCOV"><span>Acceso seguro <span class="for">para</span></span><span
-                                lang="es" class="sc-4b5bd72e-9 jPRgrv"><span lang="es" id="refBox1"
-                                    class="sc-4b5bd72e-10 brnIcb" style="width: 197px;">
-                                    <div><span class="sc-4b5bd72e-12 gZZOrJ slide-enter-done">todos<span
-                                                class="sc-4b5bd72e-11 iPFXLT"></span></span></div>
-                                </span></span></h1>
-                        <h1 lang="es" class="sc-4b5bd72e-8 lpnLYL">Pero no para<span class="sc-4b5bd72e-9 eQDNSn"><span
-                                    lang="es" id="refBox2" class="sc-4b5bd72e-10 heyILs" style="width: 326px;">
-                                    <div><span class="sc-4b5bd72e-12 lfbhkL slide-enter-done">cualquiera<span
-                                                class="sc-4b5bd72e-11 iPFXLT"></span></span></div>
-                                </span></span></h1>
-                    </article>
-                    <div class="sc-4b5bd72e-13 eDGjNz">
-                        <div class="sc-b09085f5-0 ezSyc">
-                            <form autocomplete="on" __bizdiag="0" __biza="W___">
-                                <fieldset class="styled__Wrapper-sc-1ekpay5-0 eJIQpY">
-                                    <div class="styled__WrapperInput-sc-1ekpay5-2 hWZsXm"><input id="homepage-email-form"
-                                            data-element-id="nonISPEmailForm" aria-label="Email de trabajo" type="text"
-                                            placeholder="Email de trabajo" aria-describedby=""
-                                            class="styled__Input-sc-1ekpay5-1 hoqkwS" value=""></div><button type="submit"
-                                        class="styled__Button-sc-1hwml9q-0 utils-sc-11hlfw-0 lpvcZN kHaByn"><span>Comenzar</span></button>
-                                </fieldset>
-                            </form>
-                        </div>
-                    </div>
-                </div><img src="https://cdn.auth0.com/website/website/homepage/hero/login-box.svg" alt="Login-box"
-                    data-element-id="staticLoginBox" class="sc-4b5bd72e-4 fPBzgt">
-            </div>
+  <!-- Contenido Principal -->
+  <main class="dashboard-main bg-transparent">
+    <div class="container-fluid px-4 py-4">
+      <!-- Sección de búsqueda y acciones -->
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h2 class="h4 mb-1 fw-semibold">Vista Operacional</h2>
+          <p class="text-muted small mb-0">
+            Gestión en tiempo real
+          </p>
         </div>
+        
+        <div class="d-flex align-items-center gap-2">
+          <div class="input-group" style="width: 280px;">
+            <span class="input-group-text bg-white">
+              <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control" placeholder="Buscar cliente o cita...">
+          </div>
+          <button class="btn btn-outline-secondary">
+            <i class="bi bi-funnel me-2"></i>
+            Filtros
+          </button>
+          <button class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>
+            Nueva Cita
+          </button>
+        </div>
+      </div>
+
+      <!-- Grid Principal -->
+      <div class="row g-4">
+        <!-- Columna Principal (Calendario y Estilistas) -->
+        <div class="col-12 col-lg-8">
+          <div class="mb-4">
+            <!-- <div class="card border-0 shadow-sm">
+              <div class="card-header bg-white border-bottom">
+                <h5 class="card-title mb-0">Calendario Semanal</h5>
+              </div>
+              <div class="card-body">
+                <app-weekly-calendar [dateFilter]="dateFilter"></app-weekly-calendar>
+              </div>
+            </div> -->
+            
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-white border-bottom">
+                <h5 class="card-title mb-0">Revenue Trend</h5>
+              </div>
+              <div class="card-body">
+                <div class="row gy-4">
+                  <div class="col-xxl-3">
+                      <div>
+                          <div class="mt-3 mb-3">
+                              <p class="text-muted mb-1">This Month</p>
+
+                              <div class="d-flex flex-wrap align-items-center gap-2">
+                                  <h2 class="mb-0">$24,568</h2>
+                                  <div class="badge rounded-pill font-size-13 bg-success-subtle text-success ">+
+                                      2.65%</div>
+                              </div>
+                          </div>
+
+                          <div class="row g-0">
+                              <div class="col-sm-6">
+                                  <div class="border-bottom border-end p-3 h-100">
+                                      <p class="text-muted text-truncate mb-1">Orders</p>
+                                      <h5 class="text-truncate mb-0">5,643</h5>
+                                  </div>
+                              </div>
+                              <div class="col-sm-6">
+                                  <div class="border-bottom p-3 h-100">
+                                      <p class="text-muted text-truncate mb-1">Sales</p>
+                                      <h5 class="text-truncate mb-0">16,273</h5>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row g-0">
+                              <div class="col-sm-6">
+                                  <div class="border-bottom border-end p-3 h-100">
+                                      <p class="text-muted text-truncate mb-1">Order Value</p>
+                                      <h5 class="text-truncate mb-0">12.03 %</h5>
+                                  </div>
+                              </div>
+                              <div class="col-sm-6">
+                                  <div class="border-bottom p-3 h-100">
+                                      <p class="text-muted text-truncate mb-1">Customers</p>
+                                      <h5 class="text-truncate mb-0">21,456</h5>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row g-0">
+                              <div class="col-sm-6">
+                                  <div class="border-end p-3 h-100">
+                                      <p class="text-muted text-truncate mb-1">Income</p>
+                                      <h5 class="text-truncate mb-0">$35,652</h5>
+                                  </div>
+                              </div>
+                              <div class="col-sm-6">
+                                  <div class="p-3 h-100">
+                                      <p class="text-muted text-truncate mb-1">Expenses</p>
+                                      <h5 class="text-truncate mb-0">$12,248</h5>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-xxl-9">
+                      <div>
+                          <div id="chart-column" class="apex-charts" data-colors='["#f1f3f7", "#3b76e1"]'></div>
+                      </div>
+                  </div>
+              </div>
+              </div>
+            </div>
+          
+          </div>
+          
+          <div class="mb-4">
+            <app-stylists-status></app-stylists-status>
+          </div>
+        </div>
+
+        <!-- Columna Lateral (Citas de Hoy) -->
+        <div class="col-12 col-lg-4">
+          <app-today-appointments></app-today-appointments>
+        </div>
+      </div>
     </div>
+  </main>
 </div>

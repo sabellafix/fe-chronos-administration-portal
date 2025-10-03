@@ -21,6 +21,8 @@ export class TopbarComponent {
   imageUser: string = "../assets/images/user-image.jpg";
   roleUser: string = "";
   agencies : any[] = [];
+  selectedSalon: any = { value: 'salon-1', label: 'Salón Centro - Madrid' };
+  salons : any[] = [];
   
 
   public routeParent: string = "";
@@ -63,10 +65,18 @@ export class TopbarComponent {
       if(this.user.photo != null){
         this.imageUser = this.user.photo;
       }
-    }
+    } 
 
-    
+    this.salons = [
+      { value: 'salon-1', label: 'Salón Centro - Madrid' },
+      { value: 'salon-2', label: 'Salón Norte - Barcelona' },
+      { value: 'salon-3', label: 'Salón Sur - Valencia' }
+    ];  
   }
+
+  onSalonChange(value: string): void {
+    this.selectedSalon = value;
+  } 
 
   onRouteChange() {
     const parentRoute = this.activatedRoute;

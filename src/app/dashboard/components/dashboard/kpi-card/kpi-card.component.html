@@ -1,0 +1,18 @@
+<div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+  <div class="card-body">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+      <div class="d-flex align-items-center">
+        <i class="bi {{ getIconClass() }} {{ getIconColor() }} fs-5 me-2"></i>
+        <span class="text-muted small">{{ title }}</span>
+      </div>
+    </div>
+    
+    <div class="d-flex align-items-center justify-content-between">
+      <h2 class="mb-0 fw-bold">{{ value }}</h2>
+      <div class="d-flex align-items-center {{ getTrendClass() }} small">
+        <i class="bi {{ getTrendIcon() }} me-1"></i>
+        <span>{{ change }}</span>
+      </div>
+    </div>
+  </div>
+</div>

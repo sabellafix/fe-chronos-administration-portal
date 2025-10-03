@@ -1,0 +1,53 @@
+<header class="bg-none">
+  <div class="container-fluid px-4 py-3">
+    <!-- <div class="row align-items-center mb-4">
+      <div class="col-md-6">
+        <h1 class="h3 mb-1 fw-semibold">Dashboard Chronos</h1>
+        <p class="text-muted small mb-0">Portal de Administración - Salones de Belleza</p>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="d-flex align-items-center justify-content-end gap-2">
+          <select 
+            class="form-select form-select-sm" 
+            style="width: 220px;"
+            [value]="selectedSalon"
+            (change)="onSalonChange($any($event.target).value)">
+            <option *ngFor="let salon of salons" [value]="salon.value">
+              {{ salon.label }}
+            </option>
+          </select>
+          
+          <button class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+            <i class="bi bi-calendar3 me-2"></i>
+            {{ formatDate(dateFilter) }}
+          </button>
+          
+          <button class="btn btn-outline-secondary btn-sm position-relative">
+            <i class="bi bi-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" *ngIf="notifications > 0">
+              {{ notifications }}
+            </span>
+          </button>
+          
+          <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center">
+            {{ getUserInitials() }}
+          </div>
+        </div>
+      </div>
+    </div> -->
+    
+    <!-- Segunda fila: Tarjetas KPI -->
+    <div class="row g-3">
+      <div class="col-12 col-sm-6 col-lg-3" *ngFor="let kpi of kpiData; trackBy: trackByIndex">
+        <app-kpi-card
+          [title]="kpi.title"
+          [value]="kpi.value"
+          [change]="kpi.change"
+          [trend]="kpi.trend"
+          [icon]="kpi.icon">
+        </app-kpi-card>
+      </div>
+    </div>
+  </div>
+</header>

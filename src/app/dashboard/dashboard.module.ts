@@ -89,6 +89,11 @@ import { ListBookingsComponent } from './components/shared/lists/list-bookings/l
 import { ListTimeLnBookingsComponent } from './components/shared/lists/list-time-ln-bookings/list-time-ln-bookings.component';
 import { ListCardServicesComponent } from './components/shared/lists/list-card-services/list-card-services.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { KpiCardComponent } from './components/dashboard/kpi-card/kpi-card.component';
+import { DashboardHeaderComponent } from './components/dashboard/dashboard-header/dashboard-header.component';
+import { WeeklyCalendarComponent } from './components/dashboard/weekly-calendar/weekly-calendar.component';
+import { TodayAppointmentsComponent } from './components/dashboard/today-appointments/today-appointments.component';
+import { StylistsStatusComponent } from './components/dashboard/stylists-status/stylists-status.component';
 
 
 const routes: Routes = [
@@ -263,6 +268,11 @@ const routes: Routes = [
     ListTimeLnBookingsComponent,
     ListCardServicesComponent,
     DashboardComponent,
+    KpiCardComponent,
+    DashboardHeaderComponent,
+    WeeklyCalendarComponent,
+    TodayAppointmentsComponent,
+    StylistsStatusComponent,
   ],
   imports: [
     CommonModule,

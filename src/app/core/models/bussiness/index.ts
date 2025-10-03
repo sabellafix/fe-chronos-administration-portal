@@ -15,7 +15,7 @@ export * from './company';
 export * from './rol';
 
 // Enums
-export * from './enums';
+// export * from './enums';
 
 // DTOs de creación
 export * from './create-dtos';
@@ -24,4 +24,7 @@ export * from './create-dtos';
 export * from './update-dtos';
 
 // DTOs de respuesta
-export * from './response-dtos'; 
+export * from './response-dtos';
+
+// Dashboard
+export * from './dashboard'; 

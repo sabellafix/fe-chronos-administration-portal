@@ -11002,6 +11002,11 @@ fieldset:disabled .btn {
     background-image: var(--bs-gradient) !important
 }
 
+.bg-none {
+    background: none !important
+}
+
+
 .user-select-all {
     -webkit-user-select: all !important;
     -moz-user-select: all !important;

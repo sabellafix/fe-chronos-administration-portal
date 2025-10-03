@@ -1,0 +1,88 @@
+<div class="card border-0 shadow-sm">
+  <div class="card-header bg-white border-bottom">
+    <h5 class="card-title mb-0">Estado de Estilistas</h5>
+  </div>
+  
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-12 col-md-6 col-lg-4" *ngFor="let stylist of stylists">
+        <div class="stylist-card card h-100 border hover-shadow">
+          <!-- Encabezado del estilista -->
+          <div class="card-body">
+            <div class="d-flex align-items-start justify-content-between mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <!-- Avatar -->
+                <div class="avatar-circle bg-primary text-white">
+                  {{ getStylistInitials(stylist.name) }}
+                </div>
+                
+                <!-- Nombre y estado -->
+                <div>
+                  <h6 class="mb-1 fw-medium">{{ stylist.name }}</h6>
+                  <div class="d-flex align-items-center gap-1">
+                    <i class="bi {{ getStatusIcon(stylist.status) }} small"
+                       [class]="'text-' + getStatusConfig(stylist.status).variant"></i>
+                    <span class="badge {{ 'bg-' + getStatusConfig(stylist.status).variant }} badge-sm">
+                      {{ getStatusConfig(stylist.status).label }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cliente actual (si está ocupado) -->
+            <div *ngIf="stylist.currentClient" 
+                 class="alert alert-info py-2 px-3 mb-3 small">
+              <strong>Cliente actual:</strong> {{ stylist.currentClient }}
+            </div>
+
+            <!-- Información del estilista -->
+            <div class="stylist-info small">
+              <div class="d-flex justify-content-between mb-2" *ngIf="stylist.nextAppointment">
+                <span class="text-muted">Próxima cita:</span>
+                <span class="fw-medium">{{ stylist.nextAppointment }}</span>
+              </div>
+              
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Citas hoy:</span>
+                <span class="fw-medium">{{ stylist.todayBookings }}</span>
+              </div>
+              
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Ingresos:</span>
+                <span class="fw-medium">€{{ stylist.todayRevenue }}</span>
+              </div>
+              
+              <!-- Barra de eficiencia -->
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="text-muted">Eficiencia:</span>
+                  <span class="fw-medium">{{ stylist.completionRate }}%</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar" 
+                       role="progressbar" 
+                       [style.width.%]="stylist.completionRate"
+                       [class.bg-success]="stylist.completionRate >= 90"
+                       [class.bg-warning]="stylist.completionRate >= 70 && stylist.completionRate < 90"
+                       [class.bg-danger]="stylist.completionRate < 70">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Especialidades -->
+            <div class="pt-3 border-top">
+              <div class="d-flex flex-wrap gap-1">
+                <span *ngFor="let specialty of stylist.specialties" 
+                      class="badge bg-light text-dark border">
+                  {{ specialty }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
