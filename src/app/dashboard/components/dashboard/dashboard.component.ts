@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -6,24 +6,26 @@ import { Component } from '@angular/core';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent {
+
   selectedSalon: string = 'salon-1';
   dateFilter: Date = new Date();
+  
+  // Control de vista: 'calendar' o 'chart'
+  currentView: 'calendar' | 'chart' = 'calendar';
 
-  /**
-   * Maneja el cambio de salón seleccionado
-   */
-  onSalonChange(salon: string): void {
-    this.selectedSalon = salon;
-    console.log('Salón seleccionado:', salon);
-    // TODO: Actualizar datos según el salón seleccionado
+  constructor() {
   }
 
-  /**
-   * Maneja el cambio de fecha
-   */
+  // Método para cambiar la vista
+  switchView(view: 'calendar' | 'chart'): void {
+    this.currentView = view;
+  }
+
+  onSalonChange(salon: string): void {
+    this.selectedSalon = salon;
+  }
+
   onDateChange(date: Date): void {
     this.dateFilter = date;
-    console.log('Fecha seleccionada:', date);
-    // TODO: Actualizar datos según la fecha seleccionada
   }
 }

@@ -1,0 +1,17 @@
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-bottom">
+      <h5 class="card-title mb-0">Popular Services</h5>
+    </div>
+    <div class="card-body">
+      <apx-chart
+        #pieChart
+        [series]="pieChartOptions.series!"
+        [chart]="pieChartOptions.chart!"
+        [labels]="pieChartOptions.labels!"
+        [colors]="pieChartOptions.colors!"
+        [legend]="pieChartOptions.legend!"
+        [responsive]="pieChartOptions.responsive!"
+        [dataLabels]="pieChartOptions.dataLabels!">
+      </apx-chart>
+    </div>
+  </div>

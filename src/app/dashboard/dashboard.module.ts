@@ -94,6 +94,9 @@ import { DashboardHeaderComponent } from './components/dashboard/dashboard-heade
 import { WeeklyCalendarComponent } from './components/dashboard/weekly-calendar/weekly-calendar.component';
 import { TodayAppointmentsComponent } from './components/dashboard/today-appointments/today-appointments.component';
 import { StylistsStatusComponent } from './components/dashboard/stylists-status/stylists-status.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { BarRevenueChartComponent } from './components/shared/charts/bar-revenue-chart/bar-revenue-chart.component';
+import { DonnutPopServicesChartComponent } from './components/shared/charts/donnut-pop-services-chart/donnut-pop-services-chart.component';
 
 
 const routes: Routes = [
@@ -273,6 +276,8 @@ const routes: Routes = [
     WeeklyCalendarComponent,
     TodayAppointmentsComponent,
     StylistsStatusComponent,
+    BarRevenueChartComponent,
+    DonnutPopServicesChartComponent,
   ],
   imports: [
     CommonModule,
@@ -296,6 +301,7 @@ const routes: Routes = [
     MatBadgeModule,
     MatSnackBarModule,
     NgxSkeletonLoaderModule,
+    NgApexchartsModule,
   ],
   providers: [
     // Servicios mock para el sistema de pisos y sitios
