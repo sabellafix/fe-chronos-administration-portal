@@ -1,6 +1,6 @@
 <div class="card border-0 shadow-sm">
   <div class="card-header bg-white border-bottom">
-    <h5 class="card-title mb-0">Estado de Estilistas</h5>
+    <h5 class="card-title mb-0">Stylists Status</h5>
   </div>
   
   <div class="card-body">
@@ -33,30 +33,30 @@
             <!-- Cliente actual (si está ocupado) -->
             <div *ngIf="stylist.currentClient" 
                  class="alert alert-info py-2 px-3 mb-3 small">
-              <strong>Cliente actual:</strong> {{ stylist.currentClient }}
+              <strong>Current Client:</strong> {{ stylist.currentClient }}
             </div>
 
             <!-- Información del estilista -->
             <div class="stylist-info small">
               <div class="d-flex justify-content-between mb-2" *ngIf="stylist.nextAppointment">
-                <span class="text-muted">Próxima cita:</span>
+                <span class="text-muted">Next Appointment:</span>
                 <span class="fw-medium">{{ stylist.nextAppointment }}</span>
               </div>
               
               <div class="d-flex justify-content-between mb-2">
-                <span class="text-muted">Citas hoy:</span>
+                <span class="text-muted">Today Bookings:</span>
                 <span class="fw-medium">{{ stylist.todayBookings }}</span>
               </div>
               
               <div class="d-flex justify-content-between mb-2">
-                <span class="text-muted">Ingresos:</span>
+                <span class="text-muted">Revenue:</span>
                 <span class="fw-medium">€{{ stylist.todayRevenue }}</span>
               </div>
               
               <!-- Barra de eficiencia -->
               <div class="mb-3">
                 <div class="d-flex justify-content-between mb-1">
-                  <span class="text-muted">Eficiencia:</span>
+                  <span class="text-muted">Efficiency:</span>
                   <span class="fw-medium">{{ stylist.completionRate }}%</span>
                 </div>
                 <div class="progress" style="height: 8px;">

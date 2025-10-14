@@ -76,14 +76,14 @@ export class BarRevenueChartComponent {
           text: 'Amount ($)'
         }
       },
-      colors: ['#1e2e47', '#f1f3f7'],
+      colors: ['#1e2e47', '#e9edee'],
       legend: {
         position: 'top',
         horizontalAlign: 'left'
       },
       grid: {
         borderColor: '#f1f1f1'
-      }
+      },
     };
   }
 

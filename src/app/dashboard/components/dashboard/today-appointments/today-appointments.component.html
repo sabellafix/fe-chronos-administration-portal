@@ -1,7 +1,7 @@
 <div class="card h-100 border-0 shadow-sm">
   <div class="card-header bg-white border-bottom">
     <div class="d-flex align-items-center justify-content-between">
-      <h5 class="card-title mb-0">Citas de Hoy</h5>
+      <h5 class="card-title mb-0">Today Bookings</h5>
       <small class="text-muted">{{ currentTime }}</small>
     </div>
   </div>
@@ -11,13 +11,13 @@
       <div *ngFor="let appointment of appointments" 
            class="appointment-item d-flex align-items-start p-3 border-bottom hover-bg">
         
-        <!-- Tiempo y duración -->
+        <!-- Time and duration -->
         <div class="time-column text-center me-3" style="min-width: 70px;">
           <div class="fw-medium">{{ appointment.time }}</div>
           <small class="text-muted">{{ appointment.duration }}</small>
         </div>
         
-        <!-- Detalles de la cita -->
+        <!-- Appointment details -->
         <div class="flex-fill min-w-0">
           <div class="d-flex align-items-start justify-content-between mb-1">
             <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -46,7 +46,7 @@
           </div>
         </div>
         
-        <!-- Menú de acciones -->
+        <!-- Actions menu -->
         <div class="dropdown ms-2">
           <button class="btn btn-sm btn-ghost" 
                   type="button" 
@@ -57,23 +57,23 @@
           <ul class="dropdown-menu dropdown-menu-end">
             <li>
               <a class="dropdown-item" (click)="onAction('view', appointment)">
-                Ver detalles
+                View details
               </a>
             </li>
             <li>
               <a class="dropdown-item" (click)="onAction('edit', appointment)">
-                Editar cita
+                Edit appointment
               </a>
             </li>
             <li>
               <a class="dropdown-item" (click)="onAction('complete', appointment)">
-                Marcar como completada
+                Mark as completed
               </a>
             </li>
             <li><hr class="dropdown-divider"></li>
             <li>
               <a class="dropdown-item text-danger" (click)="onAction('cancel', appointment)">
-                Cancelar cita
+                Cancel appointment
               </a>
             </li>
           </ul>
@@ -82,14 +82,14 @@
     </div>
   </div>
   
-  <!-- Footer con totales -->
+  <!-- Footer with totals -->
   <div class="card-footer bg-white border-top">
     <div class="d-flex align-items-center justify-content-between mb-2">
-      <span class="text-muted small">Total del día:</span>
+      <span class="text-muted small">Total of the day:</span>
       <span class="fw-semibold">€{{ getTotalRevenue() }}</span>
     </div>
     <div class="d-flex align-items-center justify-content-between">
-      <span class="text-muted small">Citas restantes:</span>
+      <span class="text-muted small">Remaining appointments:</span>
       <span class="fw-medium">{{ getRemainingAppointments() }}</span>
     </div>
   </div>

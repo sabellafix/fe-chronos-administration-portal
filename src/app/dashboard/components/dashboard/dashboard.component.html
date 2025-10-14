@@ -16,9 +16,9 @@
       <!-- Sección de búsqueda y acciones -->
       <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
-          <h2 class="h4 mb-1 fw-semibold">Vista Operacional</h2>
+          <h2 class="h4 mb-1 fw-semibold">Operational View</h2>
           <p class="text-muted small mb-0">
-            Gestión en tiempo real
+            Real-time management
           </p>
         </div>
 
@@ -32,7 +32,7 @@
                 [class.btn-outline-primary]="currentView !== 'calendar'"
                 (click)="switchView('calendar')">
                 <i class="bi bi-calendar-week me-2"></i>
-                Calendario Semanal
+                Weekly Calendar
               </button>
               <button 
                 type="button" 
@@ -41,7 +41,7 @@
                 [class.btn-outline-primary]="currentView !== 'chart'"
                 (click)="switchView('chart')">
                 <i class="bi bi-bar-chart-fill me-2"></i>
-                Gráfico de Ingresos
+                Revenue Chart
               </button>
             </div>
           </div>
@@ -53,15 +53,15 @@
             <span class="input-group-text bg-white">
               <i class="bi bi-search"></i>
             </span>
-            <input type="text" class="form-control" placeholder="Buscar cliente o cita...">
+            <input type="text" class="form-control" placeholder="Search customer or appointment...">
           </div>
           <button class="btn btn-outline-secondary">
             <i class="bi bi-funnel me-2"></i>
-            Filtros
+            Filters
           </button>
           <button class="btn btn-primary">
             <i class="bi bi-plus-lg me-2"></i>
-            Nueva Cita
+            New Booking
           </button>
         </div>
       </div>
