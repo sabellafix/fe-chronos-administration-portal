@@ -1,0 +1,41 @@
+<div class="card animated fadeIn fast" [style.height]="height">
+    <div class="card-body">
+        <!-- Header skeleton -->
+        <div *ngIf="showHeader" class="mb-3">
+            <ngx-skeleton-loader 
+                [count]="headerLines"
+                [theme]="{ 
+                    'border-radius': borderRadius, 
+                    'height': '24px',
+                    'margin-bottom': '10px',
+                    'width': '60%'
+                }">
+            </ngx-skeleton-loader>
+        </div>
+
+        <!-- Content skeleton -->
+        <div class="mb-2">
+            <ngx-skeleton-loader 
+                [count]="contentLines"
+                [theme]="{ 
+                    'border-radius': borderRadius, 
+                    'height': '24px',
+                    'margin-bottom': '8px'
+                }">
+            </ngx-skeleton-loader>
+        </div>
+
+        <!-- Footer skeleton -->
+        <div *ngIf="showFooter" class="mt-3">
+            <ngx-skeleton-loader 
+                [count]="footerLines"
+                [theme]="{ 
+                    'border-radius': borderRadius, 
+                    'height': '20px',
+                    'margin-bottom': '8px',
+                    'width': '40%'
+                }">
+            </ngx-skeleton-loader>
+        </div>
+    </div>
+</div>

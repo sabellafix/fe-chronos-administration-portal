@@ -8,6 +8,8 @@ import {
   ApexLegend,
   ApexPlotOptions,
   ApexGrid,
+  ApexFill,
+  ApexStroke,
   ChartComponent
 } from 'ng-apexcharts';
 
@@ -22,6 +24,8 @@ export type BarChartOptions = {
   colors: string[];
   legend: ApexLegend;
   grid: ApexGrid;
+  fill: ApexFill;
+  stroke: ApexStroke;
 };
 
 
@@ -33,56 +37,70 @@ export type BarChartOptions = {
 export class BarRevenueChartComponent {
 
   @ViewChild('barChart') barChart!: ChartComponent;
-  
-
-
    public barChartOptions: Partial<BarChartOptions>;
-  
-
    constructor() {
     this.barChartOptions = {
       series: [
         {
-          name: 'Revenue',
-          data: [28000, 35000, 30000, 42000, 38000, 45000]
+          name: 'Net Profit',
+          data: [18, 21, 17, 24, 21, 27, 25, 32, 26]
         },
         {
-          name: 'Expenses',
-          data: [12000, 15000, 13000, 18000, 16000, 19000]
+          name: 'Revenue',
+          data: [21, 24, 20, 27, 25, 29, 26, 34, 30]
         }
       ],
       chart: {
         type: 'bar',
         height: 350,
         toolbar: {
-          show: true
+          show: false
         }
       },
       plotOptions: {
         bar: {
           horizontal: false,
-          columnWidth: '25%',
-          borderRadius: 10,
+          columnWidth: '35%',
+          borderRadius: 6
         }
       },
       dataLabels: {
         enabled: false
       },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      colors: ['#fff', '#fff'],
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+        categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct']
       },
       yaxis: {
-        title: {
-          text: 'Amount ($)'
-        }
+        labels: {
+          formatter: function(value: number) {
+            return value + 'k';
+          }
+        },
+        tickAmount: 4
       },
-      colors: ['#1e2e47', '#f1f3f7'],
       legend: {
-        position: 'top',
-        horizontalAlign: 'left'
+        show: false
       },
       grid: {
         borderColor: '#f1f1f1'
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'light',
+          type: 'vertical',
+          shadeIntensity: 1,
+          inverseColors: true,
+          gradientToColors: ['#a7cee8', '#474d5f'],
+          opacityFrom: 1,
+          opacityTo: 1
+        }
       }
     };
   }

@@ -13,9 +13,6 @@ export class KpiCardComponent {
   @Input() trend: KpiTrend = 'up';
   @Input() icon: KpiIconType = 'gauge';
 
-  /**
-   * Obtiene la clase de icono de Bootstrap Icons según el tipo
-   */
   getIconClass(): string {
     const iconMap: Record<KpiIconType, string> = {
       'gauge': 'bi-speedometer2',
@@ -26,9 +23,6 @@ export class KpiCardComponent {
     return iconMap[this.icon] || 'bi-speedometer2';
   }
 
-  /**
-   * Obtiene el color del icono según el tipo
-   */
   getIconColor(): string {
     const colorMap: Record<KpiIconType, string> = {
       'gauge': 'text-primary',
@@ -39,16 +33,22 @@ export class KpiCardComponent {
     return colorMap[this.icon] || 'text-primary';
   }
 
-  /**
-   * Obtiene la clase de tendencia
-   */
+  getBgIconColor(): string {
+    const colorMap: Record<KpiIconType, string> = {
+      'gauge': 'bg-primary',
+      'revenue': 'bg-success',
+      'sessions': 'bg-info',
+      'stylists': 'bg-warning'
+    };
+    return colorMap[this.icon] || 'bg-primary';
+  }
+
+
   getTrendClass(): string {
     return this.trend === 'up' ? 'text-success' : 'text-danger';
   }
 
-  /**
-   * Obtiene el icono de tendencia
-   */
+
   getTrendIcon(): string {
     return this.trend === 'up' ? 'bi-arrow-up' : 'bi-arrow-down';
   }

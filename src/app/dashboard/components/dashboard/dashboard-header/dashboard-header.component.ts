@@ -35,37 +35,8 @@ export class DashboardHeaderComponent {
       change: '-2',
       trend: 'down',
       icon: 'sessions'
-    },
-    {
-      title: 'Active Stylists',
-      value: '8/10',
-      change: '+1',
-      trend: 'up',
-      icon: 'stylists'
     }
   ];
-
-  salons = [
-    { value: 'salon-1', label: 'Salón Centro - Madrid' },
-    { value: 'salon-2', label: 'Salón Norte - Barcelona' },
-    { value: 'salon-3', label: 'Salón Sur - Valencia' }
-  ];
-
-  onSalonChange(value: string): void {
-    this.salonChange.emit(value);
-  }
-
-  onDateChange(event: any): void {
-    this.dateChange.emit(new Date(event.target.value));
-  }
-
-  formatDate(date: Date): string {
-    return date.toLocaleDateString('es-ES');
-  }
-
-  getUserInitials(): string {
-    return 'JM'; // TODO: Obtener del servicio de autenticación
-  }
 
   trackByIndex(index: number): number {
     return index;

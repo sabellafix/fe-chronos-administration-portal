@@ -95,8 +95,14 @@ import { WeeklyCalendarComponent } from './components/dashboard/weekly-calendar/
 import { TodayAppointmentsComponent } from './components/dashboard/today-appointments/today-appointments.component';
 import { StylistsStatusComponent } from './components/dashboard/stylists-status/stylists-status.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
-import { BarRevenueChartComponent } from './components/shared/charts/bar-revenue-chart/bar-revenue-chart.component';
+import { BookingStatsComponent } from './components/dashboard/booking-stats/booking-stats.component';
+import { BarRevenueChartComponent } from './components/dashboard/bar-revenue-chart/bar-revenue-chart.component';
 import { DonnutPopServicesChartComponent } from './components/shared/charts/donnut-pop-services-chart/donnut-pop-services-chart.component';
+import { TopProductsComponent } from './components/dashboard/top-products/top-products.component';
+import { RevenueActivityComponent } from './components/dashboard/revenue-activity/revenue-activity.component';
+import { StylistResumeComponent } from './components/dashboard/stylist-resume/stylist-resume.component';
+import { SkelletonCardComponent } from './components/shared/skelletons/skelleton-card/skelleton-card.component';
+import { PaymentsListComponent } from './components/dashboard/payments-list/payments-list.component';
 
 
 const routes: Routes = [
@@ -278,6 +284,12 @@ const routes: Routes = [
     StylistsStatusComponent,
     BarRevenueChartComponent,
     DonnutPopServicesChartComponent,
+    TopProductsComponent,
+    BookingStatsComponent,
+    RevenueActivityComponent,
+    StylistResumeComponent,
+    SkelletonCardComponent,
+    PaymentsListComponent,
   ],
   imports: [
     CommonModule,

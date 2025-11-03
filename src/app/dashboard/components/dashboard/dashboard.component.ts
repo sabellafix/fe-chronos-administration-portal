@@ -11,7 +11,7 @@ export class DashboardComponent {
   dateFilter: Date = new Date();
   
   // Control de vista: 'calendar' o 'chart'
-  currentView: 'calendar' | 'chart' = 'calendar';
+  currentView: 'calendar' | 'chart' = 'chart';
 
   constructor() {
   }

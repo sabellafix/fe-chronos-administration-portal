@@ -1,0 +1,42 @@
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  background-color: white;
+  border-radius: 8px;
+  margin: 0px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.dropdown-toggle {
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.pt-3 {
+  padding-top: 1rem !important;
+}
+
+// Estilos para mejorar la apariencia del gráfico de dona
+::ng-deep .apexcharts-donut {
+  .apexcharts-pie-series {
+    .apexcharts-pie-area {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+  }
+}

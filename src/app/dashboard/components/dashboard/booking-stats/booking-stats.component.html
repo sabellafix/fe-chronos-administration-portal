@@ -1,0 +1,62 @@
+<div class="card animated fadeIn fast" *ngIf="!loading">
+    <div class="card-body">
+        <div class="d-flex align-items-start">
+            <div class="flex-grow-1">
+                <h5 class="card-title mb-3">Order Stats</h5>
+            </div>
+            <div class="flex-shrink-0">
+                <div class="dropdown">
+                    <a class="dropdown-toggle text-muted" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="eva eva-more-horizontal-outline fill-muted"><g data-name="Layer 2"><g data-name="more-horizotnal"><rect width="24" height="24" opacity="0"></rect><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle><circle cx="5" cy="12" r="2"></circle></g></g></svg>
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="#">Yearly</a>
+                        <a class="dropdown-item" href="#">Monthly</a>
+                        <a class="dropdown-item" href="#">Weekly</a>
+                        <a class="dropdown-item" href="#">Today</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <apx-chart
+                [series]="chartOptions.series"
+                [chart]="chartOptions.chart"
+                [colors]="chartOptions.colors"
+                [labels]="chartOptions.labels"
+                [plotOptions]="chartOptions.plotOptions"
+                [dataLabels]="chartOptions.dataLabels"
+                [legend]="chartOptions.legend"
+                [stroke]="chartOptions.stroke"
+                [tooltip]="chartOptions.tooltip"
+                [fill]="chartOptions.fill"
+                [responsive]="chartOptions.responsive">
+            </apx-chart>
+        </div>
+        <div class="text-center mt-4 border-top">
+            <div class="row">
+                <div class="col-4">
+                    <div class="pt-3">
+                        <p class="text-muted text-truncate mb-2">Completed</p>
+                        <h5 class="font-size-16 mb-0">70</h5>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="pt-3">
+                        <p class="text-muted text-truncate mb-2">Pending</p>
+                        <h5 class="font-size-16 mb-0">25</h5>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="pt-3">
+                        <p class="text-muted text-truncate mb-2">Cancel</p>
+                        <h5 class="font-size-16 mb-0">19</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<app-skelleton-card height="370px"  [contentLines]="5" *ngIf="loading" ></app-skelleton-card>

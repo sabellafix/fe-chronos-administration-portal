@@ -47,14 +47,11 @@
                                 <img  [src]="srcImage" alt="" class="avatar-xl rounded-circle img-thumbnail">
                                 <div class="mt-3">
                                     <h5 class="mb-1">{{user.firstName}} {{user.lastName}}</h5>
-                                    <div>
+                                    <div class="font-size-16">
                                         <a *ngFor="let  service of services | slice:0:3" class="badge bg-success-subtle text-success m-1">{{service.serviceName}}</a>
                                         <a *ngIf="services.length > 3" class="badge bg-info-subtle text-info m-1">+{{services.length - 3}} more</a>
                                         <a *ngIf="services.length === 0" class="badge bg-success-subtle text-success m-1">No services</a>
                                     </div>
-                                    <!-- <div class="mt-4">
-                                        <a href="" class="btn btn-primary waves-effect waves-light btn-sm"><i class="bx bx-calendar-check me-1 align-middle"></i> Create Booking</a>
-                                    </div> -->
                                 </div>
                             </div>
                         </div>
