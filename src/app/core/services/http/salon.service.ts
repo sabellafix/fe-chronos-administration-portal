@@ -4,12 +4,14 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { StorageService } from '../shared/storage.service';
-import { Salon, CreateSalonDto, UpdateSalonDto } from '@app/core/models/bussiness';
+import { Salon } from '@app/core/models/bussiness/salon';
+import { CreateSalonDto } from '@app/core/models/bussiness/create-dtos';
+import { UpdateSalonDto } from '@app/core/models/bussiness/update-dtos';
 
 @Injectable({
     providedIn: 'root'
 })
-export class CategoryService {
+export class SalonService {
 
     apiUrl: string = environment.apiUrl;
     controller: string = "api/chronos/salons";
@@ -29,6 +31,11 @@ export class CategoryService {
         const url = `${this.apiUrl}/${this.controller}/get-salons`;
         return this.http.get<Salon[]>(url, this.getHttpOptions());
     }
+
+    getSalonsByIdBearer(token: string): Observable<Salon[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-salons`;
+        return this.http.get<Salon[]>(url, { headers: { Authorization: `Bearer ${token}` } });
+    } 
 
     getSalon(id: number): Observable<Salon> {
         const url = `${this.apiUrl}/${this.controller}/get-salon/${id}`;

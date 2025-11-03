@@ -27,4 +27,5 @@ export * from './update-dtos';
 export * from './response-dtos';
 
 // Dashboard
-export * from './dashboard'; 
+export * from './dashboard';
+export * from './dashboard-dtos'; 

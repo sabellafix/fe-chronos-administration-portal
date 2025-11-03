@@ -3,9 +3,11 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { User } from '@app/core/models/bussiness/user';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { StorageService } from '@app/core/services/shared/storage.service';
+import { SalonStateService } from '@app/core/services/shared/salon-state.service';
 import { Navigation } from '@app/core/models/interfaces/nav.interface';
 import { Pagination } from '@app/core/models/interfaces/pagination.interface';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
+import { Salon } from '@app/core/models/bussiness/salon';
 
 @Component({
   selector: 'app-topbar',
@@ -21,8 +23,8 @@ export class TopbarComponent {
   imageUser: string = "../assets/images/user-image.jpg";
   roleUser: string = "";
   agencies : any[] = [];
-  selectedSalon: any = { value: 'salon-1', label: 'Salón Centro - Madrid' };
-  salons : any[] = [];
+  selectedSalon: Salon = new Salon();
+  salons : Salon[] = [];
   
 
   public routeParent: string = "";
@@ -45,6 +47,7 @@ export class TopbarComponent {
   constructor(private activatedRoute: ActivatedRoute,
               private authService : AuthService,
               private storageService : StorageService,
+              private salonStateService: SalonStateService,
               private router: Router
   ) {}
 
@@ -68,14 +71,53 @@ export class TopbarComponent {
     } 
 
     this.salons = [
-      { value: 'salon-1', label: 'Salón Centro - Madrid' },
-      { value: 'salon-2', label: 'Salón Norte - Barcelona' },
-      { value: 'salon-3', label: 'Salón Sur - Valencia' }
+      {
+        id: '07c3fea6-9326-45cf-b97b-c29b92e5437e',
+        companyId: '85be9ea1-6980-42a7-bfe2-4c1da6da6e9f',
+        name: 'Chronos North Point',
+        description: 'Chronos North Point',
+        capacity: 40,
+        address: '1060 West Addison Street, Wrigley Field',
+        city: 'Chicago',
+        state: 'IL',
+        country: 'United States',
+        zipCode: '60613',
+        isActive: true,
+        createdAt: new Date('2025-09-01'),
+        updatedAt: new Date('2025-09-01'),
+        company: {} as any,
+        bookings: [],
+        services: []
+      },
+      {
+        id: '790eceaa-2d87-4b8a-9594-f21d82f0799f',
+        companyId: '85be9ea1-6980-42a7-bfe2-4c1da6da6e9f',
+        name: 'Chronos Central Park',
+        description: 'Chronos Central Park',
+        capacity: 35,
+        address: '900 Michigan Ave, 360 Chicago Observation Deck',
+        city: 'Chicago',
+        state: 'IL',
+        country: 'United States',
+        zipCode: '60611',
+        isActive: true,
+        createdAt: new Date('2025-09-01'),
+        updatedAt: new Date('2025-09-01'),
+        company: {} as any,
+        bookings: [],
+        services: []
+      }
     ];  
+
+    this.selectedSalon = this.salons[0];
+    // Establecer el salón inicial en el servicio compartido
+    this.salonStateService.setSelectedSalon(this.selectedSalon);
   }
 
-  onSalonChange(value: string): void {
+  onSalonChange(value: Salon): void {
     this.selectedSalon = value;
+    // Notificar el cambio a todos los observadores
+    this.salonStateService.setSelectedSalon(value);
   } 
 
   onRouteChange() {

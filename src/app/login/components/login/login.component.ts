@@ -7,13 +7,14 @@ import { InfoUser } from '@app/core/models/views/infoUser';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { UserService } from '@app/core/services/http/user.service';
 import { RolService } from '@app/core/services/http/rol.service';
-
 import { environment } from '@env/environment';
 import { StorageService } from '@app/core/services/shared/storage.service';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { UserResponse } from '@app/core/models/dtos/userResponse';
 import { TokenRefreshService } from '@app/core/services/shared/token-refresh.service';
 import { Rol } from '@app/core/models/bussiness/rol';
+import { SalonService } from '@app/core/services/http/salon.service';
+import { Salon } from '@app/core/models/bussiness/salon';
 
 @Component({
   selector: 'app-login',
@@ -30,7 +31,7 @@ export class LoginComponent implements OnInit, AfterViewInit{
   loading: boolean = false;
   logginError: boolean = false;
   userDomain : string = environment.apiUrl;
-
+  salons : Salon[] = [];
   user : User = new User();
 
   assets: string = "assets/images/";
@@ -45,7 +46,8 @@ export class LoginComponent implements OnInit, AfterViewInit{
               private userService : UserService,
               private rolService : RolService,
               private storageService : StorageService,
-              private tokenRefreshService : TokenRefreshService
+              private tokenRefreshService : TokenRefreshService,
+              private salonService : SalonService
   ) {
     this.form = new FormGroup({
       userNumber : new FormControl("", [Validators.required, Validators.email]),
@@ -111,20 +113,36 @@ export class LoginComponent implements OnInit, AfterViewInit{
           this.userResponse = <UserResponse>response; 
           if(this.userResponse.token != ''){  
 
-            if(this.userResponse.user.roleId != null){
+            // if(this.userResponse.user.roleId != null){
+            //   this.salonService.getSalonsByIdBearer(this.userResponse.token as string).subscribe((response: Salon[]) => {
+            //     this.salons = response;
+            //     console.log(this.salons);
+            //     this.storageService.set(StorageKeyConst._TOKEN, this.userResponse.token);
+            //     this.storageService.set(StorageKeyConst._USER, JSON.stringify(this.userResponse.user));
+            //     this.storageService.set(StorageKeyConst._EXPIRES_AT, this.userResponse.expiresAt);
+            //     this.storageService.set(StorageKeyConst._SALONS, JSON.stringify(this.salons));
+                
+            //     this.tokenRefreshService.notifyTokenUpdate();
+                
+            //     this.rolService.getRolByIdBearer(this.userResponse.user.roleId, this.userResponse.token).subscribe((response: Rol) => {
+            //       this.userResponse.user.role = response;
+            //       this.storageService.set(StorageKeyConst._ROLE, JSON.stringify(this.userResponse.user.role));
+            //       this.router.navigate(['/bookings']);
+            //     });
+            //   }); 
+            // }
 
+            if(this.userResponse.user.roleId != null){
               this.storageService.set(StorageKeyConst._TOKEN, this.userResponse.token);
               this.storageService.set(StorageKeyConst._USER, JSON.stringify(this.userResponse.user));
               this.storageService.set(StorageKeyConst._EXPIRES_AT, this.userResponse.expiresAt);
-              
               this.tokenRefreshService.notifyTokenUpdate();
               
               this.rolService.getRolByIdBearer(this.userResponse.user.roleId, this.userResponse.token).subscribe((response: Rol) => {
                 this.userResponse.user.role = response;
                 this.storageService.set(StorageKeyConst._ROLE, JSON.stringify(this.userResponse.user.role));
-                this.router.navigate(['/bookings']);
+                this.router.navigate(['/dashboard']);
               });
-              
             }
           }
         },
