@@ -25,10 +25,10 @@ export class KpiCardComponent {
 
   getIconColor(): string {
     const colorMap: Record<KpiIconType, string> = {
-      'gauge': 'text-primary',
-      'revenue': 'text-success',
-      'sessions': 'text-info',
-      'stylists': 'text-warning'
+      'gauge': 'bg-primary',
+      'revenue': 'bg-success',
+      'sessions': 'bg-info',
+      'stylists': 'bg-warning'
     };
     return colorMap[this.icon] || 'text-primary';
   }

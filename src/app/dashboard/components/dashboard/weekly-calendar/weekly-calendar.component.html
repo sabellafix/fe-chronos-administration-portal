@@ -19,7 +19,7 @@
   <div class="calendar-grid border rounded overflow-hidden">
     <!-- Encabezado de días -->
     <div class="calendar-header bg-light">
-      <div class="time-column border-end p-2 text-center small fw-medium">Hora</div>
+      <div class="time-column border-end p-2 text-center small fw-medium">Time</div>
       <div class="day-column border-end p-2 text-center" *ngFor="let day of weekDays; let i = index">
         <div class="small fw-medium">{{ dayNames[i] }}</div>
         <div class="fs-5 fw-semibold mt-1" [class.text-primary]="isToday(day)" [class.bg-primary]="isToday(day)"

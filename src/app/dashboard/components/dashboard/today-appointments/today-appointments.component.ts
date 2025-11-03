@@ -28,7 +28,7 @@ export class TodayAppointmentsComponent implements OnInit {
         time: '09:00',
         customerName: 'María García',
         customerPhone: '+34 666 123 456',
-        service: 'Corte y Peinado',
+        service: 'HairCut and Hairdressing',
         stylist: 'Ana López',
         duration: '1h 30min',
         price: 45,
@@ -39,7 +39,7 @@ export class TodayAppointmentsComponent implements OnInit {
         time: '10:30',
         customerName: 'Carmen Silva',
         customerPhone: '+34 666 234 567',
-        service: 'Coloración Completa',
+        service: 'Complete Coloration',
         stylist: 'Ana López',
         duration: '2h 30min',
         price: 85,
@@ -50,7 +50,7 @@ export class TodayAppointmentsComponent implements OnInit {
         time: '14:00',
         customerName: 'Laura Ruiz',
         customerPhone: '+34 666 345 678',
-        service: 'Manicure',
+        service: 'Manicure and Pedicure',
         stylist: 'Elena Martín',
         duration: '1h',
         price: 25,
@@ -61,7 +61,7 @@ export class TodayAppointmentsComponent implements OnInit {
         time: '15:30',
         customerName: 'Isabel Moreno',
         customerPhone: '+34 666 456 789',
-        service: 'Corte y Brushing',
+        service: 'HairCut and Hairdressing',
         stylist: 'Sofia Herrera',
         duration: '1h 15min',
         price: 35,
@@ -72,7 +72,7 @@ export class TodayAppointmentsComponent implements OnInit {
         time: '17:00',
         customerName: 'Patricia Vega',
         customerPhone: '+34 666 567 890',
-        service: 'Tratamiento Capilar',
+        service: 'Hair Treatment',
         stylist: 'Ana López',
         duration: '1h',
         price: 55,
@@ -97,27 +97,27 @@ export class TodayAppointmentsComponent implements OnInit {
   getStatusConfig(status: string): BookingStatusConfig {
     const configs: Record<string, BookingStatusConfig> = {
       'pending': { 
-        label: 'Pendiente', 
+        label: 'Pending', 
         variant: 'warning', 
         color: 'bg-warning-subtle text-warning-emphasis' 
       },
       'confirmed': { 
-        label: 'Confirmada', 
+        label: 'Confirmed', 
         variant: 'primary', 
         color: 'bg-primary-subtle text-primary-emphasis' 
       },
       'in-progress': { 
-        label: 'En Curso', 
+        label: 'In Progress', 
         variant: 'success', 
         color: 'bg-success-subtle text-success-emphasis' 
       },
       'completed': { 
-        label: 'Completada', 
+        label: 'Completed', 
         variant: 'secondary', 
         color: 'bg-secondary-subtle text-secondary-emphasis' 
       },
       'cancelled': { 
-        label: 'Cancelada', 
+        label: 'Cancelled', 
         variant: 'danger', 
         color: 'bg-danger-subtle text-danger-emphasis' 
       }
