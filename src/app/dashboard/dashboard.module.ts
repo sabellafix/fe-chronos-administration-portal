@@ -1,5 +1,5 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule, APP_INITIALIZER } from '@angular/core';
-import { BrowserModule, provideClientHydration } from '@angular/platform-browser'
+import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -70,12 +70,10 @@ import { AutocompleteComponent } from './components/shared/autocomplete/autocomp
 import { SelectImageComponent } from './components/shared/selects/select-image/select-image.component';
 import { CardBookingComponent } from './components/shared/cards/card-booking/card-booking.component';
 import { CalendarFloorComponent } from './components/booking/bookingsCalendar/calendar-floor/calendar-floor.component';
-// Importar servicios mock del floor
 import { FLOOR_MOCK_SERVICES } from '@app/core/services/mock/floor-services.index';
 import { CustomersUpdateComponent } from './components/customers/customers-update/customers-update.component';
 import { CustomersDetailComponent } from './components/customers/customers-detail/customers-detail.component';
 import { OffcanvasDetailBookingComponent } from './components/shared/offcanvas/offcanvas-detail-booking/offcanvas-detail-booking.component';
-// Importar servicio de inicialización del dashboard
 import { DashboardInitializerService } from './services/dashboard-initializer.service';
 import { UsersAvailabilityComponent } from './components/users/users-availability/users-availability.component';
 import { RolesListComponent } from './components/roles/roles-list/roles-list.component';
@@ -103,6 +101,7 @@ import { RevenueActivityComponent } from './components/dashboard/revenue-activit
 import { StylistResumeComponent } from './components/dashboard/stylist-resume/stylist-resume.component';
 import { SkelletonCardComponent } from './components/shared/skelletons/skelleton-card/skelleton-card.component';
 import { PaymentsListComponent } from './components/dashboard/payments-list/payments-list.component';
+import { BarOcupationChartComponent } from './components/dashboard/bar-ocupation-chart/bar-ocupation-chart.component';
 
 
 const routes: Routes = [
@@ -290,6 +289,7 @@ const routes: Routes = [
     StylistResumeComponent,
     SkelletonCardComponent,
     PaymentsListComponent,
+    BarOcupationChartComponent,
   ],
   imports: [
     CommonModule,
@@ -316,9 +316,7 @@ const routes: Routes = [
     NgApexchartsModule,
   ],
   providers: [
-    // Servicios mock para el sistema de pisos y sitios
     ...FLOOR_MOCK_SERVICES,
-    // Inicializador del dashboard para refrescar tokens en servicios
     {
       provide: APP_INITIALIZER,
       useFactory: DashboardInitializerService.initializeFactory,

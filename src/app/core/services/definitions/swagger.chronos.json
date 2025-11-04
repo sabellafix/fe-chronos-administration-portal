@@ -3354,6 +3354,76 @@
         }
       }
     },
+    "/api/Dashboard/salon-occupancy/{salonId}": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "parameters": [
+          {
+            "name": "salonId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalonOccupancyDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalonOccupancyDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SalonOccupancyDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Salons/get-salons": {
       "get": {
         "tags": [
@@ -5768,6 +5838,32 @@
         },
         "additionalProperties": false
       },
+      "MonthlyOccupancyDto": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentYearOccupancy": {
+            "type": "number",
+            "format": "double"
+          },
+          "previousYearOccupancy": {
+            "type": "number",
+            "format": "double"
+          },
+          "hoursWorked": {
+            "type": "number",
+            "format": "double"
+          },
+          "activeStylists": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "MonthlyRevenueDto": {
         "type": "object",
         "properties": {
@@ -5962,6 +6058,43 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SalonOccupancyDto": {
+        "type": "object",
+        "properties": {
+          "occupancyThisMonth": {
+            "type": "number",
+            "format": "double"
+          },
+          "occupancyChangePercentage": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalHoursWorked": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalAvailableHours": {
+            "type": "number",
+            "format": "double"
+          },
+          "activeStylists": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workingDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "monthlyData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonthlyOccupancyDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

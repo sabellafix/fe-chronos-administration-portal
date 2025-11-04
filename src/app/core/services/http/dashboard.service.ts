@@ -10,7 +10,8 @@ import {
     RevenueChartDto,
     RevenueActivityDto,
     OrderStatsDto,
-    TopServiceDto
+    TopServiceDto,
+    SalonOccupancyDto
 } from '@app/core/models/bussiness/dashboard-dtos';
 
 @Injectable({
@@ -119,6 +120,20 @@ export class DashboardService {
         }
 
         return this.http.get<TopServiceDto[]>(url, {
+            ...this.getHttpOptions(),
+            params
+        });
+    }
+
+    getSalonOccupancy(salonId: string, date?: Date): Observable<SalonOccupancyDto> {
+        const url = `${this.apiUrl}/${this.controller}/salon-occupancy/${salonId}`;
+        let params = new HttpParams();
+        
+        if (date) {
+            params = params.set('date', date.toISOString());
+        }
+
+        return this.http.get<SalonOccupancyDto>(url, {
             ...this.getHttpOptions(),
             params
         });

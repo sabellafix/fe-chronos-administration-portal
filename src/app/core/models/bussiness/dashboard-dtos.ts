@@ -66,3 +66,20 @@ export interface TopServiceDto {
     formattedRevenue?: string;
 }
 
+export interface SalonOccupancyDto {
+    occupancyThisMonth: number;
+    occupancyChangePercentage: number;
+    totalHoursWorked: number;
+    totalAvailableHours: number;
+    activeStylists: number;
+    workingDays: number;
+    monthlyData?: MonthlyOccupancyDto[];
+}
+
+export interface MonthlyOccupancyDto {
+    month?: string;
+    currentYearOccupancy: number;
+    previousYearOccupancy: number;
+    hoursWorked: number;
+    activeStylists: number;
+}
