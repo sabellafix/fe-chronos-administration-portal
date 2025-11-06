@@ -43,7 +43,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     // Mensaje inicial del agente
     const welcomeMessage = new Message();
     welcomeMessage.userId = this.botUserId;
-    welcomeMessage.message = '¡Hola! ¿En qué puedo asistirte hoy?';
+    welcomeMessage.message = 'Hi! How can I assist you today?';
     welcomeMessage.createdAt = new Date();
     
     this.messages.push(welcomeMessage);

@@ -5,7 +5,7 @@
                 <img src="assets/images/chronos-collapse-dark.png" alt="Soporte" class="avatar">
                 <div class="title-text">
                     <h6 class="text-white">Chronos</h6>
-                    <p class="status">En línea</p>
+                    <p class="status">Online</p>
                 </div>
             </div>
             <div class="chat-controls">
@@ -20,7 +20,7 @@
         <div class="chat-conversation" #chatContainer>
             <ul class="list-unstyled mb-0">
                 <li class="chat-day-title">
-                    <span class="title">Hoy</span>
+                    <span class="title">Today</span>
                 </li>
                 
                 <li *ngFor="let message of messages" [class.right]="isUserMessage(message)">
@@ -87,7 +87,7 @@
                     #messageInput
                     type="text" 
                     class="form-control" 
-                    placeholder="Escribe tu mensaje..."
+                    placeholder="Write your message..."
                     [disabled]="isLoading"
                     (keypress)="onKeyPress($event, messageInput)">
             </div>
@@ -99,7 +99,7 @@
                     (click)="onSendMessage(messageInput)">
                     <i class="mdi mdi-send" *ngIf="!isLoading"></i>
                     <div class="spinner-border spinner-border-sm" role="status" *ngIf="isLoading">
-                        <span class="visually-hidden">Enviando...</span>
+                        <span class="visually-hidden">Sending...</span>
                     </div>
                 </button>
             </div>

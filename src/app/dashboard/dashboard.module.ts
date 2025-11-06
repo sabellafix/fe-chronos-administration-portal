@@ -104,6 +104,7 @@ import { PaymentsListComponent } from './components/dashboard/payments-list/paym
 import { BarOcupationChartComponent } from './components/dashboard/bar-ocupation-chart/bar-ocupation-chart.component';
 import { AuthGuard } from '@app/core/guards/auth.guard';
 import { SkelletonBarRevenueChartComponent } from './components/shared/skelletons/skelleton-bar-revenue-chart/skelleton-bar-revenue-chart.component';
+import { SkelletonStylistResumeComponent } from './components/shared/skelletons/skelleton-stylist-resume/skelleton-stylist-resume.component';
 
 
 const routes: Routes = [
@@ -294,6 +295,7 @@ const routes: Routes = [
     PaymentsListComponent,
     BarOcupationChartComponent,
     SkelletonBarRevenueChartComponent,
+    SkelletonStylistResumeComponent,
   ],
   imports: [
     CommonModule,
