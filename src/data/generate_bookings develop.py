@@ -16,16 +16,29 @@ SALONS = [
 ]
 
 CUSTOMERS = [
-    ('4f8b7afc-ca83-4e19-a281-129d0b54fa2f', 'Carmen Jiménez'),
-    ('811c4c9e-6845-40b0-bf33-428470f3ca14', 'Elena García'),
-    ('b9a695a2-072b-4cbf-a20e-6d3f55ccc4ba', 'Lucía Fernández'),
-    ('d89fb75a-a7e1-4b91-9ea8-7bf7308cdf1e', 'Fernando Herrera'),
-    ('7ea812bc-bedd-41f0-a770-85aada876f36', 'Natalia Castro'),
-    ('7a969d8e-83d5-450a-b357-9db2cfaa2eba', 'Miguel Torres'),
-    ('28a89b3e-e6cb-4458-b3ab-b5be7b133c23', 'Ana López'),
-    ('dbd39a8f-1eec-4cdd-8440-b7bfb5e3d77c', 'Patricia Ramos'),
-    ('6f5b40cd-5f99-4687-ae8f-cb1b482151a8', 'Isabella Moreno'),
-    ('9ddbb539-dd48-40fe-8ab4-e23f02b19d56', 'Roberto Vega'),
+    ('9AF7B1C3-2A46-4F37-9E5B-0AEBAB415BC5', 'Jared Volkers'),
+    ('F1DFCDCA-5485-43AB-8BD8-15C1634FCBFA', 'Cheryl Mason'),
+    ('F05DAD89-3794-44EB-A05C-19A3F293667E', 'Alida Patricia'),
+    ('7B4DB3DD-6F0F-4E2C-B4F5-1C89E3CBB0D7', 'Jay Harig'),
+    ('40E73D66-9C45-415D-A860-229418DA2F67', 'Test Testy'),
+    ('FCF04AEC-797C-44F4-B4A9-318588098041', 'Brian Dawson'),
+    ('9AB78120-BF96-49E3-B647-3B016E26B77D', 'Bob Palacios'),
+    ('41AD7918-B777-45DE-A413-51B0C8ACC462', 'Mason Dawson'),
+    ('2FACF6E8-CE77-486F-9395-53474443DD1B', 'Juan Sebastian Cortes Palacios'),
+    ('97A78D1F-4CFA-4534-A92C-59827BFFABFF', 'Juan José Chronos'),
+    ('485BB55D-2E8F-4CBF-A8AB-6AE99A17BC16', 'Test Testy'),
+    ('B8F96A55-AC56-403C-99AA-723326818F20', 'Bob Palacios'),
+    ('E0E747BE-82FD-4D0C-9772-7E17043F09B9', 'Frederich Nietzsche'),
+    ('74E142A2-A3B6-4DF6-B143-7EC77011D72A', 'Laura Rodrigues'),
+    ('DC3C15D9-F8C1-49C7-9E12-8F8E9A384829', 'James Chen'),
+    ('51BE7833-1791-4492-91D1-99538AC7413E', 'Juan Sebastian Cortes'),
+    ('2B8799A8-D3F8-453C-9638-998D44EECDC4', 'Reina Linda'),
+    ('85FF7624-F14A-4D0D-8081-99E4B9B8B087', 'Bob Palacios'),
+    ('84FA0872-4401-4CBA-A342-9AABC4D3F56C', 'Juan Look'),
+    ('204C1FC0-C077-4518-8B84-A8B8B488FC7A', 'Ana Gomez'),
+    ('75A660BE-F451-4F4C-A988-AF707AA5BFBD', 'Sergio Abella'),
+    ('0D2103E3-6AB8-4BFB-8618-D57110FBFECB', 'Maria Rodriguez'),
+    ('E2D491ED-C20A-4E20-9087-F34BD7562E9B', 'Andres Castro')
 ]
 
 

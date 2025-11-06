@@ -28,17 +28,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Angular App
-        run: npm run build -- --configuration=production
-
-      - name: Verify dist folder
-        run: |
-          echo "Verificando carpeta dist..."
-          ls -la dist/fe-chronos-administration-portal
-
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -49,7 +38,7 @@ jobs:
           app_location: "."
           api_location: ""
           output_location: "dist/fe-chronos-administration-portal"
-          skip_app_build: true
+          app_build_command: "npm run build -- --configuration=production"
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
