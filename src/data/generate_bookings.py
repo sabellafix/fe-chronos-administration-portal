@@ -11,8 +11,8 @@ import random
 
 # Datos base
 SALONS = [
-    ('790ECEAA-2D87-4B8A-9594-F21D82F0799F', 'Chronos Central Park'),
     ('07C3FEA6-9326-45CF-B97B-C29B92E5437E', 'Chronos Nort Point'),
+    ('790ECEAA-2D87-4B8A-9594-F21D82F0799F', 'Chronos Central Park')
 ]
 
 CUSTOMERS = [
