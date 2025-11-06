@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Script para generar inserts SQL de Bookings y BookingService
-para Septiembre, Octubre y Noviembre 2025
+para los años 2024 y 2025 completos (todos los meses)
 """
 
 import uuid
@@ -28,15 +28,17 @@ CUSTOMERS = [
     ('9ddbb539-dd48-40fe-8ab4-e23f02b19d56', 'Roberto Vega'),
 ]
 
+
+# Suppliers (SupplierId, Nombre, IdSalon)
 SUPPLIERS = [
-    ('01EB400D-6C7A-4783-BCF1-3E71834D512B', 'Laura Peña'),
-    ('1121AAE0-83FA-4282-BD33-3EC76732CA5B', 'Sergio Abella'),
-    ('72C92B4A-6322-4823-BDE6-5C676458E0A6', 'Carlos Rodríguez'),
-    ('787DAC6E-EAFB-44C9-9335-75E21C5A3EB0', 'Carol Smith'),
-    ('26E31B62-2ACD-4EB9-8A3E-7A052AC28E6F', 'Paula Castillo'),
-    ('3F437D11-1FEA-449D-A284-8A0B7FBBCA89', 'Sofía Martínez'),
-    ('5AD247C1-6664-41C8-991E-C6639611ACB9', 'Elena García'),
-    ('50A3453E-04F1-406D-8B80-E7B97477BCA0', 'Valeria Vallejo'),    
+    ('01EB400D-6C7A-4783-BCF1-3E71834D512B', 'Laura Peña', '790ECEAA-2D87-4B8A-9594-F21D82F0799F'),
+    ('1121AAE0-83FA-4282-BD33-3EC76732CA5B', 'Sergio Abella', '790ECEAA-2D87-4B8A-9594-F21D82F0799F'),
+    ('72C92B4A-6322-4823-BDE6-5C676458E0A6', 'Carlos Rodríguez', '790ECEAA-2D87-4B8A-9594-F21D82F0799F'),
+    ('787DAC6E-EAFB-44C9-9335-75E21C5A3EB0', 'Carol Smith', '790ECEAA-2D87-4B8A-9594-F21D82F0799F'),
+    ('26E31B62-2ACD-4EB9-8A3E-7A052AC28E6F', 'Paula Castillo', '07C3FEA6-9326-45CF-B97B-C29B92E5437E'),
+    ('3F437D11-1FEA-449D-A284-8A0B7FBBCA89', 'Sofía Martínez', '07C3FEA6-9326-45CF-B97B-C29B92E5437E'),
+    ('5AD247C1-6664-41C8-991E-C6639611ACB9', 'Elena García', '07C3FEA6-9326-45CF-B97B-C29B92E5437E'),
+    ('50A3453E-04F1-406D-8B80-E7B97477BCA0', 'Valeria Vallejo', '07C3FEA6-9326-45CF-B97B-C29B92E5437E'),    
 ]
 
 # Servicios (ServiceId, SupplierId, Nombre, Precio, Duración en minutos)
@@ -65,10 +67,21 @@ SERVICES = [
     ('5F664DE8-F255-476B-A17F-E0E1CECD180C', '01EB400D-6C7A-4783-BCF1-3E71834D512B', 'Women Classic Haircut', 89.00, 45),
     ('9FAEC70A-12C1-4F63-8B7F-FA13013633AD', '50A3453E-04F1-406D-8B80-E7B97477BCA0', 'Relaxing Massage', 50.00, 60)
 ]
-STATUSES = ['Confirmed', 'Pending', 'Confirmed', 'Confirmed', 'Pending', 'Confirmed', 'Pending', 'Cancelled']
+# Estados válidos según el enum BookingStatus
+STATUSES_FUTURE = ['Pending', 'Confirmed', 'Confirmed', 'Confirmed', 'InBasket']
+STATUSES_PAST = ['Completed', 'Completed', 'Completed', 'Completed', 'Cancelled', 'NoShow']
+
 PAYMENT_STATUSES = [0, 1, 0, 1, 0, 0, 1]
 
-START_HOURS = [7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18]
+# Horarios de operación del salón (7 AM a 8 PM)
+OPERATING_HOURS = list(range(7, 21))  # 7, 8, 9, ..., 20
+
+# Fecha de corte para determinar si un booking está en el pasado o futuro
+# Los bookings antes del 4 de noviembre de 2025 están en estado Completed
+CUTOFF_DATE = date(2025, 11, 4)
+
+# Número de bookings por día
+BOOKINGS_PER_DAY = 15
 
 
 def generate_booking_id(counter):
@@ -88,40 +101,89 @@ def calculate_end_time(start_time_obj, duration_minutes):
     return end_datetime.time()
 
 
+def get_salon_id_for_supplier(supplier_id):
+    """Obtiene el SalonId para un supplier dado"""
+    for sup_id, sup_name, salon_id in SUPPLIERS:
+        if sup_id == supplier_id:
+            return salon_id
+    return None
+
+
 def generate_bookings_for_date(booking_date, booking_counter):
-    """Genera 10 bookings para una fecha específica"""
+    """Genera 15 bookings para una fecha específica, permitiendo múltiples suppliers a la misma hora"""
     bookings = []
     booking_services = []
     
-    for i in range(10):
+    # Crear un pool de horarios con repeticiones para permitir múltiples bookings a la misma hora
+    time_slots = []
+    for _ in range(BOOKINGS_PER_DAY):
+        hour = random.choice(OPERATING_HOURS)
+        minute = random.choice([0, 15, 30, 45])
+        time_slots.append((hour, minute))
+    
+    for i in range(BOOKINGS_PER_DAY):
         # Seleccionar datos aleatorios
         customer_id, customer_name = random.choice(CUSTOMERS)
         service_id, supplier_id, service_name, price, duration = random.choice(SERVICES)
-        status = random.choice(STATUSES)
-        payment_status = random.choice(PAYMENT_STATUSES)
         
-        # Generar horarios
-        start_hour = START_HOURS[i]
-        start_time_obj = time(start_hour, random.choice([0, 15, 30, 45]))
+        # Determinar status y payment_status basado en la fecha
+        if booking_date < CUTOFF_DATE:
+            # Bookings pasados: mayormente Completed, algunos Cancelled/NoShow
+            status = random.choice(STATUSES_PAST)
+            # Los bookings completados están pagados (1), los cancelados/NoShow pueden no estarlo
+            payment_status = 1 if status == 'Completed' else random.choice([0, 1])
+        else:
+            # Bookings futuros: Pending, Confirmed, InBasket
+            status = random.choice(STATUSES_FUTURE)
+            payment_status = random.choice(PAYMENT_STATUSES)
+        
+        # Generar horarios usando los slots pre-generados
+        start_hour, start_minute = time_slots[i]
+        start_time_obj = time(start_hour, start_minute)
         end_time_obj = calculate_end_time(start_time_obj, duration)
         
         # Fechas de creación
         created_at = booking_date - timedelta(days=random.randint(1, 10))
         created_at_str = created_at.strftime('%Y-%m-%dT%H:%M:%S.0000000')
         
+        # Configurar confirmed_at según el estado
         confirmed_at = 'NULL'
-        if status == 'Confirmed':
+        if status in ['Confirmed', 'Completed', 'InProgress']:
             confirm_date = created_at + timedelta(hours=random.randint(1, 24))
             confirmed_at = f"CAST(N'{confirm_date.strftime('%Y-%m-%dT%H:%M:%S.0000000')}' AS DateTime2)"
+        
+        # Configurar completed_at para bookings completados
+        completed_at = 'NULL'
+        if status == 'Completed':
+            # Completado después de la fecha del booking
+            completed_date = datetime.combine(booking_date, end_time_obj) + timedelta(minutes=random.randint(5, 30))
+            completed_at = f"CAST(N'{completed_date.strftime('%Y-%m-%dT%H:%M:%S.0000000')}' AS DateTime2)"
+        
+        # Configurar cancelled_at y cancellation_reason para bookings cancelados
+        cancelled_at = 'NULL'
+        cancellation_reason = 'NULL'
+        if status in ['Cancelled', 'NoShow']:
+            # Cancelado antes de la fecha del booking
+            cancelled_date = booking_date - timedelta(days=random.randint(0, 5), hours=random.randint(1, 12))
+            cancelled_at = f"CAST(N'{cancelled_date.strftime('%Y-%m-%dT%H:%M:%S.0000000')}' AS DateTime2)"
+            if status == 'Cancelled':
+                reasons = ['Cliente canceló', 'Cambio de planes', 'Emergencia personal', 'Reagendado']
+                cancellation_reason = f"N'{random.choice(reasons)}'"
+            else:
+                cancellation_reason = f"N'Cliente no se presentó'"
         
         # Generar IDs
         booking_id = generate_booking_id(booking_counter)
         booking_reference = f"BK{booking_date.strftime('%Y%m%d')}{i+1:04d}"
         
+        # Obtener el SalonId del supplier
+        salon_id = get_salon_id_for_supplier(supplier_id)
+        salon_id_value = f"N'{salon_id}'" if salon_id else "NULL"
+        
         # Generar SQL de Booking
         booking_datetime = f"{booking_date.strftime('%Y-%m-%d')}T{start_time_obj.strftime('%H:%M:%S')}.0000000"
         
-        booking_sql = f"""INSERT [Chronos].[Bookings] ([Id], [CustomerId], [SupplierId], [BookingDate], [StartTime], [EndTime], [DurationMinutes], [TotalPrice], [Currency], [Status], [ClientNotes], [ProviderNotes], [BookingReference], [CreatedAt], [UpdatedAt], [ConfirmedAt], [CompletedAt], [CancelledAt], [CancellationReason], [BookingDateTime], [PaymentStatus], [SalonId]) VALUES (N'{booking_id}', N'{customer_id}', N'{supplier_id}', CAST(N'{booking_date.strftime('%Y-%m-%d')}' AS Date), CAST(N'{start_time_obj.strftime('%H:%M:%S')}' AS Time), CAST(N'{end_time_obj.strftime('%H:%M:%S')}' AS Time), {duration}, CAST({price:.2f} AS Decimal(10, 2)), N'COP', N'{status}', NULL, NULL, N'{booking_reference}', CAST(N'{created_at_str}' AS DateTime2), CAST(N'{created_at_str}' AS DateTime2), {confirmed_at}, NULL, NULL, NULL, CAST(N'{booking_datetime}' AS DateTime2), {payment_status}, NULL)"""
+        booking_sql = f"""INSERT [Chronos].[Bookings] ([Id], [CustomerId], [SupplierId], [BookingDate], [StartTime], [EndTime], [DurationMinutes], [TotalPrice], [Currency], [Status], [ClientNotes], [ProviderNotes], [BookingReference], [CreatedAt], [UpdatedAt], [ConfirmedAt], [CompletedAt], [CancelledAt], [CancellationReason], [BookingDateTime], [PaymentStatus], [SalonId]) VALUES (N'{booking_id}', N'{customer_id}', N'{supplier_id}', CAST(N'{booking_date.strftime('%Y-%m-%d')}' AS Date), CAST(N'{start_time_obj.strftime('%H:%M:%S')}' AS Time), CAST(N'{end_time_obj.strftime('%H:%M:%S')}' AS Time), {duration}, CAST({price:.2f} AS Decimal(10, 2)), N'COP', N'{status}', NULL, NULL, N'{booking_reference}', CAST(N'{created_at_str}' AS DateTime2), CAST(N'{created_at_str}' AS DateTime2), {confirmed_at}, {completed_at}, {cancelled_at}, {cancellation_reason}, CAST(N'{booking_datetime}' AS DateTime2), {payment_status}, {salon_id_value})"""
         
         bookings.append(booking_sql)
         
@@ -142,16 +204,38 @@ def generate_bookings_for_date(booking_date, booking_counter):
     return bookings, booking_services, booking_counter
 
 
+def get_days_in_month(year, month):
+    """Obtiene la cantidad de días de un mes específico"""
+    days_per_month = {
+        1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30,
+        7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31
+    }
+    # Verificar año bisiesto para febrero
+    if month == 2 and ((year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)):
+        return 29
+    return days_per_month[month]
+
+
+def get_month_name(month):
+    """Obtiene el nombre del mes en español"""
+    month_names = {
+        1: 'ENERO', 2: 'FEBRERO', 3: 'MARZO', 4: 'ABRIL',
+        5: 'MAYO', 6: 'JUNIO', 7: 'JULIO', 8: 'AGOSTO',
+        9: 'SEPTIEMBRE', 10: 'OCTUBRE', 11: 'NOVIEMBRE', 12: 'DICIEMBRE'
+    }
+    return month_names[month]
+
+
 def main():
     """Función principal"""
-    output_file = 'chronos-beauty-bookings-sept-oct-nov-2025-COMPLETE.sql'
+    output_file = 'chronos-beauty-bookings-2024-2025-COMPLETE.sql'
     
     with open(output_file, 'w', encoding='utf-8') as f:
         # Encabezado
         f.write("""-- =============================================
 -- INSERTS COMPLETOS PARA BOOKINGS Y BOOKINGSERVICE
--- SEPTIEMBRE, OCTUBRE Y NOVIEMBRE 2025
--- 10 bookings por día = 910 bookings totales
+-- AÑO 2024 Y 2025 COMPLETOS
+-- 15 bookings por día (múltiples suppliers pueden tener citas a la misma hora)
 -- Generado automáticamente
 -- =============================================
 
@@ -159,77 +243,39 @@ def main():
         
         booking_counter = 1
         
-        # Septiembre 2025
-        f.write("-- =============================================\n")
-        f.write("-- SEPTIEMBRE 2025\n")
-        f.write("-- =============================================\n\n")
-        
-        start_date = date(2025, 9, 1)
-        
-        for day in range(30):  # Septiembre tiene 30 días
-            current_date = start_date + timedelta(days=day)
-            day_name = current_date.strftime('%A')
+        # Generar para 2024 y 2025
+        for year in [2024, 2025]:
+            f.write(f"\n-- =============================================\n")
+            f.write(f"-- AÑO {year}\n")
+            f.write(f"-- =============================================\n\n")
             
-            f.write(f"-- {current_date.strftime('%Y-%m-%d')} ({day_name})\n")
-            
-            bookings, booking_services, booking_counter = generate_bookings_for_date(current_date, booking_counter)
-            
-            for booking in bookings:
-                f.write(booking + "\n")
-            
-            f.write("\n-- BookingService para " + current_date.strftime('%Y-%m-%d') + "\n")
-            for bs in booking_services:
-                f.write(bs + "\n")
-            
-            f.write("GO\n\n")
-        
-        # Octubre 2025
-        f.write("\n-- =============================================\n")
-        f.write("-- OCTUBRE 2025\n")
-        f.write("-- =============================================\n\n")
-        
-        start_date = date(2025, 10, 1)
-        
-        for day in range(31):  # Octubre tiene 31 días
-            current_date = start_date + timedelta(days=day)
-            day_name = current_date.strftime('%A')
-            
-            f.write(f"-- {current_date.strftime('%Y-%m-%d')} ({day_name})\n")
-            
-            bookings, booking_services, booking_counter = generate_bookings_for_date(current_date, booking_counter)
-            
-            for booking in bookings:
-                f.write(booking + "\n")
-            
-            f.write("\n-- BookingService para " + current_date.strftime('%Y-%m-%d') + "\n")
-            for bs in booking_services:
-                f.write(bs + "\n")
-            
-            f.write("GO\n\n")
-        
-        # Noviembre 2025
-        f.write("\n-- =============================================\n")
-        f.write("-- NOVIEMBRE 2025\n")
-        f.write("-- =============================================\n\n")
-        
-        start_date = date(2025, 11, 1)
-        
-        for day in range(30):  # Noviembre tiene 30 días
-            current_date = start_date + timedelta(days=day)
-            day_name = current_date.strftime('%A')
-            
-            f.write(f"-- {current_date.strftime('%Y-%m-%d')} ({day_name})\n")
-            
-            bookings, booking_services, booking_counter = generate_bookings_for_date(current_date, booking_counter)
-            
-            for booking in bookings:
-                f.write(booking + "\n")
-            
-            f.write("\n-- BookingService para " + current_date.strftime('%Y-%m-%d') + "\n")
-            for bs in booking_services:
-                f.write(bs + "\n")
-            
-            f.write("GO\n\n")
+            # Generar para todos los meses del año
+            for month in range(1, 13):
+                month_name = get_month_name(month)
+                days_in_month = get_days_in_month(year, month)
+                
+                f.write(f"-- =============================================\n")
+                f.write(f"-- {month_name} {year}\n")
+                f.write(f"-- =============================================\n\n")
+                
+                start_date = date(year, month, 1)
+                
+                for day in range(days_in_month):
+                    current_date = start_date + timedelta(days=day)
+                    day_name = current_date.strftime('%A')
+                    
+                    f.write(f"-- {current_date.strftime('%Y-%m-%d')} ({day_name})\n")
+                    
+                    bookings, booking_services, booking_counter = generate_bookings_for_date(current_date, booking_counter)
+                    
+                    for booking in bookings:
+                        f.write(booking + "\n")
+                    
+                    f.write(f"\n-- BookingService para {current_date.strftime('%Y-%m-%d')}\n")
+                    for bs in booking_services:
+                        f.write(bs + "\n")
+                    
+                    f.write("GO\n\n")
         
         f.write("\n-- =============================================\n")
         f.write(f"-- TOTAL DE BOOKINGS GENERADOS: {booking_counter - 1}\n")
@@ -237,7 +283,7 @@ def main():
     
     print(f"✓ Archivo generado exitosamente: {output_file}")
     print(f"✓ Total de bookings generados: {booking_counter - 1}")
-    print(f"✓ Rango de fechas: 2025-09-01 a 2025-11-30")
+    print(f"✓ Rango de fechas: 2024-01-01 a 2025-12-31")
 
 
 if __name__ == '__main__':

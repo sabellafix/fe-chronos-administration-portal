@@ -102,12 +102,15 @@ import { StylistResumeComponent } from './components/dashboard/stylist-resume/st
 import { SkelletonCardComponent } from './components/shared/skelletons/skelleton-card/skelleton-card.component';
 import { PaymentsListComponent } from './components/dashboard/payments-list/payments-list.component';
 import { BarOcupationChartComponent } from './components/dashboard/bar-ocupation-chart/bar-ocupation-chart.component';
+import { AuthGuard } from '@app/core/guards/auth.guard';
+import { SkelletonBarRevenueChartComponent } from './components/shared/skelletons/skelleton-bar-revenue-chart/skelleton-bar-revenue-chart.component';
 
 
 const routes: Routes = [
   {
     path: '',
     component: MainComponent,
+    canActivate: [AuthGuard],
     children: [
       { 
         path: 'dashboard',
@@ -290,6 +293,7 @@ const routes: Routes = [
     SkelletonCardComponent,
     PaymentsListComponent,
     BarOcupationChartComponent,
+    SkelletonBarRevenueChartComponent,
   ],
   imports: [
     CommonModule,

@@ -1,16 +1,18 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { OrderStatsDto } from '@app/core/models/bussiness/dashboard-dtos';
 
 @Component({
   selector: 'app-booking-stats',
   templateUrl: './booking-stats.component.html',
   styleUrl: './booking-stats.component.scss'
 })
-export class BookingStatsComponent {
+export class BookingStatsComponent implements OnChanges {
 
   @Input() loading: boolean = false;
+  @Input() orderStats: OrderStatsDto | null = null;
   
   chartOptions: any = {
-    series: [70, 25, 19],
+    series: [0, 0, 0],
     chart: {
       type: 'donut',
       height: 220,
@@ -71,6 +73,25 @@ export class BookingStatsComponent {
   }
 
   ngOnInit() {
-   
+    this.updateChartData();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['orderStats'] && this.orderStats) {
+      this.updateChartData();
+    }
+  }
+
+  private updateChartData(): void {
+    if (this.orderStats) {
+      this.chartOptions = {
+        ...this.chartOptions,
+        series: [
+          this.orderStats.completed,
+          this.orderStats.pending,
+          this.orderStats.cancelled
+        ]
+      };
+    }
   }
 }

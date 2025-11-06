@@ -1,0 +1,159 @@
+<div class="row gy-4">
+    <div class="col-xxl-3">
+        <div>
+            <div class="mt-3 mb-3">
+                <ngx-skeleton-loader 
+                    count="1" 
+                    appearance="line" 
+                    [theme]="{ 'height': '14px', 'width': '80px', 'margin-bottom': '8px' }">
+                </ngx-skeleton-loader>
+
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <ngx-skeleton-loader 
+                        count="1" 
+                        appearance="line" 
+                        [theme]="{ 'height': '36px', 'width': '120px', 'margin-bottom': '0' }">
+                    </ngx-skeleton-loader>
+                    <ngx-skeleton-loader 
+                        count="1" 
+                        appearance="line" 
+                        [theme]="{ 'height': '24px', 'width': '70px', 'border-radius': '20px', 'margin-bottom': '0' }">
+                    </ngx-skeleton-loader>
+                </div>
+            </div>
+
+            <div class="row g-0">
+                <div class="col-sm-6">
+                    <div class="border-bottom border-end p-3 h-100">
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '12px', 'width': '60px', 'margin-bottom': '8px' }">
+                        </ngx-skeleton-loader>
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '20px', 'width': '50px', 'margin-bottom': '0' }">
+                        </ngx-skeleton-loader>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="border-bottom p-3 h-100">
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '12px', 'width': '50px', 'margin-bottom': '8px' }">
+                        </ngx-skeleton-loader>
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '20px', 'width': '40px', 'margin-bottom': '0' }">
+                        </ngx-skeleton-loader>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-0">
+                <div class="col-sm-6">
+                    <div class="border-bottom border-end p-3 h-100">
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '12px', 'width': '80px', 'margin-bottom': '8px' }">
+                        </ngx-skeleton-loader>
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '20px', 'width': '65px', 'margin-bottom': '0' }">
+                        </ngx-skeleton-loader>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="border-bottom p-3 h-100">
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '12px', 'width': '75px', 'margin-bottom': '8px' }">
+                        </ngx-skeleton-loader>
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '20px', 'width': '45px', 'margin-bottom': '0' }">
+                        </ngx-skeleton-loader>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-0">
+                <div class="col-sm-6">
+                    <div class="border-end p-3 h-100">
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '12px', 'width': '65px', 'margin-bottom': '8px' }">
+                        </ngx-skeleton-loader>
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '20px', 'width': '70px', 'margin-bottom': '0' }">
+                        </ngx-skeleton-loader>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="p-3 h-100">
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '12px', 'width': '70px', 'margin-bottom': '8px' }">
+                        </ngx-skeleton-loader>
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 'height': '20px', 'width': '55px', 'margin-bottom': '0' }">
+                        </ngx-skeleton-loader>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xxl-9">
+        <div class="chart-skeleton">
+            <div class="d-flex align-items-end justify-content-around" style="height: 350px; padding: 20px;">
+                <div class="bar-group" *ngFor="let month of months">
+                    <div class="d-flex gap-1 align-items-end justify-content-center">
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 
+                                'height': month.currentHeight, 
+                                'width': '16px', 
+                                'border-radius': '4px 4px 0 0',
+                                'margin-bottom': '0'
+                            }">
+                        </ngx-skeleton-loader>
+                        <ngx-skeleton-loader 
+                            count="1" 
+                            appearance="line" 
+                            [theme]="{ 
+                                'height': month.previousHeight, 
+                                'width': '16px', 
+                                'border-radius': '4px 4px 0 0',
+                                'margin-bottom': '0'
+                            }">
+                        </ngx-skeleton-loader>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-around px-3">
+                <ngx-skeleton-loader 
+                    *ngFor="let month of months"
+                    count="1" 
+                    appearance="line" 
+                    [theme]="{ 'height': '12px', 'width': '35px', 'margin-bottom': '0' }">
+                </ngx-skeleton-loader>
+            </div>
+        </div>
+    </div>
+</div>

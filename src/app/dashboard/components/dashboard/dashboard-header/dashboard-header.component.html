@@ -1,7 +1,65 @@
 <div class="row">
-    <div class="col-xl-4 col-lg-6" *ngFor="let kpi of kpiData; trackBy: trackByIndex">
-        <app-kpi-card [title]="kpi.title" [value]="kpi.value" [change]="kpi.change" [trend]="kpi.trend"
-            [icon]="kpi.icon">
-        </app-kpi-card>
-    </div>
+    <!-- Skeleton Loader -->
+    <ng-container *ngIf="loading">
+        <div class="col-xl-4 col-lg-6" *ngFor="let item of [1, 2, 3]">
+            <div class="card animated fadeIn fast">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <ngx-skeleton-loader 
+                                count="1" 
+                                appearance="line"
+                                [theme]="{ 
+                                    'width': '48px', 
+                                    'height': '48px',
+                                    'margin-bottom': '0'
+                                }">
+                            </ngx-skeleton-loader>
+                        </div>
+                        <div class="flex-grow-1">
+                            <ngx-skeleton-loader 
+                                count="1" 
+                                appearance="line" 
+                                [theme]="{ 
+                                    'height': '14px', 
+                                    'width': '120px', 
+                                    'margin-bottom': '8px' 
+                                }">
+                            </ngx-skeleton-loader>
+                            <ngx-skeleton-loader 
+                                count="1" 
+                                appearance="line" 
+                                [theme]="{ 
+                                    'height': '28px', 
+                                    'width': '80px', 
+                                    'margin-bottom': '0' 
+                                }">
+                            </ngx-skeleton-loader>
+                        </div>
+                        <div class="flex-shrink-0 align-self-end ms-2">
+                            <ngx-skeleton-loader 
+                                count="1" 
+                                appearance="line" 
+                                [theme]="{ 
+                                    'height': '24px', 
+                                    'width': '60px', 
+                                    'border-radius': '20px',
+                                    'margin-bottom': '0' 
+                                }">
+                            </ngx-skeleton-loader>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- Tarjetas KPI reales -->
+    <ng-container *ngIf="!loading">
+        <div class="col-xl-4 col-lg-6" *ngFor="let kpi of kpiData; trackBy: trackByIndex">
+            <app-kpi-card [title]="kpi.title" [value]="kpi.value" [change]="kpi.change" [trend]="kpi.trend"
+                [icon]="kpi.icon">
+            </app-kpi-card>
+        </div>
+    </ng-container>
 </div>

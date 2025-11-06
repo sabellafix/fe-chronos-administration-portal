@@ -3,44 +3,38 @@
         <div class="row">
             <div class="col-xxl-9">
                 <div class="row">
-                    <app-dashboard-header  [dateFilter]="dateFilter"
+                    <app-dashboard-header  
+                        [dateFilter]="dateFilter"
+                        [kpiCards]="kpiCards"
+                        [loading]="loading"
                         (dateChange)="onDateChange($event)">
                     </app-dashboard-header>
                 </div>
 
                 <div class="card">
-                    <div class="card-header pt-3 pb-0 pe-3  border-0">
-                        <div class="btn-group" role="group" aria-label="Vista selector">
-                            <button type="button" class="btn" [class.btn-primary]="currentView === 'calendar'"
-                                [class.btn-outline-primary]="currentView !== 'calendar'"
-                                (click)="switchView('calendar')">
-                                <i class="bi bi-calendar-week me-2"></i>
-                                Weekly calendar
-                            </button>
-                            <button type="button" class="btn" [class.btn-primary]="currentView === 'chart'"
-                                [class.btn-outline-primary]="currentView !== 'chart'" (click)="switchView('chart')">
-                                <i class="bi bi-bar-chart-fill me-2"></i>
-                                Revenue chart
-                            </button>
-                        </div>
-                    </div>
                     <div class="card-body">
-                        <app-bar-ocupation-chart 
-                            *ngIf="currentView === 'chart'"
-                            [salonOccupancy]="salonOccupancy">
-                        </app-bar-ocupation-chart>
-
-                        <app-weekly-calendar *ngIf="currentView === 'calendar'" [dateFilter]="dateFilter">
-                        </app-weekly-calendar>
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title mb-3">Revenue chart</h5>
+                            </div>
+                        </div>
+                        <app-skelleton-bar-revenue-chart *ngIf="loading && !revenueChart"></app-skelleton-bar-revenue-chart>
+                        <app-bar-revenue-chart *ngIf="!loading && revenueChart" [revenueChart]="revenueChart"></app-bar-revenue-chart>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-lg-4">
-                        <app-revenue-activity></app-revenue-activity>
+                        <app-revenue-activity 
+                            [revenueActivity]="revenueActivity"
+                            [loading]="loading">
+                        </app-revenue-activity>
                     </div>
                     <div class="col-lg-4">
-                        <app-booking-stats></app-booking-stats>
+                        <app-booking-stats 
+                            [orderStats]="orderStats"
+                            [loading]="loading">
+                        </app-booking-stats>
                     </div>
                     <div class="col-lg-4">
                         <app-top-products 

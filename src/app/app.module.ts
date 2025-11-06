@@ -8,12 +8,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { provideClientHydration } from '@angular/platform-browser';
 import { DashboardModule } from './dashboard/dashboard.module';
-import { LoginModule } from './login/login.module'; 
-import { AuthGuard } from './core/guards/auth.guard';
+import { LoginModule } from './login/login.module';
+import { AuthGuard } from './core/guards/auth.guard'; 
 
 export const routes: Routes = [
   { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule) },
-  { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
+  { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule), canActivate: [AuthGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];
 

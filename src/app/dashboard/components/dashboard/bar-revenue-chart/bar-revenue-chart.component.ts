@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, Input, OnChanges, SimpleChanges } from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -12,6 +12,7 @@ import {
   ApexStroke,
   ChartComponent
 } from 'ng-apexcharts';
+import { RevenueChartDto } from '@app/core/models/bussiness/dashboard-dtos';
 
 
 export type BarChartOptions = {
@@ -34,20 +35,32 @@ export type BarChartOptions = {
   templateUrl: './bar-revenue-chart.component.html',
   styleUrl: './bar-revenue-chart.component.scss'
 })
-export class BarRevenueChartComponent {
+export class BarRevenueChartComponent implements OnChanges {
 
+  @Input() revenueChart: RevenueChartDto | null = null;
   @ViewChild('barChart') barChart!: ChartComponent;
-   public barChartOptions: Partial<BarChartOptions>;
-   constructor() {
-    this.barChartOptions = {
+  public barChartOptions: Partial<BarChartOptions>;
+
+  constructor() {
+    this.barChartOptions = this.getDefaultChartOptions();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['revenueChart'] && this.revenueChart) {
+      this.updateChartData();
+    }
+  }
+
+  private getDefaultChartOptions(): Partial<BarChartOptions> {
+    return {
       series: [
         {
-          name: 'Net Profit',
-          data: [18, 21, 17, 24, 21, 27, 25, 32, 26]
+          name: 'Current Year Revenue',
+          data: []
         },
         {
-          name: 'Revenue',
-          data: [21, 24, 20, 27, 25, 29, 26, 34, 30]
+          name: 'Previous Year Revenue',
+          data: []
         }
       ],
       chart: {
@@ -61,7 +74,7 @@ export class BarRevenueChartComponent {
         bar: {
           horizontal: false,
           columnWidth: '35%',
-          borderRadius: 6
+          borderRadius: 4
         }
       },
       dataLabels: {
@@ -74,12 +87,12 @@ export class BarRevenueChartComponent {
       },
       colors: ['#fff', '#fff'],
       xaxis: {
-        categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct']
+        categories: []
       },
       yaxis: {
         labels: {
           formatter: function(value: number) {
-            return value + 'k';
+            return '$' + (value / 1000).toFixed(0) + 'k';
           }
         },
         tickAmount: 4
@@ -97,12 +110,45 @@ export class BarRevenueChartComponent {
           type: 'vertical',
           shadeIntensity: 1,
           inverseColors: true,
-          gradientToColors: ['#a7cee8', '#474d5f'],
+          gradientToColors: ['#474d5f', '#a7cee8'],
           opacityFrom: 1,
           opacityTo: 1
         }
       }
     };
+  }
+
+  private updateChartData(): void {
+    if (!this.revenueChart || !this.revenueChart.monthlyData) {
+      return;
+    }
+
+    const categories = this.revenueChart.monthlyData.map(item => item.month || '');
+    const currentYearData = this.revenueChart.monthlyData.map(item => item.currentYearRevenue);
+    const previousYearData = this.revenueChart.monthlyData.map(item => item.previousYearRevenue);
+
+    this.barChartOptions = {
+      ...this.barChartOptions,
+      series: [
+        {
+          name: 'Current Year Revenue',
+          data: currentYearData
+        },
+        {
+          name: 'Previous Year Revenue',
+          data: previousYearData
+        }
+      ],
+      xaxis: {
+        ...this.barChartOptions.xaxis,
+        categories: categories
+      }
+    };
+
+    // Actualizar el gráfico si ya está renderizado
+    if (this.barChart) {
+      this.barChart.updateOptions(this.barChartOptions);
+    }
   }
 
 }

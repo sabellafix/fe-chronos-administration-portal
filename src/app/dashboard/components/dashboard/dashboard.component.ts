@@ -52,20 +52,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   loadServices(): void {
     if (!this.selectedSalon || !this.selectedSalon.id) {
-      console.warn('No hay salón seleccionado');
+      console.warn('No salon selected');
       return;
     }
 
     this.loading = true;
     const salonId = this.selectedSalon.id;
+    this.revenueChart = null;
+    this.kpiCards = null;
+    this.revenueActivity = null;
+    this.orderStats = null;
+    this.topServices = [];
+    this.salonOccupancy = null;
 
     forkJoin({
       metrics: this.dashboardService.getMetrics(salonId, this.dateFilter),
       kpiCards: this.dashboardService.getKpiCards(salonId, this.dateFilter),
       revenueChart: this.dashboardService.getRevenueChart(salonId, this.dateFilter),
-      revenueActivity: this.dashboardService.getRevenueActivity(salonId, this.dateFilter),
-      orderStats: this.dashboardService.getOrderStats(salonId, this.dateFilter, this.dateFilter),
-      topServices: this.dashboardService.getTopServices(salonId, 10, this.dateFilter, this.dateFilter),
+      revenueActivity: this.dashboardService.getRevenueActivity(salonId, this.dateFilter),      
       salonOccupancy: this.dashboardService.getSalonOccupancy(salonId, this.dateFilter)
     })
       .pipe(takeUntil(this.destroy$))
@@ -75,118 +79,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.kpiCards = results.kpiCards;
           this.revenueChart = results.revenueChart;
           this.revenueActivity = results.revenueActivity;
-          this.orderStats = results.orderStats;
-          this.topServices = results.topServices;
+          this.orderStats = results.metrics?.orderStats ?? null;
+          this.topServices = results.metrics?.topServices ?? [];
           this.salonOccupancy = results.salonOccupancy;
           this.loading = false;
         },
         error: (error) => {
           this.loading = false;
-        }
-      });
-  }
-
-  loadMetrics(): void {
-    if (!this.selectedSalon?.id) return;
-
-    this.dashboardService.getMetrics(this.selectedSalon.id, this.dateFilter)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.dashboardMetrics = data;
-        },
-        error: (error) => {
-          console.error('Dashboard - Error al cargar métricas:', error);
-        }
-      });
-  }
-
-  loadKpiCards(): void {
-    if (!this.selectedSalon?.id) return;
-
-    this.dashboardService.getKpiCards(this.selectedSalon.id, this.dateFilter)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.kpiCards = data;
-        },
-        error: (error) => {
-          console.error('Dashboard - Error al cargar KPI Cards:', error);
-        }
-      });
-  }
-
-  loadRevenueChart(): void {
-    if (!this.selectedSalon?.id) return;
-
-    this.dashboardService.getRevenueChart(this.selectedSalon.id, this.dateFilter)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.revenueChart = data;
-        },
-        error: (error) => {
-          console.error('Dashboard - Error al cargar gráfico de ingresos:', error);
-        }
-      });
-  }
-
-  loadRevenueActivity(): void {
-    if (!this.selectedSalon?.id) return;
-
-    this.dashboardService.getRevenueActivity(this.selectedSalon.id, this.dateFilter)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.revenueActivity = data;
-        },
-        error: (error) => {
-          console.error('Dashboard - Error al cargar actividad de ingresos:', error);
-        }
-      });
-  }
-
-  loadOrderStats(): void {
-    if (!this.selectedSalon?.id) return;
-
-    this.dashboardService.getOrderStats(this.selectedSalon.id, this.dateFilter, this.dateFilter)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.orderStats = data;
-        },
-        error: (error) => {
-          console.error('Dashboard - Error al cargar estadísticas de órdenes:', error);
-        }
-      });
-  }
-
-  loadTopServices(): void {
-    if (!this.selectedSalon?.id) return;
-
-    this.dashboardService.getTopServices(this.selectedSalon.id, 10, this.dateFilter, this.dateFilter)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.topServices = data;
-        },
-        error: (error) => {
-          console.error('Dashboard - Error al cargar top servicios:', error);
-        }
-      });
-  }
-
-  loadSalonOccupancy(): void {
-    if (!this.selectedSalon?.id) return;
-
-    this.dashboardService.getSalonOccupancy(this.selectedSalon.id, this.dateFilter)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.salonOccupancy = data;
-        },
-        error: (error) => {
-          console.error('Dashboard - Error al cargar ocupación del salón:', error);
         }
       });
   }
@@ -202,7 +101,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   onDateChange(date: Date): void {
     this.dateFilter = date;
-    // Recargar los servicios con la nueva fecha
     this.loadServices();
   }
 }

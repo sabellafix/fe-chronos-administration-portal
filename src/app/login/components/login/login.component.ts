@@ -138,6 +138,8 @@ export class LoginComponent implements OnInit, AfterViewInit{
               this.storageService.set(StorageKeyConst._EXPIRES_AT, this.userResponse.expiresAt);
               this.tokenRefreshService.notifyTokenUpdate();
               
+              this.authService.updateAuthenticationStatus();
+              
               this.rolService.getRolByIdBearer(this.userResponse.user.roleId, this.userResponse.token).subscribe((response: Rol) => {
                 this.userResponse.user.role = response;
                 this.storageService.set(StorageKeyConst._ROLE, JSON.stringify(this.userResponse.user.role));

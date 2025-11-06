@@ -22,8 +22,17 @@ export class AuthService {
         return this.isAuthenticated.asObservable();
     }
 
+    updateAuthenticationStatus(): void {
+        const hasToken = this.hasToken();
+        this.isAuthenticated.next(hasToken);
+    }
+
+    setAuthenticated(isAuthenticated: boolean): void {
+        this.isAuthenticated.next(isAuthenticated);
+    }
+
     private hasToken(): boolean {
-        return localStorage.getItem('token') !== null;
+        return localStorage.getItem(StorageKeyConst._TOKEN) !== null;
     }
 
     signIn(infoUser: InfoUser): Observable<boolean> {
@@ -47,7 +56,7 @@ export class AuthService {
                 user.address = "Av. Siempre Viva 123";
                 
                 this.storageService.set(StorageKeyConst._USER_LOGGED, user);
-                localStorage.setItem('token', 'mock-token-123');
+                localStorage.setItem(StorageKeyConst._TOKEN, 'mock-token-123');
                 localStorage.setItem('user', JSON.stringify(infoUser));
                 this.isAuthenticated.next(true);
             })
@@ -55,14 +64,14 @@ export class AuthService {
     }
 
     signOut(): void {
-        localStorage.removeItem('token');
+        localStorage.removeItem(StorageKeyConst._TOKEN);
         localStorage.removeItem('user');
         this.isAuthenticated.next(false);
     }
 
     logOut(){
         this.storageService.clearAll();
-        this.isAuthenticated.next(false);
+        this.setAuthenticated(false);
         this.router.navigate(['login']);
     }
 

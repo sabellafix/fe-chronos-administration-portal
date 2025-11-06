@@ -7,7 +7,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { SkelletonLoginComponent } from './components/skelleton-login/skelleton-login.component';
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
+  { path: '', component: LoginComponent },
 ];
 
 @NgModule({
