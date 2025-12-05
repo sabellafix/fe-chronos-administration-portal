@@ -105,6 +105,9 @@ import { BarOcupationChartComponent } from './components/dashboard/bar-ocupation
 import { AuthGuard } from '@app/core/guards/auth.guard';
 import { SkelletonBarRevenueChartComponent } from './components/shared/skelletons/skelleton-bar-revenue-chart/skelleton-bar-revenue-chart.component';
 import { SkelletonStylistResumeComponent } from './components/shared/skelletons/skelleton-stylist-resume/skelleton-stylist-resume.component';
+import { ProductsListComponent } from './components/ecomerce/products-list/products-list.component';
+import { ProductsDetailComponent } from './components/ecomerce/products-detail/products-detail.component';
+import { ProductsCreateComponent } from './components/ecomerce/products-create/products-create.component';
 
 
 const routes: Routes = [
@@ -177,6 +180,15 @@ const routes: Routes = [
           { path: 'daily', component: CalendarDailyComponent },
           { path: 'weekly', component: CalendarWeeklyComponent },
           { path: 'monthly', component: CalendarMonthlyComponent },
+          { path: '**', redirectTo: '' }
+        ]
+      },
+      {
+        path: 'products',
+        children: [
+          { path: '', component: ProductsListComponent, pathMatch: 'full' },
+          { path: 'create', component: ProductsCreateComponent },
+          { path: ':id/detail', component: ProductsDetailComponent },
           { path: '**', redirectTo: '' }
         ]
       },
@@ -296,6 +308,9 @@ const routes: Routes = [
     BarOcupationChartComponent,
     SkelletonBarRevenueChartComponent,
     SkelletonStylistResumeComponent,
+    ProductsListComponent,
+    ProductsDetailComponent,
+    ProductsCreateComponent,
   ],
   imports: [
     CommonModule,
