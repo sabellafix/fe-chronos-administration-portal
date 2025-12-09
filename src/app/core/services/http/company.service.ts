@@ -11,7 +11,7 @@ import { StorageService } from '../shared/storage.service';
 export class CompanyService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/companies";
+    controller: string = "api/companies";
     token: string = "";
     headers : any = {};
 

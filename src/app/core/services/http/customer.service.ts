@@ -12,7 +12,7 @@ import { Customer, CreateCustomerDto, UpdateCustomerDto } from '@app/core/models
 export class CustomerService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/customers";
+    controller: string = "api/customers";
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {

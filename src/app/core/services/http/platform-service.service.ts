@@ -12,7 +12,7 @@ import { Service, CreateServiceDto, UpdateServiceDto } from '@app/core/models/bu
 export class ServiceService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/services";
+    controller: string = "api/services";
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageServiceLocal) {

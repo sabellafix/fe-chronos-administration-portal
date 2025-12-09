@@ -12,7 +12,7 @@ import { Supplier, CreateSupplierDto, UpdateSupplierDto } from '@app/core/models
 export class SupplierService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/suppliers";
+    controller: string = "api/suppliers";
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {

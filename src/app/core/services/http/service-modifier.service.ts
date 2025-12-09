@@ -12,7 +12,7 @@ import { ServiceModifier, CreateServiceModifierDto, UpdateServiceModifierDto } f
 export class ServiceModifierService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/service-modifiers";
+    controller: string = "api/service-modifiers";
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {

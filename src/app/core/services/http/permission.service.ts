@@ -11,7 +11,7 @@ import { StorageService } from '../shared/storage.service';
 export class PermissionService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/auth/permissions";
+    controller: string = "api/permissions";
     token: string = "";
     headers : any = {};
 

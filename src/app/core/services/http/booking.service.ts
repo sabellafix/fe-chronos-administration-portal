@@ -12,7 +12,7 @@ import { Booking, CreateBookingDto, UpdateBookingDto, DateOnly } from '@app/core
 export class BookingService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/bookings";
+    controller: string = "api/bookings";
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {

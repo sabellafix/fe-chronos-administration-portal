@@ -12,7 +12,7 @@ import { Category, CreateCategoryDto, UpdateCategoryDto } from '@app/core/models
 export class CategoryService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/categories";
+    controller: string = "api/categories";
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {

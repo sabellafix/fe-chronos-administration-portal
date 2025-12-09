@@ -12,7 +12,7 @@ import { BlockedTime, CreateBlockedTimeDto, CreateBlockedTimesDto, UpdateBlocked
 export class BlockedTimeService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/blocked-times";
+    controller: string = "api/blocked-times";
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {

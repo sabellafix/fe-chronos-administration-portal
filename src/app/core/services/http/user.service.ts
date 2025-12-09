@@ -11,7 +11,7 @@ import { StorageService } from '../shared/storage.service';
 export class UserService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/auth/users";
+    controller: string = "api/users";
     token: string = "";
     headers : any = {};
 
@@ -36,6 +36,16 @@ export class UserService {
 
     getUsersByRole(role: string): Observable<any[]> {
         const url = `${this.apiUrl}/${this.controller}/get-users-by-role/${role}`;
+        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
+    }
+
+    getUsersBySalon(salonId: string): Observable<any[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-users-by-salon/${salonId}`;
+        return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
+    }
+
+    getUsersByRoleAndSalon(role: string, salonId: string): Observable<any[]> {
+        const url = `${this.apiUrl}/${this.controller}/get-users-by-role-and-salon/${role}/${salonId}`;
         return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
     }
 

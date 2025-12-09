@@ -20,7 +20,7 @@ import {
 export class DashboardService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/dashboard";
+    controller: string = "api/dashboard";
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {

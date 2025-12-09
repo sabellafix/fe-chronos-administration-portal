@@ -14,7 +14,7 @@ import { UpdateSalonDto } from '@app/core/models/bussiness/update-dtos';
 export class SalonService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/salons";
+    controller: string = "api/salons";
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {

@@ -12,7 +12,7 @@ import { Availability, CreateAvailabilityDto, UpdateAvailabilityDto, DateOnly } 
 export class AvailabilityService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/chronos/availabilities";
+    controller: string = "api/availabilities";
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {

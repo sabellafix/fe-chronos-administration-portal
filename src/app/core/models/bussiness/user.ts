@@ -13,6 +13,7 @@ export class User{
     createdAt: string;
     updatedAt: string;
     lastLoginAt: string;
+    salonId: string; // ID del salón al que pertenece el usuario (especialmente estilistas)
     
     // Campos adicionales del sistema interno (mantenidos para compatibilidad)
     name: string;
@@ -42,6 +43,7 @@ export class User{
         this.createdAt = "";
         this.updatedAt = "";
         this.lastLoginAt = "";
+        this.salonId = "";
         this.role = new Rol();
         // Campos adicionales del sistema interno
         this.name = "";

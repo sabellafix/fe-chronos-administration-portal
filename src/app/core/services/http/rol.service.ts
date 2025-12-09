@@ -12,7 +12,7 @@ import { Rol, CreateRolDto, UpdateRolDto } from '@app/core/models/bussiness';
 export class RolService {
 
     apiUrl: string = environment.apiUrl;
-    controller: string = "api/auth/roles";
+    controller: string = "api/roles";
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {
