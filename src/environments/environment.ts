@@ -1,6 +1,5 @@
 export const environment = {
     production: false,
-    // apiUrl: 'https://az-chronos-gateway-ascberh2bfepcaej.eastus2-01.azurewebsites.net',
     apiUrl: 'https://az-chronos-services-bmbzgqajgfevbyd2.eastus2-01.azurewebsites.net',
     // apiUrl: 'https://localhost:44300',
     apiKey: 'Ciq8Q-SRk8Q~RZZgw_wfMiB4L2GlQt1_uNiW~OZv~FHdd5',
