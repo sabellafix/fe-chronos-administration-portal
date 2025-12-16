@@ -1,0 +1,98 @@
+<div class="table-finder">
+  <form [formGroup]="filterForm" class="filter-form">
+    <div class="filter-row">
+      <div class="filter-group search-group">
+        <label class="filter-label">Search</label>
+        <div class="search-input-wrapper">
+          <i class="bx bx-search search-icon"></i>
+          <input 
+            type="text" 
+            class="form-control search-input" 
+            [placeholder]="config.searchPlaceholder || 'Search...'"
+            formControlName="searchText"
+            (keyup.enter)="applyFilters()">
+        </div>
+      </div>
+
+      <div class="filter-group field-group" *ngIf="config.searchableFields.length > 1">
+        <label class="filter-label">Search in</label>
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-select formControlName="searchField" placeholder="Select field">
+            <mat-option [value]="null">All fields</mat-option>
+            <mat-option *ngFor="let field of config.searchableFields" [value]="field.field">
+              {{ field.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-group state-group" *ngIf="config.showStateFilter && config.stateOptions && config.stateOptions.length > 0">
+        <label class="filter-label">State</label>
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-select formControlName="stateValue" placeholder="All states">
+            <mat-option [value]="null">All states</mat-option>
+            <mat-option *ngFor="let state of config.stateOptions" [value]="state.code">
+              {{ state.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="filter-row date-row" *ngIf="config.showDateFilter">
+      <div class="filter-group date-group">
+        <label class="filter-label">Date from</label>
+        <mat-form-field appearance="outline" class="filter-field date-field">
+          <input 
+            matInput 
+            [matDatepicker]="pickerFrom" 
+            formControlName="dateFrom"
+            placeholder="Select date">
+          <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-group date-group">
+        <label class="filter-label">Date to</label>
+        <mat-form-field appearance="outline" class="filter-field date-field">
+          <input 
+            matInput 
+            [matDatepicker]="pickerTo" 
+            formControlName="dateTo"
+            placeholder="Select date">
+          <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-spacer"></div>
+    </div>
+
+    <div class="filter-actions">
+      <button 
+        type="button" 
+        class="btn btn-outline-secondary btn-sm"
+        (click)="clearFilters()"
+        [disabled]="!hasActiveFilters()">
+        <i class="bx bx-x me-1"></i>
+        Clear
+      </button>
+      <button 
+        type="button" 
+        class="btn btn-primary btn-sm"
+        (click)="applyFilters()">
+        <i class="bx bx-filter-alt me-1"></i>
+        Apply filters
+      </button>
+    </div>
+  </form>
+
+  <!-- Indicador de filtros activos -->
+  <div class="active-filters-indicator" *ngIf="hasActiveFilters()">
+    <span class="badge bg-primary-subtle text-primary">
+      <i class="bx bx-filter me-1"></i>
+      Active filters
+    </span>
+  </div>
+</div>

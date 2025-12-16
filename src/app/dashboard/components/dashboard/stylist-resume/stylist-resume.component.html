@@ -1,4 +1,6 @@
-<div class="card">
+<app-skelleton-stylist-resume *ngIf="isLoading"></app-skelleton-stylist-resume>
+
+<div class="card animated fadeIn fast" *ngIf="!isLoading">
     <div class="card-body p-0">
         <div class="user-profile-img">
             <img src="assets/images/pattern-bg.jpg" class="profile-img profile-foreground-img rounded-top"
@@ -7,7 +9,6 @@
                 <div>
                     <div class="user-nav p-3">
                         <div class="d-flex justify-content-end">
-                            <!-- Selector de Estilista -->
                             <div class="stylist-selector">
                                 <select class="form-select" (change)="onStylistChange($event)" [disabled]="isLoading">
                                     <option value="" disabled [selected]="!selectedStylist">Select Stylist</option>
@@ -23,7 +24,6 @@
                 </div>
             </div>
         </div>
-        <!-- end user-profile-img -->
 
         <div class="mt-n5 position-relative">
             <div class="text-center">
@@ -54,30 +54,13 @@
 
             <hr class="mb-4">
 
-
             <div class="mb-4">
-                <div class="d-flex align-items-start">
-                    <div class="flex-grow-1">
-                        <h5 class="card-title mb-3">Earning</h5>
-                    </div>
-                    <div>
-                        <button class="btn btn-link py-0 shadow-none" data-bs-toggle="tooltip" data-bs-placement="left"
-                            data-bs-trigger="hover" aria-label="Info" data-bs-original-title="Info">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                class="eva eva-info-outline fill-muted">
-                                <g data-name="Layer 2">
-                                    <g data-name="info">
-                                        <rect width="24" height="24" transform="rotate(180 12 12)" opacity="0"></rect>
-                                        <path
-                                            d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z">
-                                        </path>
-                                        <circle cx="12" cy="8" r="1"></circle>
-                                        <path d="M12 10a1 1 0 0 0-1 1v5a1 1 0 0 0 2 0v-5a1 1 0 0 0-1-1z"></path>
-                                    </g>
-                                </g>
-                            </svg>
-                        </button>
-                    </div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="card-title mb-0">Earning</h5>
+                    <span class="badge bg-light text-muted font-size-12">
+                        <i class="bx bx-calendar me-1"></i>
+                        {{getQueryDateRange()}}
+                    </span>
                 </div>
 
                 <div class="chart-radial-bar">
@@ -111,17 +94,11 @@
                                     <div>
                                         <h5 class="card-title mb-3">Recent Activity</h5>
 
-                                        <div *ngIf="isLoading" class="text-center py-4">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Loading...</span>
-                                            </div>
-                                        </div>
-
-                                        <div *ngIf="!isLoading && recentActivities.length === 0" class="text-center py-4">
+                                        <div *ngIf="recentActivities.length === 0" class="text-center py-4">
                                             <p class="text-muted mb-0">No recent activities</p>
                                         </div>
 
-                                        <ul class="list-unstyled mb-0" *ngIf="!isLoading && recentActivities.length > 0">
+                                        <ul class="list-unstyled mb-0" *ngIf="recentActivities.length > 0">
                                             <li class="py-2" *ngFor="let activity of recentActivities">
                                                 <div class="d-flex align-items-start">
                                                     <div class="flex-shrink-0 me-3">
@@ -155,5 +132,4 @@
             </div>
         </div>
     </div>
-    <!-- end card body -->
 </div>

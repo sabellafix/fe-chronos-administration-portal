@@ -108,6 +108,7 @@ import { SkelletonStylistResumeComponent } from './components/shared/skelletons/
 import { ProductsListComponent } from './components/ecomerce/products-list/products-list.component';
 import { ProductsDetailComponent } from './components/ecomerce/products-detail/products-detail.component';
 import { ProductsCreateComponent } from './components/ecomerce/products-create/products-create.component';
+import { TableFinderComponent } from './components/shared/table-finder/table-finder.component';
 
 
 const routes: Routes = [
@@ -311,6 +312,7 @@ const routes: Routes = [
     ProductsListComponent,
     ProductsDetailComponent,
     ProductsCreateComponent,
+    TableFinderComponent,
   ],
   imports: [
     CommonModule,

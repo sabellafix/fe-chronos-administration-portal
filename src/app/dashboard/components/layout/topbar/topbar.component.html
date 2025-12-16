@@ -52,11 +52,11 @@
         <div class="d-flex">
 
             <div class="dropdown d-inline-block language-switch">
-                <button type="button" class="btn header-item" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button type="button" style="border-color: none" class="btn header-item" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <i class="bx bx-building me-2"></i>
                     <b>{{selectedSalon.name}}</b>
                 </button>
-                <div class="dropdown-menu dropdown-menu-end " style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 72px);" data-popper-placement="bottom-end">
+                <div class="dropdown-menu dropdown-menu-end " style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 72px)" data-popper-placement="bottom-end">
                     <a *ngFor="let salon of salons" class="dropdown-item notify-item cursor" (click)="onSalonChange(salon)">
                         <span class="me-2">
                             <i class="bx bx-building"></i>
