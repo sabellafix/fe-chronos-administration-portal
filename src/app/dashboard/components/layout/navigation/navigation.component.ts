@@ -34,7 +34,13 @@ export class NavigationComponent implements OnInit{
     {
       title: 'Bookings',
       icon: 'bx bx bx-calendar',
-      route: 'bookings'
+      children: [
+        {
+          title: 'Calendar',
+          icon: 'bx bx bx-calendar',
+          route: 'bookings/calendar'
+        }
+      ]
     },
     {
       title: 'Stylists',
@@ -83,18 +89,6 @@ export class NavigationComponent implements OnInit{
           title: 'Create',
           icon: 'bx bx-user',
           route: 'customers/create'
-        }
-      ]
-    },
-    {
-      title: 'Products',
-      icon: 'bx bx-package',
-      route: 'products',
-      children: [
-        {
-          title: 'Create',
-          icon: 'bx bx-package',
-          route: 'products/create'
         }
       ]
     },

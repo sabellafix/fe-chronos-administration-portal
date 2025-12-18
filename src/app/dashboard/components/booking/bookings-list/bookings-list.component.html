@@ -1,0 +1,97 @@
+<div class="page-content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xl-12">
+				<div class="card">
+					<div class="card-header d-flex justify-content-between align-items-center">
+						<h5 class="mb-0"><i class="bx bx-calendar-check text-muted font-size-18 me-2"></i> {{ titleComponent
+							}}</h5>
+						<button (click)="create()" class="btn btn-primary w-sm bg-gradient waves-effect waves-light">New</button>
+					</div>
+					<div class="card-body">
+						<!-- Filtros OData -->
+						<app-table-finder 
+							[config]="tableFilterConfig" 
+							(filtersChanged)="applyFilters($event)"
+							(filtersCleared)="clearFilters()">
+						</app-table-finder>
+
+						<div *ngIf="!loading" class="table-responsive animated fadeIn fast">
+							<table class="table table-hover mb-0">
+								<thead class="table-light">
+									<tr>
+										<th>State</th>
+										<th>Reference</th>
+										<th>Customer</th>
+										<th>Date</th>
+										<th>Time</th>
+										<th>Price</th>
+										<th width="250" class="text-center">Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let booking of bookings">
+										<td>
+											<span class="badge badge-pill font-size-14" [ngClass]="getBookingStatusClass(booking)">
+												{{ getBookingStatus(booking) }}
+											</span>
+										</td>
+										<td>{{ booking.bookingReference || 'N/A' }}</td>
+										<td>{{ getCustomerName(booking) }}</td>
+										<td>{{ formatDateOnly(booking.bookingDate) }}</td>
+										<td>{{ formatTimeOnly(booking.startTime) }} - {{ formatTimeOnly(booking.endTime) }}</td>
+										<td>{{ formatPrice(booking) }}</td>
+										<td class="text-center">
+											<ul class="list-inline mb-0">
+												<li class="list-inline-item">
+													<div (click)="detail(booking.id)" matTooltip="Detail"
+														class="px-3 text-success cursor" aria-label="Detail"
+														data-bs-original-title="Detail"><i
+															class="bx bx-show-alt font-size-18"></i></div>
+												</li>
+												<li class="list-inline-item">
+													<div matTooltip="Update" (click)="update(booking.id)"
+														class="px-3 text-primary cursor" aria-label="Edit"
+														data-bs-original-title="Edit"><i
+															class="bx bx-pencil font-size-18"></i>
+													</div>
+												</li>
+												<li class="list-inline-item">
+													<div (click)="delete(booking.id)" matTooltip="Delete"
+														class="px-3 text-danger cursor" aria-label="Detail"
+														data-bs-original-title="Detail"><i
+															class="bx bx bx-x font-size-18"></i>
+													</div>
+												</li>
+											</ul>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<mat-paginator class="paginator" #paginator
+								*ngIf="showPaginate && bookings.length > 0 && !loading" [length]="totalItems"
+								[pageSize]="pageSize" [showFirstLastButtons]="true" [pageSizeOptions]="maxItems"
+								[pageIndex]="pageIndex" (page)="changePage($event)">
+							</mat-paginator>
+							<div *ngIf="!loading && bookings.length == 0" class="card border-square-top border-ligth">
+								<div class="card-body">
+									<h1 class="display-3 text-center">
+										<small class="text-muted"><i class="bx bx-search-alt-2"></i></small>
+									</h1>
+									<h6 class="card-title text-center">
+										No se encontraron resultados.
+									</h6>
+								</div>
+							</div>
+						</div>
+						<div *ngIf="loading" class="animated fadeIn fast">
+							<ngx-skeleton-loader [count]="10"
+								[theme]="{ 'border-radius': '10', height: '40px', 'background-color': '#FFFFFFF' }">
+							</ngx-skeleton-loader>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

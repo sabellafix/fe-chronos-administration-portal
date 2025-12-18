@@ -15,7 +15,8 @@
                     <div class="card-body">
                         <div class="d-flex align-items-start">
                             <div class="flex-grow-1">
-                                <h5 class="card-title mb-3">Revenue chart</h5>
+                                <h5 class="card-title mb-3" *ngIf="!loading">Revenue chart</h5>
+                                <ngx-skeleton-loader *ngIf="loading" count="1" appearance="line" [theme]="{ height: '20px', width: '150px', 'border-radius': '6px' }"></ngx-skeleton-loader>
                             </div>
                         </div>
                         <app-skelleton-bar-revenue-chart *ngIf="loading && !revenueChart"></app-skelleton-bar-revenue-chart>
@@ -49,7 +50,7 @@
                 <app-stylist-resume></app-stylist-resume>
             </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="displayPayments">
             <div class="col-xl-12">
                 <app-payments-list></app-payments-list>
             </div>

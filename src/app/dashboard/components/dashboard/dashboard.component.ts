@@ -40,6 +40,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   orderStats: OrderStatsDto | null = null;
   topServices: TopServiceDto[] = [];
   salonOccupancy: SalonOccupancyDto | null = null;
+  displayPayments: boolean = false;
 
   private destroy$: Subject<void> = new Subject<void>();
   

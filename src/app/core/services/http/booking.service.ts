@@ -5,6 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { StorageService } from '../shared/storage.service';
 import { Booking, CreateBookingDto, UpdateBookingDto, DateOnly } from '@app/core/models/bussiness';
+import { ODataQueryParams, PagedResult } from '@app/core/models/interfaces/odata.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -27,6 +28,60 @@ export class BookingService {
         return {
             headers: { Authorization: `Bearer ${this.token}` }
         };
+    }
+
+    getBookingsOData(params: ODataQueryParams): Observable<Booking[]> {
+        const url = `${this.apiUrl}/${this.controller}/odata`;
+        const httpParams = this.buildODataParams(params);
+        return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params: httpParams });
+    }
+
+    
+    getMyBookingsOData(params: ODataQueryParams): Observable<Booking[]> {
+        const url = `${this.apiUrl}/${this.controller}/odata/my-bookings`;
+        const httpParams = this.buildODataParams(params);
+        return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params: httpParams });
+    }
+
+    getBookingsPaged(page: number = 1, pageSize: number = 10): Observable<PagedResult<Booking>> {
+        const url = `${this.apiUrl}/${this.controller}/paged`;
+        const params = new HttpParams()
+            .set('page', page.toString())
+            .set('pageSize', pageSize.toString());
+        return this.http.get<PagedResult<Booking>>(url, { ...this.getHttpOptions(), params });
+    }
+
+
+    getBookingsWithPagination(params: ODataQueryParams): Observable<Booking[]> {
+        return this.getMyBookingsOData(params);
+    }
+
+    private buildODataParams(params: ODataQueryParams): HttpParams {
+        let httpParams = new HttpParams();
+
+        if (params.filter) {
+            httpParams = httpParams.set('$filter', params.filter);
+        }
+        if (params.orderby) {
+            httpParams = httpParams.set('$orderby', params.orderby);
+        }
+        if (params.top !== undefined) {
+            httpParams = httpParams.set('$top', params.top.toString());
+        }
+        if (params.skip !== undefined) {
+            httpParams = httpParams.set('$skip', params.skip.toString());
+        }
+        if (params.select) {
+            httpParams = httpParams.set('$select', params.select);
+        }
+        if (params.count) {
+            httpParams = httpParams.set('$count', 'true');
+        }
+        if (params.expand) {
+            httpParams = httpParams.set('$expand', params.expand);
+        }
+
+        return httpParams;
     }
 
     getBookings(): Observable<Booking[]> {

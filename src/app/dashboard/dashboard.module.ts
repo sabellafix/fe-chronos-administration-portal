@@ -109,6 +109,7 @@ import { ProductsListComponent } from './components/ecomerce/products-list/produ
 import { ProductsDetailComponent } from './components/ecomerce/products-detail/products-detail.component';
 import { ProductsCreateComponent } from './components/ecomerce/products-create/products-create.component';
 import { TableFinderComponent } from './components/shared/table-finder/table-finder.component';
+import { BookingsListComponent } from './components/booking/bookings-list/bookings-list.component';
 
 
 const routes: Routes = [
@@ -181,6 +182,7 @@ const routes: Routes = [
           { path: 'daily', component: CalendarDailyComponent },
           { path: 'weekly', component: CalendarWeeklyComponent },
           { path: 'monthly', component: CalendarMonthlyComponent },
+          { path: 'list', component: BookingsListComponent },
           { path: '**', redirectTo: '' }
         ]
       },
@@ -313,6 +315,7 @@ const routes: Routes = [
     ProductsDetailComponent,
     ProductsCreateComponent,
     TableFinderComponent,
+    BookingsListComponent,
   ],
   imports: [
     CommonModule,
