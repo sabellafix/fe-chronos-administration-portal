@@ -181,17 +181,15 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
   
   private prepareStylistOptions(): void {
-    this.stylistOptions = this.stylists.map((stylist, index) => ({
+    this.stylistOptions = this.stylists.map((stylist) => ({
       id: stylist.id,
       name: `${stylist.firstName} ${stylist.lastName}`,
       imageUrl: stylist.photo || '../assets/images/user-image.jpg',
-      selected: index === 0 // Seleccionar el primero por defecto
+      selected: false
     }));
     
-    // Notificar el estilista inicial seleccionado
-    if (this.stylists.length > 0) {
-      this.dashboardFiltersService.updateSelectedStylist(this.stylists[0]);
-    }
+    // Estado inicial sin estilista seleccionado
+    this.dashboardFiltersService.updateSelectedStylist(null);
   }
   
   private prepareSalonOptions(): void {
@@ -247,13 +245,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
     return this.startDate;
   }
   
-  onStylistSingleSelectionChange(selectedOption: VisualOption): void {
-    const selectedStylist = this.stylists.find(s => s.id === selectedOption.id) || null;
+  onStylistSingleSelectionChange(selectedOption: VisualOption | null): void {
+    const selectedStylist = selectedOption ? this.stylists.find(s => s.id === selectedOption.id) || null : null;
     this.dashboardFiltersService.updateSelectedStylist(selectedStylist);
   }
   
-  onSalonSingleSelectionChange(selectedOption: VisualOption): void {
-    const selectedSalon = this.salons.find(s => s.id === selectedOption.id) || null;
+  onSalonSingleSelectionChange(selectedOption: VisualOption | null): void {
+    const selectedSalon = selectedOption ? this.salons.find(s => s.id === selectedOption.id) || null : null;
     this.dashboardFiltersService.updateSelectedSalon(selectedSalon);
     if (selectedSalon) {
       this.onSalonChange(selectedSalon);

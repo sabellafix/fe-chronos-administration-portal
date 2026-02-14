@@ -4,8 +4,10 @@ import { SalonStateService } from '@app/core/services/shared/salon-state.service
 import { DashboardService } from '@app/core/services/http/dashboard.service';
 import { StorageService } from '@app/core/services/shared/storage.service';
 import { WaitService } from '@app/core/services/shared/wait.service';
+import { DashboardFiltersService } from '@app/core/services/shared/dashboard-filters.service';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { Salon } from '@app/core/models/bussiness/salon';
+import { User } from '@app/core/models/bussiness/user';
 import {
   DashboardMetricsDto,
   KpiCardsDto,
@@ -20,6 +22,8 @@ interface CachedData<T> {
   data: T;
   timestamp: number;
   salonId: string;
+  startDate: string;
+  endDate: string;
 }
 
 @Component({
@@ -30,7 +34,8 @@ interface CachedData<T> {
 export class DashboardComponent implements OnInit, OnDestroy {
 
   selectedSalon: Salon | null = null;
-  dateFilter: Date = new Date();
+  startDateFilter: Date = new Date();
+  endDateFilter: Date = new Date();
   currentView: 'calendar' | 'chart' = 'chart';
   loading: boolean = false;
   dashboardMetrics: DashboardMetricsDto | null = null;
@@ -41,6 +46,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   topServices: TopServiceDto[] = [];
   salonOccupancy: SalonOccupancyDto | null = null;
   displayPayments: boolean = false;
+  selectedStylist: User | null = null;
+  isStylistPanelVisible: boolean = false;
 
   private destroy$: Subject<void> = new Subject<void>();
   
@@ -51,15 +58,39 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private salonStateService: SalonStateService,
     private dashboardService: DashboardService,
     private storageService: StorageService,
-    private waitService: WaitService
+    private waitService: WaitService,
+    private dashboardFiltersService: DashboardFiltersService
   ) {}
 
   ngOnInit(): void {
+    // Inicializar fechas desde el servicio de filtros
+    const initialFilters = this.dashboardFiltersService.getCurrentFilters();
+    this.startDateFilter = initialFilters.startDate;
+    this.endDateFilter = initialFilters.endDate;
+
+    // Suscribirse al salón seleccionado
     this.salonStateService.selectedSalon$
       .pipe(takeUntil(this.destroy$))
       .subscribe(salon => {
         if (salon != null) {
           this.selectedSalon = salon;
+          this.loadServices();
+        }
+      });
+
+    // Suscribirse a los cambios de filtros del topbar
+    this.dashboardFiltersService.filters$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(filters => {
+        this.startDateFilter = filters.startDate;
+        this.endDateFilter = filters.endDate;
+        
+        // Actualizar visibilidad del panel de estilista
+        this.selectedStylist = filters.selectedStylist;
+        this.isStylistPanelVisible = filters.selectedStylist !== null;
+        
+        // Solo recargar si hay un salón seleccionado
+        if (this.selectedSalon) {
           this.loadServices();
         }
       });
@@ -98,16 +129,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return !!(metricsCache && kpiCache && revenueChartCache && revenueActivityCache && occupancyCache);
   }
 
+  private getCacheKey(): string {
+    const startStr = this.startDateFilter.toISOString().split('T')[0];
+    const endStr = this.endDateFilter.toISOString().split('T')[0];
+    return `${startStr}_${endStr}`;
+  }
+
   private getCachedData<T>(key: string, salonId: string): T | null {
-    const cacheKey = `${key}_${salonId}`;
+    const dateKey = this.getCacheKey();
+    const cacheKey = `${key}_${salonId}_${dateKey}`;
     const cached = this.storageService.get<CachedData<T>>(cacheKey);
     
     if (!cached) return null;
     
     const now = Date.now();
     const isExpired = (now - cached.timestamp) > this.CACHE_EXPIRATION_MS;
+    const startStr = this.startDateFilter.toISOString().split('T')[0];
+    const endStr = this.endDateFilter.toISOString().split('T')[0];
+    const datesMatch = cached.startDate === startStr && cached.endDate === endStr;
     
-    if (isExpired || cached.salonId !== salonId) {
+    if (isExpired || cached.salonId !== salonId || !datesMatch) {
       this.storageService.remove(cacheKey);
       return null;
     }
@@ -116,11 +157,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private setCachedData<T>(key: string, salonId: string, data: T): void {
-    const cacheKey = `${key}_${salonId}`;
+    const dateKey = this.getCacheKey();
+    const cacheKey = `${key}_${salonId}_${dateKey}`;
     const cached: CachedData<T> = {
       data,
       timestamp: Date.now(),
-      salonId
+      salonId,
+      startDate: this.startDateFilter.toISOString().split('T')[0],
+      endDate: this.endDateFilter.toISOString().split('T')[0]
     };
     this.storageService.set(cacheKey, cached);
   }
@@ -142,16 +186,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private loadFromBackend(salonId: string): void {
     forkJoin({
-      metrics: this.dashboardService.getMetrics(salonId, this.dateFilter),
-      kpiCards: this.dashboardService.getKpiCards(salonId, this.dateFilter),
-      revenueChart: this.dashboardService.getRevenueChart(salonId, this.dateFilter),
-      revenueActivity: this.dashboardService.getRevenueActivity(salonId, this.dateFilter),      
-      salonOccupancy: this.dashboardService.getSalonOccupancy(salonId, this.dateFilter)
+      metrics: this.dashboardService.getMetrics(salonId, this.startDateFilter, this.endDateFilter),
+      kpiCards: this.dashboardService.getKpiCards(salonId, this.startDateFilter, this.endDateFilter),
+      revenueChart: this.dashboardService.getRevenueChart(salonId, this.startDateFilter, this.endDateFilter),
+      revenueActivity: this.dashboardService.getRevenueActivity(salonId, this.startDateFilter, this.endDateFilter),      
+      salonOccupancy: this.dashboardService.getSalonOccupancy(salonId, this.startDateFilter, this.endDateFilter)
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (results) => {
-          // Guardar en caché
+          // Guardar en caché con las fechas actuales
           this.setCachedData(StorageKeyConst._DASHBOARD_METRICS, salonId, results.metrics);
           this.setCachedData(StorageKeyConst._DASHBOARD_KPI_CARDS, salonId, results.kpiCards);
           this.setCachedData(StorageKeyConst._DASHBOARD_REVENUE_CHART, salonId, results.revenueChart);
@@ -183,8 +227,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.currentView = view;
   }
 
-  onDateChange(date: Date): void {
-    this.dateFilter = date;
+  onDateRangeChange(startDate: Date, endDate: Date): void {
+    this.startDateFilter = startDate;
+    this.endDateFilter = endDate;
     this.loadServices();
   }
 }

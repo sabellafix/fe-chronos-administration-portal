@@ -1,13 +1,11 @@
 <div class="page-content">
     <div class="container-fluid dashboard-scrollable">  
-        <div class="row">
-            <div class="col-xxl-9">
+        <div class="row dashboard-row">
+            <div class="main-content-col" [class.expanded]="!isStylistPanelVisible">
                 <div class="row">
                     <app-dashboard-header  
-                        [dateFilter]="dateFilter"
                         [kpiCards]="kpiCards"
-                        [loading]="loading"
-                        (dateChange)="onDateChange($event)">
+                        [loading]="loading">
                     </app-dashboard-header>
                 </div>
 
@@ -46,7 +44,7 @@
                 </div>
 
             </div>
-            <div class="col-xxl-3">
+            <div class="stylist-panel-col" [class.visible]="isStylistPanelVisible">
                 <app-stylist-resume></app-stylist-resume>
             </div>
         </div>

@@ -25,7 +25,7 @@ export class SelectImageComponent implements OnChanges {
   @Input("noInitialSelection") noInitialSelection: boolean = false; // Cargar opciones sin selección inicial
   
   @Output() selectionChange = new EventEmitter<VisualOption[]>();
-  @Output() singleSelectionChange = new EventEmitter<VisualOption>();
+  @Output() singleSelectionChange = new EventEmitter<VisualOption | null>();
 
   selectedOptions: VisualOption[] = [];
   isDropdownOpen: boolean = false;
@@ -259,12 +259,18 @@ export class SelectImageComponent implements OnChanges {
   }
 
   private setSingleSelection(option: VisualOption): void {
-    // Deseleccionar todas las otras opciones
-    this.options.forEach(opt => opt.selected = false);
-    
-    // Seleccionar la opción clickeada
-    option.selected = true;
-    this.selectedOptions = [option];
+    // Si la opción ya está seleccionada, deseleccionarla (toggle)
+    if (option.selected) {
+      option.selected = false;
+      this.selectedOptions = [];
+    } else {
+      // Deseleccionar todas las otras opciones
+      this.options.forEach(opt => opt.selected = false);
+      
+      // Seleccionar la opción clickeada
+      option.selected = true;
+      this.selectedOptions = [option];
+    }
     
     // Cerrar dropdown en modo single select
     this.isDropdownOpen = false;
@@ -285,8 +291,9 @@ export class SelectImageComponent implements OnChanges {
   private emitSelectionChange(): void {
     this.selectionChange.emit([...this.selectedOptions]);
     
-    if (!this.multiSelect && this.selectedOptions.length > 0) {
-      this.singleSelectionChange.emit(this.selectedOptions[0]);
+    if (!this.multiSelect) {
+      // Emitir el elemento seleccionado o null si no hay selección
+      this.singleSelectionChange.emit(this.selectedOptions.length > 0 ? this.selectedOptions[0] : null);
     }
   }
 

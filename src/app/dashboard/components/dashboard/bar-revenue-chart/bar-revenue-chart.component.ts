@@ -74,7 +74,7 @@ export class BarRevenueChartComponent implements OnChanges {
         bar: {
           horizontal: false,
           columnWidth: '35%',
-          borderRadius: 4
+          borderRadius: 6
         }
       },
       dataLabels: {

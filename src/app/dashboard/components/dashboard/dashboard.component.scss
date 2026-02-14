@@ -62,3 +62,77 @@
     }
   }
 }
+
+// Dashboard row layout for offcanvas effect
+.dashboard-row {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+// Main content column with smooth transition
+.main-content-col {
+  flex: 0 0 75%;
+  max-width: 75%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-right: calc(var(--bs-gutter-x) * 0.5);
+  padding-left: calc(var(--bs-gutter-x) * 0.5);
+  
+  &.expanded {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+// Stylist panel with offcanvas slide effect
+.stylist-panel-col {
+  flex: 0 0 25%;
+  max-width: 25%;
+  padding-right: calc(var(--bs-gutter-x) * 0.5);
+  padding-left: calc(var(--bs-gutter-x) * 0.5);
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-right: -25%;
+  
+  &.visible {
+    transform: translateX(0);
+    opacity: 1;
+    margin-right: 0;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1399.98px) {
+  .main-content-col {
+    flex: 0 0 100%;
+    max-width: 100%;
+    
+    &.expanded {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+  
+  .stylist-panel-col {
+    position: fixed;
+    top: 70px;
+    right: 0;
+    width: 350px;
+    max-width: 90vw;
+    height: calc(100vh - 70px);
+    background: var(--bs-body-bg, #fff);
+    z-index: 1045;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    padding: 1rem;
+    flex: none;
+    max-width: none;
+    margin-right: 0;
+    transform: translateX(100%);
+    
+    &.visible {
+      transform: translateX(0);
+    }
+  }
+}

@@ -73,7 +73,7 @@
                 </div>
                 
                 <div style="width: 240px;" class="filter-item filter-select me-2">
-                    <i class="bx bx-user filter-icon"></i>
+                    <i class="bx bx-face filter-icon"></i>
                     <app-select-image
                         [options]="stylistOptions"
                         [placeholder]="'Select stylist'"
@@ -81,10 +81,14 @@
                         [showAllOption]="false"
                         [showImages]="true"
                         [showColors]="false"
-                        [autoSelectFirst]="true"
+                        [autoSelectFirst]="false"
                         (singleSelectionChange)="onStylistSingleSelectionChange($event)">
                     </app-select-image>
                 </div>
+
+                <!-- <button type="button" class="btn btn-dark" >
+                    <i class="bx bx-search-alt"></i>
+                </button> -->
                 
                 <div style="width: 240px;" class="filter-item filter-select">
                     <i class="bx bx-store filter-icon"></i>
@@ -99,10 +103,6 @@
                         (singleSelectionChange)="onSalonSingleSelectionChange($event)">
                     </app-select-image>
                 </div>
-
-                <button type="button" class="btn btn-dark" >
-                    <i class="bx bx-search-alt"></i>
-                </button>
             </div>
 
             <div *ngIf="!load" class="dropdown d-inline-block  animated fadeIn fast">
