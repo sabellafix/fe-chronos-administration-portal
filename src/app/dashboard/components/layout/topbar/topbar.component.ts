@@ -1,12 +1,17 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { User } from '@app/core/models/bussiness/user';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { StorageService } from '@app/core/services/shared/storage.service';
 import { SalonStateService } from '@app/core/services/shared/salon-state.service';
+import { DashboardFiltersService } from '@app/core/services/shared/dashboard-filters.service';
+import { UserService } from '@app/core/services/http/user.service';
 import { Navigation } from '@app/core/models/interfaces/nav.interface';
 import { Pagination } from '@app/core/models/interfaces/pagination.interface';
+import { VisualOption } from '@app/core/models/interfaces/option.interface';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
+import { RolesConst } from '@app/core/models/constants/roles.const';
 import { Salon } from '@app/core/models/bussiness/salon';
 
 @Component({
@@ -14,7 +19,7 @@ import { Salon } from '@app/core/models/bussiness/salon';
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.scss'
 })
-export class TopbarComponent {
+export class TopbarComponent implements OnInit, OnDestroy {
 
   user : User = new User();
   load: boolean = false;
@@ -25,6 +30,16 @@ export class TopbarComponent {
   agencies : any[] = [];
   selectedSalon: Salon = new Salon();
   salons : Salon[] = [];
+  
+  // Dashboard filters
+  isDashboardRoute: boolean = false;
+  startDate: string = '';
+  endDate: string = '';
+  stylistOptions: VisualOption[] = [];
+  salonOptions: VisualOption[] = [];
+  stylists: User[] = [];
+  
+  private destroy$: Subject<void> = new Subject<void>();
   
 
   public routeParent: string = "";
@@ -45,20 +60,29 @@ export class TopbarComponent {
   
   moduleName? : Navigation | undefined = this.routes[0];
 
-  constructor(private activatedRoute: ActivatedRoute,
-              private authService : AuthService,
-              private storageService : StorageService,
-              private salonStateService: SalonStateService,
-              private router: Router
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService,
+    private storageService: StorageService,
+    private salonStateService: SalonStateService,
+    private dashboardFiltersService: DashboardFiltersService,
+    private userService: UserService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.onRouteChange();   
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.onRouteChange();
-      }
-    });
+    this.router.events
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(event => {
+        if (event instanceof NavigationEnd) {
+          this.onRouteChange();
+          this.checkDashboardRoute(event.urlAfterRedirects);
+        }
+      });
+
+    // Check initial route
+    this.checkDashboardRoute(this.router.url);
 
     this.user = JSON.parse(this.storageService.get(StorageKeyConst._USER)!);
     if(this.user != null){
@@ -113,11 +137,131 @@ export class TopbarComponent {
     this.selectedSalon = this.salons[0];
     // Establecer el salón inicial en el servicio compartido
     this.salonStateService.setSelectedSalon(this.selectedSalon);
+    
+    // Initialize dashboard filters
+    this.initializeDashboardFilters();
+    this.loadStylists();
+    this.prepareSalonOptions();
+  }
+  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  
+  private checkDashboardRoute(url: string): void {
+    this.isDashboardRoute = url === '/dashboard' || url.endsWith('/dashboard');
+  }
+  
+  private initializeDashboardFilters(): void {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    this.startDate = this.formatDateForInput(startOfMonth);
+    this.endDate = this.formatDateForInput(endOfMonth);
+  }
+  
+  private formatDateForInput(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+  
+  private loadStylists(): void {
+    this.userService.getUsersByRole(RolesConst._STYLIST)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (users) => {
+          this.stylists = users.filter(u => u.isActive);
+          this.prepareStylistOptions();
+        },
+        error: (error) => {
+          console.error('Error loading stylists:', error);
+        }
+      });
+  }
+  
+  private prepareStylistOptions(): void {
+    this.stylistOptions = this.stylists.map((stylist, index) => ({
+      id: stylist.id,
+      name: `${stylist.firstName} ${stylist.lastName}`,
+      imageUrl: stylist.photo || '../assets/images/user-image.jpg',
+      selected: index === 0 // Seleccionar el primero por defecto
+    }));
+    
+    // Notificar el estilista inicial seleccionado
+    if (this.stylists.length > 0) {
+      this.dashboardFiltersService.updateSelectedStylist(this.stylists[0]);
+    }
+  }
+  
+  private prepareSalonOptions(): void {
+    this.salonOptions = this.salons.map((salon, index) => ({
+      id: salon.id,
+      name: salon.name,
+      selected: index === 0 // Seleccionar el primero por defecto
+    }));
+    
+    // Notificar el salón inicial seleccionado
+    if (this.salons.length > 0) {
+      this.dashboardFiltersService.updateSelectedSalon(this.salons[0]);
+    }
+  }
+  
+  onStartDateChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const newStartDate = new Date(input.value);
+    const currentEndDate = new Date(this.endDate);
+    
+    // Validar que la fecha de inicio no sea posterior a la fecha de fin
+    if (newStartDate > currentEndDate) {
+      // Ajustar la fecha de fin para que sea igual a la fecha de inicio
+      this.endDate = input.value;
+      this.dashboardFiltersService.updateEndDate(newStartDate);
+    }
+    
+    this.startDate = input.value;
+    this.dashboardFiltersService.updateStartDate(newStartDate);
+  }
+  
+  onEndDateChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const newEndDate = new Date(input.value);
+    const currentStartDate = new Date(this.startDate);
+    
+    // Validar que la fecha de fin no sea anterior a la fecha de inicio
+    if (newEndDate < currentStartDate) {
+      // Ajustar la fecha de inicio para que sea igual a la fecha de fin
+      this.startDate = input.value;
+      this.dashboardFiltersService.updateStartDate(newEndDate);
+    }
+    
+    this.endDate = input.value;
+    this.dashboardFiltersService.updateEndDate(newEndDate);
+  }
+  
+  getMaxStartDate(): string {
+    return this.endDate;
+  }
+  
+  getMinEndDate(): string {
+    return this.startDate;
+  }
+  
+  onStylistSingleSelectionChange(selectedOption: VisualOption): void {
+    const selectedStylist = this.stylists.find(s => s.id === selectedOption.id) || null;
+    this.dashboardFiltersService.updateSelectedStylist(selectedStylist);
+  }
+  
+  onSalonSingleSelectionChange(selectedOption: VisualOption): void {
+    const selectedSalon = this.salons.find(s => s.id === selectedOption.id) || null;
+    this.dashboardFiltersService.updateSelectedSalon(selectedSalon);
+    if (selectedSalon) {
+      this.onSalonChange(selectedSalon);
+    }
   }
 
   onSalonChange(value: Salon): void {
     this.selectedSalon = value;
-    // Notificar el cambio a todos los observadores
     this.salonStateService.setSelectedSalon(value);
   } 
 

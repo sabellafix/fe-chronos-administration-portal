@@ -53,7 +53,7 @@
                                     <span class="d-none d-sm-block">Stylists</span>
                                 </a>
                             </li>
-                            <li *ngIf="hasPermission('bookings.floor')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
+                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
                                 <a class="nav-link" data-bs-toggle="tab" href="#floors" role="tab" aria-selected="false"
                                     tabindex="-1" (click)="tabActive = 'Floor'">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
@@ -132,5 +132,5 @@
     <app-calendar-weekly *ngIf="hasPermission('bookings.weekly')" [ngStyle]="{'display': tabActive === 'Week' ? 'block' : 'none' }"  [date]="dateCalendarWeekly"  [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-weekly>
     <app-calendar-daily *ngIf="hasPermission('bookings.daily')" [ngStyle]="{'display': tabActive === 'Day' ? 'block' : 'none' }"  [date]="dateCalendarDaily" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-daily>
     <app-bookings-supplier *ngIf="hasPermission('bookings.calendar')" [ngStyle]="{'display': tabActive === 'Stylists' ? 'block' : 'none' }"  [date]="dateBookingsSupplier" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-bookings-supplier>    
-    <!-- <app-calendar-floor [ngStyle]="{'display': tabActive === 'Floor' ? 'block' : 'none' }"></app-calendar-floor> -->
+    <app-calendar-floor [ngStyle]="{'display': tabActive === 'Floor' ? 'block' : 'none' }"></app-calendar-floor>
 </div>

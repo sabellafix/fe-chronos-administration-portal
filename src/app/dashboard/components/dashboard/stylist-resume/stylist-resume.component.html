@@ -6,22 +6,7 @@
             <img src="assets/images/pattern-bg.jpg" class="profile-img profile-foreground-img rounded-top"
                 style="height: 120px;" alt="">
             <div class="overlay-content rounded-top">
-                <div>
-                    <div class="user-nav p-3">
-                        <div class="d-flex justify-content-end">
-                            <div class="stylist-selector">
-                                <select class="form-select" (change)="onStylistChange($event)" [disabled]="isLoading">
-                                    <option value="" disabled [selected]="!selectedStylist">Select Stylist</option>
-                                    <option *ngFor="let stylist of stylists" 
-                                            [value]="stylist.id"
-                                            [selected]="selectedStylist?.id === stylist.id">
-                                        {{stylist.firstName}} {{stylist.lastName}}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              
             </div>
         </div>
 

@@ -1,7 +1,7 @@
-
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Customer, Service, User } from '@app/core/models/bussiness';
 import { CustomerService } from '@app/core/services/http/customer.service';
+
 import { ServiceService } from '@app/core/services/http/platform-service.service';
 import { UserService } from '@app/core/services/http/user.service';
 import { VisualOption } from '@app/core/models/interfaces/option.interface';
@@ -17,7 +17,7 @@ import { Permission } from '@app/core/models/bussiness/permission';
 })
 export class BookingsCalendarComponent implements OnInit, OnDestroy {
 
-  tabs: string[] = ['Month', 'Week', 'Day', 'Stylists', 'Floor'];
+  tabs: string[] = ['Month', 'Week', 'Day',  'Floor'];
   tabActive: string = 'Month';
   tabIndex: number = 1;
   dateNow: Date = new Date();

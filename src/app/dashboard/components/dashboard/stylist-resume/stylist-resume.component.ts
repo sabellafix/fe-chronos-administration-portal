@@ -1,11 +1,13 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { UserService } from '@app/core/services/http/user.service';
 import { BookingService } from '@app/core/services/http/booking.service';
+import { DashboardFiltersService, DashboardFilters } from '@app/core/services/shared/dashboard-filters.service';
 import { User } from '@app/core/models/bussiness/user';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { Salon } from '@app/core/models/bussiness/salon';
 import { BookingStatus } from '@app/core/models/bussiness/enums';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { RolesConst } from '@app/core/models/constants/roles.const';
 
 // Interfaces para el resumen del estilista
@@ -38,7 +40,7 @@ export interface WeeklyEarnings {
   templateUrl: './stylist-resume.component.html',
   styleUrl: './stylist-resume.component.scss'
 })
-export class StylistResumeComponent implements OnInit, OnChanges {
+export class StylistResumeComponent implements OnInit, OnChanges, OnDestroy {
   
   @Input() salon: Salon | null = null;
   
@@ -57,14 +59,24 @@ export class StylistResumeComponent implements OnInit, OnChanges {
   // Fechas de consulta
   queryStartDate: Date = new Date();
   queryEndDate: Date = new Date();
+  
+  private destroy$ = new Subject<void>();
+  private stylistsLoaded: boolean = false;
 
   constructor(
     private userService: UserService,
-    private bookingService: BookingService
+    private bookingService: BookingService,
+    private dashboardFiltersService: DashboardFiltersService
   ) { }
 
   ngOnInit(): void {
     this.loadStylists();
+    this.subscribeToFiltersChanges();
+  }
+  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -73,17 +85,72 @@ export class StylistResumeComponent implements OnInit, OnChanges {
       this.loadStylists();
     }
   }
+  
+  private subscribeToFiltersChanges(): void {
+    this.dashboardFiltersService.filters$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((filters: DashboardFilters) => {
+        // Solo procesar si los estilistas ya están cargados
+        if (this.stylistsLoaded && filters.selectedStylist) {
+          // Verificar si el estilista seleccionado es diferente al actual
+          if (!this.selectedStylist || this.selectedStylist.id !== filters.selectedStylist.id) {
+            this.selectStylistFromFilter(filters.selectedStylist, filters.startDate, filters.endDate);
+          }
+        }
+      });
+  }
+  
+  private selectStylistFromFilter(stylist: User, startDate: Date, endDate: Date): void {
+    this.selectedStylist = stylist;
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    // Usar las fechas del filtro
+    this.queryStartDate = startDate;
+    this.queryEndDate = endDate;
+
+    // Calcular el mes anterior basado en startDate
+    const startOfPreviousMonth = new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1);
+    const endOfPreviousMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 0);
+
+    forkJoin({
+      currentMonthBookings: this.bookingService.getByUserDateRange(stylist.id, startDate, endDate),
+      previousMonthBookings: this.bookingService.getByUserDateRange(stylist.id, startOfPreviousMonth, endOfPreviousMonth)
+    }).subscribe({
+      next: (result) => {
+        this.processStylistData(result.currentMonthBookings, result.previousMonthBookings);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading stylist data:', error);
+        this.errorMessage = 'Error al cargar la información del estilista';
+        this.isLoading = false;
+      }
+    });
+  }
 
   loadStylists(): void {
     this.isLoading = true;
     this.errorMessage = '';
+    this.stylistsLoaded = false;
     
     this.userService.getUsersByRole(RolesConst._STYLIST).subscribe({
       next: (users) => {
         this.stylists = users.filter(u => u.isActive);
+        this.stylistsLoaded = true;
         
         if (this.stylists.length > 0) {
-          this.selectStylist(this.stylists[0].id);
+          // Verificar si hay un estilista seleccionado en los filtros
+          const currentFilters = this.dashboardFiltersService.getCurrentFilters();
+          if (currentFilters.selectedStylist) {
+            this.selectStylistFromFilter(
+              currentFilters.selectedStylist, 
+              currentFilters.startDate, 
+              currentFilters.endDate
+            );
+          } else {
+            this.selectStylist(this.stylists[0].id);
+          }
         } else {
           this.isLoading = false;
           this.errorMessage = 'No hay estilistas disponibles';
@@ -220,15 +287,6 @@ export class StylistResumeComponent implements OnInit, OnChanges {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[date.getMonth()];
-  }
-
-
-  onStylistChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    const userId = target.value;
-    if (userId) {
-      this.selectStylist(userId);
-    }
   }
 
   getStylistFullName(): string {

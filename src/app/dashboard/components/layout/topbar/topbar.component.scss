@@ -66,3 +66,153 @@
 button.show{
     border-color: none !important;
 }
+
+// Dashboard Filters Styles
+.dashboard-filters {
+    gap: 8px;
+    
+    .filter-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        
+        .filter-icon {
+            font-size: 18px;
+            color: rgb(40, 63, 92);
+            margin-right: 6px;
+            opacity: 0.7;
+            transition: opacity 0.15s ease-in-out;
+        }
+        
+        &:hover .filter-icon {
+            opacity: 1;
+        }
+        
+        .filter-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: rgb(40, 63, 92);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+            padding-left: 4px;
+        }
+        
+        .filter-date-input {
+            height: 38px;
+            min-width: 130px;
+            padding: 6px 10px;
+            font-size: 13px;
+            color: rgb(40, 63, 92);
+            background-color: #f5f6f8;
+            border: 1px solid rgb(239, 240, 242);
+            border-radius: 8px;
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+            
+            &:hover {
+                border-color: #86b7fe;
+                background-color: #ffffff;
+            }
+            
+            &:focus {
+                border-color: #86b7fe;
+                box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+                background-color: #ffffff;
+                outline: none;
+            }
+        }
+        
+        &.filter-select {
+            min-width: 160px;
+            
+            app-select-image {
+                flex: 1;
+                
+                ::ng-deep {
+                    .custom-select-wrapper {
+                        .select-filter-custom {
+                            min-height: 38px;
+                            height: 38px;
+                            font-size: 13px;
+                            border-radius: 8px;
+                            padding: 6px 10px;
+                        }
+                        
+                        .dropdown-options {
+                            border-radius: 0 0 8px 8px;
+                            max-height: 250px;
+                            
+                            .dropdown-option {
+                                padding: 6px 10px;
+                                
+                                .option-content {
+                                    .option-text {
+                                        font-size: 13px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Responsive adjustments for filters
+@media (max-width: 1400px) {
+    .dashboard-filters {
+        .filter-item {
+            .filter-icon {
+                font-size: 16px;
+                margin-right: 4px;
+            }
+            
+            .filter-date-input {
+                min-width: 115px;
+            }
+            
+            &.filter-select {
+                min-width: 140px;
+            }
+        }
+    }
+}
+
+@media (max-width: 1200px) {
+    .dashboard-filters {
+        .filter-item {
+            .filter-icon {
+                font-size: 14px;
+                margin-right: 3px;
+            }
+            
+            .filter-label {
+                font-size: 9px;
+            }
+            
+            .filter-date-input {
+                min-width: 110px;
+                font-size: 12px;
+                height: 34px;
+            }
+            
+            &.filter-select {
+                min-width: 130px;
+                
+                app-select-image {
+                    ::ng-deep {
+                        .custom-select-wrapper {
+                            .select-filter-custom {
+                                min-height: 34px;
+                                height: 34px;
+                                font-size: 12px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

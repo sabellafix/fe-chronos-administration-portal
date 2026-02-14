@@ -184,7 +184,7 @@ body:not([data-sidebar-size=sm]) .app-search {
 }
 
 .page-content {
-    padding: calc(70px + 1.5rem) calc(1.5rem / 2) 0 calc(1.5rem / 2)
+    padding: calc(62px + 1.5rem) calc(1.5rem / 2) 0 calc(1.5rem / 2)
 }
 
 .header-item {
