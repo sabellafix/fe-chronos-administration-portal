@@ -135,31 +135,31 @@
 .day-cell:hover {
     background-color: transparent;
     
-    &::before {
-        content: '';
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        right: 4px;
-        bottom: 4px;
-        border: 1.5px dashed #39557a;
-        border-radius: 16px;
-        pointer-events: none;
-        transition: all 0.2s ease;
-    }
+    // &::before {
+    //     content: '';
+    //     position: absolute;
+    //     top: 4px;
+    //     left: 4px;
+    //     right: 4px;
+    //     bottom: 4px;
+    //     border: 1.5px dashed #39557a;
+    //     border-radius: 16px;
+    //     pointer-events: none;
+    //     transition: all 0.2s ease;
+    // }
     
-    &::after {
-        content: '+';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 24px;
-        font-weight: normal;
-        color: #39557a;
-        pointer-events: none;
-        transition: all 0.2s ease;
-    }
+    // &::after {
+    //     content: '+';
+    //     position: absolute;
+    //     top: 50%;
+    //     left: 50%;
+    //     transform: translate(-50%, -50%);
+    //     font-size: 24px;
+    //     font-weight: normal;
+    //     color: #39557a;
+    //     pointer-events: none;
+    //     transition: all 0.2s ease;
+    // }
 }
 
 .day-cell.has-bookings {
@@ -170,10 +170,6 @@
 .day-cell.has-bookings:hover {
     background-color: rgba(121, 34, 197, 0.2);
 }
-
-
-
-
 
 
 .calendar-monthly {
@@ -255,7 +251,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     border-right: 1px solid rgba(208, 213, 225, 0.3);
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(255, 255, 255, 0.023);
     
     &:last-child {
         border-right: none;
@@ -310,7 +306,7 @@
     // Días con bookings
     &.has-bookings {
         background-color: rgba(121, 34, 197, 0.05);
-        border-left: 2px solid #1a293c;
+        border-left: 2px solid #77879d;
     }
 }
 

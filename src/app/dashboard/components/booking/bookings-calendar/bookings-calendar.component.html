@@ -53,13 +53,13 @@
                                     <span class="d-none d-sm-block">Stylists</span>
                                 </a>
                             </li>
-                            <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
+                            <!-- <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
                                 <a class="nav-link" data-bs-toggle="tab" href="#floors" role="tab" aria-selected="false"
                                     tabindex="-1" (click)="tabActive = 'Floor'">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">Floor</span>
                                 </a>
-                            </li>
+                            </li> -->
                         </ul>
                     </div>
                 </div>
@@ -82,43 +82,49 @@
                     </div>
                 </div>
 
+
                 <div *ngIf="tabActive === 'Month'" class="col-xl-2 animated fadeIn fast">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
-                        <button (click)="changeDateCalendarMonthly(true)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
-                        <button (click)="setTodayDateCalendarMonthly()" [ngClass]="{'btn-dark': dateCalendarMonthly.getMonth() == dateNow.getMonth() && dateCalendarMonthly.getFullYear() == dateNow.getFullYear(), 'btn-light': dateCalendarMonthly.getMonth() != dateNow.getMonth() || dateCalendarMonthly.getFullYear() != dateNow.getFullYear()}" style="height: 46px !important" class="btn shadow-sm w-25">{{dateCalendarMonthly.toLocaleDateString('es-ES', { month: 'short' })}}</button>
-                        <button (click)="changeDateCalendarMonthly(false)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-right"></i></button>
+                        <button class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-plus"></i></button>
+                        <button (click)="changeDateCalendarMonthly(true)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-left"></i></button>
+                        <button (click)="setTodayDateCalendarMonthly()" [ngClass]="{'btn-dark': dateCalendarMonthly.getMonth() == dateNow.getMonth() && dateCalendarMonthly.getFullYear() == dateNow.getFullYear(), 'btn-light btn-calendar-nav': dateCalendarMonthly.getMonth() != dateNow.getMonth() || dateCalendarMonthly.getFullYear() != dateNow.getFullYear()}" class="btn shadow-sm btn-calendar-number w-25">{{dateCalendarMonthly.toLocaleDateString('es-ES', { month: 'short' })}}</button>
+                        <button (click)="changeDateCalendarMonthly(false)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-right"></i></button>
                     </div>
                 </div>
 
                 <div *ngIf="tabActive === 'Week'" class="col-xl-2 animated fadeIn fast">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
-                        <button (click)="changeDateCalendarWeekly(true)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
-                        <button (click)="setTodayDateCalendarWeekly()" [ngClass]="{'btn-dark': dateCalendarWeekly.getDate() == dateNow.getDate(), 'btn-light': dateCalendarWeekly.getDate() != dateNow.getDate()}" style="height: 46px !important" class="btn shadow-sm w-25">{{dateCalendarWeekly.getDate()}}</button>
-                        <button (click)="changeDateCalendarWeekly(false)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-right"></i></button>
+                        <button class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-plus"></i></button>
+                        <button (click)="changeDateCalendarWeekly(true)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-left"></i></button>
+                        <button (click)="setTodayDateCalendarWeekly()" [ngClass]="{'btn-dark': dateCalendarWeekly.getDate() == dateNow.getDate(), 'btn-light btn-calendar-nav': dateCalendarWeekly.getDate() != dateNow.getDate()}" class="btn shadow-sm btn-calendar-number w-25">{{dateCalendarWeekly.getDate()}}</button>
+                        <button (click)="changeDateCalendarWeekly(false)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-right"></i></button>
                     </div>
                 </div>
 
                 <div *ngIf="tabActive === 'Day'" class="col-xl-2 animated fadeIn fast">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
-                        <button (click)="changeDateCalendarDaily(true)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
-                        <button (click)="setTodayDateCalendarDaily()" [ngClass]="{'btn-dark': dateCalendarDaily.getDate() == dateNow.getDate(), 'btn-light': dateCalendarDaily.getDate() != dateNow.getDate()}" style="height: 46px !important" class="btn shadow-sm w-25">{{dateCalendarDaily.getDate()}}</button>
-                        <button (click)="changeDateCalendarDaily(false)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-right"></i></button>
+                        <button class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-plus"></i></button>
+                        <button (click)="changeDateCalendarDaily(true)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-left"></i></button>
+                        <button (click)="setTodayDateCalendarDaily()" [ngClass]="{'btn-dark': dateCalendarDaily.getDate() == dateNow.getDate(), 'btn-light btn-calendar-nav': dateCalendarDaily.getDate() != dateNow.getDate()}" class="btn shadow-sm btn-calendar-number w-25">{{dateCalendarDaily.getDate()}}</button>
+                        <button (click)="changeDateCalendarDaily(false)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-right"></i></button>
                     </div>
                 </div>
 
                 <div *ngIf="tabActive === 'Stylists'" class="col-xl-2">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
-                        <button (click)="changeDateBookingsSupplier(true)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
-                        <button (click)="setTodayDateBookingsSupplier()" [ngClass]="{'btn-dark': dateBookingsSupplier.getDate() == dateNow.getDate(), 'btn-light': dateBookingsSupplier.getDate() != dateNow.getDate()}" style="height: 46px !important" class="btn shadow-sm w-25">{{dateBookingsSupplier.getDate()}}</button>
-                        <button (click)="changeDateBookingsSupplier(false)" style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-right"></i></button>
+                        <button class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-plus"></i></button>
+                        <button (click)="changeDateBookingsSupplier(true)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-left"></i></button>
+                        <button (click)="setTodayDateBookingsSupplier()" [ngClass]="{'btn-dark': dateBookingsSupplier.getDate() == dateNow.getDate(), 'btn-light btn-calendar-nav': dateBookingsSupplier.getDate() != dateNow.getDate()}" class="btn shadow-sm btn-calendar-number w-25">{{dateBookingsSupplier.getDate()}}</button>
+                        <button (click)="changeDateBookingsSupplier(false)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-right"></i></button>
                     </div>
                 </div>
 
                 <div *ngIf="tabActive === 'Floor'" class="col-xl-2 animated fadeIn fast">
                     <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
-                        <button style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-left"></i></button>
-                        <button style="height: 46px !important" class="btn btn-light shadow-sm w-25">First Floor</button>
-                        <button style="height: 46px !important" class="btn btn-light shadow-sm"><i class="bx bx-chevron-right"></i></button>
+                        <button class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-plus"></i></button>
+                        <button class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-left"></i></button>
+                        <button class="btn btn-light shadow-sm btn-calendar-nav w-25">First Floor</button>
+                        <button class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-right"></i></button>
                     </div>
                 </div>
 
@@ -128,9 +134,9 @@
 </div>
 
 <div *ngIf="!loading" class="calendar-content">
-    <app-calendar-monthly *ngIf="hasPermission('bookings.monthly')" [ngStyle]="{'display': tabActive === 'Month' ? 'block' : 'none' }"  [date]="dateCalendarMonthly" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" ></app-calendar-monthly>
-    <app-calendar-weekly *ngIf="hasPermission('bookings.weekly')" [ngStyle]="{'display': tabActive === 'Week' ? 'block' : 'none' }"  [date]="dateCalendarWeekly"  [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-weekly>
-    <app-calendar-daily *ngIf="hasPermission('bookings.daily')" [ngStyle]="{'display': tabActive === 'Day' ? 'block' : 'none' }"  [date]="dateCalendarDaily" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-calendar-daily>
-    <app-bookings-supplier *ngIf="hasPermission('bookings.calendar')" [ngStyle]="{'display': tabActive === 'Stylists' ? 'block' : 'none' }"  [date]="dateBookingsSupplier" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users"></app-bookings-supplier>    
-    <app-calendar-floor [ngStyle]="{'display': tabActive === 'Floor' ? 'block' : 'none' }"></app-calendar-floor>
+    <app-calendar-monthly *ngIf="hasPermission('bookings.monthly')" [ngStyle]="{'display': tabActive === 'Month' ? 'block' : 'none' }"  [date]="dateCalendarMonthly" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" [salonId]="selectedSalonId"></app-calendar-monthly>
+    <app-calendar-weekly *ngIf="hasPermission('bookings.weekly')" [ngStyle]="{'display': tabActive === 'Week' ? 'block' : 'none' }"  [date]="dateCalendarWeekly"  [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" [salonId]="selectedSalonId"></app-calendar-weekly>
+    <app-calendar-daily *ngIf="hasPermission('bookings.daily')" [ngStyle]="{'display': tabActive === 'Day' ? 'block' : 'none' }"  [date]="dateCalendarDaily" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" [salonId]="selectedSalonId"></app-calendar-daily>
+    <app-bookings-supplier *ngIf="hasPermission('bookings.calendar')" [ngStyle]="{'display': tabActive === 'Stylists' ? 'block' : 'none' }"  [date]="dateBookingsSupplier" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" [salonId]="selectedSalonId"></app-bookings-supplier>    
+    <!-- <app-calendar-floor [ngStyle]="{'display': tabActive === 'Floor' ? 'block' : 'none' }"></app-calendar-floor> -->
 </div>

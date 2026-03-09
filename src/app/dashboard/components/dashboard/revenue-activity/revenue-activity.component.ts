@@ -82,11 +82,11 @@ export class RevenueActivityComponent implements OnChanges {
         ...this.areaChartOptions,
         series: [
           {
-            name: 'Current Week',
+            name: 'Current Period',
             data: currentData
           },
           {
-            name: 'Previous Week',
+            name: 'Previous Period',
             data: previousData
           }
         ],

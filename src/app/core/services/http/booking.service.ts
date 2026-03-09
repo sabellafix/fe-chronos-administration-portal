@@ -109,24 +109,33 @@ export class BookingService {
     }
 
 
-    getByMonth(dateToSearch: Date): Observable<Booking[]> {
+    getByMonth(dateToSearch: Date, salonId?: string): Observable<Booking[]> {
         const url = `${this.apiUrl}/${this.controller}/get-by-month`;
         const formattedDate = `${dateToSearch.getFullYear()}/${dateToSearch.getMonth() + 1}/${dateToSearch.getDate()}`;
-        const params = new HttpParams().set('month', formattedDate);
+        let params = new HttpParams().set('month', formattedDate);
+        if (salonId) {
+            params = params.set('salonId', salonId);
+        }
         return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params });
     }
 
-    getByWeek(dateToSearch: Date): Observable<Booking[]> {
+    getByWeek(dateToSearch: Date, salonId?: string): Observable<Booking[]> {
         const url = `${this.apiUrl}/${this.controller}/get-by-week`;
         const formattedDate = `${dateToSearch.getFullYear()}/${dateToSearch.getMonth() + 1}/${dateToSearch.getDate()}`;
-        const params = new HttpParams().set('week', formattedDate);
+        let params = new HttpParams().set('week', formattedDate);
+        if (salonId) {
+            params = params.set('salonId', salonId);
+        }
         return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params });
     }
      
-    getByDay(dateToSearch: Date): Observable<Booking[]> {
+    getByDay(dateToSearch: Date, salonId?: string): Observable<Booking[]> {
         const url = `${this.apiUrl}/${this.controller}/get-by-day`;
         const formattedDate = `${dateToSearch.getFullYear()}/${dateToSearch.getMonth() + 1}/${dateToSearch.getDate()}`;
-        const params = new HttpParams().set('day', formattedDate);
+        let params = new HttpParams().set('day', formattedDate);
+        if (salonId) {
+            params = params.set('salonId', salonId);
+        }
         return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params });
     }
 

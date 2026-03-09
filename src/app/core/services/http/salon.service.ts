@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { StorageService } from '../shared/storage.service';
 import { Salon } from '@app/core/models/bussiness/salon';
+import { User } from '@app/core/models/bussiness/user';
 import { CreateSalonDto } from '@app/core/models/bussiness/create-dtos';
 import { UpdateSalonDto } from '@app/core/models/bussiness/update-dtos';
 
@@ -18,8 +19,12 @@ export class SalonService {
     token: string = "";
 
     constructor(private http: HttpClient, private storageService: StorageService) {
-        this.token = this.storageService.get(StorageKeyConst._TOKEN)!; 
-     }
+        this.refreshToken();
+    }
+
+     refreshToken(): void {
+        this.token = this.storageService.get(StorageKeyConst._TOKEN) || '';
+    }
 
     private getHttpOptions() {
         return {
@@ -56,5 +61,12 @@ export class SalonService {
         const url = `${this.apiUrl}/${this.controller}/delete-salon/${id}`;
         return this.http.delete<void>(url, this.getHttpOptions());
     } 
-    
+
+    getUsersBySalon(salonId: string, userRole?: string): Observable<User[]> {
+        let url = `${this.apiUrl}/${this.controller}/get-users/${salonId}`;        
+        if (userRole) {
+            url += `?userRole=${userRole}`;
+        }        
+        return this.http.get<User[]>(url, this.getHttpOptions());
+    }
 } 

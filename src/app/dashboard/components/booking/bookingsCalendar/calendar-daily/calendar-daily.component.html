@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-lg-8 offset-lg-2">
+    <div class="col-lg-6 offset-lg-3">
         <div class="calendar-canvas calendar-daily mt-0 no-border no-box-shadow animated fadeIn fast" id="calendar-daily-header">
             <div class="calendar-container">
                 <table class="calendar-table">
@@ -72,7 +72,7 @@
                                         <ng-container *ngFor="let booking of cellBookings; let i = index; trackBy: trackByBooking">
                                             <app-card-booking 
                                                 [booking]="booking" 
-                                                [size]="'md'"
+                                                [size]="'lg'"
                                                 [absolutePosition]="true"
                                                 [topPosition]="getBookingTopPosition(booking)"
                                                 [leftOffset]="getBookingLeftOffset(booking, cellBookings)"

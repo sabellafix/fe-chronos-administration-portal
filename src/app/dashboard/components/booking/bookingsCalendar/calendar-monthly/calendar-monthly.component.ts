@@ -23,6 +23,7 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
   @Input('services') services: Service[] = [];
   @Input('stylists') stylists: User[] = [];
   @Input('users') users: User[] = [];
+  @Input('salonId') salonId: string | null = null;
 
   dateNow: Date = new Date(); 
   currentMonth: Date = new Date();
@@ -45,6 +46,9 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
     if (changes['date'] && !changes['date'].firstChange) {
       this.updateCurrentMonth();
       this.generateMonthDays();
+      this.loadBookingsForCurrentMoenth();
+    }
+    if (changes['salonId'] && !changes['salonId'].firstChange) {
       this.loadBookingsForCurrentMoenth();
     }
     if((changes['services'] && !changes['services'].firstChange) || 
@@ -245,7 +249,7 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
     this.isLoadingBookings = true;
     const month = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), 1);
 
-    const bookingsSubscription = this.bookingService.getByMonth(month).subscribe({
+    const bookingsSubscription = this.bookingService.getByMonth(month, this.salonId ?? undefined).subscribe({
       next: (allBookings: Booking[]) => {
         this.bookings = allBookings;
         this.bookings.map(booking => {

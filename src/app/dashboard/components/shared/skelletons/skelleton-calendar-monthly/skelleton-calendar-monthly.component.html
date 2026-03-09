@@ -1,0 +1,36 @@
+<div class="skeleton-calendar-monthly">
+    <div class="skeleton-grid">
+        <div class="skeleton-week" *ngFor="let week of weeks">
+            <div class="skeleton-day-cell" *ngFor="let day of weekDays">
+                <!-- Número del día -->
+                <div class="day-number">
+                    <ngx-skeleton-loader
+                        count="1"
+                        appearance="line"
+                        [theme]="{
+                            'height': '16px',
+                            'width': '20px',
+                            'margin-bottom': '0',
+                            'border-radius': '4px'
+                        }">
+                    </ngx-skeleton-loader>
+                </div>
+
+                <!-- Bookings placeholder (aleatorio) -->
+                <div class="day-bookings" *ngIf="shouldShowBookings(week, day)">
+                    <ngx-skeleton-loader
+                        *ngFor="let booking of getRandomBookings()"
+                        count="1"
+                        appearance="line"
+                        [theme]="{
+                            'height': '22px',
+                            'width': '100%',
+                            'margin-bottom': '4px',
+                            'border-radius': '4px'
+                        }">
+                    </ngx-skeleton-loader>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

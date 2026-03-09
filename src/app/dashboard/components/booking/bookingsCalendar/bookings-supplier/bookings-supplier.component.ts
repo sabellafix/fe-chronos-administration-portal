@@ -29,6 +29,7 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
   @Input('services') services: Service[] = [];
   @Input('stylists') stylists: User[] = [];
   @Input('users') users: User[] = [];
+  @Input('salonId') salonId: string | null = null;
   dateNow: Date = new Date();
   bookings: Booking[] = [];
   bookingsFiltered: Booking[] = [];
@@ -51,6 +52,9 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['date'] && !changes['date'].firstChange) {
+      this.loadBookingsForCurrentDay();
+    }
+    if (changes['salonId'] && !changes['salonId'].firstChange) {
       this.loadBookingsForCurrentDay();
     }
     if((changes['services'] && !changes['services'].firstChange) || 
@@ -184,7 +188,7 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
   private loadBookingsForCurrentDay(): void {
     this.isLoadingBookings = true;
 
-    const bookingsSubscription = this.bookingService.getByDay(this.date).subscribe({
+    const bookingsSubscription = this.bookingService.getByDay(this.date, this.salonId ?? undefined).subscribe({
       next: (allBookings: Booking[]) => {
         this.bookings = allBookings;
         this.bookings.map(booking => {

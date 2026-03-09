@@ -25,6 +25,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
   @Input('services') services: Service[] = [];
   @Input('stylists') stylists: User[] = [];
   @Input('users') users: User[] = [];
+  @Input('salonId') salonId: string | null = null;
   
   dateNow : Date = new Date();
   dates: DateItem[] = [];
@@ -53,6 +54,9 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
       this.updateDates();
       this.loadBookingsForCurrentWeek();
       this.loadBlockedTimesForSingleStylist();
+    }
+    if (changes['salonId'] && !changes['salonId'].firstChange) {
+      this.loadBookingsForCurrentWeek();
     }
     if((changes['services'] && !changes['services'].firstChange) || 
        (changes['stylists'] && !changes['stylists'].firstChange)){
@@ -283,7 +287,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     if (this.dates.length === 0) return;
     this.isLoadingBookings = true;
 
-    const bookingsSubscription = this.bookingService.getByWeek(this.dates[0].date).subscribe({
+    const bookingsSubscription = this.bookingService.getByWeek(this.dates[0].date, this.salonId ?? undefined).subscribe({
       next: (allBookings: Booking[]) => {
         this.bookings = allBookings;
         this.bookings.map(booking => {

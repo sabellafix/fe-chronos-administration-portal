@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BookingService } from '@app/core/services/http/booking.service';
 import { CustomerService } from '@app/core/services/http/customer.service';
 import { ServiceService } from '@app/core/services/http/platform-service.service';
+import { SalonService } from '@app/core/services/http/salon.service';
 import { UserService } from '@app/core/services/http/user.service';
 import { TokenRefreshService } from '@app/core/services/shared/token-refresh.service';
 
@@ -15,6 +16,7 @@ export class DashboardInitializerService {
     private customerService: CustomerService,
     private serviceService: ServiceService,
     private userService: UserService,
+    private salonService: SalonService,
     private tokenRefreshService: TokenRefreshService
   ) {
     this.tokenRefreshService.tokenUpdated$.subscribe(() => {
@@ -36,6 +38,7 @@ export class DashboardInitializerService {
     this.customerService.refreshToken();
     this.serviceService.refreshToken();
     this.userService.refreshToken();
+    this.salonService.refreshToken();
   }
 
   static initializeFactory(dashboardInitializer: DashboardInitializerService) {

@@ -144,3 +144,13 @@ body[data-sidebar-size=sm] .calend-header {
 .custom-select-wrapper:not(:has(.service-color-indicator-left)) .select-filter-custom {
     padding-left: 12px;
 }
+
+// Botón de navegación del calendario
+.btn-calendar-nav {
+    height: 46px !important;
+    border-color: rgb(239, 240, 242) !important;
+}
+
+.btn-calendar-number {
+    height: 46px !important;
+}

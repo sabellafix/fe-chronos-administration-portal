@@ -1,0 +1,40 @@
+.skeleton-calendar-monthly {
+    width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    
+
+
+    .skeleton-grid {
+        .skeleton-week {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            border-bottom: 1px solid #e9ecef;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            .skeleton-day-cell {
+                min-height: 140px;
+                padding: 8px;
+                border-right: 1px solid #e9ecef;
+
+                &:last-child {
+                    border-right: none;
+                }
+
+                .day-number {
+                    margin-bottom: 8px;
+                }
+
+                .day-bookings {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2px;
+                }
+            }
+        }
+    }
+}

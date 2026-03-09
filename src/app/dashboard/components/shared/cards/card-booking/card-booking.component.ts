@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Booking } from '@app/core/models/bussiness';
+import { BookingStatus } from '@app/core/models/bussiness/enums';
 
 @Component({
   selector: 'app-card-booking',
@@ -8,7 +9,7 @@ import { Booking } from '@app/core/models/bussiness';
 })
 export class CardBookingComponent {
   @Input() booking!: Booking;
-  @Input() size: 'sm' | 'md' = 'md';  
+  @Input() size: 'sm' | 'md' | 'lg' = 'md';  
   
   // Inputs para posicionamiento absoluto (opcional - solo para calendario semanal)
   @Input() absolutePosition?: boolean = false;
@@ -22,6 +23,13 @@ export class CardBookingComponent {
   
   // Estado del menú desplegable
   showDropdownMenu: boolean = false;
+
+
+  ngOnInit(): void {
+    if(!this.booking.user.firstName) {
+      console.log(this.booking);
+    }
+  }
 
   getBookingTooltip(booking: Booking): string {
     const services = booking.services?.map(s => s.serviceName).join(', ') || 'Sin servicios';
@@ -38,6 +46,18 @@ export class CardBookingComponent {
 
     // 60 minutos = 80px de altura
     const pixelsPerMinute = 80 / 60; // 1.333... px por minuto
+    const calculatedHeight = Math.round(this.booking.durationMinutes * pixelsPerMinute);
+
+    return `${calculatedHeight}px`;
+  }
+
+  getProportionalHeightLg(): string {
+    if (this.size !== 'lg' || !this.booking) {
+      return 'auto';
+    }
+
+    // Para LG: 60 minutos = 120px de altura (más espacio que md)
+    const pixelsPerMinute = 120 / 60; // 2px por minuto
     const calculatedHeight = Math.round(this.booking.durationMinutes * pixelsPerMinute);
 
     return `${calculatedHeight}px`;
@@ -112,5 +132,35 @@ export class CardBookingComponent {
     event.stopPropagation();
     this.hideDropdownMenu();
     // TODO: Implementar lógica de eliminar
+  }
+
+  /**
+   * Obtiene el texto del estado del booking
+   */
+  getStatusText(): string {
+    const statusMap: { [key: number]: string } = {
+      [BookingStatus.Pending]: 'Pendiente',
+      [BookingStatus.Confirmed]: 'Confirmado',
+      [BookingStatus.InProgress]: 'En Progreso',
+      [BookingStatus.Completed]: 'Completado',
+      [BookingStatus.Cancelled]: 'Cancelado',
+      [BookingStatus.NoShow]: 'No Show'
+    };
+    return statusMap[this.booking.status] || 'Desconocido';
+  }
+
+  /**
+   * Obtiene la clase CSS para el estado del booking
+   */
+  getStatusClass(): string {
+    const classMap: { [key: number]: string } = {
+      [BookingStatus.Pending]: 'status-pending',
+      [BookingStatus.Confirmed]: 'status-confirmed',
+      [BookingStatus.InProgress]: 'status-inprogress',
+      [BookingStatus.Completed]: 'status-completed',
+      [BookingStatus.Cancelled]: 'status-cancelled',
+      [BookingStatus.NoShow]: 'status-noshow'
+    };
+    return classMap[this.booking.status] || '';
   }
 }

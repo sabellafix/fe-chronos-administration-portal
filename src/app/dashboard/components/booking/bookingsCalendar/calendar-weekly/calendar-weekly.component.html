@@ -103,7 +103,7 @@
                             </ng-container>
 
                             <!-- Mostrar tiempos bloqueados solo cuando hay un estilista seleccionado -->
-                            <ng-container *ngIf="stylists.length === 1 && getBlockedTimesForDateTime(date.date, hour) as cellBlockedTimes">
+                            <!-- <ng-container *ngIf="stylists.length === 1 && getBlockedTimesForDateTime(date.date, hour) as cellBlockedTimes">
                                 <ng-container *ngFor="let blockedTime of cellBlockedTimes; let i = index">
                                     <div class="blocked-time-card"
                                          [style.top]="getBlockedTimeTopPosition(blockedTime)"
@@ -114,7 +114,7 @@
                                         </div>
                                     </div>
                                 </ng-container>
-                            </ng-container>
+                            </ng-container> -->
                         </div>
                     </td>
                 </tr>

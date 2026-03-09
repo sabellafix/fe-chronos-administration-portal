@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subject, takeUntil, forkJoin } from 'rxjs';
-import { SalonStateService } from '@app/core/services/shared/salon-state.service';
+import { Subject, takeUntil, forkJoin, filter } from 'rxjs';
 import { DashboardService } from '@app/core/services/http/dashboard.service';
 import { StorageService } from '@app/core/services/shared/storage.service';
 import { WaitService } from '@app/core/services/shared/wait.service';
@@ -55,7 +54,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private readonly CACHE_DELAY_MS = 1000;
 
   constructor(
-    private salonStateService: SalonStateService,
     private dashboardService: DashboardService,
     private storageService: StorageService,
     private waitService: WaitService,
@@ -63,40 +61,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Inicializar fechas desde el servicio de filtros
-    const initialFilters = this.dashboardFiltersService.getCurrentFilters();
-    this.startDateFilter = initialFilters.startDate;
-    this.endDateFilter = initialFilters.endDate;
+    // alert("ngOnInit dashboard component");
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    this.startDateFilter = startOfMonth;
+    this.endDateFilter = endOfMonth;
 
-    // Suscribirse al salón seleccionado
-    this.salonStateService.selectedSalon$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(salon => {
-        if (salon != null) {
-          this.selectedSalon = salon;
-          this.loadServices();
-        }
-      });
-
-    // Suscribirse a los cambios de filtros del topbar
+    // Suscripción única a todos los cambios de filtros del topbar
     this.dashboardFiltersService.filters$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(filters => filters.selectedSalon !== null)
+      )
       .subscribe(filters => {
         this.startDateFilter = filters.startDate;
         this.endDateFilter = filters.endDate;
-        
-        // Actualizar visibilidad del panel de estilista
+        this.selectedSalon = filters.selectedSalon;
         this.selectedStylist = filters.selectedStylist;
         this.isStylistPanelVisible = filters.selectedStylist !== null;
         
-        // Solo recargar si hay un salón seleccionado
-        if (this.selectedSalon) {
-          this.loadServices();
-        }
+        this.loadServices();
       });
   }
 
   async loadServices(): Promise<void> {
+    // alert("loadServices");
     if (!this.selectedSalon || !this.selectedSalon.id) {
       console.warn('No salon selected');
       return;
@@ -223,13 +214,4 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  switchView(view: 'calendar' | 'chart'): void {
-    this.currentView = view;
-  }
-
-  onDateRangeChange(startDate: Date, endDate: Date): void {
-    this.startDateFilter = startDate;
-    this.endDateFilter = endDate;
-    this.loadServices();
-  }
 }

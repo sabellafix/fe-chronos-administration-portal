@@ -4,11 +4,13 @@ import { CustomerService } from '@app/core/services/http/customer.service';
 
 import { ServiceService } from '@app/core/services/http/platform-service.service';
 import { UserService } from '@app/core/services/http/user.service';
+import { SalonService } from '@app/core/services/http/salon.service';
 import { VisualOption } from '@app/core/models/interfaces/option.interface';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { RolesConst } from '@app/core/models/constants/roles.const';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { Permission } from '@app/core/models/bussiness/permission';
+import { DashboardFiltersService } from '@app/core/services/shared/dashboard-filters.service';
 
 @Component({
   selector: 'app-bookings-calendar',
@@ -17,7 +19,7 @@ import { Permission } from '@app/core/models/bussiness/permission';
 })
 export class BookingsCalendarComponent implements OnInit, OnDestroy {
 
-  tabs: string[] = ['Month', 'Week', 'Day',  'Floor'];
+  tabs: string[] = ['Month', 'Week', 'Day'];
   tabActive: string = 'Month';
   tabIndex: number = 1;
   dateNow: Date = new Date();
@@ -49,12 +51,17 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
 
   user: User | null = null;
   permissions: Permission[] = [];
+  selectedSalonId: string | null = null;
+  
+  private destroy$: Subject<void> = new Subject<void>();
 
   constructor(
     private userService: UserService,
     private customerService: CustomerService,
     private serviceService: ServiceService, 
-    private authService: AuthService, 
+    private authService: AuthService,
+    private dashboardFiltersService: DashboardFiltersService,
+    private salonService: SalonService
   ) {
     this.user = this.authService.getUserLogged();
     this.permissions = this.authService.getPermissionsLogged();
@@ -65,12 +72,71 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initStickyHeader();
+    this.subscribeToSalonChanges();
   }
 
   ngOnDestroy(): void {
     if (this.scrollListener) {
       window.removeEventListener("scroll", this.scrollListener);
     }
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private subscribeToSalonChanges(): void {
+    this.dashboardFiltersService.selectedSalon$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(salon => {
+        this.selectedSalonId = salon?.id ?? null;
+        this.resetFiltersOnSalonChange();
+        this.loadStylistsBySalon();
+      });
+  }
+
+  private resetFiltersOnSalonChange(): void {
+    this.serviceSelected = new Service();
+    this.stylistSelected = new User();
+    this.servicesSelected = [];
+    this.stylistsSelected = [];
+  }
+
+  private loadStylistsBySalon(): void {
+    if (!this.selectedSalonId) {
+      this.stylists = [];
+      this.users = [];
+      this.prepareStylistOptions();
+      return;
+    }
+
+    this.salonService.getUsersBySalon(this.selectedSalonId, RolesConst._STYLIST)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (stylists) => {
+          this.stylists = stylists.filter(s => s.isActive);
+          this.users = this.stylists;
+          
+          this.stylists.forEach(stylist => {
+            if (!stylist.photo) {
+              stylist.photo = this.imageUser;
+            }
+          });
+          
+          this.prepareStylistOptions();
+        },
+        error: (error) => {
+          console.error('Error loading stylists by salon:', error);
+        }
+      });
+  }
+
+  private prepareStylistOptions(): void {
+    this.stylistOptions = this.stylists.map(stylist => ({
+      id: stylist.id,
+      name: `${stylist.firstName} ${stylist.lastName}`,
+      code: stylist.id,
+      imageUrl: stylist.photo,
+      selected: false
+    }));
   }
 
   private initStickyHeader(): void {
@@ -93,19 +159,10 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
     this.loading = true;
     forkJoin([
       this.serviceService.getAllServices(),
-      this.userService.getUsersByRole(RolesConst._STYLIST),
       this.customerService.getAllCustomers()
-    ]).subscribe(([services, stylists, customers]) => {
+    ]).subscribe(([services, customers]) => {
       this.services = services;
-      this.stylists = stylists;
-      this.users = stylists;
       this.customers = customers;
-
-      this.stylists.map(stylist => {
-        if(!stylist.photo){
-          stylist.photo = this.imageUser;
-        }
-      });
       
       this.prepareSelectOptions();
       
@@ -118,7 +175,6 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   }
 
   private prepareSelectOptions(): void {
-    // Convertir servicios a VisualOption
     this.serviceOptions = this.services.map(service => ({
       id: service.id,
       name: service.serviceName || '',
@@ -127,16 +183,8 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
       selected: false
     }));
 
-    // Convertir stylists a VisualOption (puedes agregar imageUrl si tienes fotos de usuarios)
-    this.stylistOptions = this.stylists.map(stylist => ({
-      id: stylist.id,
-      name: `${stylist.firstName} ${stylist.lastName}`,
-      code: stylist.id,
-      imageUrl: stylist.photo,
-      selected: false
-    }));
+    this.prepareStylistOptions();
 
-    // Convertir customers a VisualOption
     this.customerOptions = this.customers.map(customer => ({
       id: customer.id,
       name: `${customer.firstName} ${customer.lastName}`,

@@ -23,6 +23,7 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
   @Input('services') services: Service[] = [];
   @Input('stylists') stylists: User[] = [];
   @Input('users') users: User[] = [];
+  @Input('salonId') salonId: string | null = null;
   dateNow : Date = new Date();
   dates: DateItem[] = [];
   activeDate: DateItem = new DateItem();
@@ -45,7 +46,10 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['date'] && !changes['date'].firstChange) {
       this.updateDates();
-      this.loadBookingsForCurrentWeek();
+      this.loadBookingsForCurrentDay();
+    }
+    if (changes['salonId'] && !changes['salonId'].firstChange) {
+      this.loadBookingsForCurrentDay();
     }
     if((changes['services'] && !changes['services'].firstChange) || 
        (changes['stylists'] && !changes['stylists'].firstChange)){
@@ -57,7 +61,7 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
     this.updateDates();
     this.initStickyHeader();
     this.subscribeToBookingService();
-    this.loadBookingsForCurrentWeek();
+    this.loadBookingsForCurrentDay();
   }
 
   ngOnDestroy(): void {
@@ -253,11 +257,11 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
     this.loadBookings();
   }
 
-  private loadBookingsForCurrentWeek(): void {
+  private loadBookingsForCurrentDay(): void {
     if (this.dates.length === 0) return;
     this.isLoadingBookings = true;
 
-    const bookingsSubscription = this.bookingService.getByWeek(this.dates[0].date).subscribe({
+    const bookingsSubscription = this.bookingService.getByDay(this.dates[0].date, this.salonId ?? undefined).subscribe({
       next: (allBookings: Booking[]) => {
         this.bookings = allBookings;
         this.bookings.map(booking => {
@@ -278,9 +282,9 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
         this.isLoadingBookings = false;
       },
       error: (error) => {
-        console.error('Error al cargar bookings de la semana:', error);
+        console.error('Error al cargar bookings del día:', error);
         this.isLoadingBookings = false;
-        this.snackBar.open('Error al cargar las citas de la semana', 'Cerrar', {
+        this.snackBar.open('Error al cargar las citas del día', 'Cerrar', {
           duration: 5000,
           panelClass: 'snackbar-error'
         });
@@ -309,7 +313,7 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
 
   refreshCalendar(): void {
     this.dates = this.getDates();
-    this.loadBookingsForCurrentWeek();
+    this.loadBookingsForCurrentDay();
   }
 
   getBookingsForDateTime(date: Date, hour: number): Booking[] {

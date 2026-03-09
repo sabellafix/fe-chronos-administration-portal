@@ -20,13 +20,9 @@
 <div style="margin-top: 52px !important" class="calendar-canvas calendar-body mt-0 no-border no-box-shadow animated fadeIn fast">
     <div class="calendar-container">
 
-        <!-- Indicador de carga -->
-        <!-- <div *ngIf="isLoadingBookings" class="d-flex justify-content-center align-items-center p-4">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando citas...</span>
-            </div>
-            <span class="ms-2 text-muted">Cargando citas...</span>
-        </div> -->
+        <div *ngIf="isLoadingBookings" class="animated fadeIn fast" style="padding-left: 5%;">
+           <app-skelleton-calendar-monthly></app-skelleton-calendar-monthly>
+        </div>
 
         <table class="calendar-table animated fadeIn fast" *ngIf="!isLoadingBookings">
             <tbody>
@@ -39,11 +35,10 @@
                         [class.today]="dayItem.isToday"
                         [class.other-month]="!dayItem.isCurrentMonth"
                         [class.disabled]="dayItem.isDisabled"
-                        [class.has-bookings]="hasBookings(dayItem.date)"
+                        [class.has-bookings]="hasBookings(dayItem.date) && dayItem.isCurrentMonth"
                         (click)="!dayItem.isDisabled && openBookingModal(dayItem.date)">
                         
-                        <div class="day-content">
-                            <!-- Badge de total diario -->
+                        <div *ngIf="dayItem.isCurrentMonth" class="day-content">
                             <div class="daily-total-badge" *ngIf="hasBookings(dayItem.date)">
                                 ${{getDailyTotal(dayItem.date) | number:'1.0-0'}}
                             </div>

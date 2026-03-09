@@ -50,29 +50,38 @@
         </div>
 
         <div class="d-flex align-items-center">
-            <div *ngIf="isDashboardRoute" class="dashboard-filters d-none d-lg-flex align-items-center me-3 animated fadeIn fast">
+            <app-skelleton-top-bar *ngIf="loadingSalons && isDashboardRoute"></app-skelleton-top-bar>
+            <div *ngIf="isDashboardRoute && !loadingSalons" class="dashboard-filters d-none d-lg-flex align-items-center me-3 animated fadeIn fast">
                 
-                <div class="filter-item me-2">
-                    <input 
-                        type="date" 
-                        class="filter-date-input"
-                        [value]="startDate"
-                        [max]="getMaxStartDate()"
-                        (change)="onStartDateChange($event)"
-                        title="Start date">
-                </div>
+                <!-- Date Range Filter -->
+                <ng-container *ngIf="filterVisibility.showDateRange">
+                    <div class="filter-item me-2">
+                        <i class="bx bx-log-in-circle filter-icon"></i>
+                        <input 
+                            type="date" 
+                            class="filter-date-input"
+                            [(ngModel)]="startDate"
+                            [max]="getMaxStartDate()"
+                            title="Start date">
+                    </div>
+                    
+                    <div class="filter-item me-2">
+                        <i class="bx bx-log-out-circle filter-icon"></i>
+                        <input 
+                            type="date" 
+                            class="filter-date-input"
+                            [(ngModel)]="endDate"
+                            [min]="getMinEndDate()"
+                            title="End date">
+                    </div>
+
+                    <button type="button" class="btn btn-outline-secondary waves-effect" (click)="applyDateFilters()">
+                        <i class="bx bx-search-alt"></i>
+                    </button>
+                </ng-container>
                 
-                <div class="filter-item me-2">
-                    <input 
-                        type="date" 
-                        class="filter-date-input"
-                        [value]="endDate"
-                        [min]="getMinEndDate()"
-                        (change)="onEndDateChange($event)"
-                        title="End date">
-                </div>
-                
-                <div style="width: 240px;" class="filter-item filter-select me-2">
+                <!-- Stylist Filter -->
+                <div *ngIf="filterVisibility.showStylist" style="width: 240px;" class="filter-item filter-select me-2">
                     <i class="bx bx-face filter-icon"></i>
                     <app-select-image
                         [options]="stylistOptions"
@@ -85,12 +94,9 @@
                         (singleSelectionChange)="onStylistSingleSelectionChange($event)">
                     </app-select-image>
                 </div>
-
-                <!-- <button type="button" class="btn btn-dark" >
-                    <i class="bx bx-search-alt"></i>
-                </button> -->
                 
-                <div style="width: 240px;" class="filter-item filter-select">
+                <!-- Salon Filter -->
+                <div *ngIf="filterVisibility.showSalon" style="width: 240px;" class="filter-item filter-select">
                     <i class="bx bx-store filter-icon"></i>
                     <app-select-image
                         [options]="salonOptions"

@@ -110,6 +110,8 @@ import { ProductsDetailComponent } from './components/ecomerce/products-detail/p
 import { ProductsCreateComponent } from './components/ecomerce/products-create/products-create.component';
 import { TableFinderComponent } from './components/shared/table-finder/table-finder.component';
 import { BookingsListComponent } from './components/booking/bookings-list/bookings-list.component';
+import { SkelletonTopBarComponent } from './components/shared/skelletons/skelleton-top-bar/skelleton-top-bar.component';
+import { SkelletonCalendarMonthlyComponent } from './components/shared/skelletons/skelleton-calendar-monthly/skelleton-calendar-monthly.component';
 
 
 const routes: Routes = [
@@ -316,6 +318,8 @@ const routes: Routes = [
     ProductsCreateComponent,
     TableFinderComponent,
     BookingsListComponent,
+    SkelletonTopBarComponent,
+    SkelletonCalendarMonthlyComponent,
   ],
   imports: [
     CommonModule,
