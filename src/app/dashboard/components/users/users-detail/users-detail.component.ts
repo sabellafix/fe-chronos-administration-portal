@@ -28,6 +28,7 @@ export class UsersDetailComponent implements OnDestroy {
   loading: boolean = true;
   charge: boolean = false;
   hasChanged : boolean = false;
+  showBadgesServices: boolean = false;
   pagination: Pagination = { offset: 0, limit: 100, items: 0, filters: ``, sort: 'id,desc' };
   send: boolean = false;
   response? : Response;
@@ -46,7 +47,11 @@ export class UsersDetailComponent implements OnDestroy {
   loadingServices: boolean = false;
   
   dateRangeForm: FormGroup;
+  startDateControl: FormControl = new FormControl('');
+  endDateControl: FormControl = new FormControl('');
+  allBookings: Booking[] = [];
   filteredBookings: Booking[] = [];
+  selectedServiceIds: string[] = [];
   loadingBookings: boolean = false;
   maxDate: string = '';
   activeStartDate: string = '';
@@ -74,14 +79,14 @@ export class UsersDetailComponent implements OnDestroy {
       userRole : new FormControl("", Validators.required),
     });
 
-    // Inicializar formulario de filtro de fechas
     this.dateRangeForm = new FormGroup({
-      startDate: new FormControl(''),
-      endDate: new FormControl('')
+      startDate: this.startDateControl,
+      endDate: this.endDateControl
     });
 
-    // Establecer fecha máxima (hoy)
     this.maxDate = new Date().toISOString().split('T')[0];
+    
+    this.initializeDateFilters();
 
     this.route.params.subscribe(params => { if (params['id']) this.id = params['id'] });
 
@@ -104,7 +109,6 @@ export class UsersDetailComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Limpiar timeout para evitar memory leaks
     if (this.filterTimeout) {
       clearTimeout(this.filterTimeout);
     }
@@ -223,9 +227,10 @@ export class UsersDetailComponent implements OnDestroy {
       this.serviceService.getServicesByProvider(this.user.id).subscribe({
         next: (data: Service[]) => {
           this.services = data;
-          this.filteredServices = [...data]; // Inicializar servicios filtrados con todos los servicios
+          this.filteredServices = [...data];
           this.loadingServices = false;
           this.servicesOptions = this.services.map(service => ({ id: service.id, name: service.serviceName || '', color: service.color || undefined }));
+          this.loadBookings();
         },
         error: (error: any) => {
           this.loadingServices = false;
@@ -263,9 +268,30 @@ export class UsersDetailComponent implements OnDestroy {
     return service.isActive ? 'badge-success' : 'badge-secondary';
   }
 
+  private initializeDateFilters(): void {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    this.startDateControl.setValue(this.formatDateForInput(startOfMonth));
+    this.endDateControl.setValue(this.formatDateForInput(endOfMonth));
+  }
+  
+  private formatDateForInput(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+
+  getMaxStartDate(): string {
+    return this.endDateControl.value || this.maxDate;
+  }
+  
+  getMinEndDate(): string {
+    return this.startDateControl.value ?? '';
+  }
+
   isValidDateRange(): boolean {
-    const startDate = this.dateRangeForm.get('startDate')?.value;
-    const endDate = this.dateRangeForm.get('endDate')?.value;
+    const startDate = this.startDateControl.value;
+    const endDate = this.endDateControl.value;
     
     if (!startDate && !endDate) {
       return true;
@@ -279,95 +305,47 @@ export class UsersDetailComponent implements OnDestroy {
   }
 
   onDateChange(): void {
-    if (this.filterTimeout) {
-      clearTimeout(this.filterTimeout);
-    }
+    const startDate = this.startDateControl.value;
+    const endDate = this.endDateControl.value;
     
-    this.filterTimeout = setTimeout(() => {
-      this.applyDateFilter();
-    }, 500);
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      
+      if (start > end) {
+        this.endDateControl.setValue(startDate);
+      }
+    }
   }
 
   applyDateFilter(): void {
-    const startDate = this.dateRangeForm.get('startDate')?.value;
-    const endDate = this.dateRangeForm.get('endDate')?.value;
+    const startDate = this.startDateControl.value;
+    const endDate = this.endDateControl.value;
 
-    if (!startDate && !endDate) {
-      this.filteredBookings = [];
-      this.activeStartDate = '';
-      this.activeEndDate = '';
+    if (!startDate || !endDate) {
       return;
     }
 
-    if (startDate && endDate && !this.isValidDateRange()) {
+    if (!this.isValidDateRange()) {
       return;
     }
 
-    this.loadingBookings = true;
-
-    // Preparar fechas para el servicio (sumando un día a cada fecha)
-    const startDateObj = startDate ? this.addOneDay(new Date(startDate)) : undefined;
-    const endDateObj = endDate ? this.addOneDay(new Date(endDate)) : undefined;
-
-    this.bookingService.getByUserDateRange(this.id, startDateObj, endDateObj).subscribe({
-      next: (data: Booking[]) => {
-        this.filteredBookings = data;
-        console.log("filteredBookings", this.filteredBookings);
-        this.activeStartDate = startDate || '';
-        this.activeEndDate = endDate || '';
-        this.loadingBookings = false;
-        
-        this.calculateMetrics(data);
-        
-        if (startDate || endDate) {
-        }
-      },
-      error: (error: any) => {
-        this.loadingBookings = false;
-        console.error('Error filtering bookings:', error);
-        this.calculateMetrics([]);
-      }
-    });
+    this.activeStartDate = startDate;
+    this.activeEndDate = endDate;
+    this.loadBookings();
   }
 
   clearDateFilter(): void {
-    this.dateRangeForm.reset();
-    this.filteredBookings = [];
+    this.initializeDateFilters();
     this.activeStartDate = '';
-    this.activeEndDate = '';  
-    this.calculateMetrics([]);
-    this.snackBar.open('Filtro removido', 'Cerrar', {duration: 2000});
+    this.activeEndDate = '';
+    this.selectedServiceIds = [];
+    this.loadBookings();
+    this.snackBar.open('Filtro reiniciado', 'Cerrar', {duration: 2000});
   }
 
   hasActiveFilter(): boolean {
     return this.activeStartDate !== '' || this.activeEndDate !== '';
-  }
-
-  getFilterDescription(): string {
-    if (this.activeStartDate && this.activeEndDate) {
-      return `${this.formatDateForDisplay(this.activeStartDate)} - ${this.formatDateForDisplay(this.activeEndDate)}`;
-    } else if (this.activeStartDate) {
-      return `Desde ${this.formatDateForDisplay(this.activeStartDate)}`;
-    } else if (this.activeEndDate) {
-      return `Hasta ${this.formatDateForDisplay(this.activeEndDate)}`;
-    }
-    return '';
-  }
-
-  private formatDateForService(dateString: string): string {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
-  }
-
-  private formatDateForDisplay(serviceDate: string): string {
-    const parts = serviceDate.split('/');
-    if (parts.length === 3) {
-      const year = parts[0];
-      const month = parts[1].padStart(2, '0');
-      const day = parts[2].padStart(2, '0');
-      return `${day}/${month}/${year}`;
-    }
-    return serviceDate;
   }
 
   private addOneDay(date: Date): Date {
@@ -376,8 +354,36 @@ export class UsersDetailComponent implements OnDestroy {
     return newDate;
   }
 
-  onBookingsUpdated(bookings: Booking[]): void {
-    this.calculateMetrics(bookings);
+  loadBookings(): void {
+    const startDate = this.startDateControl.value;
+    const endDate = this.endDateControl.value;
+
+    if (!startDate || !endDate) {
+      this.allBookings = [];
+      this.filteredBookings = [];
+      this.calculateMetrics([]);
+      return;
+    }
+
+    this.loadingBookings = true;
+
+    const startDateObj = this.addOneDay(new Date(startDate));
+    const endDateObj = this.addOneDay(new Date(endDate));
+
+    this.bookingService.getByUserDateRange(this.id, startDateObj, endDateObj).subscribe({
+      next: (data: Booking[]) => {
+        this.allBookings = data;
+        this.loadingBookings = false;
+        this.applyServiceFilter();
+      },
+      error: (error: any) => {
+        this.loadingBookings = false;
+        this.allBookings = [];
+        this.filteredBookings = [];
+        this.snackBar.open('Error retrieving bookings', 'Cerrar', { duration: 4000 });
+        this.calculateMetrics([]);
+      }
+    });
   }
 
   private calculateMetrics(bookings: Booking[]): void {
@@ -398,9 +404,23 @@ export class UsersDetailComponent implements OnDestroy {
 
 
   onServiceSelectionChange(selectedServices: VisualOption[]): void {
-    this.filteredBookings = this.filteredBookings.filter(booking => selectedServices.some(service => service.id == booking.services?.[0]?.id));
-    this.calculateMetrics(this.filteredBookings);
+    // console.log("selectedServices", selectedServices);
+    this.selectedServiceIds = selectedServices
+      .map(service => service.id)
+      .filter((id): id is string => id !== undefined);
+      console.log("selectedServiceIds", this.selectedServiceIds);
+    this.applyServiceFilter();
   }
 
+  private applyServiceFilter(): void {
+    if (this.selectedServiceIds.length == 0) {
+      this.filteredBookings = [...this.allBookings];
+    } else {
+      this.filteredBookings = this.allBookings.filter(booking => 
+        booking.services?.some(service => this.selectedServiceIds.includes(service.id))
+      );
+    }
+    this.calculateMetrics(this.filteredBookings);
+  }
 
 }

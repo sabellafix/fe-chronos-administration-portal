@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription } from 'rxjs';
+import { Subscription, filter, take } from 'rxjs';
 
 // Services
 import { BookingService } from '@app/core/services/http/booking.service';
@@ -90,6 +90,19 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.subscribeToServiceEnabled();
+  }
+
+  private subscribeToServiceEnabled(): void {
+    const enabledSubscription = this.offcanvasBookingService.isEnabled$
+      .pipe(filter(enabled => enabled), take(1))
+      .subscribe(() => {
+        this.initializeComponent();
+      });
+    this.subscriptions.push(enabledSubscription);
+  }
+
+  private initializeComponent(): void {
     this.getUsers();
     this.getCustomers();
     

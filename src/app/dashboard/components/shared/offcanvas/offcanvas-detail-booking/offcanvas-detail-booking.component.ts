@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, filter, take } from 'rxjs';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { Service } from '@app/core/models/bussiness/service';
 import { Customer } from '@app/core/models/bussiness/customer';
@@ -66,6 +66,19 @@ export class OffcanvasDetailBookingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.subscribeToServiceEnabled();
+  }
+
+  private subscribeToServiceEnabled(): void {
+    const enabledSubscription = this.offcanvasBookingService.isEnabled$
+      .pipe(filter(enabled => enabled), take(1))
+      .subscribe(() => {
+        this.initializeComponent();
+      });
+    this.subscriptions.push(enabledSubscription);
+  }
+
+  private initializeComponent(): void {
     this.getUsers();
     this.getCustomers();
     

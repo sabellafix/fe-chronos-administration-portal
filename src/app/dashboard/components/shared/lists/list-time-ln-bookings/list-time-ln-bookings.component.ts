@@ -1,12 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Booking } from '@app/core/models/bussiness/booking';
-import { BookingService } from '@app/core/services/http/booking.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from '@app/core/models/bussiness/user';
 import { BookingStatus } from '@app/core/models/bussiness/enums';
 import { DateUtils } from '@app/core/utils/date.utils';
 import { DateOnly } from '@app/core/models/bussiness/availability';
-
 
 @Component({
   selector: 'app-list-time-ln-bookings',
@@ -15,54 +12,19 @@ import { DateOnly } from '@app/core/models/bussiness/availability';
 })
 export class ListTimeLnBookingsComponent implements OnChanges {
 
-  @Input() id?: string | null = null;
-  @Input() bookings?: Booking[] | null = null;
+  @Input() bookings: Booking[] = [];
   @Input() user?: User | null = null;
+  @Input() loading: boolean = false;
 
-  @Output() bookingsUpdated = new EventEmitter<Booking[]>();
-
-  loading: boolean = false;
   BookingStatus = BookingStatus;
   expandedBookingId: string | null = null;
 
-  constructor(private bookingService: BookingService,
-    private snackBar: MatSnackBar
-  ){}
+  constructor() {}
 
-  ngOnInit(): void {
-    if(this.id){
-      this.loadByIdUSer();
-    } else if (this.bookings) {
-      // Si se pasan bookings directamente como Input, emitir el evento
-      this.bookingsUpdated.emit(this.bookings);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['bookings']) {
+      this.expandedBookingId = null;
     }
-  }
-
-  ngOnChanges(): void {
-    // Emitir evento cuando los bookings cambian desde el Input
-    if (this.bookings) {
-      this.bookingsUpdated.emit(this.bookings);
-    }
-  }
-
-  loadByIdUSer(): void {
-    this.loading = true;
-    this.expandedBookingId = null;
-    
-    this.bookingService.getByUserDateRange(this.id!, undefined, undefined).subscribe({
-      next: (data: Booking[]) => {
-        this.bookings = data;
-        this.loading = false;
-        // Emitir evento con los bookings actualizados
-        this.bookingsUpdated.emit(data);
-      },
-      error: (error: any) => {
-        this.loading = false;
-        this.snackBar.open('Error retrieving bookings', 'Close', {duration: 4000});
-        // Emitir array vacío en caso de error
-        this.bookingsUpdated.emit([]);
-      }
-    });
   }
 
   getBookingStatusColor(status: BookingStatus): string {

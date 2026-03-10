@@ -26,5 +26,17 @@ export const ROUTE_FILTER_CONFIGURATIONS: RouteFilterConfig[] = [
         enabledFilters: [
             TopbarFiltersConst._SALON
         ]
+    },
+    {
+        route: '/users',
+        enabledFilters: [
+            TopbarFiltersConst._SALON
+        ]
+    },
+    {
+        route: '/services',
+        enabledFilters: [
+            TopbarFiltersConst._SALON
+        ]
     }
-];
+,];

@@ -1,13 +1,10 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
 import { Booking } from '@app/core/models/bussiness/booking';
-import { BookingStatus } from '@app/core/models/bussiness/enums';
-import { OffcanvasCreateBookingComponent } from '../../../shared/offcanvas/offcanvas-create-booking/offcanvas-create-booking.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Service } from '@app/core/models/bussiness/service';
 import { Space } from '@app/core/models/bussiness/space';
+import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 @Component({
   selector: 'app-bookings-floor',
@@ -16,7 +13,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 })
 export class BookingsFloorComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild(OffcanvasCreateBookingComponent) offcanvasCreateBooking!: OffcanvasCreateBookingComponent;
   @ViewChild('threejsContainer', { static: false }) threejsContainer!: ElementRef;
 
   dateNow : Date = new Date();
@@ -38,7 +34,10 @@ export class BookingsFloorComponent implements OnInit, OnDestroy, AfterViewInit 
   readonly CENTRAL_SPACE_ID = 7; // Espacio central (de 0-19)
   readonly CENTRAL_HOUR = 7; // Hora central (de 6-22)
 
-  constructor(private snackBar: MatSnackBar){
+  constructor(
+    private snackBar: MatSnackBar,
+    private offcanvasBookingService: OffcanvasBookingService
+  ){
     this.spaces = this.getSpaces();
     this.getStaticBookings();
   }
@@ -117,21 +116,16 @@ export class BookingsFloorComponent implements OnInit, OnDestroy, AfterViewInit 
     }
   }
 
-  openBookingModal(date: Date, hour?: number): void {
-    this.offcanvasCreateBooking.selectedDate = date;
-    this.offcanvasCreateBooking.selectedHour = hour;
-    
-    this.offcanvasCreateBooking.show();
+  openBookingModal(spaceId: number, hour: number): void {
+    this.offcanvasBookingService.openBookingModal(this.dateNow, hour);
   }
 
   onBookingCreated(booking: Booking): void {
     this.bookings.push(booking);
     this.snackBar.open('Booking created successfully', 'Cerrar', {
       duration: 3000,
-     
       panelClass: 'snackbar-success'
     });
-  
   }
 
   onBookingCancelled(): void {
@@ -162,8 +156,5 @@ export class BookingsFloorComponent implements OnInit, OnDestroy, AfterViewInit 
   hasBookings(date: Date, hour: number): boolean {
     return this.getBookingsForDateTime(date, hour).length > 0;
   }
-
- 
-
 
 }

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { Booking } from '../../models/bussiness/booking';
 
 @Injectable({
@@ -25,6 +27,9 @@ export class OffcanvasBookingService {
   private _isUpdateModalOpen = false;
   private _isDetailModalOpen = false;
 
+  // Estado para controlar si el servicio está habilitado según la ruta
+  private _isEnabled = new BehaviorSubject<boolean>(false);
+
   selectedDate$ = this._selectedDate.asObservable();
   selectedHour$ = this._selectedHour.asObservable();
   selectedStylistId$ = this._selectedStylistId.asObservable();
@@ -39,10 +44,42 @@ export class OffcanvasBookingService {
   // Observable para el offcanvas de detalle
   showDetailOffcanvas$ = this._showDetailOffcanvas.asObservable();
 
-  constructor() { }
+  // Observable para verificar si el servicio está habilitado
+  isEnabled$ = this._isEnabled.asObservable();
+
+  constructor(private router: Router) {
+    this.initRouteListener();
+  }
+
+  private initRouteListener(): void {
+    this.checkCurrentRoute(this.router.url);
+    
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        this.checkCurrentRoute(event.urlAfterRedirects);
+      });
+  }
+
+  private checkCurrentRoute(url: string): void {
+    const isBookingsRoute = url.includes('/bookings');
+    this._isEnabled.next(isBookingsRoute);
+    
+    if (!isBookingsRoute) {
+      this.resetState();
+    }
+  }
+
+  private isServiceEnabled(): boolean {
+    return this._isEnabled.value;
+  }
 
   openBookingModal(date: Date, hour?: number, stylistId?: string): void {
-    // Prevenir apertura múltiple del modal de creación
+    if (!this.isServiceEnabled()) {
+      console.warn('OffcanvasBookingService: El servicio solo está disponible en la ruta /bookings');
+      return;
+    }
+
     if (this._isCreateModalOpen) {
       return;
     }
@@ -70,9 +107,12 @@ export class OffcanvasBookingService {
     }
   }
 
-  // Nuevos métodos para el offcanvas de actualización
   openUpdateBookingModal(bookingId: string): void {
-    // Prevenir apertura múltiple del modal de actualización
+    if (!this.isServiceEnabled()) {
+      console.warn('OffcanvasBookingService: El servicio solo está disponible en la ruta /bookings');
+      return;
+    }
+
     if (this._isUpdateModalOpen) {
       return;
     }
@@ -95,9 +135,12 @@ export class OffcanvasBookingService {
     }
   }
 
-  // Métodos para el offcanvas de detalle
   openDetailBookingModal(bookingId: string): void {
-    // Prevenir apertura múltiple del modal de detalle
+    if (!this.isServiceEnabled()) {
+      console.warn('OffcanvasBookingService: El servicio solo está disponible en la ruta /bookings');
+      return;
+    }
+
     if (this._isDetailModalOpen) {
       return;
     }
@@ -125,7 +168,6 @@ export class OffcanvasBookingService {
     return this._selectedStylistId.value;
   }
 
-  // Getters para verificar el estado de los modales
   get isCreateModalOpen(): boolean {
     return this._isCreateModalOpen;
   }
@@ -136,6 +178,10 @@ export class OffcanvasBookingService {
 
   get isDetailModalOpen(): boolean {
     return this._isDetailModalOpen;
+  }
+
+  get isEnabled(): boolean {
+    return this._isEnabled.value;
   }
 
   // Métodos de utilidad para resetear el estado (solo en casos extremos)

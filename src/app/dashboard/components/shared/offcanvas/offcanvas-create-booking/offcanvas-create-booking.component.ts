@@ -13,7 +13,7 @@ import { CustomerService } from '@app/core/services/http/customer.service';
 import { User } from '@app/core/models/bussiness/user';
 import { UserService } from '@app/core/services/http/user.service';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
-import { Subscription } from 'rxjs';
+import { Subscription, filter, take } from 'rxjs';
 import { RolesConst } from '@app/core/models/constants/roles.const';
 import { Option } from '@app/core/models/interfaces/option.interface';
 
@@ -78,6 +78,19 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.subscribeToServiceEnabled();
+  }
+
+  private subscribeToServiceEnabled(): void {
+    const enabledSubscription = this.offcanvasBookingService.isEnabled$
+      .pipe(filter(enabled => enabled), take(1))
+      .subscribe(() => {
+        this.initializeComponent();
+      });
+    this.subscriptions.push(enabledSubscription);
+  }
+
+  private initializeComponent(): void {
     this.getUsers();
     this.getCustomers();
     
