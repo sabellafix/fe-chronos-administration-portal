@@ -30,7 +30,51 @@ export class AuthService {
     }
 
     private hasToken(): boolean {
-        return localStorage.getItem(StorageKeyConst._TOKEN) !== null;
+        const token = this.getValidToken();
+        return token !== null;
+    }
+
+    private getValidToken(): string | null {
+        const token = localStorage.getItem(StorageKeyConst._TOKEN);
+        
+        if (!token) {
+            return null;
+        }
+
+        try {
+            const payload = this.decodeToken(token);
+            
+            if (!payload || !payload.exp) {
+                return null;
+            }
+
+            const currentTime = Math.floor(Date.now() / 1000);
+            if (payload.exp < currentTime) {
+                this.logOut();
+                return null;
+            }
+
+            return token;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    private decodeToken(token: string): any {
+        try {
+            const parts = token.split('.');
+            
+            if (parts.length !== 3) {
+                return null;
+            }
+
+            const payload = parts[1];
+            const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+            
+            return JSON.parse(decoded);
+        } catch (error) {
+            return null;
+        }
     }
 
     signOut(): void {

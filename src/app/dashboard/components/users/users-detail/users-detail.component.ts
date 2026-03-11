@@ -270,7 +270,7 @@ export class UsersDetailComponent implements OnDestroy {
 
   private initializeDateFilters(): void {
     const today = new Date();
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     
     this.startDateControl.setValue(this.formatDateForInput(startOfMonth));

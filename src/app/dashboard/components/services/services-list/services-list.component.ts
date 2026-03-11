@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 import { Service } from '@app/core/models/bussiness';
 import { Option } from '@app/core/models/interfaces/option.interface';
 import { DialogConfirmComponent } from '@app/dashboard/components/shared/dialogs/dialog-confirm/dialog-confirm.component';
 import { ServiceService } from '@app/core/services/http/platform-service.service';
+import { DashboardFiltersService } from '@app/core/services/shared/dashboard-filters.service';
 import { environment } from '@env/environment';
 
 @Component({
@@ -13,12 +15,14 @@ import { environment } from '@env/environment';
   templateUrl: './services-list.component.html',
   styleUrl: './services-list.component.scss'
 })
-export class ServicesListComponent {
+export class ServicesListComponent implements OnInit, OnDestroy {
   titleComponent : string = "Services";
   loading: boolean = false;
   service: Service = new Service();
   services: Service[] = [];
   salonId: string = environment.salonId;
+  
+  private salonSubscription: Subscription | null = null;
    
   attributes : Option[] = [ 
     {name: "State", code : "isActive"}, 
@@ -40,6 +44,7 @@ export class ServicesListComponent {
 
   constructor(
     private serviceService: ServiceService,
+    private dashboardFiltersService: DashboardFiltersService,
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
@@ -47,7 +52,24 @@ export class ServicesListComponent {
   }
 
   ngOnInit(): void {
-    this.load();
+    this.subscribeToSalonFilter();
+  }
+
+  ngOnDestroy(): void {
+    if (this.salonSubscription) {
+      this.salonSubscription.unsubscribe();
+    }
+  }
+
+  private subscribeToSalonFilter(): void {
+    this.salonSubscription = this.dashboardFiltersService.selectedSalon$.subscribe(salon => {
+      if (salon) {
+        this.salonId = salon.id;
+      } else {
+        this.salonId = environment.salonId;
+      }
+      this.load();
+    });
   }
 
   load(): void {
@@ -123,7 +145,7 @@ export class ServicesListComponent {
   }
 
   getServiceStatus(service: Service): string {
-    return service.isActive ? 'Activo' : 'Inactivo';
+    return service.isActive ? 'Active' : 'Inactive';
   }
 
   getServiceStatusClass(service: Service): string {
@@ -142,13 +164,13 @@ export class ServicesListComponent {
   formatDate(dateString: string): string {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES');
+    return date.toLocaleDateString('en-US');
   }
 
   clear(){}
 
   getServiceDisplayName(service: Service): string {
-    return service.serviceName || 'Sin nombre';
+    return service.serviceName || 'No name';
   }
 
   getServiceCurrency(service: Service): string {

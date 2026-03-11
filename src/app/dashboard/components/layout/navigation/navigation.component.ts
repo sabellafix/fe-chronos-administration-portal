@@ -93,6 +93,18 @@ export class NavigationComponent implements OnInit{
       ]
     },
     {
+      title: 'Salons',
+      icon: 'bx bx-building',
+      route: 'salons',
+      children: [
+        {
+          title: 'Create',
+          icon: 'bx bx-building',
+          route: 'salons/create'
+        }
+      ]
+    },
+    {
       title: 'Roles',
       icon: 'bx bx-id-card',
       route: 'roles',

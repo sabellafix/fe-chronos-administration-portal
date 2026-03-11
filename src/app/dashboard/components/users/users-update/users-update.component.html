@@ -103,6 +103,20 @@
                                         </div>
 
                                         <div class="col-md-6 mb-3">
+                                            <label class="form-label">Salon *</label>
+                                            <select class="form-select" formControlName="salonId">
+                                                <option value="" disabled>Select a salon</option>
+                                                <option *ngFor="let salon of salons" [value]="salon.id">{{salon.name}}</option>
+                                            </select>
+                                            <div class="invalid-feedback" *ngIf="form.controls['salonId'].hasError('required') && form.controls['salonId'].touched">
+                                                <strong>*</strong> The salon is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('salonId') != undefined && send">
+                                                <strong>*</strong> {{getValidation('salonId')?.message}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <label class="form-label">Change Password</label>
                                                 <button type="button" class="btn btn-sm btn-outline-primary" (click)="togglePasswordFields()">

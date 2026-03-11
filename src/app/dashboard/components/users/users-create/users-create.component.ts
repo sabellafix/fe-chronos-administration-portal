@@ -15,6 +15,8 @@ import { Rol } from '@app/core/models/bussiness/rol';
 import { RolService } from '@app/core/services/http/rol.service';
 import { Service } from '@app/core/models/bussiness/service';
 import { ServiceService } from '@app/core/services/http/platform-service.service';
+import { SalonService } from '@app/core/services/http/salon.service';
+import { Salon } from '@app/core/models/bussiness/salon';
 
 @Component({
   selector: 'app-users-create',
@@ -37,13 +39,15 @@ export class UsersCreateComponent {
   codephones : Option[] = [];
   nameRol : string = RolesConst._STYLIST;
   rol: Rol = new Rol();
+  salons: Salon[] = [];
 
   constructor(private userService: UserService,
               private parametricService: ParametricService,
               private router: Router,
               private snackBar: MatSnackBar,
               private rolService: RolService,
-              private serviceService: ServiceService
+              private serviceService: ServiceService,
+              private salonService: SalonService
   ){
     this.form = new FormGroup({
       firstName : new FormControl("", Validators.required),
@@ -51,6 +55,7 @@ export class UsersCreateComponent {
       email : new FormControl("", [Validators.required, Validators.email]),
       phone : new FormControl("", [Validators.required, Validators.pattern(/^\d{9}$/)]),
       password : new FormControl("", [Validators.required, Validators.minLength(8)]),
+      salonId : new FormControl("", Validators.required),
     });
 
   }
@@ -78,6 +83,7 @@ export class UsersCreateComponent {
         userRole : RolesConst._SERVICEPROVIDER,
         roleId : this.rol.id,
         photo : this.photoBase64 || "assets/images/user-image.jpg",
+        salonId : this.form.get('salonId')?.value,
       }
       this.charge = true;
       this.send = false;
@@ -131,10 +137,14 @@ export class UsersCreateComponent {
 
 
   loadValues(): void {
-    forkJoin({options: this.parametricService.getOptions()})
+    forkJoin({
+      options: this.parametricService.getOptions(),
+      salons: this.salonService.getSalons()
+    })
     .subscribe({
-      next: ({options}) => {
+      next: ({options, salons}) => {
         this.codephones = options.codephones;
+        this.salons = salons;
         this.rolService.getRolByName(this.nameRol).subscribe({
           next: (response: Rol) => {
             this.rol = response;

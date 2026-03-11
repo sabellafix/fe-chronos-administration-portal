@@ -11,6 +11,8 @@ import { Validation } from '@app/core/models/dtos/validation';
 import { Option } from '@app/core/models/interfaces/option.interface';
 import { RolService } from '@app/core/services/http/rol.service';
 import { Rol } from '@app/core/models/bussiness/rol';
+import { SalonService } from '@app/core/services/http/salon.service';
+import { Salon } from '@app/core/models/bussiness/salon';
 
 @Component({
   selector: 'app-users-update',
@@ -37,6 +39,7 @@ export class UsersUpdateComponent {
   codephones : Option[] = [];
   country? : Option;
   roles: Rol[] = [];
+  salons: Salon[] = [];
   showPasswordFields: boolean = false;
 
   constructor(private userService: UserService,
@@ -44,7 +47,8 @@ export class UsersUpdateComponent {
               private router: Router,
               private snackBar: MatSnackBar,
               private route: ActivatedRoute,
-              private rolService: RolService
+              private rolService: RolService,
+              private salonService: SalonService
   ){
     this.form = new FormGroup({
       firstName : new FormControl("", Validators.required),
@@ -52,6 +56,7 @@ export class UsersUpdateComponent {
       email : new FormControl("", [Validators.required, Validators.email]),
       phone : new FormControl("", [Validators.required, Validators.pattern(/^\d{9}$/)]),
       userRole : new FormControl("", Validators.required),
+      salonId : new FormControl("", Validators.required),
       newPassword : new FormControl(""),
       confirmPassword : new FormControl(""),
     });
@@ -90,10 +95,22 @@ export class UsersUpdateComponent {
     this.rolService.getRoles().subscribe({
       next: (data: Rol[]) => {
         this.roles = data;
-        this.setForm();
+        this.loadSalons();
       },error: (error: any) => {
         this.loading = false;
         this.snackBar.open('Error loading the roles', 'Cerrar', {duration: 4000});
+      }
+    });
+  }
+
+  loadSalons(): void {
+    this.salonService.getSalons().subscribe({
+      next: (data: Salon[]) => {
+        this.salons = data;
+        this.setForm();
+      },error: (error: any) => {
+        this.loading = false;
+        this.snackBar.open('Error loading the salons', 'Cerrar', {duration: 4000});
       }
     });
   }
@@ -106,6 +123,7 @@ export class UsersUpdateComponent {
         email : this.user.email,
         phone : this.user.phone,
         userRole : this.user.userRole,
+        salonId : this.user.salonId || "",
         newPassword : "",
         confirmPassword : "",
       };
@@ -148,6 +166,7 @@ export class UsersUpdateComponent {
         email : this.form.get('email')?.value,
         phone : this.form.get('phone')?.value,
         userRole : this.form.get('userRole')?.value,
+        salonId : this.form.get('salonId')?.value,
         photo : this.photoBase64 || this.user.photo,
       }
       

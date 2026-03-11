@@ -34,8 +34,11 @@ export class UserService {
         return this.http.get<any>(url, this.headers);
     }
 
-    getUsersByRole(role: string): Observable<any[]> {
-        const url = `${this.apiUrl}/${this.controller}/get-users-by-role/${role}`;
+    getUsersByRole(role: string, salonId?: string): Observable<any[]> {
+        let url = `${this.apiUrl}/${this.controller}/get-users-by-role/${role}`;
+        if (salonId) {
+            url += `?salonId=${salonId}`;
+        }
         return this.http.get<any[]>(url, this.headers) as unknown as Observable<any[]>;
     }
 

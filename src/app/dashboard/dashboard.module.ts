@@ -112,6 +112,10 @@ import { TableFinderComponent } from './components/shared/table-finder/table-fin
 import { BookingsListComponent } from './components/booking/bookings-list/bookings-list.component';
 import { SkelletonTopBarComponent } from './components/shared/skelletons/skelleton-top-bar/skelleton-top-bar.component';
 import { SkelletonCalendarMonthlyComponent } from './components/shared/skelletons/skelleton-calendar-monthly/skelleton-calendar-monthly.component';
+import { SalonsListComponent } from './components/salons/salons-list/salons-list.component';
+import { SalonsCreateComponent } from './components/salons/salons-create/salons-create.component';
+import { SalonsUpdateComponent } from './components/salons/salons-update/salons-update.component';
+import { SalonsDetailComponent } from './components/salons/salons-detail/salons-detail.component';
 
 
 const routes: Routes = [
@@ -218,6 +222,16 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'salons',
+        children: [
+          { path: '', component: SalonsListComponent, pathMatch: 'full' },
+          { path: 'create', component: SalonsCreateComponent },
+          { path: ':id/update', component: SalonsUpdateComponent },
+          { path: ':id/detail', component: SalonsDetailComponent },
+          { path: '**', redirectTo: '' }
+        ]
+      },
+      {
         path: 'chat',
         children: [
           { path: '', component: ChatComponent, pathMatch: 'full' },
@@ -320,6 +334,10 @@ const routes: Routes = [
     BookingsListComponent,
     SkelletonTopBarComponent,
     SkelletonCalendarMonthlyComponent,
+    SalonsListComponent,
+    SalonsCreateComponent,
+    SalonsUpdateComponent,
+    SalonsDetailComponent,
   ],
   imports: [
     CommonModule,

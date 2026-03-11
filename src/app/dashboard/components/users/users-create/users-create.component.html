@@ -95,6 +95,20 @@
                                                 <div class="invalid-feedback" *ngIf="getValidation('password') != undefined && send">
                                                 <strong>*</strong> {{getValidation('password')?.message}}
                                             </div>
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label">Salon *</label>
+                                            <select class="form-select" formControlName="salonId">
+                                                <option value="" disabled>Select a salon</option>
+                                                <option *ngFor="let salon of salons" [value]="salon.id">{{salon.name}}</option>
+                                            </select>
+                                            <div class="invalid-feedback" *ngIf="form.controls['salonId'].hasError('required') && form.controls['salonId'].touched">
+                                                <strong>*</strong> The salon is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('salonId') != undefined && send">
+                                                <strong>*</strong> {{getValidation('salonId')?.message}}
+                                            </div>
                                         </div>                                      
                                     </div>
                                 </div>

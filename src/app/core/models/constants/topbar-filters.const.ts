@@ -38,5 +38,11 @@ export const ROUTE_FILTER_CONFIGURATIONS: RouteFilterConfig[] = [
         enabledFilters: [
             TopbarFiltersConst._SALON
         ]
+    },
+    {
+        route: '/salons',
+        enabledFilters: [
+            TopbarFiltersConst._SALON
+        ]
     }
 ,];

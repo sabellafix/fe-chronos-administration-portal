@@ -5,6 +5,7 @@ export * from './category';
 export * from './customer';
 export * from './service';
 export * from './service-modifier';
+export * from './salon';
 export * from './supplier';
 export * from './availability';
 export * from './blocked-time';

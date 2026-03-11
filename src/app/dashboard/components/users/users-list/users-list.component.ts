@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { DialogConfirmComponent } from '../../shared/dialogs/dialog-confirm/dialog-confirm.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -12,13 +13,15 @@ import { UserRole } from '@app/core/models/bussiness/enums';
 import { Permission } from '@app/core/models/bussiness/permission';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { RolesConst } from '@app/core/models/constants/roles.const';
+import { DashboardFiltersService } from '@app/core/services/shared/dashboard-filters.service';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
   styleUrl: './users-list.component.scss'
 })
-export class UsersListComponent {
+export class UsersListComponent implements OnInit, OnDestroy {
   titleComponent : string = "Stylist list";
   entity : string = EntiesConst._USER;
   loading: boolean = false;
@@ -27,6 +30,9 @@ export class UsersListComponent {
   roles: Rol[] = [];
   rol : string = RolesConst._STYLIST;
   srcImage : string = "assets/images/user-image.jpg";
+  salonId: string = environment.salonId;
+  
+  private salonSubscription: Subscription | null = null;
    
   attributes : Option[] = [ 
     {name: "Name", code : "firstName"}, 
@@ -56,6 +62,7 @@ export class UsersListComponent {
 
   constructor(
     private userService: UserService,
+    private dashboardFiltersService: DashboardFiltersService,
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -65,12 +72,29 @@ export class UsersListComponent {
   }
 
   ngOnInit(): void {
-    this.load();
+    this.subscribeToSalonFilter();
+  }
+
+  ngOnDestroy(): void {
+    if (this.salonSubscription) {
+      this.salonSubscription.unsubscribe();
+    }
+  }
+
+  private subscribeToSalonFilter(): void {
+    this.salonSubscription = this.dashboardFiltersService.selectedSalon$.subscribe(salon => {
+      if (salon) {
+        this.salonId = salon.id;
+      } else {
+        this.salonId = environment.salonId;
+      }
+      this.load();
+    });
   }
 
   load(): void {
     this.loading = true;
-    this.userService.getUsersByRole(this.rol).subscribe({
+    this.userService.getUsersByRole(this.rol, this.salonId).subscribe({
       next: (response: User[]) => {
         this.users = response;  
         this.users.forEach(user => {

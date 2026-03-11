@@ -42,7 +42,7 @@ export class SalonService {
         return this.http.get<Salon[]>(url, { headers: { Authorization: `Bearer ${token}` } });
     } 
 
-    getSalon(id: number): Observable<Salon> {
+    getSalon(id: string): Observable<Salon> {
         const url = `${this.apiUrl}/${this.controller}/get-salon/${id}`;
         return this.http.get<Salon>(url, this.getHttpOptions());
     } 
@@ -52,12 +52,12 @@ export class SalonService {
         return this.http.post<Salon>(url, entity, this.getHttpOptions());
     } 
 
-    updateSalon(id: number, entity: UpdateSalonDto): Observable<Salon> {
+    updateSalon(id: string, entity: UpdateSalonDto): Observable<Salon> {
         const url = `${this.apiUrl}/${this.controller}/update-salon/${id}`;
         return this.http.put<Salon>(url, entity, this.getHttpOptions());
     } 
 
-    deleteSalon(id: number): Observable<void> {
+    deleteSalon(id: string): Observable<void> {
         const url = `${this.apiUrl}/${this.controller}/delete-salon/${id}`;
         return this.http.delete<void>(url, this.getHttpOptions());
     } 
