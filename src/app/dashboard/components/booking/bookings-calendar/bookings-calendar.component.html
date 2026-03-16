@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xl-2">
-                    <h3 class="mb-0 mt-3">{{dateNow | date:'MMMM, yyyy'}}</h3>
+                    <h3 class="mb-0 mt-3">{{currentCalendarDate | date:'MMMM, yyyy'}}</h3>
                 </div>
                 <div class="col-xl-2 pt-1">
                     <app-select-image
@@ -25,37 +25,42 @@
                 <div class="col-xl-4">
                     <div class="card bg-light mt-1">
                         <ul class="nav nav-pills nav-justified p-1" role="tablist">
-                            <li *ngIf="hasPermission('bookings.monthly')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Month'}">
+                            <li *ngIf="hasPermission('bookings.monthly')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#month" role="tab" 
-                                aria-selected="false" (click)="tabActive = 'Month'">
+                                aria-selected="false" (click)="tabActive = 'Month'"
+                                [ngClass]="{'active': tabActive === 'Month'}">
                                     <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
                                     <span class="d-none d-sm-block">Month</span>
                                 </a>
                             </li>
-                            <li *ngIf="hasPermission('bookings.weekly')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Week'}">
+                            <li *ngIf="hasPermission('bookings.weekly')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#week" role="tab"
-                                    aria-selected="false" (click)="tabActive = 'Week'">
+                                    aria-selected="false" (click)="tabActive = 'Week'"
+                                    [ngClass]="{'active': tabActive === 'Week'}">
                                     <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
                                     <span class="d-none d-sm-block">Week</span>
                                 </a>
                             </li>
-                            <li *ngIf="hasPermission('bookings.daily')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Day'}">
+                            <li *ngIf="hasPermission('bookings.daily')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#day" role="tab" aria-selected="false"
-                                    tabindex="-1" (click)="tabActive = 'Day'">
+                                    tabindex="-1" (click)="tabActive = 'Day'"
+                                    [ngClass]="{'active': tabActive === 'Day'}">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">Day</span>
                                 </a>
                             </li>
-                            <li *ngIf="hasPermission('bookings.calendar')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Stylists'}">
+                            <li *ngIf="hasPermission('bookings.calendar')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#stylists" role="tab" aria-selected="false"
-                                    tabindex="-1" (click)="tabActive = 'Stylists'">
+                                    tabindex="-1" (click)="tabActive = 'Stylists'"
+                                    [ngClass]="{'active': tabActive === 'Stylists'}">
                                     <span class="d-block d-sm-none"><i class="far fa-face-smile"></i></span>
                                     <span class="d-none d-sm-block">Stylists</span>
                                 </a>
                             </li>
-                            <!-- <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Floor'}">
+                            <!-- <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#floors" role="tab" aria-selected="false"
-                                    tabindex="-1" (click)="tabActive = 'Floor'">
+                                    tabindex="-1" (click)="tabActive = 'Floor'"
+                                    [ngClass]="{'active': tabActive === 'Floor'}">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">Floor</span>
                                 </a>

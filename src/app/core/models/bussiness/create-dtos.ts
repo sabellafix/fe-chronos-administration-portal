@@ -5,22 +5,26 @@ import { ServiceModifier } from './service-modifier';
 // DTOs de Creación del Swagger Chronos
 
 export class CreateAvailabilityDto {
+    userId: string; // required, format: uuid
     dayOfWeek: number; // 1-7 (required, min: 1, max: 7)
     startTime: TimeOnly;
     endTime: TimeOnly;
-    isRecurring: boolean;
+    isRecurring?: boolean;
     effectiveFromDate: DateOnly;
     effectiveToDate?: DateOnly;
-    isActive: boolean;
+    isActive?: boolean;
+    reason?: string | null;
 
     constructor() {
+        this.userId = "";
         this.dayOfWeek = 1;
         this.startTime = new TimeOnly();
         this.endTime = new TimeOnly();
-        this.isRecurring = false;
+        this.isRecurring = true;
         this.effectiveFromDate = new DateOnly();
         this.effectiveToDate = undefined;
         this.isActive = true;
+        this.reason = null;
     }
 }
 

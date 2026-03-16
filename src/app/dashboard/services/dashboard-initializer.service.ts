@@ -24,14 +24,12 @@ export class DashboardInitializerService {
     });
   }
 
-
   initializeServices(): Promise<void> {
     return new Promise((resolve) => {
       this.refreshAllServices();
       resolve();
     });
   }
-
   
   private refreshAllServices(): void {
     this.bookingService.refreshToken();

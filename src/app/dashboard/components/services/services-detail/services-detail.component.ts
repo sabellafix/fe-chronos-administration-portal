@@ -10,6 +10,8 @@ import { Validation } from '@app/core/models/dtos/validation';
 import { ServiceService as PlatformServiceService } from '@app/core/services/http/platform-service.service';
 import { CategoryService } from '@app/core/services/http/category.service';
 import { Category } from '@app/core/models/bussiness/category';
+import { SalonService } from '@app/core/services/http/salon.service';
+import { Salon } from '@app/core/models/bussiness/salon';
 
 @Component({
   selector: 'app-services-detail',
@@ -29,18 +31,21 @@ export class ServicesDetailComponent {
   service: Service = new Service();
   now : Date = new Date();
   categories: Category[] = [];
+  salons: Salon[] = [];
 
   constructor(private serviceService: PlatformServiceService,
               private router: Router,
               private snackBar: MatSnackBar,
               private route: ActivatedRoute,
-              private categoryService: CategoryService
+              private categoryService: CategoryService,
+              private salonService: SalonService
   ){
     this.form = new FormGroup({
       serviceName : new FormControl("", Validators.required),
       serviceDescription : new FormControl(""),
       providerId : new FormControl("", Validators.required),
       categoryId : new FormControl(0, [Validators.required, Validators.min(1)]),
+      salonId : new FormControl("", Validators.required),
       durationMinutes : new FormControl(0, [Validators.required, Validators.min(1)]),
       price : new FormControl(0, [Validators.required, Validators.min(0)]),
       currency : new FormControl("USD", Validators.required),
@@ -66,7 +71,7 @@ export class ServicesDetailComponent {
         next: (data: any) => {      
           this.service = <Service>data;
           this.getCategories();
-          
+          this.getSalons();
         },error: (error: any) => {
           this.loading = false;
           this.snackBar.open('Error al cargar el servicio', 'Cerrar', {duration: 4000});
@@ -82,6 +87,7 @@ export class ServicesDetailComponent {
         serviceDescription : this.service.serviceDescription,
         providerId : this.service.providerId,
         categoryId : this.service.categoryId,
+        salonId : this.service.salonId || "",
         durationMinutes : this.service.durationMinutes,
         price : this.service.price,
         currency : this.service.currency,
@@ -141,16 +147,40 @@ export class ServicesDetailComponent {
   }
 
   getCategories(): void {
-    this.loading = true;
     this.categoryService.getCategories().subscribe({
       next: (response: Category[]) => {
         this.categories = response;
-        this.setForm();
+        this.checkAndSetForm();
       },error: (response) =>{
         this.snackBar.open('Error getting categories', 'Close', {duration: 4000});
         this.loading = false;
       }
     });
+  }
+
+  getSalons(): void {
+    this.salonService.getSalons().subscribe({
+      next: (response: Salon[]) => {
+        this.salons = response;
+        this.checkAndSetForm();
+      },
+      error: (response) => {
+        this.snackBar.open('Error getting salons', 'Close', {duration: 4000});
+        this.loading = false;
+      }
+    });
+  }
+
+  private checkAndSetForm(): void {
+    if (this.categories.length > 0 && this.salons.length > 0) {
+      this.setForm();
+    }
+  }
+
+  getSalonName(salonId: string | null): string {
+    if (!salonId) return 'Salon not assigned';
+    const salon = this.salons.find(s => s.id === salonId);
+    return salon?.name || 'Salon not found';
   }
 
   getDurationFormatted(minutes: number): string {

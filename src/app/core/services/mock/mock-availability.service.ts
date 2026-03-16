@@ -134,10 +134,10 @@ export class MockAvailabilityService {
         newAvailability.dayOfWeek = entity.dayOfWeek;
         newAvailability.startTime = entity.startTime;
         newAvailability.endTime = entity.endTime;
-        newAvailability.isRecurring = entity.isRecurring;
+        newAvailability.isRecurring = entity.isRecurring || false;
         newAvailability.effectiveFromDate = entity.effectiveFromDate;
         newAvailability.effectiveToDate = entity.effectiveToDate || new DateOnly();
-        newAvailability.isActive = entity.isActive;
+        newAvailability.isActive = entity.isActive || true;
         newAvailability.createdAt = new Date().toISOString();
         newAvailability.updatedAt = new Date().toISOString();
         
@@ -153,13 +153,13 @@ export class MockAvailabilityService {
         if (index !== -1) {
             const updatedAvailability = { ...availabilities[index] };
             
-            if (entity.dayOfWeek !== undefined) updatedAvailability.dayOfWeek = entity.dayOfWeek;
+            if (entity.dayOfWeek !== undefined) updatedAvailability.dayOfWeek = entity.dayOfWeek || 1;
             if (entity.startTime !== undefined) updatedAvailability.startTime = entity.startTime;
             if (entity.endTime !== undefined) updatedAvailability.endTime = entity.endTime;
-            if (entity.isRecurring !== undefined) updatedAvailability.isRecurring = entity.isRecurring;
+            if (entity.isRecurring !== undefined) updatedAvailability.isRecurring = entity.isRecurring || false;
             if (entity.effectiveFromDate !== undefined) updatedAvailability.effectiveFromDate = entity.effectiveFromDate;
             if (entity.effectiveToDate !== undefined) updatedAvailability.effectiveToDate = entity.effectiveToDate;
-            if (entity.isActive !== undefined) updatedAvailability.isActive = entity.isActive;
+            if (entity.isActive !== undefined) updatedAvailability.isActive = entity.isActive || true;
             
             updatedAvailability.updatedAt = new Date().toISOString();
             

@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Customer, Service, User } from '@app/core/models/bussiness';
 import { CustomerService } from '@app/core/services/http/customer.service';
-
 import { ServiceService } from '@app/core/services/http/platform-service.service';
 import { UserService } from '@app/core/services/http/user.service';
 import { SalonService } from '@app/core/services/http/salon.service';
@@ -35,7 +34,6 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   stylists: User[] = [];
   users: User[] = [];
   customers: Customer[] = [];
-
   
   serviceOptions: VisualOption[] = [];
   stylistOptions: VisualOption[] = [];
@@ -282,5 +280,20 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
 
    hasPermission(permission: string): boolean {
     return this.permissions.some(p => p.name.includes(permission));
+   }
+
+   get currentCalendarDate(): Date {
+    switch (this.tabActive) {
+      case 'Month':
+        return this.dateCalendarMonthly;
+      case 'Week':
+        return this.dateCalendarWeekly;
+      case 'Day':
+        return this.dateCalendarDaily;
+      case 'Stylists':
+        return this.dateBookingsSupplier;
+      default:
+        return this.dateCalendarMonthly;
+    }
    }
 }

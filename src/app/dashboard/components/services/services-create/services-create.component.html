@@ -50,6 +50,20 @@
                                         </div>
 
                                         <div class="col-md-6 mb-3">
+                                            <label class="form-label">Salon *</label>
+                                            <select class="form-select" formControlName="salonId">
+                                                <option value="">Select a salon</option>
+                                                <option *ngFor="let salon of salons" [value]="salon.id">{{salon.name}}</option>
+                                            </select>
+                                            <div class="invalid-feedback" *ngIf="form.controls['salonId'].hasError('required') && form.controls['salonId'].touched">
+                                                <strong>*</strong> The salon is required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="getValidation('salonId') != undefined && send">
+                                                <strong>*</strong> {{getValidation('salonId')?.message}}
+                                            </div>                                            
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
                                             <label class="form-label">Duration (minutes) *</label>
                                             <input type="number" class="form-control" placeholder="Duration in minutes" formControlName="durationMinutes">
                                             <div class="invalid-feedback" *ngIf="form.controls['durationMinutes'].hasError('required') && form.controls['durationMinutes'].touched">

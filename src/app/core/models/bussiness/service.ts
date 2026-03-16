@@ -5,6 +5,7 @@ export class Service{
     id : string;
     providerId : string;
     categoryId : number;
+    salonId : string | null;
     serviceName : string | null;
     serviceDescription : string | null;
     durationMinutes : number;
@@ -23,6 +24,7 @@ export class Service{
         this.id = "";
         this.providerId = "";
         this.categoryId = 0;
+        this.salonId = null;
         this.serviceName = null;
         this.serviceDescription = null;
         this.durationMinutes = 0;

@@ -1,6 +1,6 @@
 import { DayOfWeek } from './enums';
 
-export class Availability{
+export class Availability {
     availabilityId: string;
     providerId: string;
     dayOfWeek: number;
@@ -10,8 +10,9 @@ export class Availability{
     effectiveFromDate: DateOnly;
     effectiveToDate: DateOnly;
     isActive: boolean;
-    createdAt: string; // format: date-time
-    updatedAt: string; // format: date-time
+    createdAt: string;
+    updatedAt: string;
+    reason: string | null;
 
     constructor() {
         this.availabilityId = "";
@@ -25,6 +26,7 @@ export class Availability{
         this.isActive = false;
         this.createdAt = "";
         this.updatedAt = "";
+        this.reason = null;
     }
 }
 
@@ -52,16 +54,14 @@ export class DateOnly {
     year: number;
     month: number;
     day: number;
-    dayOfWeek: DayOfWeek;
-    // readonly dayOfYear: number;
-    // readonly dayNumber: number;
+    dayOfWeek: number;
+    readonly dayOfYear?: number;
+    readonly dayNumber?: number;
 
     constructor() {
         this.year = new Date().getFullYear();
         this.month = new Date().getMonth() + 1;
         this.day = new Date().getDate();
         this.dayOfWeek = new Date().getDay();
-        // this.dayOfYear = 0;
-        // this.dayNumber = 0;
     }
 } 

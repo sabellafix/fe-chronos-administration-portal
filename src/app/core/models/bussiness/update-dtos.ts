@@ -5,13 +5,14 @@ import { ServiceModifier } from './service-modifier';
 // DTOs de Actualización del Swagger Chronos
 
 export class UpdateAvailabilityDto {
-    dayOfWeek?: number; // minimum: 1, maximum: 7, nullable
+    dayOfWeek?: number | null; // minimum: 1, maximum: 7, nullable
     startTime?: TimeOnly;
     endTime?: TimeOnly;
-    isRecurring?: boolean;
+    isRecurring?: boolean | null;
     effectiveFromDate?: DateOnly;
     effectiveToDate?: DateOnly;
-    isActive?: boolean;
+    isActive?: boolean | null;
+    reason?: string | null;
 
     constructor() {
         this.dayOfWeek = undefined;
@@ -21,6 +22,7 @@ export class UpdateAvailabilityDto {
         this.effectiveFromDate = undefined;
         this.effectiveToDate = undefined;
         this.isActive = undefined;
+        this.reason = undefined;
     }
 }
 

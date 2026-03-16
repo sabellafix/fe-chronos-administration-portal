@@ -15,16 +15,18 @@
               <div class="col-xl-4">
                   <div class="card bg-light mt-1">
                       <ul class="nav nav-pills nav-justified p-1" role="tablist">
-                          <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Available'}">
+                          <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation">
                               <a class="nav-link" data-bs-toggle="tab" href="#available" role="tab" 
-                              aria-selected="false" (click)="tabActive = 'Available'">
+                              aria-selected="false" (click)="tabActive = 'Available'"
+                              [ngClass]="{'active': tabActive === 'Available'}">
                                   <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
                                   <span class="d-none d-sm-block">Available</span>
                               </a>
                           </li>
-                          <li class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" [ngClass]="{'active': tabActive === 'Blocked'}">
+                          <li *ngIf="blockedTimesEnabled" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation">
                               <a class="nav-link" data-bs-toggle="tab" href="#blocked" role="tab"
-                                  aria-selected="false" (click)="tabActive = 'Blocked'">
+                                  aria-selected="false" (click)="tabActive = 'Blocked'"
+                                  [ngClass]="{'active': tabActive === 'Blocked'}">
                                   <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
                                   <span class="d-none d-sm-block">Blocked</span>
                               </a>
@@ -46,15 +48,16 @@
                     </div>
                     
                     <button type="button" 
-                            (click)="saveBlockedTimes()"
-                            [disabled]="!hasPendingChanges()"
+                            (click)="saveTimes()"
+                            [disabled]="!hasPendingChanges() || saving"
                             [ngClass]="{
-                              'btn-success': hasPendingChanges(),
-                              'btn-secondary': !hasPendingChanges()
+                              'btn-success': hasPendingChanges() && !saving,
+                              'btn-secondary': !hasPendingChanges() || saving
                             }"
                             class="btn w-sm bg-gradient waves-effect waves-light ms-4"> 
-                      Save
-                      <span *ngIf="hasPendingChanges()" >
+                      <i *ngIf="saving" class="mdi mdi-loading mdi-spin me-1"></i>
+                      {{ saving ? 'Saving...' : 'Save' }}
+                      <span *ngIf="hasPendingChanges() && !saving">
                         *
                       </span>
                     </button>
@@ -134,8 +137,8 @@
                   [attr.data-hour]="hour" 
                   [attr.data-date]="date.date.toISOString()"
                   [ngClass]="{
-                    'blocked-time-cell': isBlocked(date.date, hour),
-                    'available-time-cell': hasAvailability(date.date, hour),
+                    'blocked-time-cell': blockedTimesEnabled && isBlocked(date.date, hour),
+                    'available-time-cell': hasAvailability(date.date, hour)
                   }"
                   (click)="onCellClick(date.date, hour, $event)"
                   style="cursor: pointer;">
@@ -148,16 +151,16 @@
                   </div>
                   
                   <div class="blocked-indicator" 
-                       *ngIf="isBlocked(date.date, hour)"
+                       *ngIf="blockedTimesEnabled && isBlocked(date.date, hour)"
                        title="Blocked">
                     <i class="bx bx-x text-danger"></i>
                   </div>
                   
                   <div class="neutral-indicator" 
-                       *ngIf="!hasAvailability(date.date, hour) && !isBlocked(date.date, hour)"
-                       [title]="tabActive === 'Blocked' ? 'Click para bloquear tiempo' : tabActive === 'Available' ? 'Click para agregar disponibilidad' : 'Sin definir'">
+                       *ngIf="!hasAvailability(date.date, hour) && !(blockedTimesEnabled && isBlocked(date.date, hour))"
+                       [title]="(blockedTimesEnabled && tabActive === 'Blocked') ? 'Click para bloquear tiempo' : tabActive === 'Available' ? 'Click para agregar disponibilidad' : 'Sin definir'">
                     <i class="bx" 
-                       [ngClass]="tabActive === 'Blocked' ? 'bx-block text-danger' : tabActive === 'Available' ? 'bx-plus text-success' : 'bx-plus text-muted'"></i>
+                       [ngClass]="(blockedTimesEnabled && tabActive === 'Blocked') ? 'bx-block text-danger' : tabActive === 'Available' ? 'bx-plus text-success' : 'bx-plus text-muted'"></i>
                   </div>
                 </div>
               </td>
@@ -171,26 +174,26 @@
 </div>
 
 <!-- Leyenda -->
-<!-- <div class="row mt-4">
+<div class="row ">
   <div class="col-12">
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title">Leyenda</h6>
-        <div class="d-flex flex-wrap gap-4">
+    <div class="card ">
+      <div class="card-body ">
+        <h6 class="card-title">Legend</h6>
+        <div class="d-flex flex-wrap gap-4 bg-gray">
           <div class="d-flex align-items-center">
-            <i class="bx bx-check-circle text-success me-2"></i>
-            <span>Disponible</span>
+            <i class="bx bx-check text-success me-2"></i>
+            <span>Available</span>
           </div>
-          <div class="d-flex align-items-center">
-            <i class="bx bx-x-circle text-danger me-2"></i>
-            <span>Bloqueado</span>
+          <div *ngIf="blockedTimesEnabled" class="d-flex align-items-center">
+            <i class="bx bx-x text-danger me-2"></i>
+            <span>Blocked</span>
           </div>
           <div class="d-flex align-items-center">
             <i class="bx bx-plus text-muted me-2"></i>
-            <span>Sin definir</span>
+            <span>Undefined</span>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div> -->
+</div>

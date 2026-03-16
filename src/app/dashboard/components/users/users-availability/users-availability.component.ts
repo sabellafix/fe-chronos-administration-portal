@@ -8,7 +8,7 @@ import { CreateBlockedTimeDto, CreateAvailabilityDto } from '../../../../core/mo
 import { User } from '../../../../core/models/bussiness/user';
 import { UserService } from '../../../../core/services/http/user.service';
 import { MockBlockedTimeService } from '../../../../core/services/mock/mock-blocked-time.service';
-import { MockAvailabilityService } from '../../../../core/services/mock/mock-availability.service';
+import { AvailabilityService } from '../../../../core/services/http/availability.service';
 import { Subscription } from 'rxjs';
 
 
@@ -23,6 +23,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
   dateNow: Date = new Date();
   tabs: string[] = ['Available', 'Blocked'];
   tabActive: string = 'Available';
+  blockedTimesEnabled: boolean = false;
 
   stylistId: string = "";
   stylist: User | null = null;
@@ -38,6 +39,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
   
   availabilitiesToCreate: Availability[] = [];
   availabilitiesToDelete: Availability[] = [];
+  saving: boolean = false;
   
   private subscriptions: Subscription[] = [];
 
@@ -46,7 +48,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private userService: UserService,
     private blockedTimeService: MockBlockedTimeService,
-    private availabilityService: MockAvailabilityService,
+    private availabilityService: AvailabilityService,
     private router: Router
   ) {
     this.route.params.subscribe(params => {
@@ -213,7 +215,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     newBlockedTime.endTime.hour = hour;
     newBlockedTime.endTime.minute = 59;
     
-    newBlockedTime.reason = 'Bloqueado desde calendario';
+    newBlockedTime.reason = 'Blocked from calendar';
     newBlockedTime.isActive = true;
     newBlockedTime.createdAt = new Date().toISOString();
     
@@ -455,26 +457,28 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     });
   }
 
-  saveBlockedTimes(): void {
+  saveTimes(): void {
     const totalChanges = this.blockedTimesToCreate.length + this.blockedTimesToDelete.length + 
                          this.availabilitiesToCreate.length + this.availabilitiesToDelete.length;
     
     if (totalChanges === 0) {
-      this.snackBar.open('No changes to save', 'Cerrar', {
+      this.snackBar.open('No changes to save', 'Close', {
         duration: 2000,
         panelClass: 'snackbar-info'
       });
       return;
     }
 
+    this.saving = true;
     let completedOperations = 0;
     let hasErrors = false;
 
     const checkCompletion = () => {
       completedOperations++;
       if (completedOperations === totalChanges) {
+        this.saving = false;
         if (!hasErrors) {
-          this.snackBar.open('Changes saved successfully', 'Cerrar', {
+          this.snackBar.open('Changes saved successfully', 'Close', {
             duration: 3000,
             panelClass: 'snackbar-success'
           });
@@ -504,7 +508,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           hasErrors = true;
-          this.snackBar.open('Error saving some changes', 'Cerrar', {
+          this.snackBar.open('Error saving some changes', 'Close', {
             duration: 3000,
             panelClass: 'snackbar-error'
           });
@@ -523,7 +527,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
         error: (error) => {
           hasErrors = true;
           this.blockedTimes.push(blockedTime);
-          this.snackBar.open('Error deleting some blocked times', 'Cerrar', {
+          this.snackBar.open('Error deleting some blocked times', 'Close', {
             duration: 3000,
             panelClass: 'snackbar-error'
           });
@@ -536,25 +540,26 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
 
     this.availabilitiesToCreate.forEach(availability => {
       const createDto = new CreateAvailabilityDto();
+      createDto.userId = this.stylistId;
       createDto.dayOfWeek = availability.dayOfWeek;
       createDto.startTime = availability.startTime;
       createDto.endTime = availability.endTime;
-      createDto.isRecurring = availability.isRecurring;
+      createDto.isRecurring = true;
       createDto.effectiveFromDate = availability.effectiveFromDate;
       createDto.effectiveToDate = availability.effectiveToDate;
       createDto.isActive = availability.isActive;
 
-      const subscription = this.availabilityService.createAvailability(createDto, this.stylistId).subscribe({
+      const subscription = this.availabilityService.create(createDto).subscribe({
         next: (response: Availability) => {
-          const index = this.availabilities.findIndex(av => av.availabilityId === availability.availabilityId);
-          if (index !== -1) {
-            this.availabilities[index] = response;
-          }
+          // const index = this.availabilities.findIndex(av => av.availabilityId === availability.availabilityId);
+          // if (index !== -1) {
+          //   this.availabilities[index] = response;
+          // }
           checkCompletion();
         },
         error: (error: any) => {
           hasErrors = true;
-          this.snackBar.open('Error saving some availabilities', 'Cerrar', {
+          this.snackBar.open('Error saving some availabilities', 'Close', {
             duration: 3000,
             panelClass: 'snackbar-error'
           });
@@ -573,7 +578,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
         error: (error: any) => {
           hasErrors = true;
           this.availabilities.push(availability);
-          this.snackBar.open('Error deleting some availabilities', 'Cerrar', {
+          this.snackBar.open('Error deleting some availabilities', 'Close', {
             duration: 3000,
             panelClass: 'snackbar-error'
           });
@@ -602,7 +607,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
   private loadStylistInfo(): void {
     if (!this.stylistId) {
       this.loading = false;
-      this.snackBar.open('Stylist ID not found', 'Cerrar', {
+      this.snackBar.open('Stylist ID not found', 'Close', {
         duration: 3000,
         panelClass: 'snackbar-error'
       });
@@ -618,7 +623,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.loading = false;
-        this.snackBar.open('Error loading stylist information', 'Cerrar', {
+        this.snackBar.open('Error loading stylist information', 'Close', {
           duration: 3000,
           panelClass: 'snackbar-error'
         });
@@ -632,7 +637,9 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     if (!this.stylistId) {
       return;
     }
-    this.loadBlockedTimes();
+    if (this.blockedTimesEnabled) {
+      this.loadBlockedTimes();
+    }
     this.loadAvailabilities();
   }
 
@@ -642,7 +649,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
         this.blockedTimes = blockedTimes.filter(bt => bt.isActive);
       },
       error: (error) => {
-        this.snackBar.open('Error loading blocked times', 'Cerrar', {
+        this.snackBar.open('Error loading blocked times', 'Close', {
           duration: 3000,
           panelClass: 'snackbar-error'
         });
@@ -655,10 +662,14 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
   private loadAvailabilities(): void {
     const subscription = this.availabilityService.getAvailabilitiesByProvider(this.stylistId).subscribe({
       next: (availabilities: Availability[]) => {
-        this.availabilities = availabilities.filter((av: Availability) => av.isActive);
+        this.availabilities = availabilities
+          .filter((av: Availability) => av.isActive)
+          .map((av: Availability) => this.parseAvailabilityTimes(av));
+        console.log("getAvailabilitiesByProvider", this.availabilities);
+        
       },
       error: (error: any) => {
-        this.snackBar.open('Error loading availabilities', 'Cerrar', {
+        this.snackBar.open('Error loading availabilities', 'Close', {
           duration: 3000,
           panelClass: 'snackbar-error'
         });
@@ -668,6 +679,24 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     this.subscriptions.push(subscription);
   }
 
+  private parseTimeStringToTimeOnly(timeString: string | TimeOnly): TimeOnly {
+    if (typeof timeString !== 'string') {
+      return timeString;
+    }
+    
+    const parts = timeString.split(':');
+    const timeOnly = new TimeOnly();
+    timeOnly.hour = parseInt(parts[0], 10) || 0;
+    timeOnly.minute = parseInt(parts[1], 10) || 0;
+    return timeOnly;
+  }
+
+  private parseAvailabilityTimes(availability: Availability): Availability {
+    availability.startTime = this.parseTimeStringToTimeOnly(availability.startTime);
+    availability.endTime = this.parseTimeStringToTimeOnly(availability.endTime);
+    return availability;
+  }
+
   getStylistFullName(): string {
     if (!this.stylist) return '';
     return `${this.stylist.firstName} ${this.stylist.lastName}`.trim();
@@ -675,7 +704,7 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
 
   getStylistPhoto(): string {
     if (!this.stylist || !this.stylist.photo) {
-      return 'assets/images/users/user1.jpg'; 
+      return 'assets/images/user-image.jpg'; 
     }
     return this.stylist.photo;
   }
@@ -684,7 +713,6 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     const dayOfWeek = this.getDayOfWeekNumber(date);
     return this.availabilities.some(av => {
       if (!av.isActive) return false;
-      
       return av.dayOfWeek === dayOfWeek && 
              av.startTime.hour === hour;
     });
@@ -737,20 +765,17 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     }
   }
 
-
   previousWeek(): void {
     this.currentDate.setDate(this.currentDate.getDate() - 7);
     this.updateDates();
     this.loadStylistAvailability();
   }
 
-
   nextWeek(): void {
     this.currentDate.setDate(this.currentDate.getDate() + 7);
     this.updateDates();
     this.loadStylistAvailability();
   }
-
 
   goToCurrentWeek(): void {
     this.currentDate = new Date();
@@ -772,7 +797,5 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
     this.blockedTimes = [];
     
     this.tabActive = 'Available';
-
   }
-
 }

@@ -10,6 +10,7 @@ export * from './supplier';
 export * from './availability';
 export * from './blocked-time';
 export * from './permission';
+export * from './availability';
 
 // Entidades del sistema interno
 export * from './company';

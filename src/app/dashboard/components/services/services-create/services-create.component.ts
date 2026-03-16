@@ -14,6 +14,8 @@ import { CreateServiceDto } from '@app/core/models/bussiness';
 import { ServiceTypeConst } from '@app/core/models/constants/serviceType.const';
 import { Option } from '@app/core/models/interfaces/option.interface';
 import { environment } from '@env/environment';
+import { SalonService } from '@app/core/services/http/salon.service';
+import { Salon } from '@app/core/models/bussiness/salon';
 
 @Component({
   selector: 'app-services-create',
@@ -29,8 +31,8 @@ export class ServicesCreateComponent {
   response? : Response;
   form: FormGroup; 
   now : Date = new Date();
-  salonId = environment.salonId;
   categories: Category[] = [];
+  salons: Salon[] = [];
   types: Option[] = [
     { name: ServiceTypeConst._CONFIG, code: "Config" },
     { name: ServiceTypeConst._DEFAULT, code: "Default" },
@@ -40,7 +42,8 @@ export class ServicesCreateComponent {
               private router: Router,
               private snackBar: MatSnackBar,
               private storageService: StorageService,
-              private categoryService: CategoryService
+              private categoryService: CategoryService,
+              private salonService: SalonService
   ){
     this.form = new FormGroup({
       serviceName : new FormControl("", Validators.required),
@@ -51,11 +54,13 @@ export class ServicesCreateComponent {
       price : new FormControl(0, [Validators.required, Validators.min(0)]),
       color : new FormControl("#23324d", Validators.required),
       type : new FormControl(ServiceTypeConst._CONFIG, Validators.required),
+      salonId : new FormControl("", Validators.required),
     });
   }
 
   ngOnInit(): void {
     this.getCategories();
+    this.getSalons();
     this.form.patchValue({
       categoryId: 1,
       durationMinutes: 60,
@@ -80,7 +85,7 @@ export class ServicesCreateComponent {
       createDto.color = this.form.get('color')?.value;
       createDto.type = this.form.get('type')?.value;
       createDto.currency = "USD";
-      createDto.salonId = this.salonId;
+      createDto.salonId = this.form.get('salonId')?.value;
       this.charge = true;
       this.send = false;
       this.response = new Response();
@@ -151,6 +156,17 @@ export class ServicesCreateComponent {
       },error: (response) =>{
         this.snackBar.open('Error getting categories', 'Close', {duration: 4000});
         this.loading = false;
+      }
+    });
+  }
+
+  getSalons(): void {
+    this.salonService.getSalons().subscribe({
+      next: (response: Salon[]) => {
+        this.salons = response;
+      },
+      error: (response) => {
+        this.snackBar.open('Error getting salons', 'Close', {duration: 4000});
       }
     });
   }

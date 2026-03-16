@@ -15,7 +15,7 @@ export class MockBlockedTimeService {
     private readonly NUM_BLOCKED_TIMES = 15;
 
     constructor(private storageService: StorageService) {
-        this.initializeMockData();
+        // this.initializeMockData();
     }
 
     private initializeMockData(): void {
