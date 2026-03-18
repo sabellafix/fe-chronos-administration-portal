@@ -50,18 +50,19 @@ import { CompaniesListComponent } from './components/companies/companies-list/co
 import { CompaniesCreateComponent } from './components/companies/companies-create/companies-create.component';
 import { CompaniesUpdateComponent } from './components/companies/companies-update/companies-update.component';
 import { CompaniesDetailComponent } from './components/companies/companies-detail/companies-detail.component';
-import { BookingsCalendarComponent } from './components/booking/bookings-calendar/bookings-calendar.component';
-import { CalendarDailyComponent } from './components/booking/bookingsCalendar/calendar-daily/calendar-daily.component';
-import { CalendarWeeklyComponent } from './components/booking/bookingsCalendar/calendar-weekly/calendar-weekly.component';
-import { CalendarMonthlyComponent } from './components/booking/bookingsCalendar/calendar-monthly/calendar-monthly.component';
+import { BookingsCalendarComponent } from './components/calendar/bookings-calendar/bookings-calendar.component';
+import { CalendarDailyComponent } from './components/calendar/calendar-daily/calendar-daily.component';
+import { CalendarWeeklyComponent } from './components/calendar/calendar-weekly/calendar-weekly.component';
+import { CalendarMonthlyComponent } from './components/calendar/calendar-monthly/calendar-monthly.component';
+import { BookingsFloorComponent } from './components/calendar/bookings-floor/bookings-floor.component';
+import { BookingsSupplierComponent } from './components/calendar/bookings-supplier/bookings-supplier.component';
+import { CalendarFloorComponent } from './components/calendar/calendar-floor/calendar-floor.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { SkelletonsSimpleComponent } from './components/shared/skelletons/skelletons-simple/skelletons-simple.component';
 import { OffcanvasCreateBookingComponent } from './components/shared/offcanvas/offcanvas-create-booking/offcanvas-create-booking.component';
 import { OffcanvasUpdateBookingComponent } from './components/shared/offcanvas/offcanvas-update-booking/offcanvas-update-booking.component';
 import { CustomersListComponent } from './components/customers/customers-list/customers-list.component';
 import { CustomersCreateComponent } from './components/customers/customers-create/customers-create.component';
-import { BookingsFloorComponent } from './components/booking/bookingsCalendar/bookings-floor/bookings-floor.component';
-import { BookingsSupplierComponent } from './components/booking/bookingsCalendar/bookings-supplier/bookings-supplier.component';
 import { TimeOnlyPipe } from '../core/pipes/time-only.pipe';
 import { MonthNamePipe } from '../core/pipes/month-name.pipe';
 import { DayNumberPipe } from '../core/pipes/day-number.pipe';
@@ -69,7 +70,6 @@ import { ServiceTypePipe } from '../core/pipes/service-type.pipe';
 import { AutocompleteComponent } from './components/shared/autocomplete/autocomplete.component';
 import { SelectImageComponent } from './components/shared/selects/select-image/select-image.component';
 import { CardBookingComponent } from './components/shared/cards/card-booking/card-booking.component';
-import { CalendarFloorComponent } from './components/booking/bookingsCalendar/calendar-floor/calendar-floor.component';
 import { FLOOR_MOCK_SERVICES } from '@app/core/services/mock/floor-services.index';
 import { CustomersUpdateComponent } from './components/customers/customers-update/customers-update.component';
 import { CustomersDetailComponent } from './components/customers/customers-detail/customers-detail.component';
@@ -116,7 +116,6 @@ import { SalonsListComponent } from './components/salons/salons-list/salons-list
 import { SalonsCreateComponent } from './components/salons/salons-create/salons-create.component';
 import { SalonsUpdateComponent } from './components/salons/salons-update/salons-update.component';
 import { SalonsDetailComponent } from './components/salons/salons-detail/salons-detail.component';
-
 
 const routes: Routes = [
   {
@@ -182,22 +181,16 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'bookings',
+        path: 'calendar',
         children: [
           { path: '', component: BookingsCalendarComponent, pathMatch: 'full' },
-          { path: 'daily', component: CalendarDailyComponent },
-          { path: 'weekly', component: CalendarWeeklyComponent },
-          { path: 'monthly', component: CalendarMonthlyComponent },
-          { path: 'list', component: BookingsListComponent },
           { path: '**', redirectTo: '' }
         ]
       },
       {
-        path: 'products',
+        path: 'bookings',
         children: [
-          { path: '', component: ProductsListComponent, pathMatch: 'full' },
-          { path: 'create', component: ProductsCreateComponent },
-          { path: ':id/detail', component: ProductsDetailComponent },
+          { path: '', component: BookingsListComponent, pathMatch: 'full' },
           { path: '**', redirectTo: '' }
         ]
       },

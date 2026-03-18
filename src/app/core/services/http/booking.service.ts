@@ -4,7 +4,14 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { StorageService } from '../shared/storage.service';
-import { Booking, CreateBookingDto, UpdateBookingDto, DateOnly } from '@app/core/models/bussiness';
+import { 
+    Booking, 
+    CreateBookingDto, 
+    UpdateBookingDto, 
+    DateOnly,
+    QueryBookingsParams,
+    BookingQueryResponse
+} from '@app/core/models/bussiness';
 import { ODataQueryParams, PagedResult } from '@app/core/models/interfaces/odata.interface';
 
 @Injectable({
@@ -30,55 +37,66 @@ export class BookingService {
         };
     }
 
-    getBookingsOData(params: ODataQueryParams): Observable<Booking[]> {
-        const url = `${this.apiUrl}/${this.controller}/odata`;
-        const httpParams = this.buildODataParams(params);
-        return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params: httpParams });
+    queryBookings(params?: QueryBookingsParams): Observable<BookingQueryResponse> {
+        const url = `${this.apiUrl}/${this.controller}/query-bookings`;
+        const httpParams = this.buildQueryBookingsParams(params);
+        return this.http.get<BookingQueryResponse>(url, { ...this.getHttpOptions(), params: httpParams });
     }
-
-    
-    getMyBookingsOData(params: ODataQueryParams): Observable<Booking[]> {
-        const url = `${this.apiUrl}/${this.controller}/odata/my-bookings`;
-        const httpParams = this.buildODataParams(params);
-        return this.http.get<Booking[]>(url, { ...this.getHttpOptions(), params: httpParams });
-    }
-
-    getBookingsPaged(page: number = 1, pageSize: number = 10): Observable<PagedResult<Booking>> {
-        const url = `${this.apiUrl}/${this.controller}/paged`;
-        const params = new HttpParams()
-            .set('page', page.toString())
-            .set('pageSize', pageSize.toString());
-        return this.http.get<PagedResult<Booking>>(url, { ...this.getHttpOptions(), params });
-    }
-
-
-    getBookingsWithPagination(params: ODataQueryParams): Observable<Booking[]> {
-        return this.getMyBookingsOData(params);
-    }
-
-    private buildODataParams(params: ODataQueryParams): HttpParams {
+ 
+    private buildQueryBookingsParams(params?: QueryBookingsParams): HttpParams {
         let httpParams = new HttpParams();
 
-        if (params.filter) {
-            httpParams = httpParams.set('$filter', params.filter);
+        if (!params) {
+            return httpParams;
         }
-        if (params.orderby) {
-            httpParams = httpParams.set('$orderby', params.orderby);
+
+        if (params.search) {
+            httpParams = httpParams.set('search', params.search);
         }
-        if (params.top !== undefined) {
-            httpParams = httpParams.set('$top', params.top.toString());
+        if (params.searchField) {
+            httpParams = httpParams.set('searchField', params.searchField);
         }
-        if (params.skip !== undefined) {
-            httpParams = httpParams.set('$skip', params.skip.toString());
+
+        if (params.status) {
+            httpParams = httpParams.set('status', params.status);
         }
-        if (params.select) {
-            httpParams = httpParams.set('$select', params.select);
+
+        if (params.dateFrom) {
+            httpParams = httpParams.set('dateFrom', params.dateFrom);
         }
-        if (params.count) {
-            httpParams = httpParams.set('$count', 'true');
+        if (params.dateTo) {
+            httpParams = httpParams.set('dateTo', params.dateTo);
         }
-        if (params.expand) {
-            httpParams = httpParams.set('$expand', params.expand);
+
+        if (params.supplierId) {
+            httpParams = httpParams.set('supplierId', params.supplierId);
+        }
+        if (params.serviceId) {
+            httpParams = httpParams.set('serviceId', params.serviceId);
+        }
+        if (params.customerId) {
+            httpParams = httpParams.set('customerId', params.customerId);
+        }
+        if (params.salonId) {
+            httpParams = httpParams.set('salonId', params.salonId);
+        }
+
+        if (params.page !== undefined) {
+            httpParams = httpParams.set('page', params.page.toString());
+        }
+        if (params.pageSize !== undefined) {
+            httpParams = httpParams.set('pageSize', params.pageSize.toString());
+        }
+
+        if (params.sortBy) {
+            httpParams = httpParams.set('sortBy', params.sortBy);
+        }
+        if (params.sortOrder) {
+            httpParams = httpParams.set('sortOrder', params.sortOrder);
+        }
+
+        if (params.includeCount !== undefined) {
+            httpParams = httpParams.set('includeCount', params.includeCount.toString());
         }
 
         return httpParams;

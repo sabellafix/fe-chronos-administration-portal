@@ -1,104 +1,81 @@
-<div class="card mb-3">
-  <div class="card-body py-3">
-    <form [formGroup]="filterForm">
-      <div class="row g-3 align-items-end">
-        <!-- Search input -->
-        <div class="col-md-4">
-          <label class="form-label small text-muted text-uppercase">Search</label>
-          <div class="input-group">
-            <span class="input-group-text">
-              <i class="bx bx-search"></i>
-            </span>
-            <input 
-              type="text" 
-              class="form-control" 
-              [placeholder]="config.searchPlaceholder || 'Search...'"
-              formControlName="searchText"
-              (keyup.enter)="applyFilters()">
-          </div>
-        </div>
-
-        <!-- Search field selector -->
-        <div class="col-md-2" *ngIf="config.searchableFields.length > 1">
-          <label class="form-label small text-muted text-uppercase">Search in</label>
-          <select class="form-select" formControlName="searchField">
-            <option [ngValue]="null">All fields</option>
-            <option *ngFor="let field of config.searchableFields" [ngValue]="field.field">
-              {{ field.label }}
-            </option>
-          </select>
-        </div>
-
-        <!-- State filter -->
-        <div class="col-md-2" *ngIf="config.showStateFilter && config.stateOptions && config.stateOptions.length > 0">
-          <label class="form-label small text-muted text-uppercase">State</label>
-          <select class="form-select" formControlName="stateValue">
-            <option [ngValue]="null">All states</option>
-            <option *ngFor="let state of config.stateOptions" [ngValue]="state.code">
-              {{ state.name }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Date from -->
-        <div class="col-md-2" *ngIf="config.showDateFilter">
-          <label class="form-label small text-muted text-uppercase">Date from</label>
-          <mat-form-field appearance="outline" class="w-100 mat-form-field-sm">
-            <input 
-              matInput 
-              [matDatepicker]="pickerFrom" 
-              formControlName="dateFrom"
-              placeholder="Select date">
-            <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
-            <mat-datepicker #pickerFrom></mat-datepicker>
-          </mat-form-field>
-        </div>
-
-        <!-- Date to -->
-        <div class="col-md-2" *ngIf="config.showDateFilter">
-          <label class="form-label small text-muted text-uppercase">Date to</label>
-          <mat-form-field appearance="outline" class="w-100 mat-form-field-sm">
-            <input 
-              matInput 
-              [matDatepicker]="pickerTo" 
-              formControlName="dateTo"
-              placeholder="Select date">
-            <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
-            <mat-datepicker #pickerTo></mat-datepicker>
-          </mat-form-field>
+<div class="mb-2 mt-0 py-2">
+  <form [formGroup]="filterForm">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label small text-muted mb-1">Search</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text">
+            <i class="bx bx-search"></i>
+          </span>
+          <input type="text" class="form-control form-control-sm"
+            [placeholder]="config.searchPlaceholder || 'Search...'" formControlName="searchText"
+            (keyup.enter)="applyFilters()">
         </div>
       </div>
 
-      <!-- Actions row -->
-      <div class="row mt-3">
-        <div class="col-12 d-flex justify-content-end gap-2">
-          <button 
-            type="button" 
-            class="btn btn-outline-secondary btn-sm"
-            (click)="clearFilters()"
-            [disabled]="!hasActiveFilters()">
-            <i class="bx bx-x me-1"></i>
-            Clear
-          </button>
-          <button 
-            type="button" 
-            class="btn btn-primary btn-sm"
-            (click)="applyFilters()">
-            <i class="bx bx-filter-alt me-1"></i>
-            Apply filters
-          </button>
+      <div class="col-md-2" *ngIf="config.searchableFields.length > 1">
+        <label class="form-label small text-muted mb-1">Search in</label>
+        <select class="form-select form-select-sm" formControlName="searchField">
+          <option [ngValue]="null">All fields</option>
+          <option *ngFor="let field of config.searchableFields" [ngValue]="field.field">
+            {{ field.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-2" *ngIf="config.showStateFilter && config.stateOptions && config.stateOptions.length > 0">
+        <label class="form-label small text-muted mb-1">State</label>
+        <select class="form-select form-select-sm" formControlName="stateValue">
+          <option [ngValue]="null">All states</option>
+          <option *ngFor="let state of config.stateOptions" [ngValue]="state.code">
+            {{ state.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-2" *ngIf="config.showDateFilter">
+        <label class="form-label small text-muted mb-1">Date from</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text">
+            <i class="bx bx-chevrons-left"></i>
+          </span>
+          <input type="date" class="form-control form-control-sm" formControlName="dateFrom"
+            [max]="dateTo.value | date:'yyyy-MM-dd'" title="Start date">
         </div>
       </div>
 
-      <!-- Active filters indicator -->
-      <div class="row mt-2" *ngIf="hasActiveFilters()">
-        <div class="col-12">
-          <span class="badge bg-primary-subtle text-primary">
-            <i class="bx bx-filter me-1"></i>
-            Active filters
+      <div class="col-md-2" *ngIf="config.showDateFilter">
+        <label class="form-label small text-muted mb-1">Date to</label>
+        <div class="input-group input-group-sm">
+          <input type="date" class="form-control form-control-sm" formControlName="dateTo"
+            [min]="dateFrom.value | date:'yyyy-MM-dd'" title="End date">
+          <span class="input-group-text">
+            <i class="bx bx-chevrons-right"></i>
           </span>
         </div>
       </div>
-    </form>
-  </div>
+
+      <div class="col-md-1">
+        <label class="form-label small text-muted mb-1 d-block">&nbsp;</label>
+        <div class="btn-group btn-group-sm">
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearFilters()"
+            [disabled]="!hasActiveFilters()" title="Clear filters">
+            <i class="bx bx-x"></i>
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" (click)="applyFilters()" title="Apply filters">
+            <i class="bx bx-filter-alt"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-2" *ngIf="hasActiveFilters()">
+      <div class="col-12">
+        <span class="badge bg-primary-subtle text-primary font-size-10">
+          <i class="bx bx-filter me-1"></i>
+          Active filters
+        </span>
+      </div>
+    </div>
+  </form>
 </div>

@@ -18,6 +18,72 @@ export class BookingServiceDTO {
     }
 }
 
+export type BookingSearchField = 
+    | 'bookingReference' 
+    | 'customer.firstName' 
+    | 'customer.lastName' 
+    | 'customer.phoneNumber';
+
+export type BookingStatusFilter = 
+    | 'pending' 
+    | 'confirmed' 
+    | 'inProgress' 
+    | 'completed' 
+    | 'cancelled' 
+    | 'noShow';
+
+
+export type SortOrder = 'asc' | 'desc';
+
+export type BookingSortField = 
+    | 'bookingDate' 
+    | 'startTime' 
+    | 'status' 
+    | 'totalPrice' 
+    | 'durationMinutes' 
+    | 'bookingReference' 
+    | 'customer.lastName' 
+    | 'user.lastName' 
+    | 'createdAt';
+
+export interface QueryBookingsParams {
+    search?: string;
+    searchField?: BookingSearchField;
+    
+    status?: BookingStatusFilter;
+    
+    dateFrom?: string;
+    dateTo?: string;
+    
+    supplierId?: string;
+    serviceId?: string;
+    customerId?: string;
+    salonId?: string;
+    
+    page?: number;
+    pageSize?: number;
+    
+    sortBy?: BookingSortField;
+    sortOrder?: SortOrder;
+    
+    includeCount?: boolean;
+}
+
+
+export interface PaginationInfo {
+    page: number;
+    pageSize: number;
+    totalItems: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+}
+
+export interface BookingQueryResponse {
+    data: Booking[];
+    pagination?: PaginationInfo;
+}
+
 export class Booking{
     id: string;
     customerId: string;

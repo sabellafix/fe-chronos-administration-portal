@@ -5,6 +5,7 @@ interface MenuItem {
   title: string;
   icon: string;
   route?: string;
+  queryParams?: { [key: string]: string };
   children?: MenuItem[];
   isOpen?: boolean;
 }
@@ -32,15 +33,39 @@ export class NavigationComponent implements OnInit{
       route: 'dashboard'
     },
     {
-      title: 'Bookings',
+      title: 'Calendar',
       icon: 'bx bx bx-calendar',
       children: [
         {
-          title: 'Calendar',
+          title: 'Month',
           icon: 'bx bx bx-calendar',
-          route: 'bookings/calendar'
+          route: 'calendar',
+          queryParams: { view: 'month' }
+        },
+        {
+          title: 'Week',
+          icon: 'bx bx bx-calendar',
+          route: 'calendar',
+          queryParams: { view: 'week' }
+        },
+        {
+          title: 'Day',
+          icon: 'bx bx bx-calendar',
+          route: 'calendar',
+          queryParams: { view: 'day' }
+        },
+        {
+          title: 'Stylists',
+          icon: 'bx bx bx-calendar',
+          route: 'calendar',
+          queryParams: { view: 'stylists' }
         }
       ]
+    },
+    {
+      title: 'Bookings',
+      icon: 'bx bx-calendar-check',
+      route: 'bookings'
     },
     {
       title: 'Stylists',

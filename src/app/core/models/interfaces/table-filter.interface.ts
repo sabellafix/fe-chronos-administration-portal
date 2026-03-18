@@ -12,6 +12,8 @@ export interface TableFilterConfig {
   stateField?: string;
   dateFromField?: string;
   dateToField?: string;
+  defaultDateFrom?: Date;
+  defaultDateTo?: Date;
   showStateFilter?: boolean;
   showDateFilter?: boolean;
   searchPlaceholder?: string;

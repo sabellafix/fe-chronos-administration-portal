@@ -66,6 +66,12 @@ body {
     padding-bottom: 8px !important;
 }
 
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.25rem;
+}
+
 .border-square-bottom{
     border-bottom-left-radius: 0px; 
     border-bottom-right-radius: 0px;

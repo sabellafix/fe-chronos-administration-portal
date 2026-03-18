@@ -43,10 +43,14 @@ export class TableFinderComponent implements OnInit {
   searchText = new FormControl('');
   searchField = new FormControl<string | null>(null);
   stateValue = new FormControl<string | null>(null);
-  dateFrom = new FormControl<Date | null>(null);
-  dateTo = new FormControl<Date | null>(null);
+  dateFrom = new FormControl<Date | null>(this.config.defaultDateFrom || null);
+  dateTo = new FormControl<Date | null>(this.config.defaultDateTo || null);
 
   constructor() {
+    console.log("config", this.config);
+    console.log("dateFrom", this.config.defaultDateFrom);
+    console.log("dateTo", this.config.defaultDateTo);
+    
     this.filterForm = new FormGroup({
       searchText: this.searchText,
       searchField: this.searchField,
@@ -57,9 +61,15 @@ export class TableFinderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Establecer valores por defecto si hay campos configurados
     if (this.config.searchableFields.length > 0) {
       this.searchField.setValue(this.config.searchableFields[0].field);
+    }
+
+    if (this.config.defaultDateFrom) {
+      this.dateFrom.setValue(this.config.defaultDateFrom);
+    }
+    if (this.config.defaultDateTo) {
+      this.dateTo.setValue(this.config.defaultDateTo);
     }
   }
 
@@ -101,8 +111,8 @@ export class TableFinderComponent implements OnInit {
         : null
     );
     this.stateValue.setValue(null);
-    this.dateFrom.setValue(null);
-    this.dateTo.setValue(null);
+    this.dateFrom.setValue(this.config.defaultDateFrom || null);
+    this.dateTo.setValue(this.config.defaultDateTo || null);
 
     this.filtersCleared.emit();
     this.applyFilters();
@@ -112,12 +122,33 @@ export class TableFinderComponent implements OnInit {
    * Verifica si hay filtros activos
    */
   hasActiveFilters(): boolean {
+    const hasNonDefaultDateFrom = this.dateFrom.value && 
+      (!this.config.defaultDateFrom || 
+       !this.areDatesEqual(this.dateFrom.value, this.config.defaultDateFrom));
+    
+    const hasNonDefaultDateTo = this.dateTo.value && 
+      (!this.config.defaultDateTo || 
+       !this.areDatesEqual(this.dateTo.value, this.config.defaultDateTo));
+
     return !!(
       this.searchText.value?.trim() ||
       this.stateValue.value ||
-      this.dateFrom.value ||
-      this.dateTo.value
+      hasNonDefaultDateFrom ||
+      hasNonDefaultDateTo
     );
+  }
+
+  private areDatesEqual(date1: Date | string | null, date2: Date | string | null): boolean {
+    if (!date1 || !date2) return false;
+    
+    const d1 = date1 instanceof Date ? date1 : new Date(date1);
+    const d2 = date2 instanceof Date ? date2 : new Date(date2);
+    
+    if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return false;
+    
+    return d1.getFullYear() === d2.getFullYear() &&
+           d1.getMonth() === d2.getMonth() &&
+           d1.getDate() === d2.getDate();
   }
 
   /**

@@ -27,7 +27,7 @@
                         <ul class="nav nav-pills nav-justified p-1" role="tablist">
                             <li *ngIf="hasPermission('bookings.monthly')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#month" role="tab" 
-                                aria-selected="false" (click)="tabActive = 'Month'"
+                                aria-selected="false" (click)="onTabChanged('Month')"
                                 [ngClass]="{'active': tabActive === 'Month'}">
                                     <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
                                     <span class="d-none d-sm-block">Month</span>
@@ -35,7 +35,7 @@
                             </li>
                             <li *ngIf="hasPermission('bookings.weekly')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#week" role="tab"
-                                    aria-selected="false" (click)="tabActive = 'Week'"
+                                    aria-selected="false" (click)="onTabChanged('Week')"
                                     [ngClass]="{'active': tabActive === 'Week'}">
                                     <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
                                     <span class="d-none d-sm-block">Week</span>
@@ -43,7 +43,7 @@
                             </li>
                             <li *ngIf="hasPermission('bookings.daily')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#day" role="tab" aria-selected="false"
-                                    tabindex="-1" (click)="tabActive = 'Day'"
+                                    tabindex="-1" (click)="onTabChanged('Day')"
                                     [ngClass]="{'active': tabActive === 'Day'}">
                                     <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                     <span class="d-none d-sm-block">Day</span>
@@ -51,7 +51,7 @@
                             </li>
                             <li *ngIf="hasPermission('bookings.calendar')" class="nav-item waves-effect waves-light me-1 ms-1" role="presentation" >
                                 <a class="nav-link" data-bs-toggle="tab" href="#stylists" role="tab" aria-selected="false"
-                                    tabindex="-1" (click)="tabActive = 'Stylists'"
+                                    tabindex="-1" (click)="onTabChanged('Stylists')"
                                     [ngClass]="{'active': tabActive === 'Stylists'}">
                                     <span class="d-block d-sm-none"><i class="far fa-face-smile"></i></span>
                                     <span class="d-none d-sm-block">Stylists</span>

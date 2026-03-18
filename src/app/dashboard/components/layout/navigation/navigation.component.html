@@ -30,7 +30,7 @@
                     </a>
                     <ul *ngIf="item.children" class="sub-menu animated fadeIn fast" [class.show]="item.isOpen">
                         <li *ngFor="let child of item.children">
-                            <a [routerLink]="child.route">
+                            <a [routerLink]="child.route" [queryParams]="child.queryParams">
                                 <span class="menu-item font-size-14">{{child.title}}</span>
                             </a>
                         </li>

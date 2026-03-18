@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Customer, Service, User } from '@app/core/models/bussiness';
 import { CustomerService } from '@app/core/services/http/customer.service';
 import { ServiceService } from '@app/core/services/http/platform-service.service';
@@ -18,9 +19,23 @@ import { DashboardFiltersService } from '@app/core/services/shared/dashboard-fil
 })
 export class BookingsCalendarComponent implements OnInit, OnDestroy {
 
-  tabs: string[] = ['Month', 'Week', 'Day'];
+  tabs: string[] = ['Month', 'Week', 'Day', 'Stylists'];
   tabActive: string = 'Month';
-  tabIndex: number = 1;
+  tabIndex: number = 0;
+  
+  private viewToTabMap: { [key: string]: string } = {
+    'month': 'Month',
+    'week': 'Week',
+    'day': 'Day',
+    'stylists': 'Stylists'
+  };
+  
+  private tabToViewMap: { [key: string]: string } = {
+    'Month': 'month',
+    'Week': 'week',
+    'Day': 'day',
+    'Stylists': 'stylists'
+  };
   dateNow: Date = new Date();
   loading: boolean = false;
   imageUser: string = "../assets/images/user-image.jpg";
@@ -59,7 +74,9 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
     private serviceService: ServiceService, 
     private authService: AuthService,
     private dashboardFiltersService: DashboardFiltersService,
-    private salonService: SalonService
+    private salonService: SalonService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.user = this.authService.getUserLogged();
     this.permissions = this.authService.getPermissionsLogged();
@@ -71,6 +88,26 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initStickyHeader();
     this.subscribeToSalonChanges();
+    this.subscribeToQueryParams();
+  }
+  
+  private subscribeToQueryParams(): void {
+    this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        const view = params['view'];
+        if (view && this.viewToTabMap[view]) {
+          this.tabActive = this.viewToTabMap[view];
+          this.tabIndex = this.tabs.indexOf(this.tabActive);
+        } else {
+          this.setDefaultTab();
+        }
+      });
+  }
+  
+  private setDefaultTab(): void {
+    this.tabActive = 'Month';
+    this.tabIndex = 0;
   }
 
   ngOnDestroy(): void {
@@ -223,6 +260,18 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   onTabChanged(tab: string): void {
     this.tabActive = tab;
     this.tabIndex = this.tabs.indexOf(tab);
+    this.updateUrlWithView(tab);
+  }
+  
+  private updateUrlWithView(tab: string): void {
+    const view = this.tabToViewMap[tab];
+    if (view) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { view },
+        queryParamsHandling: 'merge'
+      });
+    }
   } 
 
 
