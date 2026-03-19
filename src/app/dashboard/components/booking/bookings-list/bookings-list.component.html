@@ -13,12 +13,6 @@
 							</div>
 							<div class="col-md-6">
 								<div class="d-flex flex-wrap gap-2 justify-content-end align-items-center">
-									<button (click)="refresh()" 
-										class="btn btn-outline-secondary btn-sm"
-										matTooltip="Refresh">
-										<i class="bx bx-reset font-size-16" [class.bx-spin]="loading"></i>
-									</button>
-
 									<div class="dropdown">
 										<button class="btn btn-outline-secondary btn-sm dropdown-toggle" 
 											type="button" 
@@ -45,7 +39,6 @@
 											</li>
 										</ul>
 									</div>
-
 									<button (click)="create()" class="btn btn-primary btn-sm bg-gradient waves-effect waves-light">
 										 New
 									</button>
@@ -55,50 +48,148 @@
 					</div>
 
 					<div class="card-body pt-1">
-						<app-table-finder 
-							[config]="tableFilterConfig" 
-							(filtersChanged)="applyFilters($event)"
-							(filtersCleared)="clearFilters()">
-						</app-table-finder>
+						<!-- Filters Section -->
+						<div class="filters-container mb-3">
+							<form [formGroup]="filterForm">
+								<!-- Row 1: Search, Status, Dates -->
+								<div class="row g-2 align-items-end">
+									<!-- Search -->
+									<div class="col-md-3">
+										<label class="form-label small text-muted mb-1">Search</label>
+										<div class="input-group input-group-sm">
+											<span class="input-group-text">
+												<i class="bx bx-search"></i>
+											</span>
+											<input type="text" class="form-control form-control-sm"
+												[placeholder]="searchPlaceholder" 
+												formControlName="searchText"
+												(keyup.enter)="applyFilters()">
+										</div>
+									</div>
 
-						<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
-							<div class="filters-section d-flex flex-wrap gap-2 align-items-end">
-								<div class="filter-item">
-									<label class="form-label small text-muted mb-1">Stylist</label>
-									<select class="form-select form-select-sm" 
-										style="min-width: 160px; font-size: 0.8125rem;"
-										[(ngModel)]="selectedStylistId"
-										(ngModelChange)="onStylistFilterChange($event)">
-										<option [ngValue]="null">All stylists</option>
-										<option *ngFor="let stylist of stylists" [ngValue]="stylist.id">
-											{{ getStylistFullName(stylist) }}
-										</option>
-									</select>
-								</div>
-								<div class="filter-item">
-									<label class="form-label small text-muted mb-1">Services</label>
-									<select class="form-select form-select-sm" 
-										style="min-width: 160px; font-size: 0.8125rem;"
-										[(ngModel)]="selectedServiceId"
-										(ngModelChange)="onServiceFilterChange($event)">
-										<option [ngValue]="null">All services</option>
-										<option *ngFor="let service of services" [ngValue]="service.id">
-											{{ service.serviceName }}
-										</option>
-									</select>
-								</div>
-							</div>
+									<!-- Search Field -->
+									<div class="col-md-2" *ngIf="searchableFields.length > 1">
+										<label class="form-label small text-muted mb-1">Search in</label>
+										<select class="form-select form-select-sm" formControlName="searchField">
+											<option [ngValue]="null">All fields</option>
+											<option *ngFor="let field of searchableFields" [ngValue]="field.field">
+												{{ field.label }}
+											</option>
+										</select>
+									</div>
 
-							<div class="quick-filters d-flex flex-wrap gap-2 align-items-center pt-3">
-								<label class="form-label small text-muted mb-1">Quick filters</label>
-								<button *ngFor="let filter of quickFilters"
-									class="btn btn-sm quick-filter-btn"
-									[class.active]="filter.active"
-									(click)="applyQuickFilter(filter.id)">
-									<i class="bx {{ filter.icon }} me-1"></i>
-									{{ filter.label }}
-								</button>
-							</div>
+									<!-- State Filter -->
+									<div class="col-md-2">
+										<label class="form-label small text-muted mb-1">Status</label>
+										<select class="form-select form-select-sm" formControlName="stateValue">
+											<option [ngValue]="null">All statuses</option>
+											<option *ngFor="let state of states" [ngValue]="state.code">
+												{{ state.name }}
+											</option>
+										</select>
+									</div>
+
+									<!-- Date From -->
+									<div class="col-md-2">
+										<label class="form-label small text-muted mb-1">Date from</label>
+										<div class="input-group input-group-sm">
+											<span class="input-group-text">
+												<i class="bx bx-chevrons-left"></i>
+											</span>
+											<input type="date" class="form-control form-control-sm" 
+												formControlName="dateFrom"
+												[max]="dateTo.value" 
+												title="Start date">
+										</div>
+									</div>
+
+									<!-- Date To -->
+									<div class="col-md-2">
+										<label class="form-label small text-muted mb-1">Date to</label>
+										<div class="input-group input-group-sm">
+											<input type="date" class="form-control form-control-sm" 
+												formControlName="dateTo"
+												[min]="dateFrom.value" 
+												title="End date">
+											<span class="input-group-text">
+												<i class="bx bx-chevrons-right"></i>
+											</span>
+										</div>
+									</div>
+
+									<!-- Action Buttons -->
+									<div class="col-md-1">
+										<label class="form-label small text-muted mb-1 d-block">&nbsp;</label>
+										<div class="btn-group btn-group-sm">
+											<button type="button" class="btn btn-outline-secondary btn-sm" 
+												(click)="clearFilters()"
+												[disabled]="!hasActiveFilters()" 
+												title="Clear filters">
+												<i class="bx bx-x"></i>
+											</button>
+											<button [class.active]="showTotals.value" [disabled]="bookings.length === 0" type="button" class="btn btn-outline-secondary btn-sm" 
+												(click)="toggleShowTotals()"
+												title="Toggle show totals">
+												<i class="bx bx-show"></i>
+											</button>
+											<button type="button" class="btn btn-primary btn-sm" 
+												(click)="applyFilters()" 
+												title="Apply filters">
+												<i class="bx bx-filter-alt"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+
+								<!-- Row 2: Stylist, Service, Quick Filters -->
+								<div class="row g-2 align-items-end mt-2">
+									<!-- Stylist Filter -->
+									<div class="col-md-2">
+										<label class="form-label small text-muted mb-1">Stylist</label>
+										<select class="form-select form-select-sm" formControlName="stylistId">
+											<option [ngValue]="null">All stylists</option>
+											<option *ngFor="let stylist of stylists" [ngValue]="stylist.id">
+												{{ getStylistFullName(stylist) }}
+											</option>
+										</select>
+									</div>
+
+									<!-- Service Filter -->
+									<div class="col-md-2">
+										<label class="form-label small text-muted mb-1">Service</label>
+										<select class="form-select form-select-sm" formControlName="serviceId">
+											<option [ngValue]="null">All services</option>
+											<option *ngFor="let service of services" [ngValue]="service.id">
+												{{ service.serviceName }}
+											</option>
+										</select>
+									</div>
+
+									<!-- Quick Filters -->
+									<div class="col-md-7">
+										<label class="form-label small text-muted mb-1">Quick filters</label>
+										<div class="quick-filters d-flex flex-wrap gap-2">
+											<button type="button" 
+												*ngFor="let filter of quickFilters"
+												class="btn btn-sm quick-filter-btn"
+												[class.active]="filter.active"
+												(click)="applyQuickFilter(filter.id)">
+												<i class="bx {{ filter.icon }} me-1"></i>
+												{{ filter.label }}
+											</button>
+										</div>
+									</div>
+									<div class="col-md-1" *ngIf="hasActiveFilters()">
+										<span class="badge bg-primary-subtle text-primary font-size-12">
+											<i class="bx bx-filter me-1"></i>
+											Active filters
+										</span>
+									</div>
+								</div>
+
+								<!-- Active Filters Indicator -->
+								
+							</form>
 						</div>
 
 						<div *ngIf="selectedBookings.size > 0" class="selection-bar mb-3">
@@ -131,7 +222,7 @@
 							<table class="table table-hover bookings-table mb-0">
 								<thead class="table-light">
 									<tr>
-										<th class="checkbox-col">
+										<!-- <th class="checkbox-col">
 											<div class="form-check">
 												<input class="form-check-input" 
 													type="checkbox" 
@@ -139,7 +230,7 @@
 													(change)="toggleSelectAll()"
 													id="selectAll">
 											</div>
-										</th>
+										</th> -->
 										<th class="sortable" (click)="sortBy('status')">
 											Status
 											<i class="bx {{ getSortIcon('status') }} ms-1"></i>
@@ -148,6 +239,11 @@
 											Reference
 											<i class="bx {{ getSortIcon('bookingReference') }} ms-1"></i>
 										</th>
+										<th class="sortable" (click)="sortBy('user.lastName')">
+											Stylist
+											<i class="bx {{ getSortIcon('user.lastName') }} ms-1"></i>
+										</th>
+										<th>Service(s)</th>
 										<th class="sortable" (click)="sortBy('customer.lastName')">
 											Customer
 											<i class="bx {{ getSortIcon('customer.lastName') }} ms-1"></i>
@@ -164,11 +260,6 @@
 											Duration
 											<i class="bx {{ getSortIcon('durationMinutes') }} ms-1"></i>
 										</th>
-										<th>Service(s)</th>
-										<th class="sortable" (click)="sortBy('user.lastName')">
-											Stylist
-											<i class="bx {{ getSortIcon('user.lastName') }} ms-1"></i>
-										</th>
 										
 										<th class="sortable" (click)="sortBy('totalPrice')">
 											Price
@@ -182,17 +273,17 @@
 										[class.today-row]="isToday(booking)"
 										[class.upcoming-row]="isUpcoming(booking)"
 										[class.selected-row]="isSelected(booking.id)">
-										<td class="checkbox-col">
+										<!-- <td class="checkbox-col">
 											<div class="form-check">
 												<input class="form-check-input" 
 													type="checkbox" 
 													[checked]="isSelected(booking.id)"
 													(change)="toggleSelectBooking(booking.id)">
 											</div>
-										</td>
+										</td> -->
 										<td>
 											<span class="badge status-badge" [ngClass]="getBookingStatusClass(booking)">
-												{{ getBookingStatus(booking) }}
+												{{ booking.status }}
 											</span>
 										</td>
 										<td class="reference-col">
@@ -202,31 +293,16 @@
 											</span>
 										</td>
 										<td>
-											<div class="customer-info">
-												<span class="customer-name">{{ getCustomerName(booking) }}</span>
+											<div class="professional-info">
+												<div class="professional-avatar">
+													<img *ngIf="getStylistPhotoUrl(booking)" 
+														[src]="getStylistPhotoUrl(booking)" 
+														[alt]="getStylistName(booking)"
+														class="stylist-photo">
+													<i *ngIf="!getStylistPhotoUrl(booking)" class="bx bx-user"></i>
+												</div>
+												<span class="professional-name">{{ getStylistName(booking) }}</span>
 											</div>
-										</td>
-										
-										<td>
-											<div class="date-info">
-												<span class="date-text">{{ formatDateOnly(booking.bookingDate) }}</span>
-												<span *ngIf="isToday(booking)" class="badge bg-success-subtle text-success ms-1 font-size-10">Today</span>
-											</div>
-										</td>
-										<td>
-											<div class="time-info">
-												<i class="bx bx-time-five text-muted me-1"></i>
-												<span>{{ formatTimeRange(booking.startTime, booking.endTime) }}</span>
-												<span *ngIf="isUpcoming(booking)" class="upcoming-indicator" matTooltip="Starting soon">
-													<i class="bx bx-bell bx-tada text-warning"></i>
-												</span>
-											</div>
-										</td>
-										<td>
-											<span class="duration-text">
-												<i class="bx bx-timer text-muted me-1"></i>
-												{{ formatDuration(booking.durationMinutes) }}
-											</span>
 										</td>
 										<td class="services-col">
 											<div class="services-chips">
@@ -249,17 +325,32 @@
 											</div>
 										</td>
 										<td>
-											<div class="professional-info">
-												<div class="professional-avatar">
-													<img *ngIf="getStylistPhotoUrl(booking)" 
-														[src]="getStylistPhotoUrl(booking)" 
-														[alt]="getStylistName(booking)"
-														class="stylist-photo">
-													<i *ngIf="!getStylistPhotoUrl(booking)" class="bx bx-user"></i>
-												</div>
-												<span class="professional-name">{{ getStylistName(booking) }}</span>
+											<div class="customer-info">
+												<span class="customer-name">{{ getCustomerName(booking) }}</span>
 											</div>
 										</td>
+										<td>
+											<div class="date-info">
+												<span class="date-text">{{ formatDateOnly(booking.bookingDate) }}</span>
+												<span *ngIf="isToday(booking)" class="badge bg-success-subtle text-success ms-1 font-size-10">Today</span>
+											</div>
+										</td>
+										<td>
+											<div class="time-info">
+												<i class="bx bx-time-five text-muted me-1"></i>
+												<span>{{ formatTimeRange(booking.startTime, booking.endTime) }}</span>
+												<span *ngIf="isUpcoming(booking)" class="upcoming-indicator" matTooltip="Starting soon">
+													<i class="bx bx-bell bx-tada text-warning"></i>
+												</span>
+											</div>
+										</td>
+										<td>
+											<span class="duration-text">
+												<i class="bx bx-timer text-muted me-1"></i>
+												{{ formatDuration(booking.durationMinutes) }}
+											</span>
+										</td>
+										
 										
 										<td>
 											<span class="price-text fw-medium">{{ formatPrice(booking) }}</span>
@@ -296,6 +387,55 @@
 										</td>
 									</tr>
 								</tbody>
+								<tfoot  class="table-footer-totals animated fadeIn fast" *ngIf="bookings.length > 0 && showTotals.value">
+									<tr>
+										<td colspan="2" class="fw-semibold">
+										</td>
+										<!-- Total Num Bookings -->
+										<td class="fw-semibold">
+											<span class="totals-label" title="Total Bookings">
+												<i class="bx bx-calendar-check me-1"></i>
+												<span class="totals-value">{{ getTotalNumBookings() }}</span>
+											</span>
+										</td>
+										<!-- Total Num Stylists -->
+										<td class="fw-semibold">
+											<span class="totals-label" title="Unique Stylists">
+												<i class="bx bx-face me-1"></i>
+												<span class="totals-value">{{ getTotalNumStylists() }}</span>
+											</span>
+										</td>
+										<!-- Total Num Services -->
+										<td class="fw-semibold">
+											<span class="totals-label" title="Unique Services">
+												<i class="bx bx-cut me-1"></i>
+												<span class="totals-value">{{ getTotalNumServices() }}</span>
+											</span>
+										</td>
+										<!-- Total Num Customers -->
+										<td colspan="3" class="fw-semibold">
+											<span class="totals-label" title="Unique Customers">
+												<i class="bx bx-user me-1"></i>
+												<span class="totals-value">{{ getTotalNumCustomers() }}</span>
+											</span>
+										</td>
+										<!-- Total Duration -->
+										<td class="fw-semibold">
+											<span class="totals-label" title="Total Duration">
+												<i class="bx bx-timer me-1"></i>
+												<span class="totals-value">{{ getTotalDuration() }}</span>
+											</span>
+										</td>
+										<!-- Total Price -->
+										<td class="fw-semibold">
+											<span class="totals-label totals-price" title="Total Price">
+												<i class="bx bx-dollar"></i>
+												<span class="totals-value">{{ getTotalPrice() }}</span>
+											</span>
+										</td>
+										<td></td>
+									</tr>
+								</tfoot>
 							</table>
 
 							<!-- Pagination -->

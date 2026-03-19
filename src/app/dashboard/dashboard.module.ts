@@ -124,6 +124,11 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { 
+        path: '', 
+        redirectTo: 'dashboard', 
+        pathMatch: 'full' 
+      },
+      { 
         path: 'dashboard',
         children: [
           { path: '', component: DashboardComponent, pathMatch: 'full' },

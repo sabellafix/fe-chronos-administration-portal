@@ -39,7 +39,7 @@
           <span class="input-group-text">
             <i class="bx bx-chevrons-left"></i>
           </span>
-          <input type="date" class="form-control form-control-sm" formControlName="dateFrom"
+          <input type="date" class="form-control form-control-sm" [value]="dateFrom.value | date:'yyyy-MM-dd'" formControlName="dateFrom"
             [max]="dateTo.value | date:'yyyy-MM-dd'" title="Start date">
         </div>
       </div>
@@ -47,7 +47,7 @@
       <div class="col-md-2" *ngIf="config.showDateFilter">
         <label class="form-label small text-muted mb-1">Date to</label>
         <div class="input-group input-group-sm">
-          <input type="date" class="form-control form-control-sm" formControlName="dateTo"
+          <input type="date" class="form-control form-control-sm" [value]="dateTo.value | date:'yyyy-MM-dd'" formControlName="dateTo"
             [min]="dateFrom.value | date:'yyyy-MM-dd'" title="End date">
           <span class="input-group-text">
             <i class="bx bx-chevrons-right"></i>

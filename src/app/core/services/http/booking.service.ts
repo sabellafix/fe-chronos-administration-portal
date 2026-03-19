@@ -12,7 +12,6 @@ import {
     QueryBookingsParams,
     BookingQueryResponse
 } from '@app/core/models/bussiness';
-import { ODataQueryParams, PagedResult } from '@app/core/models/interfaces/odata.interface';
 
 @Injectable({
     providedIn: 'root'

@@ -119,10 +119,12 @@ export class DashboardFiltersService {
   }
 
   private getRouteFilterConfig(route: string): RouteFilterConfig | undefined {
-    let config = ROUTE_FILTER_CONFIGURATIONS.find(c => c.route === route);
+    const routePath = route.split('?')[0];
+    
+    let config = ROUTE_FILTER_CONFIGURATIONS.find(c => c.route === routePath);
     
     if (!config) {
-      config = ROUTE_FILTER_CONFIGURATIONS.find(c => route.endsWith(c.route));
+      config = ROUTE_FILTER_CONFIGURATIONS.find(c => routePath.endsWith(c.route));
     }
     
     return config;

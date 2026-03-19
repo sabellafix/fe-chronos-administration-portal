@@ -22,6 +22,12 @@ export const ROUTE_FILTER_CONFIGURATIONS: RouteFilterConfig[] = [
         ]
     },
     {
+        route: '/calendar',
+        enabledFilters: [
+            TopbarFiltersConst._SALON
+        ]
+    },
+    {
         route: '/bookings',
         enabledFilters: [
             TopbarFiltersConst._SALON

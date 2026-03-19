@@ -15,52 +15,55 @@ import {
 })
 export class TableFinderComponent implements OnInit {
   
-  /** Configuración del componente de filtros */
   @Input() config: TableFilterConfig = {
     searchableFields: [],
     stateOptions: [],
     showStateFilter: true,
     showDateFilter: true,
-    searchPlaceholder: 'Search...'
+    searchPlaceholder: 'Search...',
+    defaultDateFrom: new Date(),
+    defaultDateTo: new Date(),
+    stateField: 'status',
+    dateFromField: 'bookingDate',
+    dateToField: 'bookingDate'
   };
 
-  /** Datos originales a filtrar (opcional, para filtrado en cliente) */
   @Input() data: any[] = [];
 
-  /** Emite los filtros aplicados */
   @Output() filtersChanged = new EventEmitter<AppliedFilters>();
 
-  /** Emite los datos filtrados (cuando se usa filtrado en cliente) */
   @Output() filteredData = new EventEmitter<any[]>();
 
-  /** Emite cuando se limpiaron los filtros */
   @Output() filtersCleared = new EventEmitter<void>();
 
-  // Formulario reactivo
   filterForm: FormGroup;
 
-  // Campos del formulario
   searchText = new FormControl('');
   searchField = new FormControl<string | null>(null);
   stateValue = new FormControl<string | null>(null);
-  dateFrom = new FormControl<Date | null>(this.config.defaultDateFrom || null);
-  dateTo = new FormControl<Date | null>(this.config.defaultDateTo || null);
+  dateFrom = new FormControl<Date | null>( null);
+  dateTo = new FormControl<Date | null>(null);
 
   constructor() {
-    console.log("config", this.config);
-    console.log("dateFrom", this.config.defaultDateFrom);
     console.log("dateTo", this.config.defaultDateTo);
-    
+
+    this.dateFrom = new FormControl<Date | null>(this.config.defaultDateFrom || null);
+    this.dateTo = new FormControl<Date | null>(this.config.defaultDateTo || null);
+
+    console.log("dateFrom", this.dateFrom);
+    console.log("dateTo", this.dateTo);
+
     this.filterForm = new FormGroup({
       searchText: this.searchText,
       searchField: this.searchField,
       stateValue: this.stateValue,
       dateFrom: this.dateFrom,
-      dateTo: this.dateTo
+      dateTo: this.dateTo,
     });
   }
 
   ngOnInit(): void {
+
     if (this.config.searchableFields.length > 0) {
       this.searchField.setValue(this.config.searchableFields[0].field);
     }
@@ -73,9 +76,6 @@ export class TableFinderComponent implements OnInit {
     }
   }
 
-  /**
-   * Aplica los filtros y emite los resultados
-   */
   applyFilters(): void {
     const filterResult: TableFilterResult = {
       searchText: this.searchText.value || '',

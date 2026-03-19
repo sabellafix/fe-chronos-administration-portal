@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
@@ -21,7 +22,7 @@ import { Option } from '@app/core/models/interfaces/option.interface';
 import { EntiesConst } from '@app/core/models/constants/entity.const';
 import { RolesConst } from '@app/core/models/constants/roles.const';
 import { DialogConfirmComponent } from '@app/dashboard/components/shared/dialogs/dialog-confirm/dialog-confirm.component';
-import { AppliedFilters, TableFilterConfig, TableFilterResult } from '@app/core/models/interfaces/table-filter.interface';
+import { FilterFieldConfig, TableFilterResult } from '@app/core/models/interfaces/table-filter.interface';
 import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-booking.service';
 import { DashboardFiltersService } from '@app/core/services/shared/dashboard-filters.service';
 
@@ -73,11 +74,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
   quickFilters: QuickFilter[] = [
     { id: 'today', label: 'Today', icon: 'bx-calendar', active: false },
     { id: 'tomorrow', label: 'Tomorrow', icon: 'bx-calendar', active: false },
-    { id: 'thisWeek', label: 'This Week', icon: 'bx-calendar-week', active: false },
-    { id: 'thisMonth', label: 'This Month', icon: 'bx-calendar-alt', active: false },
-    { id: 'pending', label: 'Pending', icon: 'bx-time', active: false },
-    { id: 'confirmed', label: 'Confirmed', icon: 'bx-check', active: false },
-    { id: 'inProgress', label: 'In Progress', icon: 'bx-loader-alt', active: false }
+    { id: 'thisWeek', label: 'This Week', icon: 'bx-calendar', active: false },
+    { id: 'thisMonth', label: 'This Month', icon: 'bx-calendar', active: false },
   ];
 
   stylists: User[] = [];
@@ -99,25 +97,26 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
   currentFilters: TableFilterResult | null = null;
   activeQuickFilter: string | null = null;
-  defaultDateFrom: Date = this.getDefaultDateFrom();
-  defaultDateTo: Date = this.getDefaultDateTo();
+  defaultDateFrom!: Date;
+  defaultDateTo!: Date;
 
-  tableFilterConfig: TableFilterConfig = {
-    searchableFields: [
-      {label: "Reference", field: "bookingReference", type: "string"},
-      {label: "Customer", field: "customer.firstName", type: "string"},
-      {label: "Phone", field: "customer.phoneNumber", type: "string"}
-    ],
-    stateOptions: this.states,
-    stateField: 'status',
-    dateFromField: 'bookingDate',
-    dateToField: 'bookingDate',
-    defaultDateFrom: this.defaultDateFrom,
-    defaultDateTo: this.defaultDateTo,
-    showStateFilter: true,
-    showDateFilter: true,
-    searchPlaceholder: 'Search by reference, customer name...'
-  };
+  // Filter form controls
+  filterForm!: FormGroup;
+  searchText = new FormControl('');
+  searchField = new FormControl<string | null>(null);
+  stateValue = new FormControl<string | null>(null);
+  dateFrom = new FormControl<string | null>(null);
+  dateTo = new FormControl<string | null>(null);
+  stylistId = new FormControl<string | null>(null);
+  serviceId = new FormControl<string | null>(null);
+  showTotals = new FormControl<boolean>(false);
+
+  // Filter configuration
+  searchableFields: FilterFieldConfig[] = [
+    { label: "Reference", field: "bookingReference", type: "string" },
+    { label: "Customer", field: "customer.firstName", type: "string" }
+  ];
+  searchPlaceholder: string = 'Search by reference, customer name...';
 
   constructor(
     private bookingService: BookingService,
@@ -129,16 +128,52 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     private offcanvasBookingService: OffcanvasBookingService,
     private dashboardFiltersService: DashboardFiltersService
   ) {
+    this.defaultDateFrom = this.getDefaultDateFrom();
+    this.defaultDateTo = this.getDefaultDateTo();
+    
+    this.initializeFilterForm();
+  }
+
+  private initializeFilterForm(): void {
+    this.dateFrom = new FormControl<string | null>(this.formatDateToString(this.defaultDateFrom));
+    this.dateTo = new FormControl<string | null>(this.formatDateToString(this.defaultDateTo));
+    
+    this.filterForm = new FormGroup({
+      searchText: this.searchText,
+      searchField: this.searchField,
+      stateValue: this.stateValue,
+      dateFrom: this.dateFrom,
+      dateTo: this.dateTo,
+      stylistId: this.stylistId,
+      serviceId: this.serviceId,
+      showTotals: this.showTotals
+    });
+
+    if (this.searchableFields.length > 0) {
+      this.searchField.setValue(this.searchableFields[0].field);
+    }
+  }
+
+  private formatDateToString(date: Date | null): string | null {
+    if (!date) return null;
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private parseStringToDate(dateString: string | null): Date | null {
+    if (!dateString) return null;
+    const parts = dateString.split('-');
+    if (parts.length !== 3) return null;
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    return new Date(year, month, day);
   }
 
   ngOnInit(): void {
-    // console.log("defaultDateFrom", this.defaultDateFrom);
-    // console.log("defaultDateTo", this.defaultDateTo);
-    // console.log("tableFilterConfig", this.tableFilterConfig);
-    
-    
     this.subscribeToSalonChanges();
-    this.loadStylists();
     this.loadServices();
     this.subscribeToBookingEvents();
   }
@@ -150,6 +185,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
     this.loadFiltersFromStorage();
     this.initializeDefaultFilters();
+    
     this.loadBookings();
 
     const salonSub = this.dashboardFiltersService.selectedSalon$.subscribe(salon => {
@@ -157,6 +193,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
       
       if (this.salonId !== newSalonId) {
         this.salonId = newSalonId;
+        this.loadStylists();
         this.resetAllFilters();
         this.loadBookings();
       }
@@ -192,6 +229,21 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     this.selectedBookings.clear();
     this.allSelected = false;
     this.clearFiltersFromStorage();
+    
+    // Reset form controls
+    this.resetFilterForm();
+  }
+
+  private resetFilterForm(): void {
+    this.searchText.setValue('');
+    this.searchField.setValue(
+      this.searchableFields.length > 0 ? this.searchableFields[0].field : null
+    );
+    this.stateValue.setValue(null);
+    this.dateFrom.setValue(this.formatDateToString(this.defaultDateFrom));
+    this.dateTo.setValue(this.formatDateToString(this.defaultDateTo));
+    this.stylistId.setValue(null);
+    this.serviceId.setValue(null);
   }
 
   private getDefaultFilters(): TableFilterResult {
@@ -239,18 +291,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     });
   }
 
-  onStylistFilterChange(stylistId: string | null): void {
-    this.selectedStylistId = stylistId;
-    this.pageIndex = 0;
-    this.loadBookings();
-  }
-
-  onServiceFilterChange(serviceId: string | null): void {
-    this.selectedServiceId = serviceId;
-    this.pageIndex = 0;
-    this.loadBookings();
-  }
-
   getStylistFullName(user: User): string {
     return `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unknown';
   }
@@ -271,103 +311,129 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     this.subscriptions.push(createdSub, updatedSub);
   }
 
-  applyFilters(appliedFilters: AppliedFilters): void {
-    this.currentFilters = appliedFilters.filters;
+  applyFilters(): void {
+    this.currentFilters = {
+      searchText: this.searchText.value || '',
+      searchField: this.searchField.value,
+      stateValue: this.stateValue.value,
+      dateFrom: this.parseStringToDate(this.dateFrom.value),
+      dateTo: this.parseStringToDate(this.dateTo.value)
+    };
+            
+    this.selectedStylistId = this.stylistId.value;
+    this.selectedServiceId = this.serviceId.value;
+    
     this.pageIndex = 0;
     this.clearQuickFilters();
     this.saveFiltersToStorage();
     this.loadBookings();
   }
 
+  hasActiveFilters(): boolean {
+    const hasNonDefaultDateFrom = this.dateFrom.value && 
+      (!this.defaultDateFrom || !this.areDatesEqual(this.dateFrom.value, this.defaultDateFrom));
+    
+    const hasNonDefaultDateTo = this.dateTo.value && 
+      (!this.defaultDateTo || !this.areDatesEqual(this.dateTo.value, this.defaultDateTo));
+
+    return !!(
+      this.searchText.value?.trim() ||
+      this.stateValue.value ||
+      hasNonDefaultDateFrom ||
+      hasNonDefaultDateTo ||
+      this.stylistId.value ||
+      this.serviceId.value
+    );
+  }
+
+  private areDatesEqual(date1: Date | string | null, date2: Date | string | null): boolean {
+    if (!date1 || !date2) return false;
+    
+    const d1 = date1 instanceof Date ? date1 : new Date(date1);
+    const d2 = date2 instanceof Date ? date2 : new Date(date2);
+    
+    if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return false;
+    
+    return d1.getFullYear() === d2.getFullYear() &&
+           d1.getMonth() === d2.getMonth() &&
+           d1.getDate() === d2.getDate();
+  }
+
+  getFieldLabel(field: string): string {
+    const config = this.searchableFields.find(f => f.field === field);
+    return config?.label || field;
+  }
+
   applyQuickFilter(filterId: string): void {
     if (this.activeQuickFilter === filterId) {
-      this.clearQuickFilters();
-      this.loadBookings();
+      this.activeQuickFilter = null;
+      this.quickFilters.forEach(f => f.active = false);
+      // Reset dates to default
+      this.dateFrom.setValue(this.formatDateToString(this.defaultDateFrom));
+      this.dateTo.setValue(this.formatDateToString(this.defaultDateTo));
+      this.applyFilters();
       return;
     }
-
-    this.clearQuickFilters();
+    
     this.activeQuickFilter = filterId;
     
-    const filter = this.quickFilters.find(f => f.id === filterId);
-    if (filter) {
-      filter.active = true;
-    }
+    this.quickFilters.forEach(f => { 
+      if(f.id === filterId) { 
+        if(f.active) {
+          f.active = false;
+        } else {
+          f.active = true; 
+        }
+      } else {
+        f.active = false;
+      }
+    });
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     switch (filterId) {
       case 'today':
-        this.currentFilters = {
-          ...this.currentFilters,
-          dateFrom: today,
-          dateTo: today
-        } as TableFilterResult;
+        this.dateFrom.setValue(this.formatDateToString(today));
+        this.dateTo.setValue(this.formatDateToString(today));
         break;
       case 'tomorrow':
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
-        this.currentFilters = {
-          ...this.currentFilters,
-          dateFrom: tomorrow,
-          dateTo: tomorrow
-        } as TableFilterResult;
+        this.dateFrom.setValue(this.formatDateToString(tomorrow));
+        this.dateTo.setValue(this.formatDateToString(tomorrow));
         break;
       case 'thisWeek':
         const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - today.getDay());
+        startOfWeek.setDate(today.getDate() - today.getDay() + 1 );
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 6);
-        this.currentFilters = {
-          ...this.currentFilters,
-          dateFrom: startOfWeek,
-          dateTo: endOfWeek
-        } as TableFilterResult;
+        this.dateFrom.setValue(this.formatDateToString(startOfWeek));
+        this.dateTo.setValue(this.formatDateToString(endOfWeek));
         break;
       case 'thisMonth':
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        this.currentFilters = {
-          ...this.currentFilters,
-          dateFrom: startOfMonth,
-          dateTo: endOfMonth
-        } as TableFilterResult;
-        break;
-      case 'pending':
-        this.currentFilters = {
-          ...this.currentFilters,
-          stateValue: 'pending'
-        } as TableFilterResult;
-        break;
-      case 'confirmed':
-        this.currentFilters = {
-          ...this.currentFilters,
-          stateValue: 'confirmed'
-        } as TableFilterResult;
-        break;
-      case 'inProgress':
-        this.currentFilters = {
-          ...this.currentFilters,
-          stateValue: 'inProgress'
-        } as TableFilterResult;
+        this.dateFrom.setValue(this.formatDateToString(startOfMonth));
+        this.dateTo.setValue(this.formatDateToString(endOfMonth));
         break;
     }
 
-    this.pageIndex = 0;
-    this.loadBookings();
+    this.sortConfig.column = 'bookingDate';
+    this.sortConfig.direction = 'asc';
+
+    this.applyFilters();
   }
 
   private clearQuickFilters(): void {
     this.activeQuickFilter = null;
-    this.quickFilters.forEach(f => f.active = false);
+    // this.quickFilters.forEach(f => f.active = false);
   }
 
   loadBookings(): void {
     this.loading = true;
-
     const params = this.buildQueryParams();
-
+    
     this.bookingService.queryBookings(params).subscribe({
       next: (response) => {
         this.bookings = this.mapBookingsResponse(response.data || []);
@@ -675,13 +741,14 @@ export class BookingsListComponent implements OnInit, OnDestroy {
   }
 
   clearFilters(): void {
-    this.currentFilters = null;
+    this.resetFilterForm();
+    this.currentFilters = this.getDefaultFilters();
     this.selectedStylistId = null;
     this.selectedServiceId = null;
     this.clearQuickFilters();
     this.pageIndex = 0;
     this.clearFiltersFromStorage();
-    this.loadBookings();
+    this.applyFilters();
   }
 
   refresh(): void {
@@ -885,4 +952,77 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     const end = Math.min((this.pageIndex + 1) * this.pageSize, this.totalItems);
     return `Showing ${start}-${end} of ${this.totalItems} bookings`;
   }
+
+  getTotalNumBookings(): number {
+    return this.bookings.length;
+  }
+
+  getTotalNumStylists(): number {
+    const uniqueStylists = new Set(
+      this.bookings
+        .filter(b => b.supplierId)
+        .map(b => b.supplierId)
+    );
+    return uniqueStylists.size;
+  }
+
+  getTotalNumServices(): number {
+    const uniqueServices = new Set<string>();
+    this.bookings.forEach(booking => {
+      if (booking.services && booking.services.length > 0) {
+        booking.services.forEach(service => {
+          if (service.id) {
+            uniqueServices.add(service.id);
+          }
+        });
+      } else if (booking.serviceId) {
+        uniqueServices.add(booking.serviceId);
+      }
+    });
+    return uniqueServices.size;
+  }
+
+  getTotalNumCustomers(): number {
+    const uniqueCustomers = new Set(
+      this.bookings
+        .filter(b => b.customerId)
+        .map(b => b.customerId)
+    );
+    return uniqueCustomers.size;
+  }
+
+  getTotalDuration(): string {
+    const totalMinutes = this.bookings.reduce((sum, booking) => {
+      return sum + (booking.durationMinutes || 0);
+    }, 0);
+    
+    if (totalMinutes === 0) return '0m';
+    
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    
+    if (hours === 0) return `${minutes}m`;
+    if (minutes === 0) return `${hours}h`;
+    return `${hours}h ${minutes}m`;
+  }
+
+  getTotalPrice(): string {
+    const total = this.bookings.reduce((sum, booking) => {
+      return sum + (booking.totalPrice || 0);
+    }, 0);
+    
+    const currency = this.bookings.length > 0 && this.bookings[0].currency 
+      ? this.bookings[0].currency 
+      : 'USD';
+    
+    return new Intl.NumberFormat('en-US', { 
+      style: 'currency', 
+      currency: currency 
+    }).format(total);
+  }
+
+  toggleShowTotals(): void {
+    this.showTotals.setValue(!this.showTotals.value);
+  }
+
 }
