@@ -61,13 +61,7 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
   
   // UI
   imageUser: string = "../assets/images/user-image.jpg";
-  userImages: string[] = [
-    "../assets/images/users/user1.jpg",
-    "../assets/images/users/user2.png",
-    "../assets/images/users/user3.png",
-    "../assets/images/users/user4.png",
-  ];
-  
+
   constructor(
     private formBuilder: FormBuilder, 
     private serviceService: ServiceService, 
@@ -429,6 +423,8 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
       updateBookingDto.clientNotes = formValue.clientNotes || undefined;
       updateBookingDto.providerNotes = formValue.providerNotes || undefined;
       updateBookingDto.status = formValue.status;
+      updateBookingDto.supplierId = formValue.supplierId || this.booking?.supplierId || undefined;
+      updateBookingDto.forceCreation = true;
       
       this.bookingService.updateBooking(this.bookingId, updateBookingDto).subscribe({
         next: (response: Booking) => {

@@ -63,9 +63,12 @@ export class OffcanvasBookingService {
 
   private checkCurrentRoute(url: string): void {
     const isBookingsRoute = url.includes('/bookings');
-    this._isEnabled.next(isBookingsRoute);
+    const isCalendarRoute = url.includes('/calendar');
+    const isValidRoute = isBookingsRoute || isCalendarRoute;
     
-    if (!isBookingsRoute) {
+    this._isEnabled.next(isValidRoute);
+    
+    if (!isValidRoute) {
       this.resetState();
     }
   }
@@ -76,7 +79,7 @@ export class OffcanvasBookingService {
 
   openBookingModal(date: Date, hour?: number, stylistId?: string): void {
     if (!this.isServiceEnabled()) {
-      console.warn('OffcanvasBookingService: El servicio solo está disponible en la ruta /bookings');
+      console.warn('OffcanvasBookingService: El servicio solo está disponible en las rutas /bookings o /calendar');
       return;
     }
 
@@ -109,7 +112,7 @@ export class OffcanvasBookingService {
 
   openUpdateBookingModal(bookingId: string): void {
     if (!this.isServiceEnabled()) {
-      console.warn('OffcanvasBookingService: El servicio solo está disponible en la ruta /bookings');
+      console.warn('OffcanvasBookingService: El servicio solo está disponible en las rutas /bookings o /calendar');
       return;
     }
 
@@ -137,7 +140,7 @@ export class OffcanvasBookingService {
 
   openDetailBookingModal(bookingId: string): void {
     if (!this.isServiceEnabled()) {
-      console.warn('OffcanvasBookingService: El servicio solo está disponible en la ruta /bookings');
+      console.warn('OffcanvasBookingService: El servicio solo está disponible en las rutas /bookings o /calendar');
       return;
     }
 

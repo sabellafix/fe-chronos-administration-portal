@@ -16,6 +16,7 @@ import { OffcanvasBookingService } from '@app/core/services/shared/offcanvas-boo
 import { Subscription, filter, take } from 'rxjs';
 import { RolesConst } from '@app/core/models/constants/roles.const';
 import { Option } from '@app/core/models/interfaces/option.interface';
+import { DashboardFiltersService } from '@app/core/services/shared/dashboard-filters.service';
 
 declare var bootstrap: any;
 
@@ -48,6 +49,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   stylistLocked: boolean = false;
   selectedStylist: User | null = null;
   loadingServices: boolean = false;
+  salonId : string | undefined = undefined;
   imageUser: string = "../assets/images/user-image.jpg";
   userImages: string[] = [
     "../assets/images/users/user1.jpg",
@@ -62,6 +64,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     private customerService: CustomerService,
     private userService: UserService,
     private snackBar: MatSnackBar,
+    private dashboardFiltersService: DashboardFiltersService,
     private offcanvasBookingService: OffcanvasBookingService) {
     const baseDate = this.selectedDate ? new Date(this.selectedDate) : new Date();
     this.defaultDate = this.formatDateToString(baseDate);
@@ -93,6 +96,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   private initializeComponent(): void {
     this.getUsers();
     this.getCustomers();
+    this.subscribeToSelectedSalon();
     
     const offcanvasElement = document.getElementById('offcanvasCreateBooking');
     if (offcanvasElement) {
@@ -105,6 +109,16 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
     
     this.subscribeToOffcanvasService();
     this.subscribeToStylistChanges();
+  }
+
+  private subscribeToSelectedSalon(): void {
+    const currentSalon = this.dashboardFiltersService.getCurrentSalon();
+    this.salonId = currentSalon?.id;
+
+    const salonSubscription = this.dashboardFiltersService.selectedSalon$.subscribe(salon => {
+      this.salonId = salon?.id;
+    });
+    this.subscriptions.push(salonSubscription);
   }
 
   ngOnDestroy(): void {
@@ -300,6 +314,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
       createBookingDto.durationMinutes = totalDuration;
       createBookingDto.totalPrice = totalPrice;
       createBookingDto.currency = 'COP';
+      createBookingDto.salonId = this.salonId || undefined;
       
       const totalMinutes = startMinute + totalDuration;
       const endHour = startHour + Math.floor(totalMinutes / 60);

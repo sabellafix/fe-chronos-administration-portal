@@ -61,9 +61,10 @@ export interface BookingServiceRequest {
 }
 
 export class CreateBookingDto {
-    customerId: string; // required, format: uuid
-    serviceId: string; // required, format: uuid
-    supplierId?: string; // format: uuid
+    customerId: string;
+    serviceId: string;
+    supplierId?: string;
+    salonId?: string;
     bookingDate: string;
     durationMinutes?: number;
     startTime: string;
@@ -76,6 +77,7 @@ export class CreateBookingDto {
     constructor() {
         this.customerId = "";
         this.serviceId = "";
+        this.salonId = undefined;
         this.supplierId = undefined;
         this.bookingDate = "";
         this.durationMinutes = undefined;

@@ -16,7 +16,7 @@ export const BookingStatusNames = {
     Completed: "completed",
     Cancelled: "cancelled",
     NoShow: "noShow",
-    Rescheduled: "rescheduled",
+        Rescheduled: "rescheduled",
     InBaske: "inBaske",
 }
 

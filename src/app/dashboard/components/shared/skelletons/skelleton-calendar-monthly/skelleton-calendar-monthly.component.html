@@ -19,7 +19,7 @@
                 <!-- Bookings placeholder (aleatorio) -->
                 <div class="day-bookings" *ngIf="shouldShowBookings(week, day)">
                     <ngx-skeleton-loader
-                        *ngFor="let booking of getRandomBookings()"
+                        *ngFor="let booking of getBookings(week, day)"
                         count="1"
                         appearance="line"
                         [theme]="{

@@ -14,7 +14,6 @@ export class WeeklyCalendarComponent implements OnInit {
   dayNames: string[] = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   timeSlots: string[] = [];
   
-  // Datos de ejemplo de citas
   sampleBookings: CalendarBooking[] = [
     {
       id: '1',
@@ -53,9 +52,6 @@ export class WeeklyCalendarComponent implements OnInit {
     this.generateWeekDays();
   }
 
-  /**
-   * Genera los slots de tiempo desde las 6:00 hasta las 22:00
-   */
   generateTimeSlots(): void {
     this.timeSlots = Array.from({ length: 16 }, (_, i) => {
       const hour = i + 6;
@@ -63,9 +59,6 @@ export class WeeklyCalendarComponent implements OnInit {
     });
   }
 
-  /**
-   * Genera los días de la semana actual
-   */
   generateWeekDays(): void {
     const startOfWeek = new Date(this.currentWeek);
     const day = startOfWeek.getDay();
@@ -79,9 +72,6 @@ export class WeeklyCalendarComponent implements OnInit {
     });
   }
 
-  /**
-   * Navega a la semana anterior o siguiente
-   */
   navigateWeek(direction: 'prev' | 'next'): void {
     const newWeek = new Date(this.currentWeek);
     newWeek.setDate(this.currentWeek.getDate() + (direction === 'next' ? 7 : -7));
@@ -89,36 +79,23 @@ export class WeeklyCalendarComponent implements OnInit {
     this.generateWeekDays();
   }
 
-  /**
-   * Vuelve a la semana actual
-   */
   goToToday(): void {
     this.currentWeek = new Date();
     this.generateWeekDays();
   }
 
-  /**
-   * Verifica si una fecha es hoy
-   */
   isToday(date: Date): boolean {
     const today = new Date();
     return date.toDateString() === today.toDateString();
   }
 
-  /**
-   * Obtiene la cita para un slot de tiempo específico
-   */
   getBookingForTimeSlot(dayIndex: number, time: string): CalendarBooking | null {
-    // Lógica simple para distribuir las citas a través de la semana
     if (dayIndex === 1 && time === '09:00') return this.sampleBookings[0];
     if (dayIndex === 1 && time === '10:00') return this.sampleBookings[1];
     if (dayIndex === 2 && time === '14:00') return this.sampleBookings[2];
     return null;
   }
 
-  /**
-   * Obtiene la configuración del badge de estado
-   */
   getStatusBadgeClass(status: string): string {
     const statusClasses: Record<string, string> = {
       'confirmed': 'bg-primary',
@@ -129,9 +106,6 @@ export class WeeklyCalendarComponent implements OnInit {
     return statusClasses[status] || 'bg-primary';
   }
 
-  /**
-   * Obtiene el label del estado
-   */
   getStatusLabel(status: string): string {
     const statusLabels: Record<string, string> = {
       'confirmed': 'Confirmada',
@@ -143,9 +117,6 @@ export class WeeklyCalendarComponent implements OnInit {
     return statusLabels[status] || 'Confirmada';
   }
 
-  /**
-   * Formatea el rango de fechas de la semana
-   */
   getWeekRange(): string {
     if (this.weekDays.length === 0) return '';
     

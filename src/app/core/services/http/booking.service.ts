@@ -207,7 +207,7 @@ export class BookingService {
     } 
 
     updateBooking(id: string, entity: UpdateBookingDto): Observable<Booking> {
-        const url = `${this.apiUrl}/${this.controller}/update-booking/${id}`;
+        const url = `${this.apiUrl}/${this.controller}/update/${id}`;
         return this.http.put<Booking>(url, entity, this.getHttpOptions());
     } 
 

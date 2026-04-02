@@ -53,6 +53,8 @@ export class UpdateBookingDto {
     clientNotes?: string;
     providerNotes?: string;
     cancellationReason?: string;
+    supplierId?: string;
+    forceCreation?: boolean;
 
     constructor() { 
         this.bookingDate = "";
@@ -65,6 +67,8 @@ export class UpdateBookingDto {
         this.clientNotes = undefined;
         this.providerNotes = undefined;
         this.cancellationReason = undefined;
+        this.supplierId = undefined;
+        this.forceCreation = undefined;
     }
 }
 
