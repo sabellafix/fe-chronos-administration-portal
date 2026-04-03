@@ -232,6 +232,10 @@ export class OffcanvasDetailBookingComponent implements OnInit, OnDestroy {
     return (customer as any).photo || this.imageUser;
   }
 
+  getStylistPhoto(user: User): string {
+    return user?.photo || this.imageUser;
+  }
+
   getUserForCustomer(customer: Customer): User | null {
     return this.users.find(u => u.id === customer.userId) || null;
   }

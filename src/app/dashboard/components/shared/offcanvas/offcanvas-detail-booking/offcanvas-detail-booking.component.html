@@ -20,10 +20,14 @@
       <!-- Stylist Section -->
       <div class="mb-3">
         <label class="form-label text-muted">Stylist</label>
-        <div class="form-control-static p-3 border rounded">
+        <div class="form-control-static p-2 border rounded">
           <div class="d-flex align-items-center">
             <div class="me-3">
-              <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center"
+              <img *ngIf="selectedStylist?.photo" class="rounded-circle" 
+                [src]="getStylistPhoto(selectedStylist!)" alt="Stylist"
+                style="width: 40px; height: 40px; object-fit: cover;">
+              <div *ngIf="!selectedStylist?.photo"
+                class="rounded-circle bg-primary d-flex align-items-center justify-content-center"
                 style="width: 40px; height: 40px;">
                 <i class="bx bx-user text-white"></i>
               </div>
@@ -39,7 +43,7 @@
       <!-- Customer Section -->
       <div class="mb-3">
         <label class="form-label text-muted">Customer</label>
-        <div class="form-control-static p-3 border rounded">
+        <div class="form-control-static p-2 border rounded">
           <div class="d-flex align-items-center">
             <div class="me-3">
               <img *ngIf="customer" class="rounded-circle" [src]="getCustomerPhoto(customer)" alt="Cliente"

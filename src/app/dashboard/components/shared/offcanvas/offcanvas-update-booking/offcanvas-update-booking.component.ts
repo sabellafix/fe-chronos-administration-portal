@@ -550,6 +550,10 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
     return (customer as any).photo || this.imageUser;
   }
 
+  getStylistPhoto(user: User): string {
+    return user?.photo || this.imageUser;
+  }
+
   getSupplierName(supplier: Supplier): string {
     return supplier.companyName || 'Proveedor sin nombre';
   }

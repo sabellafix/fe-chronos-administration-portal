@@ -106,18 +106,8 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
   }
 
   formatHour(hour: string): string {
-    const hourNumber = parseInt(hour);
-    if (hourNumber === 0) {
-      return '12 am';
-    } else if (hourNumber < 12) {
-      return `${hourNumber} am`;
-    } else if (hourNumber === 12) {
-      return '12 pm ';
-    } else if (hourNumber === 24) {
-      return '12 am';
-    } else {
-      return `${hourNumber - 12} pm`;
-    }
+    const [hours, minutes] = hour.split(':');
+    return `${hours.padStart(2, '0')}:${(minutes || '00').padStart(2, '0')}`;
   }
 
   onCellClick(date: Date, hour: number, event: Event): void {

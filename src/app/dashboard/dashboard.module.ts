@@ -38,10 +38,6 @@ import { ServicesListComponent } from './components/services/services-list/servi
 import { ServicesCreateComponent } from './components/services/services-create/services-create.component';
 import { ServicesUpdateComponent } from './components/services/services-update/services-update.component';
 import { ServicesDetailComponent } from './components/services/services-detail/services-detail.component';
-import { SuppliersListComponent } from './components/suppliers/suppliers-list/suppliers-list.component';
-import { SuppliersCreateComponent } from './components/suppliers/suppliers-create/suppliers-create.component';
-import { SuppliersUpdateComponent } from './components/suppliers/suppliers-update/suppliers-update.component';
-import { SuppliersDetailComponent } from './components/suppliers/suppliers-detail/suppliers-detail.component';
 import { CategoriesListComponent } from './components/categories/categories-list/categories-list.component';
 import { CategoriesCreateComponent } from './components/categories/categories-create/categories-create.component';
 import { CategoriesUpdateComponent } from './components/categories/categories-update/categories-update.component';
@@ -154,17 +150,7 @@ const routes: Routes = [
           { path: ':id/detail', component: ServicesDetailComponent },
           { path: '**', redirectTo: '' }
         ]
-      },
-      {
-        path: 'suppliers',
-        children: [
-          { path: '', component: SuppliersListComponent, pathMatch: 'full' },
-          { path: 'create', component: SuppliersCreateComponent },
-          { path: ':id/update', component: SuppliersUpdateComponent },
-          { path: ':id/detail', component: SuppliersDetailComponent },
-          { path: '**', redirectTo: '' }
-        ]
-      },
+      },     
       {
         path: 'categories',
         children: [
@@ -263,10 +249,6 @@ const routes: Routes = [
     ServicesCreateComponent,
     ServicesUpdateComponent,
     ServicesDetailComponent,
-    SuppliersListComponent,
-    SuppliersCreateComponent,
-    SuppliersUpdateComponent,
-    SuppliersDetailComponent,
     CategoriesListComponent,
     CategoriesCreateComponent,
     CategoriesUpdateComponent,
