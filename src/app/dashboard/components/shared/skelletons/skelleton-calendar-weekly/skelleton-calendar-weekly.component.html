@@ -1,0 +1,44 @@
+<div class="skeleton-calendar-weekly">
+    <!-- Body del calendario con las filas de horas -->
+    <div class="skeleton-body">
+        <div class="skeleton-time-row" *ngFor="let hour of hours">
+            <!-- Celda de hora -->
+            <div class="skeleton-time-cell">
+                <ngx-skeleton-loader
+                    count="1"
+                    appearance="line"
+                    [theme]="{
+                        'height': '14px',
+                        'width': '50px',
+                        'margin': '0 auto',
+                        'border-radius': '4px'
+                    }">
+                </ngx-skeleton-loader>
+            </div>
+            
+            <!-- Celdas de cada día -->
+            <div class="skeleton-day-cell" *ngFor="let day of weekDays">
+                <div class="skeleton-cell-content">
+                    <!-- Bookings placeholder (aleatorio basado en patrón) -->
+                    <ng-container *ngIf="shouldShowBooking(hour, day)">
+                        <div class="skeleton-booking-card" 
+                             [style.height]="getBookingHeight(hour, day)"
+                             [style.width]="getBookingWidth(hour, day)"
+                             [style.left]="getBookingLeft(hour, day)">
+                            <ngx-skeleton-loader
+                                count="1"
+                                appearance="line"
+                                [theme]="{
+                                    'height': '100%',
+                                    'width': '100%',
+                                    'margin': '0',
+                                    'border-radius': '8px',
+                                }">
+                            </ngx-skeleton-loader>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

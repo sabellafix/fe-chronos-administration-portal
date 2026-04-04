@@ -827,11 +827,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         time.minute === undefined || time.minute === null) {
       return 'N/A';
     }
-    const hour = time.hour;
+    const hour = time.hour.toString().padStart(2, '0');
     const minute = time.minute.toString().padStart(2, '0');
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const hour12 = hour % 12 || 12;
-    return `${hour12}:${minute} ${ampm}`;
+    return `${hour}:${minute}`;
   }
 
   formatTimeRange(startTime: TimeOnly, endTime: TimeOnly): string {

@@ -27,13 +27,12 @@
 
 <div class="calendar-canvas calendar-body mt-0 no-border no-box-shadow animated fadeIn fast">
     <div class="calendar-container">
-        <!-- Indicador de carga -->
-        <!-- <div *ngIf="isLoadingBookings" class="d-flex justify-content-center align-items-center p-4">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando citas...</span>
-            </div>
-            <span class="ms-2 text-muted">Cargando citas...</span>
-        </div> -->
+         <div style="padding-top: 76px !important;" *ngIf="isLoadingBookings">
+            <app-skelleton-calendar-weekly 
+                [hoursCount]="17"
+                [startHour]="6">
+            </app-skelleton-calendar-weekly>
+        </div>
         
         <table class="calendar-table mt-1 animated fadeIn fast" *ngIf="!isLoadingBookings">
             <thead>
@@ -41,14 +40,6 @@
                     <th class="time-header" style="height: 0px !important; padding: 0px !important; margin: 0px !important;"></th>
                     <th class="day-header" *ngFor="let date of dates" style="height: 0px !important; padding: 0px !important; margin: 0px !important;">
                         <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="day-header-content">
-                            <!-- <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card w-100 bg-light p-1 pt-2 card-date text-center" >
-                                <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card-date-day">
-                                    <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="font-size-16 text-light fw-normal mb-1 capitalize">{{date.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
-                                </div>
-                                <div style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="card-date-number">
-                                    <p style="height: 0px !important; padding: 0px !important; margin: 0px !important;" class="font-size-26 text-light fw-semibold mb-0">{{date.date.getDate()}}</p>
-                                </div>
-                            </div> -->
                         </div>
                     </th>
                 </tr>

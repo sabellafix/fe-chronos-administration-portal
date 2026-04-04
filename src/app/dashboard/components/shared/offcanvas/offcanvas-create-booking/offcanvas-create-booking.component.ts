@@ -94,9 +94,8 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   }
 
   private initializeComponent(): void {
-    this.getUsers();
-    this.getCustomers();
     this.subscribeToSelectedSalon();
+    this.getCustomers();
     
     const offcanvasElement = document.getElementById('offcanvasCreateBooking');
     if (offcanvasElement) {
@@ -117,6 +116,7 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
 
     const salonSubscription = this.dashboardFiltersService.selectedSalon$.subscribe(salon => {
       this.salonId = salon?.id;
+      this.getUsers();
     });
     this.subscriptions.push(salonSubscription);
   }
@@ -215,7 +215,8 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   } 
 
   getUsers(): void {
-    this.userService.getUsersByRole(RolesConst._STYLIST).subscribe({
+    console.log(this.salonId);
+    this.userService.getUsersByRole(RolesConst._STYLIST, this.salonId || undefined).subscribe({
       next: (response: User[]) => {
         this.users = response;      
         this.usersOptions = this.users.map(user => ({

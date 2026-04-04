@@ -5,7 +5,7 @@
                 <tr>
                     <th class="time-header">
                         <p class="font-size-24 mt-3 fw-lighter">
-                            <i class="bx bx-calendar"></i>
+                            <i class="bx bx-face"></i>
                         </p>
                     </th>
                     <th class="day-header pe-1 ps-1 pb-0 pt-0" (click)="detailStylist(stylistBooking.stylist.id)" *ngFor="let stylistBooking of stylistsBookings; trackBy: trackByStylist">
@@ -37,12 +37,11 @@
 
 <div class="calendar-canvas calendar-body mt-0 no-border no-box-shadow animated fadeIn fast">
     <div class="calendar-container">
-        <!-- Indicador de carga -->
-        <div *ngIf="isLoadingBookings" class="d-flex justify-content-center align-items-center p-4">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando citas...</span>
-            </div>
-            <span class="ms-2 text-muted">Cargando citas...</span>
+        <div style="padding-top: 76px !important;" *ngIf="isLoadingBookings">
+            <app-skelleton-calendar-weekly 
+                [hoursCount]="17"
+                [startHour]="6">
+            </app-skelleton-calendar-weekly>
         </div>
         
         <table class="calendar-table mt-1 animated fadeIn fast" *ngIf="!isLoadingBookings">

@@ -112,6 +112,7 @@ import { SalonsListComponent } from './components/salons/salons-list/salons-list
 import { SalonsCreateComponent } from './components/salons/salons-create/salons-create.component';
 import { SalonsUpdateComponent } from './components/salons/salons-update/salons-update.component';
 import { SalonsDetailComponent } from './components/salons/salons-detail/salons-detail.component';
+import { SkelletonCalendarWeeklyComponent } from './components/shared/skelletons/skelleton-calendar-weekly/skelleton-calendar-weekly.component';
 
 const routes: Routes = [
   {
@@ -318,6 +319,7 @@ const routes: Routes = [
     SalonsCreateComponent,
     SalonsUpdateComponent,
     SalonsDetailComponent,
+    SkelletonCalendarWeeklyComponent,
   ],
   imports: [
     CommonModule,

@@ -110,7 +110,7 @@ export class OffcanvasDetailBookingComponent implements OnInit, OnDestroy {
 
   loadBooking(): void {
     if (!this.bookingId) {
-      this.snackBar.open('ID de booking no proporcionado', 'Cerrar', {duration: 4000});
+      this.snackBar.open('Booking ID not provided', 'Close', {duration: 4000});
       return;
     }
 
@@ -121,7 +121,7 @@ export class OffcanvasDetailBookingComponent implements OnInit, OnDestroy {
         this.loadBookingData();
       },
       error: (error) => {
-        this.snackBar.open('Error al cargar el booking', 'Cerrar', {duration: 4000});
+        this.snackBar.open('Error to charge the booking', 'Close', {duration: 4000});
         this.loadingBooking = false;
         this.hide();
       }
