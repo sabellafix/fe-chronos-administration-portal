@@ -663,4 +663,20 @@ body[data-sidebar-size=sm] .calendar-monthly {
     margin-top: 140px; // Ajustado para calendario mensual
 }
 
+.week-number-cell {
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        
+        .week-number-clickable {
+            color: var(--bs-primary, #556ee6);
+            transform: scale(1.1);
+        }
+    }
+}
 
+.week-number-clickable {
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+}

@@ -4,7 +4,7 @@
             <thead>
                 <tr>
                     <th class="time-header"><p class="font-size-24 mt-3 fw-lighter"><i class="bx bx-calendar"></i></p></th>
-                    <th class="day-header pe-1 ps-1 pb-2" *ngFor="let date of dates">
+                    <th class="day-header pe-1 ps-1 pb-2 day-number-clickable" (click)="onDayClick(date.date, $event)" *ngFor="let date of dates">
                         <div class="day-header-content">
                             <div class="card w-100 bg-light p-1 pt-2 card-date text-center" [ngClass]="{'today': date.isToday}">
                                 <div class="daily-total-badge animated fadeIn fast" *ngIf="hasBookingsForDate(date.date)">
@@ -13,7 +13,9 @@
                                 <div class="card-date-day">
                                     <p class="font-size-14 fw-normal mb-1 capitalize">{{date.date.toLocaleString('en-US', { weekday: 'long' })}}</p>
                                 </div>
-                                <div class="card-date-number">
+                                <div class="card-date-number" 
+                                     style="cursor: pointer;"
+                                     title="Ver día en calendario diario">
                                     <p class="font-size-22 fw-semibold mb-0">{{date.date.getDate()}}</p>
                                 </div>
                             </div>
@@ -73,17 +75,17 @@
                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button" >
                                     </app-card-booking>
                                     <div class="dropdown-menu dropdown-menu-end pt-0">
-                                        <div (click)="editBooking(booking.id, $event)" class="dropdown-item" href="#" style="cursor: pointer;">
-                                            <i class="bx bx-pencil text-muted font-size-12 align-middle me-1"></i> 
-                                            <span class="align-middle font-size-12 fw-normal">Update</span>
-                                        </div>
                                         <div (click)="detailBooking(booking.id, $event)" class="dropdown-item" href="#" style="cursor: pointer;">
                                             <i class="bx bx-show-alt text-muted font-size-12 align-middle me-1"></i> 
-                                            <span class="align-middle font-size-12 fw-normal">Details</span>
+                                            <span class="align-middle font-size-12 fw-normal">View Details</span>
+                                        </div>
+                                        <div (click)="editBooking(booking.id, $event)" class="dropdown-item" href="#" style="cursor: pointer;">
+                                            <i class="bx bx-pencil text-muted font-size-12 align-middle me-1"></i> 
+                                            <span class="align-middle font-size-12 fw-normal">Edit</span>
                                         </div>
                                         <div class="dropdown-item" href="#">
-                                            <i class="bx bx-trash text-muted font-size-12 align-middle me-1"></i> 
-                                            <span class="align-middle font-size-12 fw-normal">Delete</span>
+                                            <i class="bx bx-x text-muted font-size-12 align-middle me-1"></i> 
+                                            <span class="align-middle font-size-12 fw-normal">Cancel Booking</span>
                                         </div>
                                     </div>
                                 </ng-container>

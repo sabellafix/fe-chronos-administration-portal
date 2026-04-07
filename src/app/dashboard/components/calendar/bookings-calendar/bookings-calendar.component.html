@@ -139,8 +139,8 @@
 </div>
 
 <div *ngIf="!loading" class="calendar-content">
-    <app-calendar-monthly *ngIf="hasPermission('bookings.monthly')" [ngStyle]="{'display': tabActive === 'Month' ? 'block' : 'none' }"  [date]="dateCalendarMonthly" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" [salonId]="selectedSalonId"></app-calendar-monthly>
-    <app-calendar-weekly *ngIf="hasPermission('bookings.weekly')" [ngStyle]="{'display': tabActive === 'Week' ? 'block' : 'none' }"  [date]="dateCalendarWeekly"  [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" [salonId]="selectedSalonId"></app-calendar-weekly>
+    <app-calendar-monthly *ngIf="hasPermission('bookings.monthly')" [ngStyle]="{'display': tabActive === 'Month' ? 'block' : 'none' }"  [date]="dateCalendarMonthly" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" [salonId]="selectedSalonId" (weekSelected)="onWeekSelectedFromMonthly($event)"></app-calendar-monthly>
+    <app-calendar-weekly *ngIf="hasPermission('bookings.weekly')" [ngStyle]="{'display': tabActive === 'Week' ? 'block' : 'none' }"  [date]="dateCalendarWeekly"  [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" [salonId]="selectedSalonId" (daySelected)="onDaySelectedFromWeekly($event)"></app-calendar-weekly>
     <app-calendar-daily *ngIf="hasPermission('bookings.daily')" [ngStyle]="{'display': tabActive === 'Day' ? 'block' : 'none' }"  [date]="dateCalendarDaily" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" [salonId]="selectedSalonId"></app-calendar-daily>
     <app-bookings-supplier *ngIf="hasPermission('bookings.calendar')" [ngStyle]="{'display': tabActive === 'Stylists' ? 'block' : 'none' }"  [date]="dateBookingsSupplier" [services]="servicesSelected" [stylists]="stylistsSelected" [users]="users" [salonId]="selectedSalonId"></app-bookings-supplier>    
     <!-- <app-calendar-floor [ngStyle]="{'display': tabActive === 'Floor' ? 'block' : 'none' }"></app-calendar-floor> -->

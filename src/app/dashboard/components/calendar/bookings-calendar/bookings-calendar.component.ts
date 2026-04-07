@@ -331,6 +331,16 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
     return this.permissions.some(p => p.name.includes(permission));
    }
 
+   onWeekSelectedFromMonthly(date: Date): void {
+    this.dateCalendarWeekly = new Date(date);
+    this.onTabChanged('Week');
+   }
+
+   onDaySelectedFromWeekly(date: Date): void {
+    this.dateCalendarDaily = new Date(date);
+    this.onTabChanged('Day');
+   }
+
    get currentCalendarDate(): Date {
     switch (this.tabActive) {
       case 'Month':

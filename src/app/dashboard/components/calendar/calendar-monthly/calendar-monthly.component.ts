@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
 import { Booking } from '@app/core/models/bussiness/booking';
@@ -24,6 +24,8 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
   @Input('stylists') stylists: User[] = [];
   @Input('users') users: User[] = [];
   @Input('salonId') salonId: string | null = null;
+
+  @Output() weekSelected = new EventEmitter<Date>();
 
   dateNow: Date = new Date(); 
   currentMonth: Date = new Date();
@@ -378,6 +380,13 @@ export class CalendarMonthlyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     return false;
-  } 
+  }
+
+  onWeekClick(week: DateItem[], event: Event): void {
+    event.stopPropagation();
+    if (week.length > 0 && week[0].date) {
+      this.weekSelected.emit(week[0].date);
+    }
+  }
 }
 

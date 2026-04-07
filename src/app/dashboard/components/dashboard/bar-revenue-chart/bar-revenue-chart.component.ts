@@ -55,11 +55,11 @@ export class BarRevenueChartComponent implements OnChanges {
     return {
       series: [
         {
-          name: 'Current Year Revenue',
+          name: 'Current Year',
           data: []
         },
         {
-          name: 'Previous Year Revenue',
+          name: 'Previous Year',
           data: []
         }
       ],
@@ -78,14 +78,14 @@ export class BarRevenueChartComponent implements OnChanges {
         }
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       stroke: {
         show: true,
         width: 2,
         colors: ['transparent']
       },
-      colors: ['#fff', '#fff'],
+      colors: ['#acb1c1', '#e9f7fb'],
       xaxis: {
         categories: []
       },
@@ -98,7 +98,25 @@ export class BarRevenueChartComponent implements OnChanges {
         tickAmount: 4
       },
       legend: {
-        show: false
+        show: true,
+        position: 'top',
+        horizontalAlign: 'right',
+        fontSize: '12px',
+        fontWeight: 400,
+        markers: {
+          width: 14,
+          height: 14,
+          radius: 4,
+          offsetX: -4,
+          fillColors: ['#474d5f', '#a7cee8']
+        },
+        itemMargin: {
+          horizontal: 12,
+          vertical: 0
+        },
+        labels: {
+          useSeriesColors: true
+        }
       },
       grid: {
         borderColor: '#f1f1f1'
@@ -112,7 +130,7 @@ export class BarRevenueChartComponent implements OnChanges {
           inverseColors: true,
           gradientToColors: ['#474d5f', '#a7cee8'],
           opacityFrom: 1,
-          opacityTo: 1
+          opacityTo: 1,
         }
       }
     };
@@ -131,11 +149,11 @@ export class BarRevenueChartComponent implements OnChanges {
       ...this.barChartOptions,
       series: [
         {
-          name: 'Current Year Revenue',
+          name: 'Current Year',
           data: currentYearData
         },
         {
-          name: 'Previous Year Revenue',
+          name: 'Previous Year',
           data: previousYearData
         }
       ],

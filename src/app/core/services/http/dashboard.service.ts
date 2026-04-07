@@ -11,7 +11,8 @@ import {
     RevenueActivityDto,
     OrderStatsDto,
     TopServiceDto,
-    SalonOccupancyDto
+    SalonOccupancyDto,
+    SupplierMetricsDto
 } from '@app/core/models/bussiness/dashboard-dtos';
 
 @Injectable({
@@ -33,8 +34,7 @@ export class DashboardService {
         };
     }
 
-    getMetrics(salonId: string, startDate?: Date, endDate?: Date): Observable<DashboardMetricsDto> {
-        const url = `${this.apiUrl}/${this.controller}/metrics/${salonId}`;
+    private buildParams(startDate?: Date, endDate?: Date, supplierId?: string): HttpParams {
         let params = new HttpParams();
         
         if (startDate) {
@@ -43,6 +43,16 @@ export class DashboardService {
         if (endDate) {
             params = params.set('endDate', endDate.toISOString());
         }
+        if (supplierId) {
+            params = params.set('supplierId', supplierId);
+        }
+        
+        return params;
+    }
+
+    getMetrics(salonId: string, startDate?: Date, endDate?: Date, supplierId?: string): Observable<DashboardMetricsDto> {
+        const url = `${this.apiUrl}/${this.controller}/metrics/${salonId}`;
+        const params = this.buildParams(startDate, endDate, supplierId);
 
         return this.http.get<DashboardMetricsDto>(url, {
             ...this.getHttpOptions(),
@@ -50,16 +60,9 @@ export class DashboardService {
         });
     }
 
-    getKpiCards(salonId: string, startDate?: Date, endDate?: Date): Observable<KpiCardsDto> {
+    getKpiCards(salonId: string, startDate?: Date, endDate?: Date, supplierId?: string): Observable<KpiCardsDto> {
         const url = `${this.apiUrl}/${this.controller}/kpi-cards/${salonId}`;
-        let params = new HttpParams();
-        
-        if (startDate) {
-            params = params.set('startDate', startDate.toISOString());
-        }
-        if (endDate) {
-            params = params.set('endDate', endDate.toISOString());
-        }
+        const params = this.buildParams(startDate, endDate, supplierId);
 
         return this.http.get<KpiCardsDto>(url, {
             ...this.getHttpOptions(),
@@ -67,16 +70,9 @@ export class DashboardService {
         });
     }
 
-    getRevenueChart(salonId: string, startDate?: Date, endDate?: Date): Observable<RevenueChartDto> {
+    getRevenueChart(salonId: string, startDate?: Date, endDate?: Date, supplierId?: string): Observable<RevenueChartDto> {
         const url = `${this.apiUrl}/${this.controller}/revenue-chart/${salonId}`;
-        let params = new HttpParams();
-        
-        if (startDate) {
-            params = params.set('startDate', startDate.toISOString());
-        }
-        if (endDate) {
-            params = params.set('endDate', endDate.toISOString());
-        }
+        const params = this.buildParams(startDate, endDate, supplierId);
 
         return this.http.get<RevenueChartDto>(url, {
             ...this.getHttpOptions(),
@@ -84,16 +80,9 @@ export class DashboardService {
         });
     }
 
-    getRevenueActivity(salonId: string, startDate?: Date, endDate?: Date): Observable<RevenueActivityDto> {
+    getRevenueActivity(salonId: string, startDate?: Date, endDate?: Date, supplierId?: string): Observable<RevenueActivityDto> {
         const url = `${this.apiUrl}/${this.controller}/revenue-activity/${salonId}`;
-        let params = new HttpParams();
-        
-        if (startDate) {
-            params = params.set('startDate', startDate.toISOString());
-        }
-        if (endDate) {
-            params = params.set('endDate', endDate.toISOString());
-        }
+        const params = this.buildParams(startDate, endDate, supplierId);
 
         return this.http.get<RevenueActivityDto>(url, {
             ...this.getHttpOptions(),
@@ -101,16 +90,9 @@ export class DashboardService {
         });
     }
 
-    getOrderStats(salonId: string, startDate?: Date, endDate?: Date): Observable<OrderStatsDto> {
+    getOrderStats(salonId: string, startDate?: Date, endDate?: Date, supplierId?: string): Observable<OrderStatsDto> {
         const url = `${this.apiUrl}/${this.controller}/order-stats/${salonId}`;
-        let params = new HttpParams();
-        
-        if (startDate) {
-            params = params.set('startDate', startDate.toISOString());
-        }
-        if (endDate) {
-            params = params.set('endDate', endDate.toISOString());
-        }
+        const params = this.buildParams(startDate, endDate, supplierId);
 
         return this.http.get<OrderStatsDto>(url, {
             ...this.getHttpOptions(),
@@ -118,18 +100,10 @@ export class DashboardService {
         });
     }
 
-    getTopServices(salonId: string, topCount: number = 10, startDate?: Date, endDate?: Date): Observable<TopServiceDto[]> {
+    getTopServices(salonId: string, topCount: number = 10, startDate?: Date, endDate?: Date, supplierId?: string): Observable<TopServiceDto[]> {
         const url = `${this.apiUrl}/${this.controller}/top-services/${salonId}`;
-        let params = new HttpParams();
-        
+        let params = this.buildParams(startDate, endDate, supplierId);
         params = params.set('topCount', topCount.toString());
-        
-        if (startDate) {
-            params = params.set('startDate', startDate.toISOString());
-        }
-        if (endDate) {
-            params = params.set('endDate', endDate.toISOString());
-        }
 
         return this.http.get<TopServiceDto[]>(url, {
             ...this.getHttpOptions(),
@@ -137,18 +111,25 @@ export class DashboardService {
         });
     }
 
-    getSalonOccupancy(salonId: string, startDate?: Date, endDate?: Date): Observable<SalonOccupancyDto> {
+    getSalonOccupancy(salonId: string, startDate?: Date, endDate?: Date, supplierId?: string): Observable<SalonOccupancyDto> {
         const url = `${this.apiUrl}/${this.controller}/salon-occupancy/${salonId}`;
-        let params = new HttpParams();
+        const params = this.buildParams(startDate, endDate, supplierId);
+
+        return this.http.get<SalonOccupancyDto>(url, {
+            ...this.getHttpOptions(),
+            params
+        });
+    }
+
+    getSupplierMetrics(salonId: string, supplierId: string, startDate: Date, endDate?: Date): Observable<SupplierMetricsDto> {
+        const url = `${this.apiUrl}/${this.controller}/supplier-metrics/${salonId}`;
+        let params = new HttpParams().set('supplierId', supplierId).set('startDate', startDate.toISOString());
         
-        if (startDate) {
-            params = params.set('startDate', startDate.toISOString());
-        }
         if (endDate) {
             params = params.set('endDate', endDate.toISOString());
         }
 
-        return this.http.get<SalonOccupancyDto>(url, {
+        return this.http.get<SupplierMetricsDto>(url, {
             ...this.getHttpOptions(),
             params
         });

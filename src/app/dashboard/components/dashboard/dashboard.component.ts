@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subject, takeUntil, forkJoin, filter } from 'rxjs';
+import { Subject, takeUntil, forkJoin, filter, distinctUntilChanged } from 'rxjs';
 import { DashboardService } from '@app/core/services/http/dashboard.service';
 import { StorageService } from '@app/core/services/shared/storage.service';
 import { WaitService } from '@app/core/services/shared/wait.service';
@@ -44,9 +44,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   orderStats: OrderStatsDto | null = null;
   topServices: TopServiceDto[] = [];
   salonOccupancy: SalonOccupancyDto | null = null;
-  displayPayments: boolean = false;
   selectedStylist: User | null = null;
   isStylistPanelVisible: boolean = false;
+  
+  enabledCaching: boolean = false;
 
   private destroy$: Subject<void> = new Subject<void>();
   
@@ -73,7 +74,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardFiltersService.filters$
       .pipe(
         takeUntil(this.destroy$),
-        filter(filters => filters.selectedSalon !== null)
+        filter(filters => filters.selectedSalon !== null),
+        distinctUntilChanged((prev, curr) => 
+          prev.selectedSalon?.id === curr.selectedSalon?.id &&
+          prev.startDate.getTime() === curr.startDate.getTime() &&
+          prev.endDate.getTime() === curr.endDate.getTime() &&
+          prev.selectedStylist?.id === curr.selectedStylist?.id
+        )
       )
       .subscribe(filters => {
         this.startDateFilter = filters.startDate;
@@ -81,7 +88,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.selectedSalon = filters.selectedSalon;
         this.selectedStylist = filters.selectedStylist;
         this.isStylistPanelVisible = filters.selectedStylist !== null;
-        
         this.loadServices();
       });
   }
@@ -102,8 +108,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.topServices = [];
     this.salonOccupancy = null;
 
-    // Verificar si hay datos en caché válidos
-    if (this.isCacheValid(salonId)) {
+    // Verificar si hay datos en caché válidos (solo si el caching está habilitado)
+    if (this.enabledCaching && this.isCacheValid(salonId)) {
       await this.loadFromCache(salonId);
     } else {
       this.loadFromBackend(salonId);
@@ -148,6 +154,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private setCachedData<T>(key: string, salonId: string, data: T): void {
+    if (!this.enabledCaching) {
+      return;
+    }
+    
     const dateKey = this.getCacheKey();
     const cacheKey = `${key}_${salonId}_${dateKey}`;
     const cached: CachedData<T> = {
@@ -176,12 +186,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadFromBackend(salonId: string): void {
+    const stylistId = this.selectedStylist?.id;
     forkJoin({
-      metrics: this.dashboardService.getMetrics(salonId, this.startDateFilter, this.endDateFilter),
-      kpiCards: this.dashboardService.getKpiCards(salonId, this.startDateFilter, this.endDateFilter),
-      revenueChart: this.dashboardService.getRevenueChart(salonId, this.startDateFilter, this.endDateFilter),
-      revenueActivity: this.dashboardService.getRevenueActivity(salonId, this.startDateFilter, this.endDateFilter),      
-      salonOccupancy: this.dashboardService.getSalonOccupancy(salonId, this.startDateFilter, this.endDateFilter)
+      metrics: this.dashboardService.getMetrics(salonId, this.startDateFilter, this.endDateFilter, stylistId),
+      kpiCards: this.dashboardService.getKpiCards(salonId, this.startDateFilter, this.endDateFilter, stylistId),
+      revenueChart: this.dashboardService.getRevenueChart(salonId, this.startDateFilter, this.endDateFilter, stylistId),
+      revenueActivity: this.dashboardService.getRevenueActivity(salonId, this.startDateFilter, this.endDateFilter, stylistId),      
+      salonOccupancy: this.dashboardService.getSalonOccupancy(salonId, this.startDateFilter, this.endDateFilter, stylistId)
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({

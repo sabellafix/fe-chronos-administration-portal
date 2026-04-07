@@ -146,7 +146,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
           
           if (this.salons.length > 0) {
             this.selectedSalon = this.salons[0];
-            this.dashboardFiltersService.setSelectedSalon(this.selectedSalon);
+            // Única actualización de filtros al cargar salones
+            this.dashboardFiltersService.updateFilters({
+              selectedSalon: this.selectedSalon,
+              selectedStylist: null
+            });
             this.loadStylistsBySalon(this.selectedSalon.id);
           }
           
@@ -167,8 +171,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
       imageUrl: stylist.photo || '../assets/images/user-image.jpg',
       selected: false
     }));
-    
-    this.dashboardFiltersService.updateSelectedStylist(null);
   }
   
   private prepareSalonOptions(): void {
@@ -177,10 +179,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
       name: salon.name,
       selected: index === 0
     }));
-    
-    if (this.salons.length > 0) {
-      this.dashboardFiltersService.updateSelectedSalon(this.salons[0]);
-    }
   }
   
   applyDateFilters(): void {

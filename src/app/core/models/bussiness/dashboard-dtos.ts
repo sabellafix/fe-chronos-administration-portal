@@ -83,3 +83,19 @@ export interface MonthlyOccupancyDto {
     hoursWorked: number;
     activeStylists: number;
 }
+
+export interface SupplierMetricsDto {
+    totalBookings : number;
+    totalCustomers : number;
+    totalEarings : number;
+    earingsChangePercentage : number;
+    recentBookings : RecentBookingDto[];
+}
+
+export interface RecentBookingDto {
+    bookingId : string;
+    bookingDate : Date;
+    bookingStatus : string;
+    serviceName : string;
+    price : number;
+}

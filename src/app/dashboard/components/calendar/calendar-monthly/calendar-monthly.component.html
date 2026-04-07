@@ -27,8 +27,11 @@
         <table class="calendar-table animated fadeIn fast" *ngIf="!isLoadingBookings">
             <tbody>
                 <tr class="week-row" *ngFor="let week of monthDays; trackBy: trackByWeek; let i = index;">
-                    <td class="time-cell">
-                        <span class="time-label fw-semibold">{{i + 1}}</span>
+                    <td class="time-cell week-number-cell" 
+                        (click)="onWeekClick(week, $event)"
+                        style="cursor: pointer;"
+                        title="Ver semana {{formatNumberWeek(week)}} en calendario semanal">
+                        <span class="time-label fw-semibold week-number-clickable">{{i + 1}}</span>
                     </td>
                     <td class="day-cell" 
                         *ngFor="let dayItem of week; trackBy: trackByDay"

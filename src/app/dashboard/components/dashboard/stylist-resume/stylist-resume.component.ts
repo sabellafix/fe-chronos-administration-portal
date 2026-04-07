@@ -1,25 +1,13 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { UserService } from '@app/core/services/http/user.service';
-import { BookingService } from '@app/core/services/http/booking.service';
+import { DashboardService } from '@app/core/services/http/dashboard.service';
 import { DashboardFiltersService, DashboardFilters } from '@app/core/services/shared/dashboard-filters.service';
 import { User } from '@app/core/models/bussiness/user';
-import { Booking } from '@app/core/models/bussiness/booking';
 import { Salon } from '@app/core/models/bussiness/salon';
-import { BookingStatus } from '@app/core/models/bussiness/enums';
-import { forkJoin, Subject } from 'rxjs';
+import { SupplierMetricsDto, RecentBookingDto } from '@app/core/models/bussiness/dashboard-dtos';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RolesConst } from '@app/core/models/constants/roles.const';
-
-// Interfaces para el resumen del estilista
-export interface StylistSummary {
-  user: User;
-  bookingsCount: number;
-  clientsCount: number;
-  currentWeekEarnings: number;
-  previousWeekEarnings: number;
-  earningsPercentageChange: number;
-  recentActivities: RecentActivity[];
-}
 
 export interface RecentActivity {
   date: Date;
@@ -27,12 +15,6 @@ export interface RecentActivity {
   month: string;
   serviceName: string;
   bookingId: string;
-}
-
-export interface WeeklyEarnings {
-  currentWeek: number;
-  previousWeek: number;
-  percentage: number;
 }
 
 @Component({
@@ -46,7 +28,6 @@ export class StylistResumeComponent implements OnInit, OnChanges, OnDestroy {
   
   stylists: User[] = [];
   selectedStylist: User | null = null;
-  stylistSummary: StylistSummary | null = null;
   isLoading: boolean = false;
   errorMessage: string = '';
 
@@ -65,7 +46,7 @@ export class StylistResumeComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private userService: UserService,
-    private bookingService: BookingService,
+    private dashboardService: DashboardService,
     private dashboardFiltersService: DashboardFiltersService
   ) { }
 
@@ -90,43 +71,67 @@ export class StylistResumeComponent implements OnInit, OnChanges, OnDestroy {
     this.dashboardFiltersService.filters$
       .pipe(takeUntil(this.destroy$))
       .subscribe((filters: DashboardFilters) => {
-        // Solo procesar si los estilistas ya están cargados
+        // Solo procesar si los estilistas ya están cargados y hay un estilista seleccionado
         if (this.stylistsLoaded && filters.selectedStylist) {
-          // Verificar si el estilista seleccionado es diferente al actual
-          if (!this.selectedStylist || this.selectedStylist.id !== filters.selectedStylist.id) {
-            this.selectStylistFromFilter(filters.selectedStylist, filters.startDate, filters.endDate);
+          // Ajustar fechas sumando un día para corregir desfase
+          console.log("filters.startDate", filters.startDate);
+          console.log("filters.endDate", filters.endDate);
+          
+          const adjustedStartDate = new Date(filters.startDate);
+          adjustedStartDate.setDate(adjustedStartDate.getDate() + 1);
+          const adjustedEndDate = new Date(filters.endDate);
+          adjustedEndDate.setDate(adjustedEndDate.getDate() + 1);
+
+          const stylistChanged = !this.selectedStylist || this.selectedStylist.id !== filters.selectedStylist.id;
+          const startDateChanged = this.queryStartDate.getTime() !== adjustedStartDate.getTime();
+          const endDateChanged = this.queryEndDate.getTime() !== adjustedEndDate.getTime();
+          
+          // Ejecutar si cambió el estilista o las fechas
+          if (stylistChanged || startDateChanged || endDateChanged) {
+            this.selectStylistFromFilter(filters.selectedStylist, adjustedStartDate, adjustedEndDate);
           }
         }
       });
   }
   
   private selectStylistFromFilter(stylist: User, startDate: Date, endDate: Date): void {
+    console.log("startDate", startDate);
+    console.log("endDate", endDate);
     this.selectedStylist = stylist;
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Usar las fechas del filtro
-    this.queryStartDate = startDate;
-    this.queryEndDate = endDate;
+    // Calcular primer y último día del mes basado en startDate
+    const startOfMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+    const endOfMonth = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
 
-    // Calcular el mes anterior basado en startDate
-    const startOfPreviousMonth = new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1);
-    const endOfPreviousMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 0);
+    // Usar las fechas calculadas del mes
+    this.queryStartDate = startOfMonth;
+    this.queryEndDate = endOfMonth;
 
-    forkJoin({
-      currentMonthBookings: this.bookingService.getByUserDateRange(stylist.id, startDate, endDate),
-      previousMonthBookings: this.bookingService.getByUserDateRange(stylist.id, startOfPreviousMonth, endOfPreviousMonth)
-    }).subscribe({
-      next: (result) => {
-        this.processStylistData(result.currentMonthBookings, result.previousMonthBookings);
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading stylist data:', error);
-        this.errorMessage = 'Error al cargar la información del estilista';
-        this.isLoading = false;
-      }
-    });
+    // Obtener el salonId de los filtros actuales
+    const currentFilters = this.dashboardFiltersService.getCurrentFilters();
+    const salonId = currentFilters.selectedSalon?.id;
+
+    if (!salonId) {
+      this.errorMessage = 'No hay salón seleccionado';
+      this.isLoading = false;
+      return;
+    }
+
+    this.dashboardService.getSupplierMetrics(salonId, stylist.id, startOfMonth, endOfMonth)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (metrics: SupplierMetricsDto) => {
+          this.processSupplierMetrics(metrics);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading stylist data:', error);
+          this.errorMessage = 'Error al cargar la información del estilista';
+          this.isLoading = false;
+        }
+      });
   }
 
   loadStylists(): void {
@@ -180,106 +185,50 @@ export class StylistResumeComponent implements OnInit, OnChanges, OnDestroy {
     this.queryStartDate = startOfMonth;
     this.queryEndDate = endOfMonth;
 
-    const startOfPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const endOfPreviousMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    // Obtener el salonId de los filtros actuales
+    const currentFilters = this.dashboardFiltersService.getCurrentFilters();
+    const salonId = currentFilters.selectedSalon?.id;
 
-    forkJoin({
-      currentMonthBookings: this.bookingService.getByUserDateRange(userId, startOfMonth, endOfMonth),
-      previousMonthBookings: this.bookingService.getByUserDateRange(userId, startOfPreviousMonth, endOfPreviousMonth)
-    }).subscribe({
-      next: (result) => {
-        this.processStylistData(result.currentMonthBookings, result.previousMonthBookings);
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading stylist data:', error);
-        this.errorMessage = 'Error al cargar la información del estilista';
-        this.isLoading = false;
-      }
-    });
-  }
-
-  private processStylistData(currentMonthBookings: Booking[], previousMonthBookings: Booking[]): void {
-    const completedCurrentBookings = currentMonthBookings;
-    const completedPreviousBookings = previousMonthBookings;
-
-    this.bookingsCount = completedCurrentBookings.length;
-
-    const uniqueCustomerIds = new Set(completedCurrentBookings.map(b => b.customerId));
-    this.clientsCount = uniqueCustomerIds.size;
-
-    this.currentMonthEarnings = completedCurrentBookings.reduce(
-      (total, booking) => total + (booking.totalPrice || 0), 0
-    );
-
-    const previousMonthEarnings = completedPreviousBookings.reduce(
-      (total, booking) => total + (booking.totalPrice || 0), 0
-    );
-
-    if (previousMonthEarnings > 0) {
-      this.earningsPercentageChange = 
-        ((this.currentMonthEarnings - previousMonthEarnings) / previousMonthEarnings) * 100;
-    } else {
-      this.earningsPercentageChange = this.currentMonthEarnings > 0 ? 100 : 0;
+    if (!salonId) {
+      this.errorMessage = 'No hay salón seleccionado';
+      this.isLoading = false;
+      return;
     }
 
-    this.recentActivities = this.getRecentActivities(currentMonthBookings);
+    this.dashboardService.getSupplierMetrics(salonId, userId, startOfMonth, endOfMonth)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (metrics: SupplierMetricsDto) => {
+          this.processSupplierMetrics(metrics);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading stylist data:', error);
+          this.errorMessage = 'Error al cargar la información del estilista';
+          this.isLoading = false;
+        }
+      });
   }
 
-  private getRecentActivities(bookings: Booking[]): RecentActivity[] {
-    const now = new Date();
-    const startOfWeek = this.getStartOfWeek(now);
-    const endOfWeek = this.getEndOfWeek(now);
+  private processSupplierMetrics(metrics: SupplierMetricsDto): void {
+    this.bookingsCount = metrics.totalBookings;
+    this.clientsCount = metrics.totalCustomers;
+    this.currentMonthEarnings = metrics.totalEarings;
+    this.earningsPercentageChange = metrics.earingsChangePercentage;
+    this.recentActivities = this.mapRecentBookingsToActivities(metrics.recentBookings || []);
+  }
 
-    const weekBookings = bookings.filter(booking => {
-      const bookingDate = this.parseBookingDate(booking.bookingDate);
-      return bookingDate >= startOfWeek && bookingDate <= endOfWeek;
-    });
-
-    weekBookings.sort((a, b) => {
-      const dateA = this.parseBookingDate(a.bookingDate);
-      const dateB = this.parseBookingDate(b.bookingDate);
-      return dateB.getTime() - dateA.getTime();
-    });
-
-    return weekBookings.slice(0, 5).map(booking => {
-      const date = this.parseBookingDate(booking.bookingDate);
-      const serviceName = this.getServiceName(booking);
-      
+  private mapRecentBookingsToActivities(recentBookings: RecentBookingDto[]): RecentActivity[] {
+    return recentBookings.slice(0, 5).map(booking => {
+      const date = new Date(booking.bookingDate);
       return {
         date: date,
         day: date.getDate(),
         month: this.getMonthShortName(date),
-        serviceName: serviceName,
-        bookingId: booking.id
+        serviceName: booking.serviceName || 'Servicio',
+        bookingId: booking.bookingId
       };
     });
-  }
-
-  private getServiceName(booking: Booking): string {
-    if (booking.services && booking.services.length > 0) {
-      return booking.services[0].serviceName || 'Servicio';
-    }
-    return 'Servicio';
-  }
-
-  private parseBookingDate(dateOnly: any): Date {
-    if (dateOnly.year && dateOnly.month && dateOnly.day) {
-      return new Date(dateOnly.year, dateOnly.month - 1, dateOnly.day);
-    }
-    return new Date();
-  }
-
-  private getStartOfWeek(date: Date): Date {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Ajustar cuando es domingo
-    return new Date(d.setDate(diff));
-  }
-
-  private getEndOfWeek(date: Date): Date {
-    const startOfWeek = this.getStartOfWeek(date);
-    return new Date(startOfWeek.getTime() + 6 * 24 * 60 * 60 * 1000);
   }
 
 

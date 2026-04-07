@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { DateItem } from '@app/core/models/bussiness/calendar/dateItem';
 import { Booking } from '@app/core/models/bussiness/booking';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -26,6 +26,8 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
   @Input('stylists') stylists: User[] = [];
   @Input('users') users: User[] = [];
   @Input('salonId') salonId: string | null = null;
+
+  @Output() daySelected = new EventEmitter<Date>();
   
   dateNow : Date = new Date();
   dates: DateItem[] = [];
@@ -517,5 +519,10 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     calculatedHeight = Math.max(calculatedHeight, minHeightPx);
     
     return `${calculatedHeight}px`;
+  }
+
+  onDayClick(date: Date, event: Event): void {
+    event.stopPropagation();
+    this.daySelected.emit(date);
   }
 }

@@ -1,7 +1,7 @@
 .card-date{
     width: 12.7%;
     color: #000;
-    border-radius: 12px;
+    border-radius: 8px;
     margin-top: 0px;
     margin-bottom: 0px;
     align-items: center;
@@ -34,7 +34,7 @@
     font-size: 11px;
     font-weight: 600;
     padding: 2px 6px;
-    border-radius: 12px;
+    border-radius: 8px;
     z-index: 10;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     line-height: 1.2;
@@ -58,7 +58,7 @@
 .card-next{
     width: 3.4%;
     color: #000;
-    border-radius: 12px;
+    border-radius: 8px;
     margin: 0px;
     margin-top: 0px;
     align-items: center;
@@ -221,7 +221,7 @@
         right: 4px;
         bottom: 4px;
         border: 1.5px dashed #39557a;
-        border-radius: 16px;
+        border-radius: 8px;
         pointer-events: none;
         transition: all 0.2s ease;
     }
@@ -264,7 +264,7 @@
     top:0;
     height: 250px !important;
     width: 98%;
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 16px;
     margin-bottom: 2px;
     color: black;
@@ -488,7 +488,7 @@ body[data-sidebar-size=sm] .calendar-weekly {
         .badge-service {
             font-size: 8px;
             padding: 1px 4px;
-            border-radius: 6px;
+            border-radius: 8px;
         }
     }
     
@@ -639,6 +639,35 @@ body[data-sidebar-size=sm] .calendar-weekly {
             i {
                 font-size: 8px !important;
             }
+        }
+    }
+}
+
+.day-number-clickable {
+    cursor: pointer;
+    
+    .card-date {
+        transition: box-shadow 0.25s ease, transform 0.2s ease, border-color 0.25s ease;
+        border: 1px solid transparent;
+    }
+    
+    &:hover {
+        .card-date {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 
+                        0 2px 4px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+            border-color: rgba(var(--bs-primary-rgb, 85, 110, 230), 0.3);
+        }
+        
+        .card-date-number p {
+            color: var(--bs-primary, #556ee6);
+        }
+    }
+    
+    &:active {
+        .card-date {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
     }
 }
