@@ -1,10 +1,10 @@
-<mat-dialog-content style="height: 700px !important" class="border-round-bottom border-round-top">
+<mat-dialog-content style="height: 100% !important" class="border-round-bottom border-round-top">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="mb-0">
             <i class="bx bx-key me-2"></i>
             {{titleComponent}}
         </h5>
-        <div class="text-muted">
+        <div class="text-muted">    
             <small>
                 {{selected.length}} selected of {{totalItems}} permissions
                 <span *ngIf="keySearch.trim()">({{allPermissions.length}} total)</span>

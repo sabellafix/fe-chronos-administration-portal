@@ -99,6 +99,7 @@ import { SkelletonCardComponent } from './components/shared/skelletons/skelleton
 import { PaymentsListComponent } from './components/dashboard/payments-list/payments-list.component';
 import { BarOcupationChartComponent } from './components/dashboard/bar-ocupation-chart/bar-ocupation-chart.component';
 import { AuthGuard } from '@app/core/guards/auth.guard';
+import { PermissionGuard } from '@app/core/guards/permission.guard';
 import { SkelletonBarRevenueChartComponent } from './components/shared/skelletons/skelleton-bar-revenue-chart/skelleton-bar-revenue-chart.component';
 import { SkelletonStylistResumeComponent } from './components/shared/skelletons/skelleton-stylist-resume/skelleton-stylist-resume.component';
 import { ProductsListComponent } from './components/ecomerce/products-list/products-list.component';
@@ -133,6 +134,7 @@ const routes: Routes = [
       },
       { 
         path: 'users',
+        canActivate: [PermissionGuard],
         children: [
           { path: '', component: UsersListComponent, pathMatch: 'full' },
           { path: 'create', component: UsersCreateComponent },
@@ -144,6 +146,7 @@ const routes: Routes = [
       },
       {
         path: 'services',
+        canActivate: [PermissionGuard],
         children: [
           { path: '', component: ServicesListComponent, pathMatch: 'full' },
           { path: 'create', component: ServicesCreateComponent },
@@ -154,6 +157,7 @@ const routes: Routes = [
       },     
       {
         path: 'categories',
+        canActivate: [PermissionGuard],
         children: [
           { path: '', component: CategoriesListComponent, pathMatch: 'full' },
           { path: 'create', component: CategoriesCreateComponent },
@@ -164,6 +168,7 @@ const routes: Routes = [
       },
       {
         path: 'companies',
+        canActivate: [PermissionGuard],
         children: [
           { path: '', component: CompaniesListComponent, pathMatch: 'full' },
           { path: 'create', component: CompaniesCreateComponent },
@@ -174,6 +179,7 @@ const routes: Routes = [
       },
       {
         path: 'calendar',
+        canActivate: [PermissionGuard],
         children: [
           { path: '', component: BookingsCalendarComponent, pathMatch: 'full' },
           { path: '**', redirectTo: '' }
@@ -181,6 +187,7 @@ const routes: Routes = [
       },
       {
         path: 'bookings',
+        canActivate: [PermissionGuard],
         children: [
           { path: '', component: BookingsListComponent, pathMatch: 'full' },
           { path: '**', redirectTo: '' }
@@ -188,6 +195,7 @@ const routes: Routes = [
       },
       {
         path: 'customers',
+        canActivate: [PermissionGuard],
         children: [
           { path: '', component: CustomersListComponent, pathMatch: 'full' },
           { path: 'create', component: CustomersCreateComponent },
@@ -198,6 +206,7 @@ const routes: Routes = [
       },
       {
         path: 'roles',
+        canActivate: [PermissionGuard],
         children: [
           { path: '', component: RolesListComponent, pathMatch: 'full' },
           { path: 'create', component: RolesCreateComponent },
@@ -208,6 +217,7 @@ const routes: Routes = [
       },
       {
         path: 'salons',
+        canActivate: [PermissionGuard],
         children: [
           { path: '', component: SalonsListComponent, pathMatch: 'full' },
           { path: 'create', component: SalonsCreateComponent },
@@ -218,6 +228,7 @@ const routes: Routes = [
       },
       {
         path: 'chat',
+        canActivate: [PermissionGuard],
         children: [
           { path: '', component: ChatComponent, pathMatch: 'full' },
         ]
@@ -225,8 +236,6 @@ const routes: Routes = [
     ]
   }
 ];
-
-
 
 @NgModule({
   declarations: [

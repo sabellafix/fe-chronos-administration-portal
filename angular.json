@@ -49,8 +49,7 @@
               "src/assets/scripts/bootstrap.bundle.min.js",
               "src/assets/scripts/metismenujs.js",
               "src/assets/scripts/app.js",
-              "src/assets/scripts/apexcharts.min.js",
-              "src/assets/scripts/dashboard.init.js"
+              "src/assets/scripts/apexcharts.min.js"
             ]
           },
           "configurations": {

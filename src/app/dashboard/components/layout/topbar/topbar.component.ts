@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { User } from '@app/core/models/bussiness/user';
+import { Permission } from '@app/core/models/bussiness/permission';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { StorageService } from '@app/core/services/shared/storage.service';
 import { DashboardFiltersService, FilterVisibility } from '@app/core/services/shared/dashboard-filters.service';
@@ -46,6 +47,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
   };
   
   private destroy$: Subject<void> = new Subject<void>();
+  private userPermissions: Permission[] = [];
+  private isStylistUser: boolean = false;
   
 
   public routeParent: string = "";
@@ -79,6 +82,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+
+    this.userPermissions = this.authService.getPermissionsLogged();
+    this.checkIfStylistUser();
+
     this.onRouteChange();   
     this.router.events
       .pipe(takeUntil(this.destroy$))
@@ -136,6 +143,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
     return date.toISOString().split('T')[0];
   }
 
+  private checkIfStylistUser(): void {
+    const role = this.authService.getRoleLogged();
+    this.isStylistUser = role?.name === RolesConst._STYLIST;
+  }
+
+  private setLoggedStylistAsFilter(): void {
+    if (this.isStylistUser) {
+      const loggedUser = this.authService.getUserLogged();
+      if (loggedUser) {
+        this.dashboardFiltersService.updateSelectedStylist(loggedUser);
+      }
+    }
+  }
+
   private loadSalons(): void {
     this.loadingSalons = true;
     this.salonService.getSalons()
@@ -146,11 +167,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
           
           if (this.salons.length > 0) {
             this.selectedSalon = this.salons[0];
-            // Única actualización de filtros al cargar salones
-            this.dashboardFiltersService.updateFilters({
-              selectedSalon: this.selectedSalon,
-              selectedStylist: null
-            });
+            
+            if (this.isStylistUser) {
+              const loggedUser = this.authService.getUserLogged();
+              this.dashboardFiltersService.updateFilters({
+                selectedSalon: this.selectedSalon,
+                selectedStylist: loggedUser
+              });
+            } else {
+              this.dashboardFiltersService.updateFilters({
+                selectedSalon: this.selectedSalon,
+                selectedStylist: null
+              });
+            }
+            
             this.loadStylistsBySalon(this.selectedSalon.id);
           }
           
@@ -165,11 +195,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
   
   private prepareStylistOptions(): void {
+    const loggedUserId = this.isStylistUser ? this.authService.getUserLogged()?.id : null;
+    
     this.stylistOptions = this.stylists.map((stylist) => ({
       id: stylist.id,
       name: `${stylist.firstName} ${stylist.lastName}`,
       imageUrl: stylist.photo || '../assets/images/user-image.jpg',
-      selected: false
+      selected: this.isStylistUser && stylist.id === loggedUserId
     }));
   }
   
@@ -221,6 +253,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
         next: (users) => {
           this.stylists = users.filter(u => u.isActive);
           this.prepareStylistOptions();
+          
+          if (this.isStylistUser) {
+            this.setLoggedStylistAsFilter();
+          }
         },
         error: (error) => {
           console.error('Error loading stylists by salon:', error);
@@ -256,6 +292,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   profile(){
     this.router.navigate([`/users/${this.user.id}/detail`]);
+  }
+
+  hasPermission(permissionName: string): boolean {
+    return this.userPermissions.some(
+      permission => permission.name === permissionName && permission.isActive
+    );
   }
 
 }

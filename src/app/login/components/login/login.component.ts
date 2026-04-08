@@ -112,26 +112,6 @@ export class LoginComponent implements OnInit, AfterViewInit{
         (response: any) => {
           this.userResponse = <UserResponse>response; 
           if(this.userResponse.token != ''){  
-
-            // if(this.userResponse.user.roleId != null){
-            //   this.salonService.getSalonsByIdBearer(this.userResponse.token as string).subscribe((response: Salon[]) => {
-            //     this.salons = response;
-            //     console.log(this.salons);
-            //     this.storageService.set(StorageKeyConst._TOKEN, this.userResponse.token);
-            //     this.storageService.set(StorageKeyConst._USER, JSON.stringify(this.userResponse.user));
-            //     this.storageService.set(StorageKeyConst._EXPIRES_AT, this.userResponse.expiresAt);
-            //     this.storageService.set(StorageKeyConst._SALONS, JSON.stringify(this.salons));
-                
-            //     this.tokenRefreshService.notifyTokenUpdate();
-                
-            //     this.rolService.getRolByIdBearer(this.userResponse.user.roleId, this.userResponse.token).subscribe((response: Rol) => {
-            //       this.userResponse.user.role = response;
-            //       this.storageService.set(StorageKeyConst._ROLE, JSON.stringify(this.userResponse.user.role));
-            //       this.router.navigate(['/bookings']);
-            //     });
-            //   }); 
-            // }
-
             if(this.userResponse.user.roleId != null){
               this.storageService.set(StorageKeyConst._TOKEN, this.userResponse.token);
               this.storageService.set(StorageKeyConst._USER, JSON.stringify(this.userResponse.user));

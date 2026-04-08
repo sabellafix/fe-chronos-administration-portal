@@ -14,9 +14,9 @@ export class PermissionsSearchComponent {
     loading: boolean = true;
     titleComponent: string = "Search Permissions";
     pagination: Pagination = { offset: 0, limit: 10, items: 0, filters: ``, sort: 'id,desc' };
-    permissions: Permission[] = []; // Permisos mostrados con paginación y filtros
-    allPermissions: Permission[] = []; // Todos los permisos cargados del servidor
-    filteredPermissions: Permission[] = []; // Permisos filtrados por búsqueda
+    permissions: Permission[] = [];
+    allPermissions: Permission[] = [];
+    filteredPermissions: Permission[] = [];
     selected: Permission[] = [];
     attributes = ['resource', 'description', 'name'];
   
