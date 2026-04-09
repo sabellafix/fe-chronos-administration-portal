@@ -93,7 +93,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
   pageSize = 10;
   pageIndex = 0;
   showPaginate: boolean = true;
-  maxItems = [10, 25, 50, 100];
+  maxItems = [10, 20, 50, 100];
   Math = Math;
 
   sortConfig: SortConfig = {
@@ -194,6 +194,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     this.loadFiltersFromStorage();
     this.initializeDefaultFilters();
     
+    if (this.salonId) {
+      this.loadStylists();
+    }
     this.loadBookings();
 
     const salonSub = this.dashboardFiltersService.selectedSalon$.subscribe(salon => {
@@ -296,6 +299,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     
     if (this.isStylistUser) {
       this.loggedUser = this.authService.getUserLogged();
+      this.stylistId.disable();
     }
   }
 
