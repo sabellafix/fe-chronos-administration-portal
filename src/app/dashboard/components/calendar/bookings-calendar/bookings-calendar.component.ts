@@ -11,6 +11,7 @@ import { RolesConst } from '@app/core/models/constants/roles.const';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { Permission } from '@app/core/models/bussiness/permission';
 import { DashboardFiltersService } from '@app/core/services/shared/dashboard-filters.service';
+import { Rol } from '@app/core/models/bussiness/rol';
 
 @Component({
   selector: 'app-bookings-calendar',
@@ -66,6 +67,9 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   permissions: Permission[] = [];
   selectedSalonId: string | null = null;
   
+  isStylistUser: boolean = false;
+  stylistFilterDisabled: boolean = false;
+  
   private destroy$: Subject<void> = new Subject<void>();
 
   constructor(
@@ -80,6 +84,7 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   ) {
     this.user = this.authService.getUserLogged();
     this.permissions = this.authService.getPermissionsLogged();
+    this.checkIfStylistUser();
     this.loadData();
   }
   
@@ -164,14 +169,30 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
       });
   }
 
+  private checkIfStylistUser(): void {
+    const role: Rol = this.authService.getRoleLogged();
+    this.isStylistUser = role?.name === RolesConst._STYLIST;
+    this.stylistFilterDisabled = this.isStylistUser;
+  }
+
   private prepareStylistOptions(): void {
+    const loggedUserId = this.isStylistUser ? this.user?.id : null;
+    
     this.stylistOptions = this.stylists.map(stylist => ({
       id: stylist.id,
       name: `${stylist.firstName} ${stylist.lastName}`,
       code: stylist.id,
       imageUrl: stylist.photo,
-      selected: false
+      selected: this.isStylistUser && stylist.id === loggedUserId
     }));
+
+    if (this.isStylistUser && loggedUserId) {
+      const loggedStylist = this.stylists.find(s => s.id === loggedUserId);
+      if (loggedStylist) {
+        this.stylistsSelected = [loggedStylist];
+        this.stylistSelected = loggedStylist;
+      }
+    }
   }
 
   private initStickyHeader(): void {

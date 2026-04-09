@@ -146,8 +146,10 @@
 									<!-- Stylist Filter -->
 									<div class="col-md-2">
 										<label class="form-label small text-muted mb-1">Stylist</label>
-										<select class="form-select form-select-sm" formControlName="stylistId">
-											<option [ngValue]="null">All stylists</option>
+										<select class="form-select form-select-sm" 
+											formControlName="stylistId"
+											[attr.disabled]="stylistFilterDisabled ? '' : null">
+											<option *ngIf="!isStylistUser" [ngValue]="null">All stylists</option>
 											<option *ngFor="let stylist of stylists" [ngValue]="stylist.id">
 												{{ getStylistFullName(stylist) }}
 											</option>

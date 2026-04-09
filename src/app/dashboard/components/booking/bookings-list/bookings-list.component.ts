@@ -15,9 +15,11 @@ import { BookingStatus } from '@app/core/models/bussiness/enums';
 import { DateOnly, TimeOnly } from '@app/core/models/bussiness/availability';
 import { Service } from '@app/core/models/bussiness/service';
 import { User } from '@app/core/models/bussiness/user';
+import { Rol } from '@app/core/models/bussiness/rol';
 import { BookingService } from '@app/core/services/http/booking.service';
 import { UserService } from '@app/core/services/http/user.service';
 import { ServiceService } from '@app/core/services/http/platform-service.service';
+import { AuthService } from '@app/core/services/http/auth.service';
 import { Option } from '@app/core/models/interfaces/option.interface';
 import { EntiesConst } from '@app/core/models/constants/entity.const';
 import { RolesConst } from '@app/core/models/constants/roles.const';
@@ -83,6 +85,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
   selectedStylistId: string | null = null;
   selectedServiceId: string | null = null;
   
+  isStylistUser: boolean = false;
+  stylistFilterDisabled: boolean = false;
+  loggedUser: User | null = null;
+  
   totalItems = 0;
   pageSize = 10;
   pageIndex = 0;
@@ -122,6 +128,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     private bookingService: BookingService,
     private userService: UserService,
     private serviceService: ServiceService,
+    private authService: AuthService,
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -131,6 +138,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     this.defaultDateFrom = this.getDefaultDateFrom();
     this.defaultDateTo = this.getDefaultDateTo();
     
+    this.checkIfStylistUser();
     this.initializeFilterForm();
   }
 
@@ -217,7 +225,13 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
   private resetAllFilters(): void {
     this.currentFilters = this.getDefaultFilters();
-    this.selectedStylistId = null;
+    
+    if (this.isStylistUser && this.loggedUser) {
+      this.selectedStylistId = this.loggedUser.id;
+    } else {
+      this.selectedStylistId = null;
+    }
+    
     this.selectedServiceId = null;
     this.activeQuickFilter = null;
     this.quickFilters.forEach(f => f.active = false);
@@ -242,7 +256,13 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     this.stateValue.setValue(null);
     this.dateFrom.setValue(this.formatDateToString(this.defaultDateFrom));
     this.dateTo.setValue(this.formatDateToString(this.defaultDateTo));
-    this.stylistId.setValue(null);
+    
+    if (this.isStylistUser && this.loggedUser) {
+      this.stylistId.setValue(this.loggedUser.id);
+    } else {
+      this.stylistId.setValue(null);
+    }
+    
     this.serviceId.setValue(null);
   }
 
@@ -269,10 +289,28 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     return endOfWeek;
   }
 
+  private checkIfStylistUser(): void {
+    const role: Rol = this.authService.getRoleLogged();
+    this.isStylistUser = role?.name === RolesConst._STYLIST;
+    this.stylistFilterDisabled = this.isStylistUser;
+    
+    if (this.isStylistUser) {
+      this.loggedUser = this.authService.getUserLogged();
+    }
+  }
+
+  private applyStylistFilterIfNeeded(): void {
+    if (this.isStylistUser && this.loggedUser) {
+      this.stylistId.setValue(this.loggedUser.id);
+      this.selectedStylistId = this.loggedUser.id;
+    }
+  }
+
   private loadStylists(): void {
     this.userService.getUsersByRole(RolesConst._STYLIST, this.salonId).subscribe({
       next: (users: User[]) => {
         this.stylists = users;
+        this.applyStylistFilterIfNeeded();
       },
       error: () => {
         console.error('Error loading stylists');

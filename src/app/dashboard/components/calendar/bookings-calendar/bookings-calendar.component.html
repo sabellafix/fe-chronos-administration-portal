@@ -74,12 +74,13 @@
                         *ngIf="!loading"
                         [options]="stylistOptions"
                         [placeholder]="'Filter by stylist'"
-                        [multiSelect]="true"
-                        [showAllOption]="true"
+                        [multiSelect]="!isStylistUser"
+                        [showAllOption]="!isStylistUser"
                         [showColors]="true"
                         [showImages]="true"
                         [cardBackgroundClass]="'bg-light'"
                         [autoSelectFirst]="false"
+                        [disabled]="stylistFilterDisabled"
                         (selectionChange)="onStylistSelectionChange($event)">
                     </app-select-image>
                     <div *ngIf="loading"> 
