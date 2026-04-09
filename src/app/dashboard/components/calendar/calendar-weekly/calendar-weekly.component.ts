@@ -216,7 +216,6 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onBookingUpdated(booking: Booking): void {
-    console.log('onBookingUpdated', booking);
     if (booking && booking.id) {
       const index = this.bookings.findIndex(b => b.id === booking.id);
       

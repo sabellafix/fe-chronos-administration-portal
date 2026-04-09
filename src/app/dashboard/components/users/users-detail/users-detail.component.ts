@@ -404,11 +404,9 @@ export class UsersDetailComponent implements OnDestroy {
 
 
   onServiceSelectionChange(selectedServices: VisualOption[]): void {
-    // console.log("selectedServices", selectedServices);
     this.selectedServiceIds = selectedServices
       .map(service => service.id)
       .filter((id): id is string => id !== undefined);
-      console.log("selectedServiceIds", this.selectedServiceIds);
     this.applyServiceFilter();
   }
 

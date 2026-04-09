@@ -655,8 +655,6 @@ export class UsersAvailabilityComponent implements OnInit, OnDestroy {
         this.availabilities = availabilities
           .filter((av: Availability) => av.isActive)
           .map((av: Availability) => this.parseAvailabilityTimes(av));
-        console.log("getAvailabilitiesByProvider", this.availabilities);
-        
       },
       error: (error: any) => {
         this.snackBar.open('Error loading availabilities', 'Close', {

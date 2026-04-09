@@ -1,31 +1,31 @@
 export interface RoutePermissionConfig {
   route: string;
-  resource: string;
+  permissionName: string;
 }
 
 export const ROUTE_PERMISSION_MAPPINGS: RoutePermissionConfig[] = [
-  { route: 'dashboard', resource: 'dashboard' },
-  { route: 'users', resource: 'users' },
-  { route: 'services', resource: 'services' },
-  { route: 'categories', resource: 'categories' },
-  { route: 'companies', resource: 'companies' },
-  { route: 'calendar', resource: 'calendar' },
-  { route: 'bookings', resource: 'bookings' },
-  { route: 'customers', resource: 'customers' },
-  { route: 'roles', resource: 'roles' },
-  { route: 'salons', resource: 'salon' },
-  { route: 'chat', resource: 'chat' }
+  { route: 'dashboard', permissionName: 'dashboard.read' },
+  { route: 'users', permissionName: 'users.read' },
+  { route: 'services', permissionName: 'services.read' },
+  { route: 'categories', permissionName: 'categories.read' },
+  { route: 'companies', permissionName: 'companies.read' },
+  { route: 'calendar', permissionName: 'calendar.read' },
+  { route: 'bookings', permissionName: 'bookings.read' },
+  { route: 'customers', permissionName: 'customers.read' },
+  { route: 'roles', permissionName: 'roles.read' },
+  { route: 'salons', permissionName: 'salon.read' },
+  { route: 'chat', permissionName: 'chat.access' }
 ];
 
 export class RoutePermissionsConst {
-  static getResourceByRoute(route: string): string | null {
+  static getPermissionNameByRoute(route: string): string | null {
     const cleanRoute = route.split('/')[0];
     const config = ROUTE_PERMISSION_MAPPINGS.find(m => m.route === cleanRoute);
-    return config?.resource || null;
+    return config?.permissionName || null;
   }
 
-  static getRouteByResource(resource: string): string | null {
-    const config = ROUTE_PERMISSION_MAPPINGS.find(m => m.resource === resource);
+  static getRouteByPermissionName(permissionName: string): string | null {
+    const config = ROUTE_PERMISSION_MAPPINGS.find(m => m.permissionName === permissionName);
     return config?.route || null;
   }
 }

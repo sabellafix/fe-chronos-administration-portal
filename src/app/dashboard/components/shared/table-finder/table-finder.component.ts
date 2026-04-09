@@ -50,9 +50,6 @@ export class TableFinderComponent implements OnInit {
     this.dateFrom = new FormControl<Date | null>(this.config.defaultDateFrom || null);
     this.dateTo = new FormControl<Date | null>(this.config.defaultDateTo || null);
 
-    console.log("dateFrom", this.dateFrom);
-    console.log("dateTo", this.dateTo);
-
     this.filterForm = new FormGroup({
       searchText: this.searchText,
       searchField: this.searchField,

@@ -21,7 +21,7 @@
     <div data-simplebar class="sidebar-menu-scroll">
         <div id="sidebar-menu">
             <ul class="metismenu list-unstyled" id="side-menu">
-                <li *ngFor="let item of menuItems">
+                <li *ngFor="let item of menuItems" [class.d-none]="item.show === false">
                     <a (click)="toggleSubmenu(item)" [class.mm-active]="item.isOpen" [routerLink]="item.route">
                         <i [class]="item.icon" class="text-withe"></i>
                         <span class="menu-item text-withe">{{item.title}}</span>
@@ -29,7 +29,7 @@
                         <i *ngIf="item.children && item.isOpen" class="bx bx-chevron-up ms-auto text-white animated fadeIn fast"></i>
                     </a>
                     <ul *ngIf="item.children" class="sub-menu animated fadeIn fast" [class.show]="item.isOpen">
-                        <li *ngFor="let child of item.children">
+                        <li *ngFor="let child of item.children" [class.d-none]="child.show === false">
                             <a [routerLink]="child.route" [queryParams]="child.queryParams">
                                 <span class="menu-item font-size-14">{{child.title}}</span>
                             </a>

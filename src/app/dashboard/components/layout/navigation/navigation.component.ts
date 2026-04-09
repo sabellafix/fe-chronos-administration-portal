@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PermissionService } from '@app/core/services/shared/permission.service';
 
 interface MenuItem {
   title: string;
@@ -8,6 +9,7 @@ interface MenuItem {
   queryParams?: { [key: string]: string };
   children?: MenuItem[];
   isOpen?: boolean;
+  show?: boolean;
 }
 
 @Component({
@@ -35,6 +37,7 @@ export class NavigationComponent implements OnInit{
     {
       title: 'Calendar',
       icon: 'bx bx bx-calendar',
+      route: 'calendar',
       children: [
         {
           title: 'Month',
@@ -145,12 +148,33 @@ export class NavigationComponent implements OnInit{
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private permissionService: PermissionService
   ) {
     this.activatedRoute.parent?.url.subscribe(urlSegment => { this.routeSegment = urlSegment[0]?.path; });
   }
 
   ngOnInit(): void {
+    this.applyPermissionsToMenu();
+  }
+
+  private applyPermissionsToMenu(): void {
+    this.menuItems.forEach(item => {
+      item.show = this.hasPermissionForMenuItem(item);
+      
+      if (item.children) {
+        item.children.forEach(child => {
+          child.show = this.hasPermissionForMenuItem(child);
+        });
+      }
+    });
+  }
+
+  private hasPermissionForMenuItem(item: MenuItem): boolean {
+    if (!item.route) {
+      return true;
+    }
+    return this.permissionService.hasPermissionForRoute(item.route);
   }
 
   toggleSubmenu(item: MenuItem): void {

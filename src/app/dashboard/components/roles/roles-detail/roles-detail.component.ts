@@ -29,7 +29,7 @@ export class RolesDetailComponent {
   currentRol: Rol = new Rol();
 
   totalItems = 0;
-  pageSize = 10;
+  pageSize = 20;
   pageIndex = 0;
   showPaginate: boolean = true;
   maxItems = [10, 20, 50];

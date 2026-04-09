@@ -215,7 +215,6 @@ export class OffcanvasCreateBookingComponent implements OnInit, OnDestroy {
   } 
 
   getUsers(): void {
-    console.log(this.salonId);
     this.userService.getUsersByRole(RolesConst._STYLIST, this.salonId || undefined).subscribe({
       next: (response: User[]) => {
         this.users = response;      

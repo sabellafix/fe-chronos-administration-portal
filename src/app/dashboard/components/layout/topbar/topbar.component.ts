@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { User } from '@app/core/models/bussiness/user';
-import { Permission } from '@app/core/models/bussiness/permission';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { StorageService } from '@app/core/services/shared/storage.service';
+import { PermissionService } from '@app/core/services/shared/permission.service';
 import { DashboardFiltersService, FilterVisibility } from '@app/core/services/shared/dashboard-filters.service';
 import { UserService } from '@app/core/services/http/user.service';
 import { SalonService } from '@app/core/services/http/salon.service';
@@ -47,7 +47,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   };
   
   private destroy$: Subject<void> = new Subject<void>();
-  private userPermissions: Permission[] = [];
   private isStylistUser: boolean = false;
   
 
@@ -75,6 +74,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
     private storageService: StorageService,
+    private permissionService: PermissionService,
     private dashboardFiltersService: DashboardFiltersService,
     private userService: UserService,
     private salonService: SalonService,
@@ -82,8 +82,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-
-    this.userPermissions = this.authService.getPermissionsLogged();
     this.checkIfStylistUser();
 
     this.onRouteChange();   
@@ -295,9 +293,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   hasPermission(permissionName: string): boolean {
-    return this.userPermissions.some(
-      permission => permission.name === permissionName && permission.isActive
-    );
+    return this.permissionService.hasPermission(permissionName);
   }
 
 }

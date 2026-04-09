@@ -71,12 +71,7 @@ export class StylistResumeComponent implements OnInit, OnChanges, OnDestroy {
     this.dashboardFiltersService.filters$
       .pipe(takeUntil(this.destroy$))
       .subscribe((filters: DashboardFilters) => {
-        // Solo procesar si los estilistas ya están cargados y hay un estilista seleccionado
         if (this.stylistsLoaded && filters.selectedStylist) {
-          // Ajustar fechas sumando un día para corregir desfase
-          console.log("filters.startDate", filters.startDate);
-          console.log("filters.endDate", filters.endDate);
-          
           const adjustedStartDate = new Date(filters.startDate);
           adjustedStartDate.setDate(adjustedStartDate.getDate() + 1);
           const adjustedEndDate = new Date(filters.endDate);
@@ -95,21 +90,16 @@ export class StylistResumeComponent implements OnInit, OnChanges, OnDestroy {
   }
   
   private selectStylistFromFilter(stylist: User, startDate: Date, endDate: Date): void {
-    console.log("startDate", startDate);
-    console.log("endDate", endDate);
     this.selectedStylist = stylist;
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Calcular primer y último día del mes basado en startDate
     const startOfMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
     const endOfMonth = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
 
-    // Usar las fechas calculadas del mes
     this.queryStartDate = startOfMonth;
     this.queryEndDate = endOfMonth;
 
-    // Obtener el salonId de los filtros actuales
     const currentFilters = this.dashboardFiltersService.getCurrentFilters();
     const salonId = currentFilters.selectedSalon?.id;
 

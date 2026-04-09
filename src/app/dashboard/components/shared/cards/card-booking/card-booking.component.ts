@@ -11,7 +11,6 @@ export class CardBookingComponent {
   @Input() booking!: Booking;
   @Input() size: 'sm' | 'md' | 'lg' = 'md';  
   
-  // Inputs para posicionamiento absoluto (opcional - solo para calendario semanal)
   @Input() absolutePosition?: boolean = false;
   @Input() topPosition?: string;
   @Input() leftOffset?: string;
@@ -20,15 +19,9 @@ export class CardBookingComponent {
   @Input() zIndex?: number;
   
   imageUser: string = "../assets/images/user-image.jpg";
-  
-  // Estado del menú desplegable
   showDropdownMenu: boolean = false;
 
-
   ngOnInit(): void {
-    if(!this.booking.user.firstName) {
-      console.log(this.booking);
-    }
   }
 
   getBookingTooltip(booking: Booking): string {
@@ -44,8 +37,7 @@ export class CardBookingComponent {
       return 'auto';
     }
 
-    // 60 minutos = 80px de altura
-    const pixelsPerMinute = 80 / 60; // 1.333... px por minuto
+    const pixelsPerMinute = 80 / 60;
     const calculatedHeight = Math.round(this.booking.durationMinutes * pixelsPerMinute);
 
     return `${calculatedHeight}px`;
@@ -56,16 +48,12 @@ export class CardBookingComponent {
       return 'auto';
     }
 
-    // Para LG: 60 minutos = 120px de altura (más espacio que md)
-    const pixelsPerMinute = 120 / 60; // 2px por minuto
+    const pixelsPerMinute = 120 / 60;
     const calculatedHeight = Math.round(this.booking.durationMinutes * pixelsPerMinute);
 
     return `${calculatedHeight}px`;
   }
 
-  /**
-   * Obtiene los estilos de posicionamiento para la tarjeta
-   */
   getPositionStyles(): { [key: string]: string } {
     if (!this.absolutePosition) {
       return {};
@@ -83,60 +71,35 @@ export class CardBookingComponent {
     return styles;
   }
 
-  /**
-   * Alterna la visibilidad del menú desplegable
-   */
   toggleDropdownMenu(event: Event): void {
-    event.stopPropagation(); // Evita que se propague el evento
+    event.stopPropagation();
     this.showDropdownMenu = !this.showDropdownMenu;
   }
 
-  /**
-   * Oculta el menú desplegable
-   */
   hideDropdownMenu(): void {
     this.showDropdownMenu = false;
   }
 
-  /**
-   * Maneja la acción de desplegar
-   */
   onExpand(event: Event): void {
     event.stopPropagation();
     this.hideDropdownMenu();
-    // TODO: Implementar lógica de desplegar    
   }
 
-  /**
-   * Maneja la acción de editar
-   */
   onEdit(event: Event): void {
     event.stopPropagation();
     this.hideDropdownMenu();
-    // TODO: Implementar lógica de editar
   }
 
-  /**
-   * Maneja la acción de ver detalle
-   */
   onDetail(event: Event): void {
     event.stopPropagation();
     this.hideDropdownMenu();
-    // TODO: Implementar lógica de detalle
   }
 
-  /**
-   * Maneja la acción de eliminar
-   */
   onDelete(event: Event): void {
     event.stopPropagation();
     this.hideDropdownMenu();
-    // TODO: Implementar lógica de eliminar
   }
 
-  /**
-   * Obtiene el texto del estado del booking
-   */
   getStatusText(): string {
     const statusMap: { [key: number]: string } = {
       [BookingStatus.Pending]: 'Pendiente',
@@ -149,9 +112,6 @@ export class CardBookingComponent {
     return statusMap[this.booking.status] || 'Desconocido';
   }
 
-  /**
-   * Obtiene la clase CSS para el estado del booking
-   */
   getStatusClass(): string {
     const classMap: { [key: number]: string } = {
       [BookingStatus.Pending]: 'status-pending',

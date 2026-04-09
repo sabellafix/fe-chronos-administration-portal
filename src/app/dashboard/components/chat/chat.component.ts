@@ -102,7 +102,6 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       message: userMessage.message
     }).subscribe({
       next: (response: any) => {
-        console.log('Mensaje enviado exitosamente:', response);
         this.isLoading = false;
         this.simulateAgentResponse(response.response);
       },
