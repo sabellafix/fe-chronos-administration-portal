@@ -13,7 +13,7 @@ export class ChatService {
     token: string = environment.token;
     headers = { headers: { Authorization: `Bearer ${this.token}` } };
 
-    private twilioApiUrl: string = 'https://chronos-assistant-cqf0gxahe6g5adbh.eastus-01.azurewebsites.net';
+    private twilioApiUrl: string = environment.apiAsistantUrl;
 
     constructor(private http: HttpClient) { }
 
