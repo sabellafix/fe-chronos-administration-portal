@@ -1,7 +1,6 @@
-<div class="main-content" style="background-image: url('assets/images/background.jpg'); background-repeat: repeat-y; background-position: top center; background-size: 100% auto;">
-<!-- <div class="main-content" style="background-image: url('assets/images/background.jpg'); background-repeat: repeat-y; background-position: top center; background-size: 100% auto;"></div> -->
+<div class="main-content">
     <router-outlet></router-outlet>
-    <app-chat></app-chat>
+    <app-chat *ngIf="!chatDisabled"></app-chat>
     <app-offcanvas-create-booking></app-offcanvas-create-booking>
     <app-offcanvas-update-booking></app-offcanvas-update-booking>
     <app-offcanvas-detail-booking></app-offcanvas-detail-booking>

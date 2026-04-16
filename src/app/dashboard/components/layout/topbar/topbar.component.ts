@@ -61,6 +61,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     { name: 'categories',           icon: 'panel',    route: '/categories',           module: "categories",           active: false },
     { name: 'companies',            icon: 'panel',    route: '/companies',            module: "companies",            active: false },
     { name: 'bookings',             icon: 'panel',    route: '/bookings',             module: "bookings",             active: false },
+    { name: 'chat',                 icon: 'panel',    route: '/chat',                 module: "chat",                 active: false },
     { name: 'calendar',             icon: 'panel',    route: '/calendar',             module: "calendar",             active: false },
     { name: 'customers',            icon: 'panel',    route: '/customers',            module: "customers",            active: false },
     { name: 'products',             icon: 'panel',    route: '/products',             module: "products",             active: false },

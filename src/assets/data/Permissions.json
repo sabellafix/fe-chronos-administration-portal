@@ -1,0 +1,556 @@
+{
+  "id": 2,
+  "name": "Admin",
+  "description": "Administrator with management permissions",
+  "isSystemRole": false,
+  "isActive": true,
+  "createdAt": "2025-08-13T15:38:43.7533333",
+  "updatedAt": "2026-04-08T21:30:14.3174877",
+  "rolePermissions": [
+    {
+      "roleId": 2,
+      "permissionId": 1,
+      "permission": {
+        "id": 1,
+        "name": "booking.create",
+        "description": "Create new reservations",
+        "resource": "booking",
+        "action": "create",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 2,
+      "permission": {
+        "id": 2,
+        "name": "booking.read",
+        "description": "View existing reservations",
+        "resource": "booking",
+        "action": "read",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 3,
+      "permission": {
+        "id": 3,
+        "name": "booking.update",
+        "description": "Modify reservations",
+        "resource": "booking",
+        "action": "update",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 4,
+      "permission": {
+        "id": 4,
+        "name": "booking.delete",
+        "description": "Delete reservations",
+        "resource": "booking",
+        "action": "delete",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 5,
+      "permission": {
+        "id": 5,
+        "name": "customer.manage",
+        "description": "Manage clients",
+        "resource": "customer",
+        "action": "manage",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 6,
+      "permission": {
+        "id": 6,
+        "name": "service.manage",
+        "description": "Manage services",
+        "resource": "service",
+        "action": "manage",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 7,
+      "permission": {
+        "id": 7,
+        "name": "supplier.manage",
+        "description": "Manage suppliers",
+        "resource": "supplier",
+        "action": "manage",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 8,
+      "permission": {
+        "id": 8,
+        "name": "report.view",
+        "description": "View system reports",
+        "resource": "report",
+        "action": "view",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 9,
+      "permission": {
+        "id": 9,
+        "name": "system.admin",
+        "description": "System administration",
+        "resource": "system",
+        "action": "admin",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 10,
+      "permission": {
+        "id": 10,
+        "name": "calendar.manage",
+        "description": "Manage calendar and availability",
+        "resource": "calendar",
+        "action": "manage",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 11,
+      "permission": {
+        "id": 11,
+        "name": "users.read",
+        "description": "View users list and details",
+        "resource": "users",
+        "action": "read",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 12,
+      "permission": {
+        "id": 12,
+        "name": "users.create",
+        "description": "Create new users",
+        "resource": "users",
+        "action": "create",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 13,
+      "permission": {
+        "id": 13,
+        "name": "users.update",
+        "description": "Update existing users",
+        "resource": "users",
+        "action": "update",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 14,
+      "permission": {
+        "id": 14,
+        "name": "users.availability",
+        "description": "Manage user availability",
+        "resource": "users",
+        "action": "availability",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 15,
+      "permission": {
+        "id": 15,
+        "name": "services.read",
+        "description": "View services list and details",
+        "resource": "services",
+        "action": "read",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 16,
+      "permission": {
+        "id": 16,
+        "name": "services.create",
+        "description": "Create new services",
+        "resource": "services",
+        "action": "create",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 17,
+      "permission": {
+        "id": 17,
+        "name": "services.update",
+        "description": "Update existing services",
+        "resource": "services",
+        "action": "update",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 18,
+      "permission": {
+        "id": 18,
+        "name": "suppliers.read",
+        "description": "View suppliers list and details",
+        "resource": "suppliers",
+        "action": "read",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 19,
+      "permission": {
+        "id": 19,
+        "name": "suppliers.create",
+        "description": "Create new suppliers",
+        "resource": "suppliers",
+        "action": "create",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 20,
+      "permission": {
+        "id": 20,
+        "name": "suppliers.update",
+        "description": "Update existing suppliers",
+        "resource": "suppliers",
+        "action": "update",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 21,
+      "permission": {
+        "id": 21,
+        "name": "categories.read",
+        "description": "View categories list and details",
+        "resource": "categories",
+        "action": "read",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 22,
+      "permission": {
+        "id": 22,
+        "name": "categories.create",
+        "description": "Create new categories",
+        "resource": "categories",
+        "action": "create",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 23,
+      "permission": {
+        "id": 23,
+        "name": "categories.update",
+        "description": "Update existing categories",
+        "resource": "categories",
+        "action": "update",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 24,
+      "permission": {
+        "id": 24,
+        "name": "companies.read",
+        "description": "View companies list and details",
+        "resource": "companies",
+        "action": "read",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 25,
+      "permission": {
+        "id": 25,
+        "name": "companies.create",
+        "description": "Create new companies",
+        "resource": "companies",
+        "action": "create",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 26,
+      "permission": {
+        "id": 26,
+        "name": "companies.update",
+        "description": "Update existing companies",
+        "resource": "companies",
+        "action": "update",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 27,
+      "permission": {
+        "id": 27,
+        "name": "calendar.read",
+        "description": "Access booking calendar view",
+        "resource": "calendar",
+        "action": "calendar",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 28,
+      "permission": {
+        "id": 28,
+        "name": "calendar.daily.read",
+        "description": "Access daily booking view",
+        "resource": "calendar",
+        "action": "daily",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 29,
+      "permission": {
+        "id": 29,
+        "name": "calendar.daily.weekly",
+        "description": "Access weekly booking view",
+        "resource": "calendar",
+        "action": "weekly",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 30,
+      "permission": {
+        "id": 30,
+        "name": "calendar.daily.monthly",
+        "description": "Access monthly booking view",
+        "resource": "calendar",
+        "action": "monthly",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 31,
+      "permission": {
+        "id": 31,
+        "name": "customers.read",
+        "description": "View customers list and details",
+        "resource": "customers",
+        "action": "read",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 32,
+      "permission": {
+        "id": 32,
+        "name": "customers.create",
+        "description": "Create new customers",
+        "resource": "customers",
+        "action": "create",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 33,
+      "permission": {
+        "id": 33,
+        "name": "customers.update",
+        "description": "Update existing customers",
+        "resource": "customers",
+        "action": "update",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 34,
+      "permission": {
+        "id": 34,
+        "name": "roles.read",
+        "description": "View roles list and details",
+        "resource": "roles",
+        "action": "read",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 35,
+      "permission": {
+        "id": 35,
+        "name": "roles.create",
+        "description": "Create new roles",
+        "resource": "roles",
+        "action": "create",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 36,
+      "permission": {
+        "id": 36,
+        "name": "roles.update",
+        "description": "Update existing roles",
+        "resource": "roles",
+        "action": "update",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 37,
+      "permission": {
+        "id": 37,
+        "name": "chat.access",
+        "description": "Access chat functionality",
+        "resource": "chat",
+        "action": "access",
+        "isActive": true
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 40,
+      "permission": {
+        "id": 40,
+        "name": "dashboard.salon.read",
+        "description": "Access dashboard salon",
+        "resource": "dashboard",
+        "action": "access",
+        "isActive": true,
+        "createdAt": "2025-08-13T00:00:00",
+        "updatedAt": "2025-08-13T00:00:00"
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 43,
+      "permission": {
+        "id": 43,
+        "name": "dashboard.supplier.read",
+        "description": "Access dashboard supplier",
+        "resource": "dashboard",
+        "action": "access",
+        "isActive": true,
+        "createdAt": "2025-08-13T00:00:00",
+        "updatedAt": "2025-08-13T00:00:00"
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 46,
+      "permission": {
+        "id": 46,
+        "name": "bookings.read",
+        "description": "Access bookings list",
+        "resource": "bookings",
+        "action": "access",
+        "isActive": true,
+        "createdAt": "2025-08-13T00:00:00",
+        "updatedAt": "2025-08-13T00:00:00"
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 49,
+      "permission": {
+        "id": 49,
+        "name": "calendar.daily.supplier",
+        "description": "Access supploer booking view",
+        "resource": "calendar",
+        "action": "read"
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 52,
+      "grantedBy": null,
+      "permission": {
+        "id": 52,
+        "name": "salon.read",
+        "description": "View salons list and details",
+        "resource": "salon",
+        "action": "read"
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 53,
+      "grantedBy": null,
+      "permission": {
+        "id": 53,
+        "name": "salon.create",
+        "description": "Create new salons",
+        "resource": "salon",
+        "action": "create"
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 55,
+      "grantedBy": null,
+      "permission": {
+        "id": 55,
+        "name": "salon.update",
+        "description": "Update existing salons",
+        "resource": "salon",
+        "action": "update"
+      }
+    },
+    {
+      "roleId": 2,
+      "permissionId": 56,
+      "grantedBy": null,
+      "permission": {
+        "id": 56,
+        "name": "salon.manage",
+        "description": "Manage salons",
+        "resource": "salon",
+        "action": "manage"
+      }
+    }  
+  ]
+}

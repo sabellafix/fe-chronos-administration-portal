@@ -6707,15 +6707,6 @@ a.ck.ck-button:not(.ck-disabled):hover {
     margin-left: 10px
 }
 
-.chat-conversation .conversation-list .ctext-wrap-content:before {
-    content: "";
-    position: absolute;
-    border: 5px solid transparent;
-    border-right-color: #3b76e1;
-    border-top-color: #3b76e1;
-    left: -10px;
-    top: 0
-}
 
 .chat-conversation .conversation-list .conversation-name {
     display: -webkit-box;

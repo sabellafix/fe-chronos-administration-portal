@@ -71,6 +71,11 @@ export class NavigationComponent implements OnInit{
       route: 'bookings'
     },
     {
+      title: 'Chat',
+      icon: 'bx bx-chat',
+      route: 'chat'
+    },
+    {
       title: 'Stylists',
       icon: 'bx bx-face',
       route: 'users',

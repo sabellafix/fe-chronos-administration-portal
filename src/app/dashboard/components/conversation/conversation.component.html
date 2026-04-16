@@ -1,0 +1,143 @@
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="conversation-container">
+                    <div class="contacts-sidebar">
+                        <div class="sidebar-header">
+                            <div class="user-info">
+                                <div class="user-avatar-icon">
+                                    <i class="bx bx-conversation"></i>
+                                </div>
+                                <div class="user-details">
+                                    <h5>Chats</h5>
+                                </div>
+                            </div>
+                            <div class="header-actions">
+                                <button class="action-btn" title="More options">
+                                    <i class="bx bx-dots-horizontal-rounded"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="search-box">
+                            <i class="bx bx-search search-icon"></i>
+                            <input type="text" placeholder="Search agents..." [(ngModel)]="searchQuery"
+                                class="search-input">
+                        </div>
+
+                        <div class="contacts-list">
+                            <div class="contact-item" *ngFor="let contact of getFilteredContacts()"
+                                [class.active]="selectedContact?.id === contact.id" (click)="selectContact(contact)">
+                                <div class="contact-avatar-wrapper">
+                                    <img [src]="contact.avatar" [alt]="contact.name" class="contact-avatar">
+                                    <span class="status-dot" [class]="contact.status"></span>
+                                </div>
+                                <div class="contact-info">
+                                    <div class="contact-header">
+                                        <h6 class="contact-name">{{ contact.name }}</h6>
+                                        <span class="message-time">{{ formatLastMessageTime(contact.lastMessageTime)
+                                            }}</span>
+                                    </div>
+                                    <p class="last-message">{{ contact.lastMessage }}</p>
+                                </div>
+                                <div class="unread-badge" *ngIf="contact.unreadCount && contact.unreadCount > 0">
+                                    {{ contact.unreadCount }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-main">
+                        <div class="chat-header">
+                            <div class="chat-user-info">
+                                <img [src]="selectedContact?.avatar || 'assets/images/chronos-collapse-dark.png'"
+                                    alt="Contact" class="chat-avatar">
+                                <div class="chat-user-details">
+                                    <h6>{{ selectedContact?.name || 'Select a contact' }}</h6>
+                                    <span class="user-status">
+                                        <span class="status-indicator"
+                                            [class]="selectedContact?.status || 'offline'"></span>
+                                        {{ selectedContact?.status === 'online' ? 'Online' : 'Offline' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="chat-actions">
+                                <button class="chat-action-btn" title="More options">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="chat-body" #chatContainer>
+                            <div class="chat-date-separator">
+                                <span>Today</span>
+                            </div>
+
+                            <div class="message-wrapper" *ngFor="let message of messages"
+                                [class.sent]="isUserMessage(message)" [class.received]="isAgentMessage(message)">
+
+                                <img *ngIf="isAgentMessage(message) && !avatarDisabled"
+                                    [src]="selectedContact?.avatar || 'assets/images/chronos-collapse-dark.png'"
+                                    class="message-avatar" alt="Contact">
+
+                                <div class="message-content">
+                                    <div class="message-bubble">
+                                        <p class="message-text">{{ message.message }}</p>
+                                        <div *ngIf="msjOptionsDisabled" class="message-options">
+                                            <button class="msg-option-btn">
+                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                            </button>
+                                        </div>  
+                                    </div>
+                                    <span class="message-time">{{ formatTime(message.createdAt) }}</span>
+                                </div>
+
+                                <img *ngIf="isUserMessage(message) && !avatarDisabled" [src]="user.photo || 'assets/images/user-image.jpg'"
+                                    class="message-avatar" alt="You">
+                            </div>
+
+                            <!-- Indicador de escritura -->
+                            <div class="message-wrapper received" *ngIf="isLoading">
+                                <img [src]="selectedContact?.avatar || 'assets/images/chronos-collapse-dark.png'"
+                                    class="message-avatar" alt="Contact">
+                                <div class="message-content">
+                                    <div class="message-bubble typing">
+                                        <div class="typing-indicator">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chat-input-area">
+                            <div class="input-container">
+                                <div *ngIf="adjustDisabled" class="input-actions-left">
+                                    <button class="input-action-btn" title="Attach file">
+                                        <i class="bx bx-paperclip"></i>
+                                    </button>
+                                    <button class="input-action-btn" title="Add image">
+                                        <i class="bx bx-image"></i>
+                                    </button>
+                                </div>
+
+                                <input #messageInput type="text" class="message-input" placeholder="Enter Message..."
+                                    [disabled]="isLoading" (keypress)="onKeyPress($event, messageInput)">
+
+                                <button class="btn btn-primary" [disabled]="isLoading" (click)="onSendMessage(messageInput)">
+                                    <i class="mdi mdi-send" *ngIf="!isLoading"></i>
+                                    <div class="spinner-border spinner-border-sm" role="status" *ngIf="isLoading">
+                                        <span class="visually-hidden">Sending...</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

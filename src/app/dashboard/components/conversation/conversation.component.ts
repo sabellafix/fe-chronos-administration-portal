@@ -5,31 +5,58 @@ import { StorageService } from '@app/core/services/shared/storage.service';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { User } from '@app/core/models/bussiness/user';
+import { TwilioMessageRequest } from '@app/core/models/dtos/twilioMessageRequest';
+
+interface Contact {
+  id: string;
+  name: string;
+  avatar: string;
+  status: 'online' | 'offline' | 'away';
+  lastMessage?: string;
+  lastMessageTime?: Date;
+  unreadCount?: number;
+}
 
 @Component({
-  selector: 'app-chat',
-  templateUrl: './chat.component.html',
-  styleUrl: './chat.component.scss'
+  selector: 'app-conversation',
+  templateUrl: './conversation.component.html',
+  styleUrl: './conversation.component.scss'
 })
-export class ChatComponent implements OnInit, AfterViewChecked {
+export class ConversationComponent implements OnInit, AfterViewChecked {
   @ViewChild('chatContainer', { static: false }) chatContainer!: ElementRef;
-  user: User = new User();
-  isMinimized: boolean = true;
+  
   messages: Message[] = [];
   isLoading: boolean = false;
   currentUserId: string = '51231a62-8bc9-42cd-b420-3fece744762f';
   botUserId: string = 'bot-agent';
+  user: User = new User();
   private shouldScrollToBottom: boolean = false;
+  searchQuery: string = '';
+  adjustDisabled: boolean = false;
+  msjOptionsDisabled: boolean = false;
   avatarDisabled: boolean = true;
-
+  
+  selectedContact: Contact | null = null;
+  
+  contacts: Contact[] = [
+    {
+      id: 'bot-agent',
+      name: 'Chronos Assistant',
+      avatar: 'assets/images/chronos-collapse-dark.png',
+      status: 'online',
+      lastMessage: 'Hi! How can I assist you today?',
+      lastMessageTime: new Date(),
+      unreadCount: 0
+    }
+  ];
 
   constructor(
-    private chatService: ChatService, 
-    private storageService: StorageService,
+    private chatService: ChatService,
     private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.selectedContact = this.contacts[0];
     this.initializeChat();
     this.user = this.authService.getUserLogged();
   }
@@ -61,16 +88,18 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  private getUser(): void {
-    let user = this.storageService.get(StorageKeyConst._USER_LOGGED) as any;
-    if(user){
-      this.currentUserId = user.id;
-      this.botUserId = user.id;
-    }
-  }
-
-  toggleMinimize(): void {
-    this.isMinimized = !this.isMinimized;
+  selectContact(contact: Contact): void {
+    this.selectedContact = contact;
+    this.messages = [];
+    
+    const welcomeMessage = new Message();
+    welcomeMessage.userId = contact.id;
+    welcomeMessage.message = contact.lastMessage || 'Hello!';
+    welcomeMessage.createdAt = new Date();
+    this.messages.push(welcomeMessage);
+    
+    contact.unreadCount = 0;
+    this.shouldScrollToBottom = true;
   }
 
   onSendMessage(messageInput: HTMLInputElement): void {
@@ -98,28 +127,26 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     
     this.isLoading = true;
     
-    this.chatService.createMessage({
-      userId: userMessage.userId,
-      message: userMessage.message
-    }).subscribe({
+    const twilioRequest = new TwilioMessageRequest(messageText);
+    
+    this.chatService.twilioWsAgent(twilioRequest).subscribe({
       next: (response: any) => {
         this.isLoading = false;
-        this.simulateAgentResponse(response.response);
+        this.simulateAgentResponse(response);
       },
       error: (error) => {
         console.error('Error al enviar mensaje:', error);
         this.isLoading = false;
-        this.simulateAgentResponse(messageText);
+        this.simulateAgentResponse('Sorry, there was an error processing your message.');
       }
     });
   }
 
   private simulateAgentResponse(userMessage: string): void {
-    // Simular delay de respuesta del agente
     setTimeout(() => {
       const agentResponse = userMessage;
       const agentMessage = new Message();
-      agentMessage.userId = this.botUserId;
+      agentMessage.userId = this.selectedContact?.id || this.botUserId;
       agentMessage.message = agentResponse;
       agentMessage.createdAt = new Date();
       
@@ -128,46 +155,12 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     }, 1000 + Math.random() * 2000); 
   }
 
-  private generateAgentResponse(userMessage: string): string {
-    const responses = [
-      'Entiendo tu consulta. ¿Podrías proporcionarme más detalles?',
-      'Gracias por tu mensaje. Estoy aquí para ayudarte con tus compras.',
-      'Me parece una excelente pregunta. Te ayudo a resolverla.',
-      'Perfecto, voy a revisar esa información para ti.',
-      'Comprendo. ¿Hay algo específico que necesites sobre este tema?',
-      'Muy bien, te voy a asistir con eso ahora mismo.',
-      'Interesante punto. Déjame buscar la mejor solución para ti.'
-    ];
-    
-    // Respuestas más específicas basadas en palabras clave
-    const lowerMessage = userMessage.toLowerCase();
-    
-    if (lowerMessage.includes('precio') || lowerMessage.includes('costo')) {
-      return 'Te puedo ayudar con información sobre precios. ¿Qué producto te interesa?';
-    }
-    
-    if (lowerMessage.includes('producto') || lowerMessage.includes('comprar')) {
-      return 'Perfecto, te ayudo con tu compra. ¿Podrías decirme qué producto buscas?';
-    }
-    
-    if (lowerMessage.includes('orden') || lowerMessage.includes('pedido')) {
-      return 'Te ayudo con tu orden. ¿Necesitas crear una nueva o revisar una existente?';
-    }
-    
-    if (lowerMessage.includes('gracias') || lowerMessage.includes('gracias')) {
-      return '¡De nada! Es un placer ayudarte. ¿Hay algo más en lo que pueda asistirte?';
-    }
-    
-    // Respuesta aleatoria si no hay palabras clave específicas
-    return responses[Math.floor(Math.random() * responses.length)];
-  }
-
   isUserMessage(message: Message): boolean {
     return message.userId === this.currentUserId;
   }
 
   isAgentMessage(message: Message): boolean {
-    return message.userId === this.botUserId;
+    return message.userId !== this.currentUserId;
   }
 
   formatTime(date: Date): string {
@@ -175,5 +168,29 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  formatLastMessageTime(date: Date | undefined): string {
+    if (!date) return '';
+    const now = new Date();
+    const messageDate = new Date(date);
+    
+    if (messageDate.toDateString() === now.toDateString()) {
+      return this.formatTime(date);
+    }
+    
+    return messageDate.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: 'short'
+    });
+  }
+
+  getFilteredContacts(): Contact[] {
+    if (!this.searchQuery.trim()) {
+      return this.contacts;
+    }
+    return this.contacts.filter(contact => 
+      contact.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
   }
 }

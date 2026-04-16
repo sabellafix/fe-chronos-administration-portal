@@ -34,6 +34,12 @@ export const ROUTE_FILTER_CONFIGURATIONS: RouteFilterConfig[] = [
         ]
     },
     {
+        route: '/chat',
+        enabledFilters: [
+            TopbarFiltersConst._SALON
+        ]
+    },
+    {
         route: '/users',
         enabledFilters: [
             TopbarFiltersConst._SALON

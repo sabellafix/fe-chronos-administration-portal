@@ -114,6 +114,7 @@ import { SalonsCreateComponent } from './components/salons/salons-create/salons-
 import { SalonsUpdateComponent } from './components/salons/salons-update/salons-update.component';
 import { SalonsDetailComponent } from './components/salons/salons-detail/salons-detail.component';
 import { SkelletonCalendarWeeklyComponent } from './components/shared/skelletons/skelleton-calendar-weekly/skelleton-calendar-weekly.component';
+import { ConversationComponent } from './components/conversation/conversation.component';
 
 const routes: Routes = [
   {
@@ -194,6 +195,13 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'chat',
+        canActivate: [PermissionGuard],
+        children: [
+          { path: '', component: ConversationComponent, pathMatch: 'full' },
+        ]
+      },
+      {
         path: 'customers',
         canActivate: [PermissionGuard],
         children: [
@@ -231,6 +239,12 @@ const routes: Routes = [
         canActivate: [PermissionGuard],
         children: [
           { path: '', component: ChatComponent, pathMatch: 'full' },
+        ]
+      },
+      {
+        path: 'conversation',
+        children: [
+          { path: '', component: ConversationComponent, pathMatch: 'full' },
         ]
       }
     ]
@@ -329,6 +343,7 @@ const routes: Routes = [
     SalonsUpdateComponent,
     SalonsDetailComponent,
     SkelletonCalendarWeeklyComponent,
+    ConversationComponent,
   ],
   imports: [
     CommonModule,

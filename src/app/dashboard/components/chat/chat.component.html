@@ -9,9 +9,9 @@
                 </div>
             </div>
             <div class="chat-controls">
-                <button type="button" class="control-btn" title="Minimizar/Maximizar">
-                    <i class="bx bx-minus"></i>
-                </button>
+                <a routerLink="./chat" class="control-btn" title="Open chat">
+                    <i class="bx bx-link-external"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -27,7 +27,7 @@
                     <div class="conversation-list">
                         <div class="d-flex">
                             <img 
-                                *ngIf="isAgentMessage(message)"
+                                *ngIf="isAgentMessage(message) && !avatarDisabled"
                                 src="assets/images/chronos-collapse-dark.png" 
                                 class="rounded-circle" 
                                 alt="Agente">
@@ -48,8 +48,8 @@
                             </div>
                             
                             <img 
-                                *ngIf="isUserMessage(message)"
-                                src="assets/images/user-image.jpg" 
+                                *ngIf="isUserMessage(message) && !avatarDisabled"
+                                [src]="user.photo || 'assets/images/user-image.jpg'" 
                                 class="rounded-circle" 
                                 alt="Usuario">
                         </div>
