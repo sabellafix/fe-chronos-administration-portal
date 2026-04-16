@@ -40,12 +40,12 @@ export class ListTimeLnBookingsComponent implements OnChanges {
 
   getBookingStatusText(status: BookingStatus): string {
     switch(status) {
-      case BookingStatus.Pending: return 'Pendiente';
-      case BookingStatus.Confirmed: return 'Confirmada';
-      case BookingStatus.InProgress: return 'En Progreso';
-      case BookingStatus.Completed: return 'Completada';
-      case BookingStatus.Cancelled: return 'Cancelada';
-      default: return 'Desconocido';
+      case BookingStatus.Pending: return 'Pending';
+      case BookingStatus.Confirmed: return 'Confirmed';
+      case BookingStatus.InProgress: return 'In Progress';
+      case BookingStatus.Completed: return 'Completed';
+      case BookingStatus.Cancelled: return 'Cancelled';
+      default: return 'Unknown';
     }
   }
 

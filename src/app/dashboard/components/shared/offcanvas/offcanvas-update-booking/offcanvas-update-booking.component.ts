@@ -574,17 +574,17 @@ export class OffcanvasUpdateBookingComponent implements OnInit, OnDestroy {
 
   getStatusOptions(): {value: BookingStatus, label: string}[] {
     return [
-      { value: BookingStatus.Pending, label: 'Pendiente' },
-      { value: BookingStatus.Confirmed, label: 'Confirmado' },
-      { value: BookingStatus.InProgress, label: 'En Progreso' },
-      { value: BookingStatus.Completed, label: 'Completado' },
-      { value: BookingStatus.Cancelled, label: 'Cancelado' }
+      { value: BookingStatus.Pending, label: 'Pending' },
+      { value: BookingStatus.Confirmed, label: 'Confirmed' },
+      { value: BookingStatus.InProgress, label: 'In Progress' },
+      { value: BookingStatus.Completed, label: 'Completed' },
+      { value: BookingStatus.Cancelled, label: 'Cancelled' }
     ];
   }
 
   getStatusLabel(status: BookingStatus): string {
     const statusOption = this.getStatusOptions().find(option => option.value === status);
-    return statusOption ? statusOption.label : 'Desconocido';
+    return statusOption ? statusOption.label : 'Unknown';
   }
 
   getModifiedPrice(service: Service): number | null {

@@ -102,14 +102,14 @@ export class CardBookingComponent {
 
   getStatusText(): string {
     const statusMap: { [key: number]: string } = {
-      [BookingStatus.Pending]: 'Pendiente',
-      [BookingStatus.Confirmed]: 'Confirmado',
-      [BookingStatus.InProgress]: 'En Progreso',
-      [BookingStatus.Completed]: 'Completado',
-      [BookingStatus.Cancelled]: 'Cancelado',
+      [BookingStatus.Pending]: 'Pending',
+      [BookingStatus.Confirmed]: 'Confirmed',
+      [BookingStatus.InProgress]: 'In Progress',
+      [BookingStatus.Completed]: 'Completed',
+      [BookingStatus.Cancelled]: 'Cancelled',
       [BookingStatus.NoShow]: 'No Show'
     };
-    return statusMap[this.booking.status] || 'Desconocido';
+    return statusMap[this.booking.status] || 'Unknown';
   }
 
   getStatusClass(): string {

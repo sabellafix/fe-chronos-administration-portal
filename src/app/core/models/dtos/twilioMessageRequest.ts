@@ -23,13 +23,13 @@ export class TwilioMessageRequest {
         this.SmsStatus = 'received';
         this.Body = body;
         this.FromCountry = 'CO';
-        this.To = '+19137285498';
+        this.To = '19137285498';
         this.NumSegments = '1';
         this.SmsMessageSid = environment.twilio.smsMessageSid;
         this.SmsSid = environment.twilio.smsSid;
         this.MessageSid = environment.twilio.messageSid;
         this.AccountSid = environment.twilio.accountSid;
-        this.From = '+573104453912';
+        this.From = '573104453912';
         this.ApiVersion = '2010-04-01';
     }
 }

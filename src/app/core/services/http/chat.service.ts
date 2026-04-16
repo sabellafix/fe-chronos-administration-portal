@@ -45,6 +45,9 @@ export class ChatService {
             'Content-Type': 'application/x-www-form-urlencoded'
         });
 
-        return this.http.post<string>(url, body.toString(), { headers: httpHeaders });
+        return this.http.post(url, body.toString(), { 
+            headers: httpHeaders,
+            responseType: 'text'
+        });
     }
 } 

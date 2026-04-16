@@ -47,7 +47,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   selectedStylist: User | null = null;
   isStylistPanelVisible: boolean = false;
   
-  enabledCaching: boolean = false;
+  enabledCaching: boolean = true;
 
   private destroy$: Subject<void> = new Subject<void>();
   

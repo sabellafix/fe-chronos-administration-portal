@@ -160,6 +160,11 @@ export class BookingsSupplierComponent implements OnInit, OnDestroy, OnChanges {
     this.offcanvasBookingService.openUpdateBookingModal(bookingId);
   }
 
+  detailBooking(bookingId: string, event: Event): void {
+    event.stopPropagation();
+    this.offcanvasBookingService.openDetailBookingModal(bookingId);
+  }
+
   onBookingUpdated(booking: Booking): void {
     const index = this.bookings.findIndex(b => b.id === booking.id);
     if (index !== -1) {

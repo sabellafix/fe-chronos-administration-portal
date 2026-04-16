@@ -752,12 +752,12 @@ export class CalendarFloorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   public getSiteStatusText(status: string): string {
     switch (status) {
-      case 'available': return 'Disponible';
-      case 'occupied': return 'Ocupado';
-      case 'reserved': return 'Reservado';
-      case 'maintenance': return 'Mantenimiento';
-      case 'blocked': return 'Bloqueado';
-      default: return 'Desconocido';
+      case 'available': return 'Avaia';
+      case 'occupied': return 'Occupied';
+      case 'reserved': return 'Reserved';
+      case 'maintenance': return 'Maintenance';
+      case 'blocked': return 'Blocked';
+      default: return 'Unknown';
     }
   }
 
@@ -802,7 +802,7 @@ export class CalendarFloorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   public getServiceName(serviceId: string): string {
     const service = this.serviceTypes.get(serviceId);
-    return service?.name || 'Servicio desconocido';
+    return service?.name || 'Unknown Service';
   }
 
   public onCreateBooking(site: Site): void {

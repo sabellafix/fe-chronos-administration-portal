@@ -195,6 +195,11 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
     this.offcanvasBookingService.openUpdateBookingModal(bookingId);
   }
 
+  detailBooking(bookingId: string, event: Event): void {
+    event.stopPropagation();
+    this.offcanvasBookingService.openDetailBookingModal(bookingId);
+  }
+
   onBookingUpdated(booking: Booking): void {
     if (booking && booking.id) {
       const index = this.bookings.findIndex(b => b.id === booking.id);
