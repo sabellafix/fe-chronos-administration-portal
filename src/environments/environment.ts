@@ -8,5 +8,11 @@ export const environment = {
     companyName: 'Administration Platform',
     companyLogo: 'icon.png',
     encryptionKey: '087HIph807Wh766R54',
-    salonId: '07c3fea6-9326-45cf-b97b-c29b92e5437e'
+    salonId: '07c3fea6-9326-45cf-b97b-c29b92e5437e',
+    twilio: {
+      smsMessageSid: 'SM079ad2bf3836f265befbb6d462447a5c',
+      smsSid: 'SM079ad2bf3836f265befbb6d462447a',
+      messageSid: 'SM079ad2bf3836f265befbb6d462447a5c',
+      accountSid: 'AC4c808d46b875111e8dce87edad64dea2'
+    }
   }; 
