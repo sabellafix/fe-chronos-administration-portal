@@ -83,7 +83,7 @@
 
                                 <div class="message-content">
                                     <div class="message-bubble">
-                                        <p class="message-text">{{ message.message }}</p>
+                                        <p class="message-text" [innerHTML]="isAgentMessage(message) ? formatMessageText(message.message) : message.message"></p>
                                         <div *ngIf="msjOptionsDisabled" class="message-options">
                                             <button class="msg-option-btn">
                                                 <i class="bx bx-dots-vertical-rounded"></i>

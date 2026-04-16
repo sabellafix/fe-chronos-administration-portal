@@ -52,7 +52,8 @@ export class ConversationComponent implements OnInit, AfterViewChecked {
 
   constructor(
     private chatService: ChatService,
-    private authService: AuthService
+    private authService: AuthService,
+    private storageService: StorageService
   ) { }
 
   ngOnInit(): void {
@@ -69,13 +70,25 @@ export class ConversationComponent implements OnInit, AfterViewChecked {
   }
 
   private initializeChat(): void {
-    const welcomeMessage = new Message();
-    welcomeMessage.userId = this.botUserId;
-    welcomeMessage.message = 'Hi! How can I assist you today?';
-    welcomeMessage.createdAt = new Date();
+    const storedMessages = this.storageService.get<Message[]>(StorageKeyConst._CHAT_MESSAGES);
     
-    this.messages.push(welcomeMessage);
+    if (storedMessages && storedMessages.length > 0) {
+      this.messages = storedMessages;
+    } else {
+      const welcomeMessage = new Message();
+      welcomeMessage.userId = this.botUserId;
+      welcomeMessage.message = 'Hi! How can I assist you today?';
+      welcomeMessage.createdAt = new Date();
+      
+      this.messages.push(welcomeMessage);
+      this.saveMessages();
+    }
+    
     this.shouldScrollToBottom = true;
+  }
+
+  private saveMessages(): void {
+    this.storageService.set(StorageKeyConst._CHAT_MESSAGES, this.messages);
   }
 
   private scrollToBottom(): void {
@@ -123,6 +136,7 @@ export class ConversationComponent implements OnInit, AfterViewChecked {
     userMessage.createdAt = new Date();
     
     this.messages.push(userMessage);
+    this.saveMessages();
     this.shouldScrollToBottom = true;
     
     this.isLoading = true;
@@ -151,6 +165,7 @@ export class ConversationComponent implements OnInit, AfterViewChecked {
       agentMessage.createdAt = new Date();
       
       this.messages.push(agentMessage);
+      this.saveMessages();
       this.shouldScrollToBottom = true;
     }, 1000 + Math.random() * 2000); 
   }
@@ -192,5 +207,34 @@ export class ConversationComponent implements OnInit, AfterViewChecked {
     return this.contacts.filter(contact => 
       contact.name.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
+  }
+
+  formatMessageText(text: string): string {
+    if (!text) return '';
+    
+    let formatted = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    
+    formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    
+    formatted = formatted.replace(/\n/g, '<br>');
+    
+    return formatted;
+  }
+
+  clearConversation(): void {
+    this.messages = [];
+    this.storageService.remove(StorageKeyConst._CHAT_MESSAGES);
+    
+    const welcomeMessage = new Message();
+    welcomeMessage.userId = this.botUserId;
+    welcomeMessage.message = 'Hi! How can I assist you today?';
+    welcomeMessage.createdAt = new Date();
+    
+    this.messages.push(welcomeMessage);
+    this.saveMessages();
+    this.shouldScrollToBottom = true;
   }
 }

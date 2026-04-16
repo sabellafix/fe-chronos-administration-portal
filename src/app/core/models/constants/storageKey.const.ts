@@ -11,6 +11,8 @@ const DASHBOARD_REVENUE_CHART : string = "DASHBOARD_REVENUE_CHART";
 const DASHBOARD_REVENUE_ACTIVITY : string = "DASHBOARD_REVENUE_ACTIVITY";
 const DASHBOARD_SALON_OCCUPANCY : string = "DASHBOARD_SALON_OCCUPANCY";
 
+const CHAT_MESSAGES : string = "CHAT_MESSAGES";
+
 export abstract class StorageKeyConst {
     public static readonly _USER_LOGGED: string = USER_LOGGED;
     public static readonly _TOKEN: string = TOKEN;
@@ -25,6 +27,9 @@ export abstract class StorageKeyConst {
     public static readonly _DASHBOARD_REVENUE_CHART: string = DASHBOARD_REVENUE_CHART;
     public static readonly _DASHBOARD_REVENUE_ACTIVITY: string = DASHBOARD_REVENUE_ACTIVITY;
     public static readonly _DASHBOARD_SALON_OCCUPANCY: string = DASHBOARD_SALON_OCCUPANCY;
+
+    // Chat
+    public static readonly _CHAT_MESSAGES: string = CHAT_MESSAGES;
 }
 
 
