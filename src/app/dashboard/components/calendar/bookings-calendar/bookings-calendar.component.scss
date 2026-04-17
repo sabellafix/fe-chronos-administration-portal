@@ -1,3 +1,29 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.bookings-calendar-container {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.bookings-calendar-scrollable {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    
+    scrollbar-width: none;
+    
+    -ms-overflow-style: none;
+}
+
 .calend-header{
     position: fixed;
     top: 60px;
@@ -14,21 +40,6 @@
     box-shadow: 0 2px 3px rgba(26, 41, 60, .06);
 }
 
-@media (max-width:991.98px) {
-    .calend-header {
-        left: 0;
-    }
-}
-
-body[data-sidebar-size=sm] .calend-header {
-    left: 70px;
-}
-
-@media (max-width:991.98px) {
-    body[data-sidebar-size=sm] .calend-header {
-        left: 0;
-    }
-}
 
 .calend-header.sticky {
     background-color: rgba(255, 255, 255, 0.95);
@@ -40,6 +51,7 @@ body[data-sidebar-size=sm] .calend-header {
     padding-left: 0px;
     padding-right: 0px;
     padding-top: 20px;
+    flex: 1;
 }
 
 .nav-link.active{
