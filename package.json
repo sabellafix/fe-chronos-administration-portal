@@ -20,6 +20,8 @@
     "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
+    "@azure/msal-angular": "^5.2.0",
+    "@azure/msal-browser": "^5.7.0",
     "@ng-select/ng-select": "^12.0.7",
     "@types/three": "^0.178.1",
     "apexcharts": "^3.54.1",

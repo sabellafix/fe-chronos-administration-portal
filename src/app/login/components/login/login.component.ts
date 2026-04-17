@@ -15,6 +15,7 @@ import { TokenRefreshService } from '@app/core/services/shared/token-refresh.ser
 import { Rol } from '@app/core/models/bussiness/rol';
 import { SalonService } from '@app/core/services/http/salon.service';
 import { Salon } from '@app/core/models/bussiness/salon';
+import { SsoAuthService } from '@app/core/services/http/sso-auth.service';
 
 @Component({
   selector: 'app-login',
@@ -47,7 +48,8 @@ export class LoginComponent implements OnInit, AfterViewInit{
               private rolService : RolService,
               private storageService : StorageService,
               private tokenRefreshService : TokenRefreshService,
-              private salonService : SalonService
+              private salonService : SalonService,
+              private ssoAuthService : SsoAuthService
   ) {
     this.form = new FormGroup({
       userNumber : new FormControl("", [Validators.required, Validators.email]),
@@ -134,6 +136,25 @@ export class LoginComponent implements OnInit, AfterViewInit{
         }
       );
     }
+  }
+
+  signInWithGoogle(): void {
+    this.loading = true;
+    this.ssoAuthService.loginWithGoogle();
+  }
+
+  signInWithMicrosoft(): void {
+    this.loading = true;
+    this.ssoAuthService.loginWithMicrosoft();
+  }
+
+  signInWithApple(): void {
+    this.loading = true;
+    this.ssoAuthService.loginWithApple();
+  }
+
+  signUpWithSSO(): void {
+    this.ssoAuthService.signUpWithB2C();
   }
 
 }

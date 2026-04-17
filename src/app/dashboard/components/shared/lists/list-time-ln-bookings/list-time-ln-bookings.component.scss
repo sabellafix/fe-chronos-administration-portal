@@ -391,6 +391,10 @@
     }
   }
 
+  .content-loader {
+    height: calc(100vh - 285px);
+  }
+
   // Responsive adjustments para mantener proporciones en móviles
   @media (max-width: 768px) {
     .feed-item-list .d-flex {

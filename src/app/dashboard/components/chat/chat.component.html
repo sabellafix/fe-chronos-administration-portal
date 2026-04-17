@@ -40,8 +40,8 @@
                                             <span class="time">{{ formatTime(message.createdAt) }}</span>
                                         </div>
                                         <p class="mb-0" 
-                                           [ngClass]="{'text-dark': isAgentMessage(message), 'text-white': isUserMessage(message)}">
-                                            {{ message.message }}
+                                           [ngClass]="{'text-dark': isAgentMessage(message), 'text-white': isUserMessage(message)}"
+                                           [innerHTML]="isAgentMessage(message) ? formatMessageText(message.message) : message.message">
                                         </p>
                                     </div>
                                 </div>

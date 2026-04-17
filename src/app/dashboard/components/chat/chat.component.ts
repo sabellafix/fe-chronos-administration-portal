@@ -5,6 +5,7 @@ import { StorageService } from '@app/core/services/shared/storage.service';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { User } from '@app/core/models/bussiness/user';
+import { TwilioMessageRequest } from '@app/core/models/dtos/twilioMessageRequest';
 
 @Component({
   selector: 'app-chat',
@@ -21,7 +22,6 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   botUserId: string = 'bot-agent';
   private shouldScrollToBottom: boolean = false;
   avatarDisabled: boolean = true;
-
 
   constructor(
     private chatService: ChatService, 
@@ -42,13 +42,25 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   private initializeChat(): void {
-    const welcomeMessage = new Message();
-    welcomeMessage.userId = this.botUserId;
-    welcomeMessage.message = 'Hi! How can I assist you today?';
-    welcomeMessage.createdAt = new Date();
+    const storedMessages = this.storageService.get<Message[]>(StorageKeyConst._CHAT_MESSAGES);
     
-    this.messages.push(welcomeMessage);
+    if (storedMessages && storedMessages.length > 0) {
+      this.messages = storedMessages;
+    } else {
+      const welcomeMessage = new Message();
+      welcomeMessage.userId = this.botUserId;
+      welcomeMessage.message = 'Hi! How can I assist you today?';
+      welcomeMessage.createdAt = new Date();
+
+      this.messages.push(welcomeMessage);
+      this.saveMessages();
+    }
+    
     this.shouldScrollToBottom = true;
+  }
+
+  private saveMessages(): void {
+    this.storageService.set(StorageKeyConst._CHAT_MESSAGES, this.messages);
   }
 
   private scrollToBottom(): void {
@@ -58,14 +70,6 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       }
     } catch (err) {
       console.error('Error scrolling to bottom:', err);
-    }
-  }
-
-  private getUser(): void {
-    let user = this.storageService.get(StorageKeyConst._USER_LOGGED) as any;
-    if(user){
-      this.currentUserId = user.id;
-      this.botUserId = user.id;
     }
   }
 
@@ -94,28 +98,27 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     userMessage.createdAt = new Date();
     
     this.messages.push(userMessage);
+    this.saveMessages();
     this.shouldScrollToBottom = true;
     
     this.isLoading = true;
     
-    this.chatService.createMessage({
-      userId: userMessage.userId,
-      message: userMessage.message
-    }).subscribe({
+    const twilioRequest = new TwilioMessageRequest(messageText);
+    
+    this.chatService.twilioWsAgent(twilioRequest).subscribe({
       next: (response: any) => {
         this.isLoading = false;
-        this.simulateAgentResponse(response.response);
+        this.simulateAgentResponse(response);
       },
       error: (error) => {
         console.error('Error al enviar mensaje:', error);
         this.isLoading = false;
-        this.simulateAgentResponse(messageText);
+        this.simulateAgentResponse('Sorry, there was an error processing your message.');
       }
     });
   }
 
   private simulateAgentResponse(userMessage: string): void {
-    // Simular delay de respuesta del agente
     setTimeout(() => {
       const agentResponse = userMessage;
       const agentMessage = new Message();
@@ -124,42 +127,9 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       agentMessage.createdAt = new Date();
       
       this.messages.push(agentMessage);
+      this.saveMessages();
       this.shouldScrollToBottom = true;
     }, 1000 + Math.random() * 2000); 
-  }
-
-  private generateAgentResponse(userMessage: string): string {
-    const responses = [
-      'Entiendo tu consulta. ¿Podrías proporcionarme más detalles?',
-      'Gracias por tu mensaje. Estoy aquí para ayudarte con tus compras.',
-      'Me parece una excelente pregunta. Te ayudo a resolverla.',
-      'Perfecto, voy a revisar esa información para ti.',
-      'Comprendo. ¿Hay algo específico que necesites sobre este tema?',
-      'Muy bien, te voy a asistir con eso ahora mismo.',
-      'Interesante punto. Déjame buscar la mejor solución para ti.'
-    ];
-    
-    // Respuestas más específicas basadas en palabras clave
-    const lowerMessage = userMessage.toLowerCase();
-    
-    if (lowerMessage.includes('precio') || lowerMessage.includes('costo')) {
-      return 'Te puedo ayudar con información sobre precios. ¿Qué producto te interesa?';
-    }
-    
-    if (lowerMessage.includes('producto') || lowerMessage.includes('comprar')) {
-      return 'Perfecto, te ayudo con tu compra. ¿Podrías decirme qué producto buscas?';
-    }
-    
-    if (lowerMessage.includes('orden') || lowerMessage.includes('pedido')) {
-      return 'Te ayudo con tu orden. ¿Necesitas crear una nueva o revisar una existente?';
-    }
-    
-    if (lowerMessage.includes('gracias') || lowerMessage.includes('gracias')) {
-      return '¡De nada! Es un placer ayudarte. ¿Hay algo más en lo que pueda asistirte?';
-    }
-    
-    // Respuesta aleatoria si no hay palabras clave específicas
-    return responses[Math.floor(Math.random() * responses.length)];
   }
 
   isUserMessage(message: Message): boolean {
@@ -167,7 +137,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   isAgentMessage(message: Message): boolean {
-    return message.userId === this.botUserId;
+    return message.userId !== this.currentUserId;
   }
 
   formatTime(date: Date): string {
@@ -175,5 +145,34 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  formatMessageText(text: string): string {
+    if (!text) return '';
+    
+    let formatted = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    
+    formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    
+    formatted = formatted.replace(/\n/g, '<br>');
+    
+    return formatted;
+  }
+
+  clearConversation(): void {
+    this.messages = [];
+    this.storageService.remove(StorageKeyConst._CHAT_MESSAGES);
+    
+    const welcomeMessage = new Message();
+    welcomeMessage.userId = this.botUserId;
+    welcomeMessage.message = 'Hi! How can I assist you today?';
+    welcomeMessage.createdAt = new Date();
+    
+    this.messages.push(welcomeMessage);
+    this.saveMessages();
+    this.shouldScrollToBottom = true;
   }
 }

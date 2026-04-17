@@ -188,7 +188,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private loadFromBackend(salonId: string): void {
     const stylistId = this.selectedStylist?.id;
     forkJoin({
-      metrics: this.dashboardService.getMetrics(salonId, this.startDateFilter, this.endDateFilter, stylistId),
+      // metrics: this.dashboardService.getMetrics(salonId, this.startDateFilter, this.endDateFilter, stylistId),
       kpiCards: this.dashboardService.getKpiCards(salonId, this.startDateFilter, this.endDateFilter, stylistId),
       revenueChart: this.dashboardService.getRevenueChart(salonId, this.startDateFilter, this.endDateFilter, stylistId),
       revenueActivity: this.dashboardService.getRevenueActivity(salonId, this.startDateFilter, this.endDateFilter, stylistId),      
@@ -198,19 +198,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (results) => {
           // Guardar en caché con las fechas actuales
-          this.setCachedData(StorageKeyConst._DASHBOARD_METRICS, salonId, results.metrics);
+          // this.setCachedData(StorageKeyConst._DASHBOARD_METRICS, salonId, results.metrics);
           this.setCachedData(StorageKeyConst._DASHBOARD_KPI_CARDS, salonId, results.kpiCards);
           this.setCachedData(StorageKeyConst._DASHBOARD_REVENUE_CHART, salonId, results.revenueChart);
           this.setCachedData(StorageKeyConst._DASHBOARD_REVENUE_ACTIVITY, salonId, results.revenueActivity);
           this.setCachedData(StorageKeyConst._DASHBOARD_SALON_OCCUPANCY, salonId, results.salonOccupancy);
 
           // Asignar valores
-          this.dashboardMetrics = results.metrics;
           this.kpiCards = results.kpiCards;
           this.revenueChart = results.revenueChart;
           this.revenueActivity = results.revenueActivity;
-          this.orderStats = results.metrics?.orderStats ?? null;
-          this.topServices = results.metrics?.topServices ?? [];
+          // this.orderStats = results.metrics?.orderStats ?? null;
+          // this.topServices = results.metrics?.topServices ?? [];
           this.salonOccupancy = results.salonOccupancy;
           this.loading = false;
         },

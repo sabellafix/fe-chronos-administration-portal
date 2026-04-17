@@ -19,8 +19,8 @@
                                                     <div class="auth-content my-auto">
                                                         <div class="text-left">
                                                             <h5 class="mb-0 font-size-24 mb-3">Portal de administración</h5>
-                                                            <p class="text-muted mt-2 font-size-14">¡Bienvenido de vuelta!</p>
-                                                            <h6 class="font-size-14">Ingrese su email y contraseña para iniciar sesión</h6>
+                                                            <p class="text-muted mt-2 font-size-14">¡Welcome back!</p>
+                                                            <h6 class="font-size-14">Enter your email and password to login</h6>
                                                         </div>
                                                         <form [formGroup]="form" novalidate="novalidate" class="mt-4 pt-2" >
 
@@ -32,50 +32,64 @@
                                                                 </div>
                                                             </div>
                                                             <div class="invalid-feedback" *ngIf="form.controls['userNumber'].hasError('email') && form.controls['userNumber'].touched">
-                                                                <strong>*</strong> El email no es valido
+                                                                <strong>*</strong> The email is not valid
                                                             </div>
                                                             <div class="invalid-feedback" *ngIf="form.controls['userNumber'].hasError('required') && form.controls['userNumber'].touched">
-                                                                <strong>*</strong> El email es requerido
+                                                                <strong>*</strong> The email is required
                                                             </div>
                                                             <br>
                                                             <div class="form-floating form-floating-custom mb-2 auth-pass-inputgroup">
-                                                                <input type="password" class="form-control pe-5" autocomplete="current-password" name="current-password" placeholder="Contraseña" formControlName="password">
-                                                                <label for="password-input">Contraseña</label>
+                                                                <input type="password" class="form-control pe-5" autocomplete="current-password" name="current-password" placeholder="Password" formControlName="password">
+                                                                <label for="password-input">Password</label>
                                                                 <div class="form-floating-icon">
                                                                     <i data-eva="lock-outline"></i>
                                                                 </div>
                                                             </div>
                                                             <div class="invalid-feedback" *ngIf="form.controls['password'].hasError('required') && form.controls['password'].touched">
-                                                                <strong>*</strong> La contraseña es requerida
+                                                                <strong>*</strong> The password is required
                                                             </div>
                                                             <br>
                                                             <div *ngIf="logginError"  class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                                Su inicio de sesion fallo, intentelo de nuevo
+                                                                Your login failed, please try again
                                                                 <button type="button" class="btn-close" (click)="logginError = false" aria-label="Close"></button>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <button (click)="signIn()"  style="height: 50px; background-color: #6f19e6;" class="btn btn-dark w-100 waves-effect waves-light" type="submit">
-                                                                    <span *ngIf="!loading">Ingresar</span>
-                                                                    <span *ngIf="loading">Cargando <i  class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i></span>
+                                                                    <span *ngIf="!loading">Login</span>
+                                                                    <span *ngIf="loading">Loading <i  class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i></span>
                                                                 </button>
                                                             </div>
 
                                                             <div class="divider">
-                                                                <span class="divider-text">O</span>
+                                                                <span class="divider-text">Or</span>
                                                             </div>
 
                                                             <div class="mb-3">
-                                                                <button (click)="signIn()"  style="height: 50px;" class="btn btn-white border w-100 waves-effect waves-light" type="submit">
-                                                                    <span><i class="bx bxl-google font-size-18 align-middle me-2"></i> Continuar con Google </span>
+                                                                <button (click)="signInWithGoogle()" style="height: 50px;" class="btn btn-outline-danger w-100 py-2" type="button" [disabled]="loading">
+                                                                    <span><i class="bx bxl-google font-size-18 align-middle me-2"></i> Continue with Google </span>
                                                                 </button>
                                                             </div>
 
                                                             <div class="mb-3">
-                                                                <button (click)="signIn()"  style="height: 50px;" class="btn btn-white border w-100 waves-effect waves-light" type="submit">
-                                                                    <span><i class="bx bxl-windows font-size-18 align-middle me-2"></i> Continuar con Windows </span>
+                                                                <button (click)="signInWithMicrosoft()" style="height: 50px;" class="btn btn-outline-purple w-100 py-2" type="button" [disabled]="loading">
+                                                                    <span><i class="bx bxl-microsoft font-size-18 align-middle me-2"></i> Continue with Microsoft </span>
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="mb-3">
+                                                                <button (click)="signInWithApple()" style="height: 50px;" class="btn btn-outline-secondary w-100 py-2" type="button" [disabled]="loading">
+                                                                    <span><i class="bx bxl-apple font-size-18 align-middle me-2"></i> Continue with Apple </span>
                                                                 </button>
                                                             </div>
                                                         </form>
+
+                                                        <div class="mt-4 text-center">
+                                                            <p class="mb-0">Don't have an account? 
+                                                                <a routerLink="/login/sign-up" class="fw-semibold text-primary">
+                                                                    Register here
+                                                                </a>
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                     <div class="mt-4 text-center">
                                                         <p class="mb-0" *ngIf="!charge"> <script>document.write(new Date().getFullYear())</script> 2025 © {{this.companyName}}</p>

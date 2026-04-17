@@ -1,0 +1,70 @@
+<div class="auth-page">
+    <div class="container-fluid p-0">
+        <div class="row g-0 align-items-center justify-content-center min-vh-100">
+            <div class="col-xxl-3 col-lg-6 col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <img [src]="companyLogo" alt="Logo" height="80" class="mb-3">
+                            <h4 class="mb-2">Create Account</h4>
+                            <p class="text-muted">Register with your preferred account</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <button (click)="signUpWithGoogle()" 
+                                    class="btn btn-outline-danger w-100 py-2"
+                                    [disabled]="loading">
+                                <i class="bx bxl-google font-size-20 align-middle me-2"></i>
+                                Register with Google
+                            </button>
+                        </div>
+
+                        <div class="mb-3">
+                            <button (click)="signUpWithMicrosoft()" 
+                                    class="btn btn-outline-purple w-100 py-2"
+                                    [disabled]="loading">
+                                <i class="bx bxl-microsoft font-size-20 align-middle me-2"></i>
+                                Register with Microsoft
+                            </button>
+                        </div>
+
+                        <div class="mb-3">
+                            <button (click)="signUpWithApple()" 
+                                    class="btn btn-outline-secondary w-100 py-2"
+                                    [disabled]="loading">
+                                <i class="bx bxl-apple font-size-20 align-middle me-2"></i>
+                                Register with Apple
+                            </button>
+                        </div>
+
+                        <div class="divider my-4">
+                            <span class="divider-text">O</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <button (click)="signUpGeneric()" 
+                                    style="background-color: #6f19e6;"
+                                    class="btn btn-primary w-100 py-2"
+                                    [disabled]="loading">
+                                <span *ngIf="!loading">Register with Email</span>
+                                <span *ngIf="loading">Cargando <i class="bx bx-loader bx-spin font-size-16 align-middle me-2"></i></span>
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <p class="mb-0">
+                                Already have an account? 
+                                <a routerLink="/login" class="fw-semibold text-primary">
+                                    Login
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <p class="text-gray-200 mb-0">2025 © {{companyName}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
