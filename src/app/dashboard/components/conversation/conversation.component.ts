@@ -47,7 +47,7 @@ export class ConversationComponent implements OnInit, AfterViewChecked {
       lastMessage: 'Hi! How can I assist you today?',
       lastMessageTime: new Date(),
       unreadCount: 0
-    }
+    },
   ];
 
   constructor(
@@ -79,7 +79,7 @@ export class ConversationComponent implements OnInit, AfterViewChecked {
       welcomeMessage.userId = this.botUserId;
       welcomeMessage.message = 'Hi! How can I assist you today?';
       welcomeMessage.createdAt = new Date();
-      
+
       this.messages.push(welcomeMessage);
       this.saveMessages();
     }
