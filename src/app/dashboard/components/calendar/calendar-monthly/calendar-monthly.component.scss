@@ -46,7 +46,16 @@
     padding: 0;
 }
 
+.calendar-table-header {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-family: inherit;
+}
+
 .calendar-table {
+    height: calc(100vh - 215px);
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;

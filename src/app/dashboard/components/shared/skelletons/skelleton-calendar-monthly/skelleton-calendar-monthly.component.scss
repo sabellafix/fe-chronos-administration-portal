@@ -1,11 +1,9 @@
 .skeleton-calendar-monthly {
     width: 100%;
+    height: calc(100vh - 215px);
     background: #fff;
     border-radius: 8px;
     overflow: hidden;
-    
-
-
     .skeleton-grid {
         .skeleton-week {
             display: grid;
@@ -17,7 +15,7 @@
             }
 
             .skeleton-day-cell {
-                min-height: 140px;
+                min-height: calc((100vh - 215px) / 5);
                 padding: 8px;
                 border-right: 1px solid #e9ecef;
 
