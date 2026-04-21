@@ -130,16 +130,8 @@ export class CalendarDailyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   formatHour(hour: string): string {
-    const hourNumber = parseInt(hour.split(":")[0]);
-    if (hourNumber === 0) {
-      return '12 am';
-    } else if (hourNumber < 12) {
-      return `${hour} am`;
-    } else if (hourNumber === 12) {
-      return '12 pm';
-    } else {
-      return `${hourNumber} pm`;
-    }
+    const [hours, minutes] = hour.split(':');
+    return `${hours.padStart(2, '0')}:${(minutes || '00').padStart(2, '0')}`;
   }
 
   openBookingModal(date: Date, hour?: number): void {

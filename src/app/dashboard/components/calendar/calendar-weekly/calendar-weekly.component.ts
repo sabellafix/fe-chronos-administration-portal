@@ -12,6 +12,7 @@ import { User } from '@app/core/models/bussiness/user';
 import { UserService } from '@app/core/services/http/user.service';
 import { BlockedTime } from '@app/core/models/bussiness/blocked-time';
 import { MockBlockedTimeService } from '@app/core/services/mock/mock-blocked-time.service';
+import { CalendarVisibilityService } from '@app/core/services/shared/calendar-visibility.service';
 
 @Component({
   selector: 'app-calendar-weekly',
@@ -37,6 +38,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
   blockedTimes: BlockedTime[] = [];
   isLoadingBookings: boolean = false;
   isLoadingBlockedTimes: boolean = false;
+  bookingsVisible: boolean = true;
   private scrollListener?: () => void;
   private subscriptions: Subscription[] = [];
   imageUser: string = "../assets/images/user-image.jpg";
@@ -45,8 +47,8 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     private snackBar: MatSnackBar, 
     private offcanvasBookingService: OffcanvasBookingService,
     private bookingService: BookingService,
-    private userService: UserService,
-    private blockedTimeService: MockBlockedTimeService
+    private blockedTimeService: MockBlockedTimeService,
+    private calendarVisibilityService: CalendarVisibilityService
   ){
     
   }
@@ -71,6 +73,7 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     this.updateDates();
     this.initStickyHeader();
     this.subscribeToBookingService();
+    this.subscribeToBookingsVisibility();
     this.loadBookingsForCurrentWeek();
     this.loadBlockedTimesForSingleStylist();
   }
@@ -92,6 +95,14 @@ export class CalendarWeeklyComponent implements OnInit, OnDestroy, OnChanges {
     });
 
     this.subscriptions.push(bookingCreatedSubscription, bookingUpdatedSubscription);
+  }
+
+  private subscribeToBookingsVisibility(): void {
+    const visibilitySubscription = this.calendarVisibilityService.bookingsVisible$.subscribe(visible => {
+      this.bookingsVisible = visible;
+    });
+
+    this.subscriptions.push(visibilitySubscription);
   }
 
   private initStickyHeader(): void {

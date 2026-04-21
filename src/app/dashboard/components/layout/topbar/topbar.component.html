@@ -28,7 +28,7 @@
                     <span></span>
                 </span>
             </button>
-            <div style="width: 580px;" class="d-none d-sm-block ms-3 align-self-center">
+            <div class="d-none d-sm-block ms-3 align-self-center">
                 <div *ngIf="!load" class="d-flex animated fadeIn fast">
                     <div class="me-3">
                         <h4 class="page-title capitalice mt-1">{{moduleName?.name}}</h4>
@@ -36,9 +36,9 @@
                     <div>
                         <nav class="breadcrumb-container mt-2">
                             <ul class="breadcrumb">
-                                <li class="breadcrumb-item">
+                                <!-- <li class="breadcrumb-item">
                                     <a href="dashboard"><i class="bx bx-home-alt"></i></a>
-                                </li>
+                                </li> -->
                                 <li class="breadcrumb-item">
                                     <a [href]="moduleName?.module">{{moduleName?.name}}</a>
                                 </li>

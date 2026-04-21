@@ -60,7 +60,7 @@
                         >
                         <div class="cell-content">
                             <!-- Mostrar bookings -->
-                            <ng-container *ngIf="getCellBookings(date.date, hour) as cellBookings" >
+                            <ng-container *ngIf="bookingsVisible && getCellBookings(date.date, hour) as cellBookings" >
                                 <ng-container *ngFor="let booking of cellBookings; let i = index; trackBy: trackByBooking">
                                     <app-card-booking 
                                         [booking]="booking" 

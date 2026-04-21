@@ -166,3 +166,31 @@
 .btn-calendar-number {
     height: 46px !important;
 }
+
+.btn-toggle-bookings {
+    position: relative;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: scale(1.05);
+    }
+    
+    i {
+        transition: all 0.2s ease;
+    }
+}
+
+.btn-toggle-active {
+    background-color: #556ee6 !important;
+    border-color: #556ee6 !important;
+    color: #fff !important;
+    
+    &:hover {
+        background-color: #4458cb !important;
+        border-color: #4458cb !important;
+    }
+    
+    &:focus {
+        box-shadow: 0 0 0 0.15rem rgba(85, 110, 230, 0.25) !important;
+    }
+}

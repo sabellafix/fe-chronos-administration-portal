@@ -11,6 +11,7 @@ import { RolesConst } from '@app/core/models/constants/roles.const';
 import { AuthService } from '@app/core/services/http/auth.service';
 import { Permission } from '@app/core/models/bussiness/permission';
 import { DashboardFiltersService } from '@app/core/services/shared/dashboard-filters.service';
+import { CalendarVisibilityService } from '@app/core/services/shared/calendar-visibility.service';
 import { Rol } from '@app/core/models/bussiness/rol';
 
 @Component({
@@ -70,6 +71,8 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
   isStylistUser: boolean = false;
   stylistFilterDisabled: boolean = false;
   
+  bookingsVisible: boolean = true;
+  
   private destroy$: Subject<void> = new Subject<void>();
 
   constructor(
@@ -78,6 +81,7 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
     private serviceService: ServiceService, 
     private authService: AuthService,
     private dashboardFiltersService: DashboardFiltersService,
+    private calendarVisibilityService: CalendarVisibilityService,
     private salonService: SalonService,
     private route: ActivatedRoute,
     private router: Router
@@ -86,6 +90,7 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
     this.permissions = this.authService.getPermissionsLogged();
     this.checkIfStylistUser();
     this.loadData();
+    this.subscribeToBookingsVisibility();
   }
   
   private scrollListener?: () => void;
@@ -173,6 +178,18 @@ export class BookingsCalendarComponent implements OnInit, OnDestroy {
     const role: Rol = this.authService.getRoleLogged();
     this.isStylistUser = role?.name === RolesConst._STYLIST;
     this.stylistFilterDisabled = this.isStylistUser;
+  }
+
+  private subscribeToBookingsVisibility(): void {
+    this.calendarVisibilityService.bookingsVisible$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(visible => {
+        this.bookingsVisible = visible;
+      });
+  }
+
+  toggleBookingsVisibility(): void {
+    this.calendarVisibilityService.toggleBookingsVisible();
   }
 
   private prepareStylistOptions(): void {

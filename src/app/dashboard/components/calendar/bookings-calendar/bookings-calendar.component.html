@@ -93,7 +93,13 @@
 
                         <div *ngIf="tabActive === 'Week'" class="col-xl-2 p-0 animated fadeIn fast">
                             <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
-                                <button class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-plus"></i></button>
+                                <button 
+                                    (click)="toggleBookingsVisibility()" 
+                                    class="btn shadow-sm btn-calendar-nav btn-toggle-bookings"
+                                    [ngClass]="{'btn-dark': !bookingsVisible, 'btn-light': bookingsVisible}"
+                                    [title]="bookingsVisible ? 'Hide bookings' : 'Show bookings'">
+                                    <i class="bx bx-plus"></i>
+                                </button>
                                 <button (click)="changeDateCalendarWeekly(true)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-left"></i></button>
                                 <button (click)="setTodayDateCalendarWeekly()" [ngClass]="{'btn-dark': dateCalendarWeekly.getDate() == dateNow.getDate(), 'btn-light btn-calendar-nav': dateCalendarWeekly.getDate() != dateNow.getDate()}" class="btn shadow-sm btn-calendar-number w-25">{{dateCalendarWeekly.getDate()}}</button>
                                 <button (click)="changeDateCalendarWeekly(false)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-right"></i></button>
@@ -102,7 +108,13 @@
 
                         <div *ngIf="tabActive === 'Day'" class="col-xl-2 p-0 animated fadeIn fast">
                             <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
-                                <button class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-plus"></i></button>
+                                <button 
+                                    (click)="toggleBookingsVisibility()" 
+                                    class="btn shadow-sm btn-calendar-nav btn-toggle-bookings"
+                                    [ngClass]="{'btn-dark': !bookingsVisible, 'btn-light': bookingsVisible}"
+                                    [title]="bookingsVisible ? 'Hide bookings' : 'Show bookings'">
+                                    <i class="bx bx-plus"></i>
+                                </button>
                                 <button (click)="changeDateCalendarDaily(true)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-left"></i></button>
                                 <button (click)="setTodayDateCalendarDaily()" [ngClass]="{'btn-dark': dateCalendarDaily.getDate() == dateNow.getDate(), 'btn-light btn-calendar-nav': dateCalendarDaily.getDate() != dateNow.getDate()}" class="btn shadow-sm btn-calendar-number w-25">{{dateCalendarDaily.getDate()}}</button>
                                 <button (click)="changeDateCalendarDaily(false)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-right"></i></button>
@@ -111,7 +123,13 @@
 
                         <div *ngIf="tabActive === 'Stylists'" class="col-xl-2 p-0 animated fadeIn fast">
                             <div class="d-flex flex-wrap gap-2 pt-1 justify-content-end align-items-start h-100">
-                                <button class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-plus"></i></button>
+                                <button 
+                                    (click)="toggleBookingsVisibility()" 
+                                    class="btn shadow-sm btn-calendar-nav btn-toggle-bookings"
+                                    [ngClass]="{'btn-dark': !bookingsVisible, 'btn-light': bookingsVisible}"
+                                    [title]="bookingsVisible ? 'Hide bookings' : 'Show bookings'">
+                                    <i class="bx bx-plus"></i>
+                                </button>
                                 <button (click)="changeDateBookingsSupplier(true)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-left"></i></button>
                                 <button (click)="setTodayDateBookingsSupplier()" [ngClass]="{'btn-dark': dateBookingsSupplier.getDate() == dateNow.getDate(), 'btn-light btn-calendar-nav': dateBookingsSupplier.getDate() != dateNow.getDate()}" class="btn shadow-sm btn-calendar-number w-25">{{dateBookingsSupplier.getDate()}}</button>
                                 <button (click)="changeDateBookingsSupplier(false)" class="btn btn-light shadow-sm btn-calendar-nav"><i class="bx bx-chevron-right"></i></button>

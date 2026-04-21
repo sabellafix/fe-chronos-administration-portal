@@ -33,7 +33,7 @@
               </div>
             </div>
             <div>
-              <h6 class="mb-0 fw-medium">{{selectedStylist ? getUserFullName(selectedStylist) : 'No asignado'}}</h6>
+              <h6 class="mb-0 fw-medium">{{selectedStylist ? getUserFullName(selectedStylist) : 'No assigned'}}</h6>
               <small class="text-muted">Stylist assigned</small>
             </div>
           </div>
@@ -46,7 +46,7 @@
         <div class="form-control-static p-2 border rounded">
           <div class="d-flex align-items-center">
             <div class="me-3">
-              <img *ngIf="customer" class="rounded-circle" [src]="getCustomerPhoto(customer)" alt="Cliente"
+              <img *ngIf="customer" class="rounded-circle" [src]="getCustomerPhoto(customer)" alt="Customer"
                 style="width: 40px; height: 40px;">
               <div *ngIf="!customer"
                 class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
@@ -55,9 +55,9 @@
               </div>
             </div>
             <div class="flex-grow-1">
-              <h6 class="mb-0 fw-medium">{{customer ? getCustomerFullName(customer) : 'No asignado'}}</h6>
+              <h6 class="mb-0 fw-medium">{{customer ? getCustomerFullName(customer) : 'No assigned'}}</h6>
               <small class="text-muted">{{customer && getUserForCustomer(customer)?.email ?
-                getUserForCustomer(customer)?.email : 'Cliente del booking'}}</small>
+                getUserForCustomer(customer)?.email : 'Customer of the booking'}}</small>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-<div *ngIf="!loading" class="card-body p-0 mt-2">
+<div *ngIf="loading" class="card-body p-0 mt-2">
     <div *ngIf="!bookings || bookings.length === 0" class="text-center text-muted py-3">
         <i class="bx bx-info-circle me-2"></i>No reservations have been assigned yet
     </div>
@@ -83,6 +83,6 @@
     </div>
 </div>
 
-<div *ngIf="loading" class="text-center py-3 content-loader animated fadeIn fast">
+<div *ngIf="!loading" class="content-loader py-3 animated fadeIn fast">
     <ngx-skeleton-loader [count]="10" [theme]="{ 'border-radius': '10', height: '50px', 'background-color': '#FFFFFFF' }"></ngx-skeleton-loader>
 </div>

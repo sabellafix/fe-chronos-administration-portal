@@ -55,7 +55,7 @@
 }
 
 .calendar-table {
-    height: calc(100vh - 215px);
+    height: calc(100vh - 225px);
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;
@@ -321,7 +321,7 @@
 
 .day-content {
     width: 100%;
-    height: 148px;
+    max-height: calc((100vh - 225px) / 5);
     display: flex;
     flex-direction: column;
     padding: 8px;
@@ -374,7 +374,8 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: calc(148px - 36px);
+    // max-height: calc(148px - 36px);
+    max-height: calc((100vh - 225px) / 5);
         
     &::-webkit-scrollbar {
         width: 3px;
