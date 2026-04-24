@@ -6,6 +6,8 @@ import { StorageService } from '../shared/storage.service';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { Rol } from '@app/core/models/bussiness/rol';
 import { Permission } from '@app/core/models/bussiness/permission';
+import { CookieService } from '../shared/cookie.service';
+import { environment } from '@env/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,7 @@ export class AuthService {
 
     private isAuthenticated = new BehaviorSubject<boolean>(this.hasToken());
 
-    constructor(private router: Router, private storageService: StorageService) {}
+    constructor(private router: Router, private storageService: StorageService, private cookieService: CookieService) {}
 
     isLoggedIn() {
         return this.isAuthenticated.asObservable();
@@ -85,8 +87,8 @@ export class AuthService {
 
     logOut(){
         this.storageService.clearAll();
+        this.cookieService.clearAllByDomain(environment.ssoCookieDomain);
         this.setAuthenticated(false);
-        this.router.navigate(['login']);
     }
 
     getUserLogged(): User{

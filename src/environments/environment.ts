@@ -4,9 +4,9 @@ export const environment = {
     apiAsistantUrl: 'https://chronos-assistant-cqf0gxahe6g5adbh.eastus-01.azurewebsites.net',
     // apiUrl: 'https://localhost:44300',  
     apiKey: 'Ciq8Q-SRk8Q~RZZgw_wfMiB4L2GlQt1_uNiW~OZv~FHdd5',
-    token : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkNOdjBPSTNSd3FsSEZFVm5hb01Bc2hDSDJYRSIsImtpZCI6IkNOdjBPSTNSd3FsSEZFVm5hb01Bc2hDSDJYRSJ9.eyJhdWQiOiJodHRwczovL3NhYmVsYXNvbHV0aW9ucy5vbm1pY3Jvc29mdC5jb20vMTk3MTg3ZjMtZjAzMS00ZGJhLTkzNGItZjU2YzJiYjNkNWQ5IiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvYTk5OTQzNjYtYzFiZS00MGQyLWFiMDUtZTNkZDQwYTk4ZjBlLyIsImlhdCI6MTc0ODU0MzI1NSwibmJmIjoxNzQ4NTQzMjU1LCJleHAiOjE3NDg1NDg1NzksImFjciI6IjEiLCJhaW8iOiJBYlFBUy84WkFBQUFmYkVGaFJSbTN5K2c2dnBWRURYOThxN2Nya0ZiRG5lbGZHRktkTVBVZU5ueWNGNmVmYWhaTU10aXIzeFZKbGpnOFBNTlgxKzFTV3psNTlUUXR5VmhUZzJtZFZIa2lUUDA5Nitsci9YSW5TZkxtaXJCdzYwV3BaWW9kWVNJaTZqWGpZU2g2T25oaXhScUdjY1czbzlIWlJNNnM5Y3B0S3dITjhqRWs2WFUyWCtqQmpiTnBwRU80WHhjbVZiaGYxcUxZMlBnZGwxdlNwTWhWclVpbnByQUFPWTFFUzRVK0xRZHc4bmdRTUhHeitNPSIsImFtciI6WyJwd2QiLCJtZmEiXSwiYXBwaWQiOiIxOTcxODdmMy1mMDMxLTRkYmEtOTM0Yi1mNTZjMmJiM2Q1ZDkiLCJhcHBpZGFjciI6IjAiLCJlbWFpbCI6InNlcmdpb2FiZWxsYTA5M0Bob3RtYWlsLmNvbSIsImZhbWlseV9uYW1lIjoiQWJlbGxhIiwiZ2l2ZW5fbmFtZSI6IlNlcmdpbyIsImdyb3VwcyI6WyJkMmRiOTI1Ni01ZmRmLTQ4NTctYmYwZi05MjNkNjQ3MThmNTciLCJhMzJjZmMwMC01NmY5LTQ4ODctYmQ4My02YjZiNGRjMzMzYzciXSwiaWRwIjoibGl2ZS5jb20iLCJpcGFkZHIiOiIxODEuMjM0LjIwOS41OCIsIm5hbWUiOiJTYWJlbGFTb2x1dGlvbnMiLCJvaWQiOiJlY2YxYWExZS1jMDZmLTQzODYtYTdjNi00YTY2ZjM2MzE1NDUiLCJyaCI6IjEuQWNnQVprT1pxYjdCMGtDckJlUGRRS21QRHZPSGNSa3g4THBOazB2MWJDdXoxZGtnQVQzSUFBLiIsInNjcCI6ImFjY2Vzc19hc191c2VyIiwic2lkIjoiMDAyMmFiMTktNTgyYi1mYjg3LTk0ZWMtN2RkN2M0NDMwMjg4Iiwic3ViIjoiOUNOaXU1Q0MwSXlpNDUwam82eUZRaVNKbEN1NW9KQjM0MFhpUDdMWlNlMCIsInRpZCI6ImE5OTk0MzY2LWMxYmUtNDBkMi1hYjA1LWUzZGQ0MGE5OGYwZSIsInVuaXF1ZV9uYW1lIjoibGl2ZS5jb20jc2VyZ2lvYWJlbGxhMDkzQGhvdG1haWwuY29tIiwidXRpIjoiakxwY2g0amd6RXE0S0JleXBkNG5BQSIsInZlciI6IjEuMCIsInhtc19mdGQiOiI3U1dTdDl5dXZIaHR0WmFBb1FodEVYQldBZzM3UVBwTmtSTnhiNDhWT2tzQmRYTjNaWE4wTXkxa2MyMXoifQ.F_-oI3L0LMosq59owEn20FCTujWFZjQ_X-yNlmZbZ_8kWhXCs8dSQ8NwSe5GBZ6EefypRbeYLJgb9WBCgF0qt84BoRV5vY6SfsIcI_sJrGwxiNcUSm8ponZbL8UCOrQIpYNVDUjXEk1A7wZCqDCBtQ-Zd-iBdZt2uoLQ753bqfVxZYzZCxoMgvzmhX-oremQLOxBxTYS2tklT9KlWVyE7_F1p3Jm8pw2aURdGwRdhZQXENQtyESWB7bVKBLlX2mfb5F3L88L6zZ47BpcPZXV7wjzXU11jq3xljrZtMbnDk5kHTt1k8-jD7c6w84dZsgoHEfoB3DuNVTueE960vHe3A',
     companyName: 'Administration Platform',
     companyLogo: 'icon.png',
+    ssoCookieDomain: 'chronosportal.ciamlogin.com',
     encryptionKey: '087HIph807Wh766R54',
     salonId: '07c3fea6-9326-45cf-b97b-c29b92e5437e',
     twilio: {
@@ -14,5 +14,23 @@ export const environment = {
       smsSid: 'SM079ad2bf3836f265befbb6d462447a',
       messageSid: 'SM079ad2bf3836f265befbb6d462447a5c',
       accountSid: 'AC4c808d46b875111e8dce87edad64dea2'
+    },
+    identityProviders: {
+      Google : true,
+      Microsoft : false,
+      Apple : false
+    },
+    
+    azureB2C: {
+      tenantName: 'chronosportal',
+      tenantId: '0e9fb1ff-ed73-4b9c-ae61-a3fdbe97ceca',
+      clientId: '01bbe673-0f31-428c-92d7-80a036ea4646',
+      signUpSignInPolicy: 'SignUpSignIn',
+      resetPasswordPolicy: 'PasswordReset',
+      // redirectUri: 'http://localhost:4200/login/callback',
+      // postLogoutRedirectUri: 'http://localhost:4200/login',
+      redirectUri: 'https://salmon-island-076177c0f.2.azurestaticapps.net/login/callback',
+      postLogoutRedirectUri: 'https://salmon-island-076177c0f.2.azurestaticapps.net/login',
+      scopes: ['openid', 'profile', 'email', 'offline_access']
     }
-  }; 
+  };

@@ -3,6 +3,7 @@ import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { TwilioMessageRequest } from '@app/core/models/dtos/twilioMessageRequest';
+import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 
 @Injectable({
     providedIn: 'root'
@@ -10,16 +11,18 @@ import { TwilioMessageRequest } from '@app/core/models/dtos/twilioMessageRequest
 export class ChatService {
     apiUrl: string = environment.apiUrl;
     controller: string = "api/Chat";
-    token: string = environment.token;
-    headers = { headers: { Authorization: `Bearer ${this.token}` } };
-
     private twilioApiUrl: string = environment.apiAsistantUrl;
 
     constructor(private http: HttpClient) { }
 
+    private getHeaders() {
+        const token = localStorage.getItem(StorageKeyConst._TOKEN)?.replace(/^"|"$/g, '') || '';
+        return { headers: { Authorization: `Bearer ${token}` } };
+    }
+
     createMessage(message: any): Observable<string> {
         const url = `${this.apiUrl}/${this.controller}/message`;
-        return this.http.post<string>(url, message, this.headers);
+        return this.http.post<string>(url, message, this.getHeaders());
     }
 
     twilioWsAgent(request: TwilioMessageRequest): Observable<string> {

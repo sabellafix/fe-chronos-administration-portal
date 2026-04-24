@@ -10,7 +10,7 @@
                             <p class="text-muted">Register with your preferred account</p>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3" *ngIf="identityProviders.Google">
                             <button (click)="signUpWithGoogle()" 
                                     class="btn btn-outline-danger w-100 py-2"
                                     [disabled]="loading">
@@ -19,7 +19,7 @@
                             </button>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3" *ngIf="identityProviders.Microsoft">
                             <button (click)="signUpWithMicrosoft()" 
                                     class="btn btn-outline-purple w-100 py-2"
                                     [disabled]="loading">
@@ -28,7 +28,7 @@
                             </button>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3" *ngIf="identityProviders.Apple">
                             <button (click)="signUpWithApple()" 
                                     class="btn btn-outline-secondary w-100 py-2"
                                     [disabled]="loading">

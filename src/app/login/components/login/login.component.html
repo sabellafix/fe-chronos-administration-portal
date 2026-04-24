@@ -53,6 +53,10 @@
                                                                 Your login failed, please try again
                                                                 <button type="button" class="btn-close" (click)="logginError = false" aria-label="Close"></button>
                                                             </div>
+                                                            <div *ngIf="ssoError" class="alert alert-warning alert-dismissible fade show" role="alert">
+                                                                <strong>SSO Error:</strong> {{ ssoError }}
+                                                                <button type="button" class="btn-close" (click)="clearSsoError()" aria-label="Close"></button>
+                                                            </div>
                                                             <div class="mb-3">
                                                                 <button (click)="signIn()"  style="height: 50px; background-color: #6f19e6;" class="btn btn-dark w-100 waves-effect waves-light" type="submit">
                                                                     <span *ngIf="!loading">Login</span>
@@ -64,19 +68,19 @@
                                                                 <span class="divider-text">Or</span>
                                                             </div>
 
-                                                            <div class="mb-3">
+                                                            <div class="mb-3" *ngIf="identityProviders.Google">
                                                                 <button (click)="signInWithGoogle()" style="height: 50px;" class="btn btn-outline-danger w-100 py-2" type="button" [disabled]="loading">
                                                                     <span><i class="bx bxl-google font-size-18 align-middle me-2"></i> Continue with Google </span>
                                                                 </button>
                                                             </div>
 
-                                                            <div class="mb-3">
+                                                            <div class="mb-3" *ngIf="identityProviders.Microsoft">
                                                                 <button (click)="signInWithMicrosoft()" style="height: 50px;" class="btn btn-outline-purple w-100 py-2" type="button" [disabled]="loading">
                                                                     <span><i class="bx bxl-microsoft font-size-18 align-middle me-2"></i> Continue with Microsoft </span>
                                                                 </button>
                                                             </div>
 
-                                                            <div class="mb-3">
+                                                            <div class="mb-3" *ngIf="identityProviders.Apple">
                                                                 <button (click)="signInWithApple()" style="height: 50px;" class="btn btn-outline-secondary w-100 py-2" type="button" [disabled]="loading">
                                                                     <span><i class="bx bxl-apple font-size-18 align-middle me-2"></i> Continue with Apple </span>
                                                                 </button>

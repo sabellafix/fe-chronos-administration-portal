@@ -1,0 +1,580 @@
+openapi: 3.0.3
+info:
+  title: Chronos Bookings Query API
+  description: API endpoint for querying bookings with advanced filtering, pagination, and sorting capabilities
+  version: 1.0.0
+
+servers:
+  - url: /api
+    description: API base path
+
+paths:
+  /bookings/query-bookings:
+    get:
+      summary: Query Bookings
+      description: |
+        Retrieves a paginated list of bookings with optional filtering and sorting.
+        This endpoint supports multiple filter criteria that can be combined to narrow down results.
+        
+        **Filter Behavior:**
+        - All filters are optional and can be combined
+        - Text search performs case-insensitive partial matching
+        - Date filters are inclusive (from <= bookingDate <= to)
+        - When no filters are provided, returns all bookings
+        
+        **Sorting:**
+        - Default sort: bookingDate DESC, startTime ASC
+        - Multiple sort fields can be specified separated by comma
+        - Each field can have ASC or DESC direction
+      operationId: queryBookings
+      tags:
+        - Bookings
+      security:
+        - bearerAuth: []
+      parameters:
+        # Search Parameters
+        - name: search
+          in: query
+          description: Text to search across multiple fields (bookingReference, customer name, phone)
+          required: false
+          schema:
+            type: string
+            example: "REF-2024"
+        
+        - name: searchField
+          in: query
+          description: |
+            Specific field to search in. If not provided, searches in default field (bookingReference).
+            Available fields: bookingReference, customer.firstName, customer.lastName, customer.phoneNumber
+          required: false
+          schema:
+            type: string
+            enum:
+              - bookingReference
+              - customer.firstName
+              - customer.lastName
+              - customer.phoneNumber
+            example: "bookingReference"
+        
+        # Status Filter
+        - name: status
+          in: query
+          description: Filter by booking status
+          required: false
+          schema:
+            type: string
+            enum:
+              - pending
+              - confirmed
+              - inProgress
+              - completed
+              - cancelled
+              - noShow
+            example: "confirmed"
+        
+        # Date Range Filters
+        - name: dateFrom
+          in: query
+          description: Filter bookings from this date (inclusive). Format YYYY-MM-DD
+          required: false
+          schema:
+            type: string
+            format: date
+            example: "2024-03-01"
+        
+        - name: dateTo
+          in: query
+          description: Filter bookings until this date (inclusive). Format YYYY-MM-DD
+          required: false
+          schema:
+            type: string
+            format: date
+            example: "2024-03-31"
+        
+        # Advanced Filters
+        - name: supplierId
+          in: query
+          description: Filter by professional/stylist ID (UUID)
+          required: false
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440000"
+        
+        - name: serviceId
+          in: query
+          description: Filter by service ID (UUID)
+          required: false
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440001"
+        
+        - name: customerId
+          in: query
+          description: Filter by customer ID (UUID)
+          required: false
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440002"
+        
+        - name: salonId
+          in: query
+          description: Filter by salon ID (UUID). Required for multi-salon environments
+          required: false
+          schema:
+            type: string
+            format: uuid
+            example: "550e8400-e29b-41d4-a716-446655440003"
+        
+        # Pagination Parameters
+        - name: page
+          in: query
+          description: Page number (0-indexed)
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+            example: 0
+        
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+            example: 25
+        
+        # Sorting Parameters
+        - name: sortBy
+          in: query
+          description: |
+            Field to sort by. Supports nested fields using dot notation.
+            Available fields: bookingDate, startTime, status, totalPrice, durationMinutes, 
+            bookingReference, customer.lastName, user.lastName, createdAt
+          required: false
+          schema:
+            type: string
+            default: "bookingDate"
+            example: "bookingDate"
+        
+        - name: sortOrder
+          in: query
+          description: Sort direction
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: "desc"
+            example: "desc"
+        
+        # Include count
+        - name: includeCount
+          in: query
+          description: Whether to include total count in response for pagination
+          required: false
+          schema:
+            type: boolean
+            default: true
+            example: true
+
+      responses:
+        '200':
+          description: Successful response with paginated booking list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingQueryResponse'
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Invalid or missing authentication token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - User does not have permission to access this resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from authentication endpoint
+
+  schemas:
+    BookingQueryResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Booking'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+      required:
+        - data
+
+    PaginationInfo:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number (0-indexed)
+          example: 0
+        pageSize:
+          type: integer
+          description: Number of items per page
+          example: 25
+        totalItems:
+          type: integer
+          description: Total number of items matching the query
+          example: 342
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 14
+        hasNextPage:
+          type: boolean
+          description: Whether there is a next page
+          example: true
+        hasPreviousPage:
+          type: boolean
+          description: Whether there is a previous page
+          example: false
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique booking identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        bookingReference:
+          type: string
+          nullable: true
+          description: Human-readable booking reference code
+          example: "REF-2024-001234"
+        customerId:
+          type: string
+          format: uuid
+          description: Customer ID
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        customer:
+          $ref: '#/components/schemas/Customer'
+        supplierId:
+          type: string
+          format: uuid
+          description: Professional/Stylist ID
+          example: "550e8400-e29b-41d4-a716-446655440002"
+        user:
+          $ref: '#/components/schemas/User'
+        serviceId:
+          type: string
+          format: uuid
+          description: Primary service ID
+          example: "550e8400-e29b-41d4-a716-446655440003"
+        services:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Service'
+          description: List of services included in the booking
+        bookingDate:
+          $ref: '#/components/schemas/DateOnly'
+        startTime:
+          $ref: '#/components/schemas/TimeOnly'
+        endTime:
+          $ref: '#/components/schemas/TimeOnly'
+        durationMinutes:
+          type: integer
+          description: Total duration in minutes
+          example: 90
+        totalPrice:
+          type: number
+          format: decimal
+          description: Total price of the booking
+          example: 75.00
+        currency:
+          type: string
+          nullable: true
+          description: Currency code (ISO 4217)
+          example: "USD"
+        status:
+          $ref: '#/components/schemas/BookingStatus'
+        clientNotes:
+          type: string
+          nullable: true
+          description: Notes from the customer
+          example: "I prefer warm tones"
+        providerNotes:
+          type: string
+          nullable: true
+          description: Internal notes from the provider
+          example: "Regular customer, prefers stylist Maria"
+        createdAt:
+          type: string
+          format: date-time
+          description: Booking creation timestamp
+          example: "2024-03-10T15:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2024-03-10T16:00:00Z"
+        confirmedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Confirmation timestamp
+          example: "2024-03-10T16:00:00Z"
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Completion timestamp
+          example: null
+        cancelledAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Cancellation timestamp
+          example: null
+        cancellationReason:
+          type: string
+          nullable: true
+          description: Reason for cancellation if applicable
+          example: null
+        bookingServices:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/BookingServiceDTO'
+          description: Detailed booking-service relationships
+
+    BookingStatus:
+      type: string
+      enum:
+        - pending
+        - confirmed
+        - inProgress
+        - completed
+        - cancelled
+        - noShow
+      description: |
+        Booking status:
+        - **pending**: Booking created, awaiting confirmation
+        - **confirmed**: Booking confirmed by salon
+        - **inProgress**: Service currently being performed
+        - **completed**: Service finished successfully
+        - **cancelled**: Booking was cancelled
+        - **noShow**: Customer did not show up
+      example: "confirmed"
+
+    DateOnly:
+      type: object
+      properties:
+        year:
+          type: integer
+          example: 2024
+        month:
+          type: integer
+          minimum: 1
+          maximum: 12
+          example: 3
+        day:
+          type: integer
+          minimum: 1
+          maximum: 31
+          example: 15
+      description: Date without time component
+
+    TimeOnly:
+      type: object
+      properties:
+        hour:
+          type: integer
+          minimum: 0
+          maximum: 23
+          example: 10
+        minute:
+          type: integer
+          minimum: 0
+          maximum: 59
+          example: 30
+        second:
+          type: integer
+          minimum: 0
+          maximum: 59
+          example: 0
+      description: Time without date component
+
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        firstName:
+          type: string
+          nullable: true
+          example: "Maria"
+        lastName:
+          type: string
+          nullable: true
+          example: "Garcia"
+        phoneNumber:
+          type: string
+          nullable: true
+          example: "+34 612 345 678"
+        email:
+          type: string
+          format: email
+          nullable: true
+          example: "maria@email.com"
+        photo:
+          type: string
+          nullable: true
+          description: URL to customer photo
+        isActive:
+          type: boolean
+          example: true
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440002"
+        firstName:
+          type: string
+          example: "Carlos"
+        lastName:
+          type: string
+          example: "Martinez"
+        email:
+          type: string
+          format: email
+          example: "carlos@salon.com"
+        phone:
+          type: string
+          example: "+34 698 765 432"
+        photo:
+          type: string
+          nullable: true
+          description: URL to user photo
+        isActive:
+          type: boolean
+          example: true
+        userRole:
+          type: string
+          example: "serviceProvider"
+
+    Service:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440003"
+        serviceName:
+          type: string
+          nullable: true
+          example: "Haircut"
+        serviceDescription:
+          type: string
+          nullable: true
+          example: "Professional haircut service"
+        durationMinutes:
+          type: integer
+          example: 45
+        price:
+          type: number
+          format: decimal
+          example: 25.00
+        currency:
+          type: string
+          nullable: true
+          example: "USD"
+        color:
+          type: string
+          nullable: true
+          description: Color code for UI display
+          example: "#007bff"
+        isActive:
+          type: boolean
+          example: true
+
+    BookingServiceDTO:
+      type: object
+      properties:
+        bookingId:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        serviceId:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440003"
+        order:
+          type: integer
+          description: Order of the service in the booking
+          example: 1
+        durationInMinutes:
+          type: integer
+          description: Duration of this specific service
+          example: 45
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: "Invalid date format for dateFrom parameter"
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: "dateFrom"
+              message:
+                type: string
+                example: "Must be a valid date in YYYY-MM-DD format"
+          description: Detailed validation errors (optional)
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-03-15T10:30:00Z"

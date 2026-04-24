@@ -1,6 +1,7 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { User } from '@app/core/models/bussiness/user';
 import { CompanyInfo } from '@app/core/models/views/companyInfo';
 import { InfoUser } from '@app/core/models/views/infoUser';
@@ -16,13 +17,17 @@ import { Rol } from '@app/core/models/bussiness/rol';
 import { SalonService } from '@app/core/services/http/salon.service';
 import { Salon } from '@app/core/models/bussiness/salon';
 import { SsoAuthService } from '@app/core/services/http/sso-auth.service';
+import { IdentityProviders } from '@app/core/models/interfaces/identityProviders';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent implements OnInit, AfterViewInit{
+export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  private readonly _destroying$ = new Subject<void>();
+  identityProviders: IdentityProviders = environment.identityProviders;
 
   form: FormGroup;
   infoUser : InfoUser = new InfoUser();
@@ -31,6 +36,7 @@ export class LoginComponent implements OnInit, AfterViewInit{
   charge: boolean = false;
   loading: boolean = false;
   logginError: boolean = false;
+  ssoError: string | null = null;
   userDomain : string = environment.apiUrl;
   salons : Salon[] = [];
   user : User = new User();
@@ -58,6 +64,28 @@ export class LoginComponent implements OnInit, AfterViewInit{
   }
 
   ngOnInit() {
+    this.ssoAuthService.isSsoProcessing$
+      .pipe(takeUntil(this._destroying$))
+      .subscribe(isProcessing => {
+        this.loading = isProcessing;
+      });
+
+    this.ssoAuthService.ssoError$
+      .pipe(takeUntil(this._destroying$))
+      .subscribe(error => {
+        this.ssoError = error;
+        if (error) {
+          this.loading = false;
+        }
+      });
+
+    this.authService.isLoggedIn()
+      .pipe(takeUntil(this._destroying$))
+      .subscribe(isLoggedIn => {
+        if (isLoggedIn) {
+          this.router.navigate(['/dashboard']);
+        }
+      });
   }
 
   ngAfterViewInit() {
@@ -157,4 +185,13 @@ export class LoginComponent implements OnInit, AfterViewInit{
     this.ssoAuthService.signUpWithB2C();
   }
 
+  clearSsoError(): void {
+    this.ssoError = null;
+    this.ssoAuthService.clearError();
+  }
+
+  ngOnDestroy(): void {
+    this._destroying$.next();
+    this._destroying$.complete();
+  }
 }

@@ -14,6 +14,7 @@ import { VisualOption } from '@app/core/models/interfaces/option.interface';
 import { StorageKeyConst } from '@app/core/models/constants/storageKey.const';
 import { RolesConst } from '@app/core/models/constants/roles.const';
 import { Salon } from '@app/core/models/bussiness/salon';
+import { SsoAuthService } from '@app/core/services/http/sso-auth.service';
 
 @Component({
   selector: 'app-topbar',
@@ -74,6 +75,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
+    private ssoAuthService: SsoAuthService,
     private storageService: StorageService,
     private permissionService: PermissionService,
     private dashboardFiltersService: DashboardFiltersService,
@@ -286,7 +288,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
   
   logOut(){
-    this.authService.logOut();
+    this.ssoAuthService.logout();
   }
 
   profile(){
