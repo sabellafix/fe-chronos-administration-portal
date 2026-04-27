@@ -5,7 +5,7 @@
                 <div class="row">
                     <app-dashboard-header  
                         [kpiCards]="kpiCards"
-                        [loading]="loading">
+                        [loading]="loadingCharts.kpiCards">
                     </app-dashboard-header>
                 </div>
 
@@ -13,12 +13,12 @@
                     <div class="card-body">
                         <div class="d-flex align-items-start">
                             <div class="flex-grow-1">
-                                <h5 class="card-title mb-3" *ngIf="!loading">Revenue chart</h5>
-                                <ngx-skeleton-loader *ngIf="loading" count="1" appearance="line" [theme]="{ height: '20px', width: '150px', 'border-radius': '6px' }"></ngx-skeleton-loader>
+                                <h5 class="card-title mb-3" *ngIf="!loadingCharts.revenueChart">Revenue chart</h5>
+                                <ngx-skeleton-loader *ngIf="loadingCharts.revenueChart" count="1" appearance="line" [theme]="{ height: '20px', width: '150px', 'border-radius': '6px' }"></ngx-skeleton-loader>
                             </div>
                         </div>
-                        <app-skelleton-bar-revenue-chart *ngIf="loading && !revenueChart"></app-skelleton-bar-revenue-chart>
-                        <app-bar-revenue-chart *ngIf="!loading && revenueChart" [revenueChart]="revenueChart"></app-bar-revenue-chart>
+                        <app-skelleton-bar-revenue-chart *ngIf="loadingCharts.revenueChart && !revenueChart"></app-skelleton-bar-revenue-chart>
+                        <app-bar-revenue-chart *ngIf="!loadingCharts.revenueChart && revenueChart" [revenueChart]="revenueChart"></app-bar-revenue-chart>
                     </div>
                 </div>
 
@@ -26,19 +26,19 @@
                     <div class="col-lg-4">
                         <app-revenue-activity 
                             [revenueActivity]="revenueActivity"
-                            [loading]="loading">
+                            [loading]="loadingCharts.revenueActivity">
                         </app-revenue-activity>
                     </div>
                     <div class="col-lg-4">
                         <app-booking-stats 
                             [orderStats]="orderStats"
-                            [loading]="loading">
+                            [loading]="loadingCharts.orderStats">
                         </app-booking-stats>
                     </div>
                     <div class="col-lg-4">
                         <app-top-products 
                             [topServices]="topServices"
-                            [loading]="loading">
+                            [loading]="loadingCharts.topServices">
                         </app-top-products>
                     </div>
                 </div>

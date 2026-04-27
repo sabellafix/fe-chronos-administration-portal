@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subject, takeUntil, forkJoin, filter, distinctUntilChanged } from 'rxjs';
+import { Subject, takeUntil, filter, distinctUntilChanged } from 'rxjs';
 import { DashboardService } from '@app/core/services/http/dashboard.service';
 import { StorageService } from '@app/core/services/shared/storage.service';
 import { WaitService } from '@app/core/services/shared/wait.service';
@@ -46,6 +46,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
   salonOccupancy: SalonOccupancyDto | null = null;
   selectedStylist: User | null = null;
   isStylistPanelVisible: boolean = false;
+  loadingCharts: {
+    kpiCards: boolean;
+    revenueChart: boolean;
+    revenueActivity: boolean;
+    orderStats: boolean;
+    topServices: boolean;
+    salonOccupancy: boolean;
+  } = {
+    kpiCards: false,
+    revenueChart: false,
+    revenueActivity: false,
+    orderStats: false,
+    topServices: false,
+    salonOccupancy: false
+  };
   
   enabledCaching: boolean = false;
 
@@ -187,36 +202,105 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private loadFromBackend(salonId: string): void {
     const stylistId = this.selectedStylist?.id;
-    forkJoin({
-      metrics: this.dashboardService.getMetrics(salonId, this.startDateFilter, this.endDateFilter, stylistId),
-      kpiCards: this.dashboardService.getKpiCards(salonId, this.startDateFilter, this.endDateFilter, stylistId),
-      revenueChart: this.dashboardService.getRevenueChart(salonId, this.startDateFilter, this.endDateFilter, stylistId),
-      revenueActivity: this.dashboardService.getRevenueActivity(salonId, this.startDateFilter, this.endDateFilter, stylistId),      
-      salonOccupancy: this.dashboardService.getSalonOccupancy(salonId, this.startDateFilter, this.endDateFilter, stylistId)
-    })
+    
+    // Activar todos los estados de carga individuales
+    this.setAllLoadingCharts(true);
+
+    // Cargar KPI Cards
+    this.dashboardService.getKpiCards(salonId, this.startDateFilter, this.endDateFilter, stylistId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (results) => {
-          // Guardar en caché con las fechas actuales
-          this.setCachedData(StorageKeyConst._DASHBOARD_METRICS, salonId, results.metrics);
-          this.setCachedData(StorageKeyConst._DASHBOARD_KPI_CARDS, salonId, results.kpiCards);
-          this.setCachedData(StorageKeyConst._DASHBOARD_REVENUE_CHART, salonId, results.revenueChart);
-          this.setCachedData(StorageKeyConst._DASHBOARD_REVENUE_ACTIVITY, salonId, results.revenueActivity);
-          this.setCachedData(StorageKeyConst._DASHBOARD_SALON_OCCUPANCY, salonId, results.salonOccupancy);
-
-          // Asignar valores
-          this.kpiCards = results.kpiCards;
-          this.revenueChart = results.revenueChart;
-          this.revenueActivity = results.revenueActivity;
-          this.orderStats = results.metrics?.orderStats ?? null;
-          this.topServices = results.metrics?.topServices ?? [];
-          this.salonOccupancy = results.salonOccupancy;
-          this.loading = false;
+        next: (result) => {
+          this.setCachedData(StorageKeyConst._DASHBOARD_KPI_CARDS, salonId, result);
+          this.kpiCards = result;
+          this.loadingCharts.kpiCards = false;
+          this.updateGlobalLoading();
         },
-        error: (error) => {
-          this.loading = false;
+        error: () => {
+          this.loadingCharts.kpiCards = false;
+          this.updateGlobalLoading();
         }
       });
+
+    // Cargar Revenue Chart
+    this.dashboardService.getRevenueChart(salonId, this.startDateFilter, this.endDateFilter, stylistId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.setCachedData(StorageKeyConst._DASHBOARD_REVENUE_CHART, salonId, result);
+          this.revenueChart = result;
+          this.loadingCharts.revenueChart = false;
+          this.updateGlobalLoading();
+        },
+        error: () => {
+          this.loadingCharts.revenueChart = false;
+          this.updateGlobalLoading();
+        }
+      });
+
+    // Cargar Revenue Activity
+    this.dashboardService.getRevenueActivity(salonId, this.startDateFilter, this.endDateFilter, stylistId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.setCachedData(StorageKeyConst._DASHBOARD_REVENUE_ACTIVITY, salonId, result);
+          this.revenueActivity = result;
+          this.loadingCharts.revenueActivity = false;
+          this.updateGlobalLoading();
+        },
+        error: () => {
+          this.loadingCharts.revenueActivity = false;
+          this.updateGlobalLoading();
+        }
+      });
+
+    // Cargar Metrics (orderStats y topServices)
+    this.dashboardService.getMetrics(salonId, this.startDateFilter, this.endDateFilter, stylistId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.setCachedData(StorageKeyConst._DASHBOARD_METRICS, salonId, result);
+          this.orderStats = result?.orderStats ?? null;
+          this.topServices = result?.topServices ?? [];
+          this.loadingCharts.orderStats = false;
+          this.loadingCharts.topServices = false;
+          this.updateGlobalLoading();
+        },
+        error: () => {
+          this.loadingCharts.orderStats = false;
+          this.loadingCharts.topServices = false;
+          this.updateGlobalLoading();
+        }
+      });
+
+    // Cargar Salon Occupancy
+    this.dashboardService.getSalonOccupancy(salonId, this.startDateFilter, this.endDateFilter, stylistId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.setCachedData(StorageKeyConst._DASHBOARD_SALON_OCCUPANCY, salonId, result);
+          this.salonOccupancy = result;
+          this.loadingCharts.salonOccupancy = false;
+          this.updateGlobalLoading();
+        },
+        error: () => {
+          this.loadingCharts.salonOccupancy = false;
+          this.updateGlobalLoading();
+        }
+      });
+  }
+
+  private setAllLoadingCharts(value: boolean): void {
+    this.loadingCharts.kpiCards = value;
+    this.loadingCharts.revenueChart = value;
+    this.loadingCharts.revenueActivity = value;
+    this.loadingCharts.orderStats = value;
+    this.loadingCharts.topServices = value;
+    this.loadingCharts.salonOccupancy = value;
+  }
+
+  private updateGlobalLoading(): void {
+    this.loading = Object.values(this.loadingCharts).some(loading => loading);
   }
 
   ngOnDestroy(): void {
