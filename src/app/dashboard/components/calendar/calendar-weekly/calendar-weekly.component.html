@@ -64,7 +64,7 @@
                                 <ng-container *ngFor="let booking of cellBookings; let i = index; trackBy: trackByBooking">
                                     <app-card-booking 
                                         [booking]="booking" 
-                                        [size]="'md'"
+                                        [size]="'lg'"
                                         [absolutePosition]="true"
                                         [topPosition]="getBookingTopPosition(booking)"
                                         [leftOffset]="getBookingLeftOffset(booking, cellBookings)"
